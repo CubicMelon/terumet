@@ -9,7 +9,7 @@ terumet.mod_name = "terumet"
 terumet.alloy_recipes = {}
 
 function terumet.format_time(t)
-    return string.format('%.1fs', t or 0)
+    return string.format('%.1f s', t or 0)
 end
 
 function terumet.lua_file(name)

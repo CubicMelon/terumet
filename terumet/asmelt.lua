@@ -1,8 +1,13 @@
 terumet.FLUX_MELTING_TIME = 1.0
 terumet.FLUX_SOURCE = terumet.id('lump_raw')
 terumet.SMELTER_FLUX_MAXIMUM = 99
-terumet.SMELTER_FUEL_MAXIMUM = 300.0
-terumet.SMELTER_FUEL_MULTIPLIER = 10.0
+
+terumet.SMELTER_FUEL_ITEM = 'bucket:bucket_lava'
+terumet.SMELTER_FUEL_RETURN = 'bucket:bucket_empty'
+terumet.SMELTER_FUEL_FINISH = 'default:cobble'
+terumet.SMELTER_HEAT_LEVEL = 1000 -- from one fuel item
+
+-- time between smelter ticks
 terumet.SMELTER_TIMER = 0.5
 
 local asmelt = {}
@@ -30,15 +35,17 @@ function asmelt.generate_formspec(smelter)
     --input inventory
     'list[context;inp;0,1.5;2,2;]'..
     --output inventory
-    'list[context;out;6,1.5;2,2;]'..
-    --fuel inventory
-    'list[context;fuel;4,3.5;1,1;]'..
+    'list[context;out;6,1.5;2,2;]'
+    if smelter.heat_level == 0 or (not smelter.inv:is_empty('fuel')) then
+    --fuel inventory (if needed/not empty)
+        fs = fs..'list[context;fuel;3,3.5;1,1;]'
+    end
     --current status text
-    'label[0,0;Terumetal Alloy Smelter]'..
+    fs = fs..'label[0,0;Terumetal Alloy Smelter]'..
     'label[0,0.5;' .. smelter.status_text .. ']'..
-    'label[5,3.5;Fuel: ' .. terumet.format_time(smelter.fuel_time) .. ']'..
+    'label[4,3.5;Heat: ' .. smelter.heat_level .. ' HU]'..
     --molten readout
-    'label[2.4,2.5;Molten flux: ' .. (smelter.flux_tank or '???') .. '/' .. terumet.SMELTER_FLUX_MAXIMUM .. ' lumps' .. ']'
+    'label[2.4,2;Molten flux: ' .. (smelter.flux_tank or '???') .. '/' .. terumet.SMELTER_FLUX_MAXIMUM .. ' lumps' .. ']'
     return fs
 end
 
@@ -58,7 +65,7 @@ function asmelt.init(pos)
         flux_tank = 0,
         state = asmelt.STATE.IDLE,
         state_time = 0,
-        fuel_time = 0,
+        heat_level = 0,
         status_text = 'New',
     }
 
@@ -85,7 +92,7 @@ function asmelt.read_state(pos)
     smelter.inv = meta:get_inventory()
     smelter.flux_tank = meta:get_int('flux_tank') or 0
     smelter.state = meta:get_int('state') or asmelt.STATE.IDLE
-    smelter.fuel_time = meta:get_float('fuel_time') or 0
+    smelter.heat_level = meta:get_int('heat_level') or 0
     smelter.state_time = meta:get_float('state_time') or 0
     smelter.status_text = 'STATUS TEXT NOT SET'
     return smelter
@@ -98,17 +105,40 @@ function asmelt.write_state(pos, smelter)
     meta:set_int('flux_tank', smelter.flux_tank)
     meta:set_int('state', smelter.state)
     meta:set_float('state_time', smelter.state_time)
-    meta:set_float('fuel_time', smelter.fuel_time)
+    meta:set_int('heat_level', smelter.heat_level)
+end
+
+function asmelt.expend_heat(smelter, value)
+    smelter.heat_level = math.max(0, smelter.heat_level - value)
 end
 
 function asmelt.tick(pos, dt)
     -- read status from metadata
     local smelter = asmelt.read_state(pos)
+    local heat_empty = smelter.heat_level == 0
+
+    if heat_empty then
+        if smelter.inv:contains_item('fuel', terumet.SMELTER_FUEL_ITEM) then
+            if smelter.inv:room_for_item('out', terumet.SMELTER_FUEL_RETURN) then
+                smelter.inv:remove_item('fuel', terumet.SMELTER_FUEL_ITEM)
+                smelter.inv:add_item('out', terumet.SMELTER_FUEL_RETURN)
+                smelter.heat_level = terumet.SMELTER_HEAT_LEVEL
+                heat_empty = false
+            else
+                smelter.status_text = 'No space for return bucket'
+                goto skip_processing
+            end
+        else
+            smelter.status_text = 'Need heat (lava bucket)'
+            goto skip_processing
+        end
+    end
 
     -- do processing
     if smelter.state == asmelt.STATE.FLUX_MELT then
         smelter.state_time = smelter.state_time - dt
         smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
+        asmelt.expend_heat(smelter, 1)
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
             smelter.state = asmelt.STATE.IDLE
@@ -118,6 +148,7 @@ function asmelt.tick(pos, dt)
         local result_name = result_stack:get_definition().description
         smelter.state_time = smelter.state_time - dt
         smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(smelter.state_time) .. ')'
+        asmelt.expend_heat(smelter, 1)
         if smelter.state_time <= 0 then
             if smelter.inv:room_for_item('out', result_stack) then
                 smelter.inv:set_stack('result', 1, nil)
@@ -180,9 +211,15 @@ function asmelt.tick(pos, dt)
         end
     end
     
+    if (not heat_empty) and smelter.heat_level == 0 then
+        -- heat reached zero this tick?
+        smelter.inv:set_stack('fuel', 1, terumet.SMELTER_FUEL_FINISH)
+    end
+
     -- if not currently idle, set next timer tick
     if smelter.state ~= asmelt.STATE.IDLE then asmelt.start_timer(pos) end
 
+::skip_processing::
     -- write status back to metadata
     asmelt.write_state(pos, smelter)
 end
@@ -192,7 +229,7 @@ function asmelt.allow_put(pos, listname, index, stack, player)
         return 0 -- number of items allowed to move
     end
     if listname == "fuel" then
-        if asmelt.stack_is_valid_fuel(stack) then
+        if stack:get_name() == terumet.SMELTER_FUEL_ITEM then
             return stack:get_count()
         else
             return 0
