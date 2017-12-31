@@ -1,6 +1,8 @@
 function terumet.reg_alloy(name, id, block_level, source_list)
     if (not source_list) or (type(source_list) ~= 'table') then error('invalid source list for alloy') end
-    source_list.teru = source_list.teru or 1
+    source_list.flux = source_list.flux or 1
+    source_list.result_count = source_list.result_count or 2
+    source_list.time = source_list.time or 1.0
 
     local ingot_id = 'ingot_alloy_' .. id
     local block_id = 'block_alloy_' .. id

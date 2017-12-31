@@ -61,10 +61,10 @@ minetest.register_ore{
     y_max = 64
 }
 
-terumet.reg_alloy('Terucopper', 'tcop', 1, {teru=1, 'default:copper_lump'})
-terumet.reg_alloy('Terusteel', 'tste', 2, {teru=2, 'default:iron_lump'})
-terumet.reg_alloy('Terugold', 'tgol', 3, {teru=3, 'default:gold_lump'})
-terumet.reg_alloy('Coreglass', 'cgls', 4, {teru=5, 'default:diamond', 'default:obsidian_shard'})
+terumet.reg_alloy('Terucopper', 'tcop', 1, {flux=1, time=3.0, 'default:copper_lump'})
+terumet.reg_alloy('Terusteel', 'tste', 2, {flux=2, time=4.0, 'default:iron_lump'})
+terumet.reg_alloy('Terugold', 'tgol', 3, {flux=3, time=5.0, 'default:gold_lump'})
+terumet.reg_alloy('Coreglass', 'cgls', 4, {flux=5, time=6.0, 'default:diamond', 'default:obsidian_shard'})
 
 terumet.reg_tools('Terumetal', 'traw',
     terumet.id('ingot_raw'),
