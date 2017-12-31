@@ -8,6 +8,10 @@ terumet.mod_name = "terumet"
 -- X = number of raw terumetal lumps required
 terumet.alloy_recipes = {}
 
+function terumet.format_time(t)
+    return string.format('%.1fs', t or 0)
+end
+
 function terumet.lua_file(name)
     return minetest.get_modpath(terumet.mod_name) .. '/' .. name .. '.lua'
 end
@@ -44,7 +48,7 @@ minetest.register_ore{
     ore_type = 'scatter',
     ore = terumet.id('ore_raw'),
     wherein = 'default:stone',
-    clust_scarcity = 16 * 16 * 16,
+    clust_scarcity = 12 * 12 * 12,
     clust_num_ores = 4,
     clust_size = 4,
     y_min = -30000,
@@ -54,7 +58,7 @@ minetest.register_ore{
     ore_type = 'scatter',
     ore = terumet.id('ore_raw_desert'),
     wherein = 'default:desert_stone',
-    clust_scarcity = 16 * 16 * 14,
+    clust_scarcity = 12 * 10 * 8,
     clust_num_ores = 4,
     clust_size = 6,
     y_min = -30000,
@@ -65,6 +69,11 @@ terumet.reg_alloy('Terucopper', 'tcop', 1, {flux=1, time=3.0, 'default:copper_lu
 terumet.reg_alloy('Terusteel', 'tste', 2, {flux=2, time=4.0, 'default:iron_lump'})
 terumet.reg_alloy('Terugold', 'tgol', 3, {flux=3, time=5.0, 'default:gold_lump'})
 terumet.reg_alloy('Coreglass', 'cgls', 4, {flux=5, time=6.0, 'default:diamond', 'default:obsidian_shard'})
+
+terumet.alloy_recipes[terumet.id('block_alloy_tcop')] = {flux=9, time=24.0, 'default:copperblock'}
+terumet.alloy_recipes[terumet.id('block_alloy_tste')] = {flux=17, time=34.0, 'default:ironblock'}
+terumet.alloy_recipes[terumet.id('block_alloy_tgol')] = {flux=25, time=40.0, 'default:goldblock'}
+terumet.alloy_recipes[terumet.id('block_alloy_cgls')] = {flux=40, time=45.0, 'default:diamondblock', 'default:obsidian'}
 
 terumet.reg_tools('Terumetal', 'traw',
     terumet.id('ingot_raw'),
