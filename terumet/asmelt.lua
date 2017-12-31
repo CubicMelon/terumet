@@ -42,7 +42,7 @@ function asmelt.generate_formspec(smelter)
 end
 
 function asmelt.generate_infotext(smelter)
-    return 'Alloy Smelter: ' .. smelter.status_text .. ' Fuel: ' .. terumet.format_time(smelter.fueltime)
+    return 'Alloy Smelter: ' .. smelter.status_text
 end
 
 function asmelt.init(pos)
@@ -107,7 +107,7 @@ function asmelt.tick(pos, dt)
     -- do processing
     if smelter.state == asmelt.STATE.FLUX_MELT then
         smelter.state_time = smelter.state_time - dt
-        smelter.status_text = 'Melting flux (' .. terumet.format_time(state_time) .. ')'
+        smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
             smelter.state = asmelt.STATE.IDLE
@@ -116,7 +116,7 @@ function asmelt.tick(pos, dt)
         local result_stack = smelter.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         smelter.state_time = smelter.state_time - dt
-        smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(state_time) .. ')'
+        smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(smelter.state_time) .. ')'
         if smelter.state_time <= 0 then
             if smelter.inv:room_for_item('out', result_stack) then
                 smelter.inv:set_stack('result', 1, nil)
