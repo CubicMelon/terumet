@@ -3,6 +3,7 @@ terumet.FLUX_SOURCE = terumet.id('lump_raw')
 terumet.SMELTER_FLUX_MAXIMUM = 99
 terumet.SMELTER_FUEL_MAXIMUM = 300.0
 terumet.SMELTER_FUEL_MULTIPLIER = 10.0
+terumet.SMELTER_TIMER = 0.5
 
 local asmelt = {}
 asmelt.full_id = terumet.id('mach_asmelt')
@@ -14,7 +15,7 @@ asmelt.STATE.FLUX_MELT = 1
 asmelt.STATE.ALLOYING = 2
 
 function asmelt.start_timer(pos)
-    minetest.get_node_timer(pos):start(1.0)
+    minetest.get_node_timer(pos):start(terumet.SMELTER_TIMER)
 end
 
 function asmelt.stack_is_valid_fuel(stack)
