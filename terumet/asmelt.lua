@@ -7,6 +7,12 @@ terumet.SMELTER_FUEL_MULTIPLIER = 10.0
 local asmelt = {}
 asmelt.full_id = terumet.id('mach_asmelt')
 
+-- state identifier consts
+asmelt.STATE = {}
+asmelt.STATE.IDLE = 0
+asmelt.STATE.FLUX_MELT = 1
+asmelt.STATE.ALLOYING = 2
+
 function asmelt.start_timer(pos)
     minetest.get_node_timer(pos):start(1.0)
 end
@@ -78,7 +84,7 @@ function asmelt.read_state(pos)
     smelter.inv = meta:get_inventory()
     smelter.flux_tank = meta:get_int('flux_tank') or 0
     smelter.state = meta:get_int('state') or asmelt.STATE.IDLE
-    --local fuel_time = meta:get_float('fuel_time') or 0
+    smelter.fuel_time = meta:get_float('fuel_time') or 0
     smelter.state_time = meta:get_float('state_time') or 0
     smelter.status_text = 'STATUS TEXT NOT SET'
     return smelter
@@ -91,14 +97,8 @@ function asmelt.write_state(pos, smelter)
     meta:set_int('flux_tank', smelter.flux_tank)
     meta:set_int('state', smelter.state)
     meta:set_float('state_time', smelter.state_time)
-    --meta:set_float('fuel_time', smelter.fuel_time)
+    meta:set_float('fuel_time', smelter.fuel_time)
 end
-
--- state identifier consts
-asmelt.STATE = {}
-asmelt.STATE.IDLE = 0
-asmelt.STATE.FLUX_MELT = 1
-asmelt.STATE.ALLOYING = 2
 
 function asmelt.tick(pos, dt)
     -- read status from metadata
