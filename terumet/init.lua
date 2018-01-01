@@ -61,7 +61,7 @@ end
 -- X = number of raw terumetal lumps required
 terumet.alloy_recipes = {}
 dofile(terumet.lua_file('options'))
-
+dofile(terumet.lua_file('machine'))
 dofile(terumet.lua_file('reg_metal'))
 dofile(terumet.lua_file('reg_alloy'))
 dofile(terumet.lua_file('reg_tools'))

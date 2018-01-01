@@ -21,6 +21,20 @@ alloys.COREGLASS = {flux=5, time=10.0, 'default:diamond', 'default:obsidian_shar
 alloys.COREGLASS_BLOCK = {flux=30, time=180.0, 'default:diamondblock', 'default:obsidian'}
 
 --
+-- GENERAL MACHINE SETTINGS
+--
+terumet.options.machine = {}
+local machine = terumet.options.machine
+-- Item used to start a smelter's heat cycle
+machine.FUEL_ITEM = 'bucket:bucket_lava'
+-- Item returned after starting a heat cycle
+machine.FUEL_RETURN = 'bucket:bucket_empty'
+-- Item provided after a full heat cycle is completed
+machine.FUEL_COMPLETE = 'default:cobble'
+-- Heat Units provided by one cycle - melting flux is 2HU/tick and alloying is 1HU/tick
+machine.FULL_HEAT = 1500
+
+--
 -- ALLOY SMELTER SETTINGS
 --
 terumet.options.smelter = {}
@@ -33,12 +47,3 @@ smelter.FLUX_MELTING_TIME = 3.0
 -- Maximum size (in item count) of an alloy smelter's flux tank
 -- (note if greater than 99, some flux could be lost when breaking a smelter -- only up to 99 flux will be dropped)
 smelter.FLUX_MAXIMUM = 99
-
--- Item used to start a smelter's heat cycle
-smelter.FUEL_ITEM = 'bucket:bucket_lava'
--- Item returned after starting a heat cycle
-smelter.FUEL_RETURN = 'bucket:bucket_empty'
--- Item provided after a full heat cycle is completed
-smelter.FUEL_COMPLETE = 'default:cobble'
--- Heat Units provided by one cycle - melting flux is 2HU/tick and alloying is 1HU/tick
-smelter.FULL_HEAT = 2000

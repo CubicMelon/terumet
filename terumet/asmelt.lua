@@ -1,4 +1,7 @@
 local opts = terumet.options.smelter
+local base_opts = terumet.options.machine
+
+local base_mach = terumet.machine
 
 local asmelt = {}
 asmelt.full_id = terumet.id('mach_asmelt')
@@ -16,30 +19,23 @@ function asmelt.start_timer(pos)
 end
 
 function asmelt.generate_formspec(smelter)
-    local heat_pct = 100.0 * smelter.heat_level / opts.FULL_HEAT
-    local flux_pct = 100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM
-    local fs = 'size[8,9]background[0,0;8,9;terumet_asmeltgui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'..
+    local heat_pct = 100.0 * smelter.heat_level / base_opts.FULL_HEAT
+    local fs = 'size[8,9]'..base_mach.fs_gui_bg..
     --player inventory
-    'list[current_player;main;0,4.75;8,1;]'..
-    'list[current_player;main;0,6;8,3;8]'..
+    base_mach.fs_player_inv(0,4.75)..
     --input inventory
     'list[context;inp;0,1.5;2,2;]'..
     'label[0.5,3.5;Input Slots]'..
     --output inventory
     'list[context;out;6,1.5;2,2;]'..
-    'label[6.5,3.5;Output Slots]'
-    if smelter.heat_level == 0 or (not smelter.inv:is_empty('fuel')) then
-    --fuel inventory (if needed/not empty)
-        fs = fs..'list[context;fuel;6.5,0;1,1;]'..
-        'label[6.5,1;Fuel Slot]'
-    end
-    --current status texts
-    fs = fs..'label[0,0;Terumetal Alloy Smelter]'..
+    'label[6.5,3.5;Output Slots]'..
+    --fuel slot
+    base_mach.fs_fuel_slot(smelter,6.5,0)..
+    --current status
+    'label[0,0;Terumetal Alloy Smelter]'..
     'label[0,0.5;' .. smelter.status_text .. ']'..
-    'image[2,1.5;2,2;terumet_asmeltgui_flux_bg.png^[lowpart:'..flux_pct..':terumet_asmeltgui_flux_fg.png]'..
-    'label[2.5,3.5;Molten Flux]'..
-    'image[4,1.5;2,2;terumet_asmeltgui_heat_bg.png^[lowpart:'..heat_pct..':terumet_asmeltgui_heat_fg.png]'..
-    'label[4.5,3.5;Heat Level]'..
+    base_mach.fs_flux_info(smelter,2,1.5,100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM)..
+    base_mach.fs_heat_info(smelter,4,1.5)..
     --list rings
     "listring[current_player;main]"..
 	"listring[context;inp]"..
@@ -49,7 +45,7 @@ function asmelt.generate_formspec(smelter)
 end
 
 function asmelt.generate_infotext(smelter)
-    return string.format('Alloy Smelter (%.0f%% heat): %s', 100.0 * smelter.heat_level / opts.FULL_HEAT, smelter.status_text)
+    return string.format('Alloy Smelter (%.0f%% heat): %s', base_mach.heat_pct(smelter), smelter.status_text)
 end
 
 function asmelt.init(pos)
@@ -107,14 +103,10 @@ function asmelt.write_state(pos, smelter)
     meta:set_int('heat_level', smelter.heat_level)
 end
 
-function asmelt.expend_heat(smelter, value)
-    smelter.heat_level = math.max(0, smelter.heat_level - value)
-end
-
 function asmelt.do_processing(smelter, dt)
     if smelter.state == asmelt.STATE.FLUX_MELT then
         smelter.state_time = smelter.state_time - dt
-        asmelt.expend_heat(smelter, 2)
+        base_mach.expend_heat(smelter, 2)
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
             smelter.state = asmelt.STATE.IDLE
@@ -125,7 +117,7 @@ function asmelt.do_processing(smelter, dt)
         local result_stack = smelter.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         smelter.state_time = smelter.state_time - dt
-        asmelt.expend_heat(smelter, 1)
+        base_mach.expend_heat(smelter, 1)
         if smelter.state_time <= 0 then
             if smelter.inv:room_for_item('out', result_stack) then
                 smelter.inv:set_stack('result', 1, nil)
@@ -190,17 +182,7 @@ function asmelt.tick(pos, dt)
     local smelter = asmelt.read_state(pos)
 
     if smelter.heat_level == 0 then
-        if smelter.inv:contains_item('fuel', opts.FUEL_ITEM) then
-            if smelter.inv:room_for_item('out', opts.FUEL_RETURN) then
-                smelter.inv:remove_item('fuel', opts.FUEL_ITEM)
-                smelter.inv:add_item('out', opts.FUEL_RETURN)
-                smelter.heat_level = opts.FULL_HEAT
-            else
-                smelter.status_text = 'No space for return bucket'
-            end
-        else
-            smelter.status_text = 'Need heat ('..minetest.registered_items[opts.FUEL_ITEM].description..')'
-        end
+        base_mach.process_fuel(smelter)
     end
     -- not an else since it could have changed!
     if smelter.heat_level > 0 then
@@ -212,9 +194,8 @@ function asmelt.tick(pos, dt)
                 asmelt.check_new_processing(smelter) 
             end
         else
-            -- if heat reached zero this tick, expel the fuel finish item (cobblestone by default)
-            -- no need to check if fuel slot is empty because in normal usage it's been hidden since last fueling
-            smelter.inv:set_stack('fuel', 1, opts.FUEL_COMPLETE)
+            -- if heat reached zero this tick
+            base_mach.heat_exhausted(smelter)
         end
     end
     -- if idle, make sure status text has been set to something (if no other error happened)
@@ -226,36 +207,6 @@ function asmelt.tick(pos, dt)
     end
     -- write status back to metadata
     asmelt.write_state(pos, smelter)
-end
-
-function asmelt.allow_put(pos, listname, index, stack, player)
-    if minetest.is_protected(pos, player:get_player_name()) then
-        return 0 -- number of items allowed to move
-    end
-    if listname == "fuel" then
-        if stack:get_name() == opts.FUEL_ITEM then
-            return stack:get_count()
-        else
-            return 0
-        end
-    elseif listname == "inp" then
-        return stack:get_count()
-    else
-        return 0
-    end
-end
-
-function asmelt.allow_take(pos, listname, index, stack, player)
-    if minetest.is_protected(pos, player:get_player_name()) then
-        return 0
-    end
-    return stack:get_count()
-end
-
-function asmelt.allow_move(pos, from_list, from_index, to_list, to_index, count, player)
-    --return count
-    local stack = minetest.get_meta(pos):get_inventory():get_stack(from_list, from_index)
-    return asmelt.allow_put(pos, to_list, to_index, stack, player)
 end
 
 asmelt.nodedef = {
@@ -272,9 +223,9 @@ asmelt.nodedef = {
     sounds = default.node_sound_metal_defaults(),
     legacy_facedir_simple = true,
     -- inventory slot control
-    allow_metadata_inventory_put = asmelt.allow_put,
-    allow_metadata_inventory_move = asmelt.allow_move,
-    allow_metadata_inventory_take = asmelt.allow_take,
+    allow_metadata_inventory_put = base_mach.allow_put,
+    allow_metadata_inventory_move = base_mach.allow_move,
+    allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = asmelt.init,
     on_metadata_inventory_move = asmelt.start_timer,
