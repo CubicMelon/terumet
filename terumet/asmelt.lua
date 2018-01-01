@@ -160,7 +160,7 @@ function asmelt.check_new_processing(smelter)
         local recipe = terumet.alloy_recipes[matched_result]
         local result_name = minetest.registered_items[matched_result].description
         if smelter.flux_tank < recipe.flux then
-            smelter.status_text = 'Alloying ' .. result_name .. ': ' .. recipe.flux .. ' flux required'
+            smelter.status_text = 'Alloying ' .. result_name .. ': ' .. recipe.flux - smelter.flux_tank .. ' more flux needed'
         else
             smelter.state = asmelt.STATE.ALLOYING
             for _, consumed_source in ipairs(recipe) do
