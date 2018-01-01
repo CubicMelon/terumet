@@ -67,10 +67,11 @@ In total there are four alloys the smelter can create, all based on Terumetal an
 
 | Material | Flux/Ingot* | Time* | Alloy |  |
 |----------------------------|-------------|---------|------------|----------------------|
-| Copper Lump | 1 | 3 sec. | Terucopper | [Terucopper Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tcop.png) |
-| Iron Lump | 2 | 4 sec. | Terusteel | [Terusteel Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tste.png) |
-| Gold Lump | 3 | 5 sec. | Terugold | [Terugold Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tgol.png) |
-| Diamond and Obsidian Shard | 5 | 10 sec. | Coreglass | [Coreglass Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_cgls.png) |
+| Copper Lump | 1 | 3 sec. | Terucopper | ![Terucopper Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tcop.png) |
+| Iron Lump | 2 | 4 sec. | Terusteel | ![Terusteel Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tste.png) |
+| Gold Lump | 3 | 5 sec. | Terugold | ![Terugold Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tgol.png) |
+| Diamond and Obsidian Shard | 5 | 10 sec. | Coreglass | ![Coreglass Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_cgls.png) |
+
 *note: Flux required and time shown are default.
 
 See options.lua for ways to some ways to modify how the alloying process works.
