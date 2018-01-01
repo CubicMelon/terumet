@@ -20,7 +20,7 @@ Do not make too many ingots from this new ore though because it is much better u
 The real use of Terumetal Ingots is creating an Alloy Smelter:
 ![Alloy Smelter Recipe](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_recipe.png)
 
-| Recipe items |
+| Recipe items |-|-|
 |-----------------|-----------|---------------|
 | Terumetal Ingot | Furnace | Terumetal Ingot |
 | Empty Bucket | Copper Block | Empty Bucket |
