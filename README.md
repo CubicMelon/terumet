@@ -8,7 +8,7 @@ Creates a new ore in the world which can be used to make useful alloys from many
 ## Installing
 Download the current version straight from Github [Here](https://github.com/Terumoc/terumet/archive/master.zip).
 
-Unzip the folder into a temporary space, then move/copy the subfolder **terumet** into your minetest **mods** folder.
+Unzip the folder into a temporary space then move/copy the subfolder **terumet** into your minetest **mods** folder.
 
 The items outside of that folder are development files and are *not needed* to use the mod.
 
@@ -21,9 +21,9 @@ Which can be found in stone or desert stone:
 
 ![Terumetal Desert Ore](https://github.com/Terumoc/terumet/blob/master/tutorial/ore_desert_stone.png)
 
-Like any other standard Minetest ore, mining it provides you with one or more raw lumps of ore, which can be cooked in a furnace to create ingots.
+Like any other standard Minetest ore mining it provides you with one or more raw lumps of ore, which can be cooked in a furnace to create ingots.
 
-Do not make too many ingots from this new ore though because it is much better used as a flux for alloying than by itself; most tools made from raw Terumetal Ore will be very brittle, breaking quickly. In a pinch they *can* be useful since they are capable of digging very hard material quickly (and curiously, *ONLY* very hard material) but will only last a few blocks worth of digging.
+Do not make too many ingots from this new ore though because it is much better used as a flux for alloying than by itself; most tools made from raw Terumetal Ore will be very brittle and break quickly. In a pinch they *can* be useful since they are capable of digging very hard material quickly (and curiously, *ONLY* very hard material) but will only last a few blocks worth of digging.
 
 ## Alloy Smelter
 The real use of Terumetal Ingots is creating an Alloy Smelter:
@@ -36,23 +36,23 @@ The real use of Terumetal Ingots is creating an Alloy Smelter:
 | Empty Bucket | Copper Block | Empty Bucket |
 | Terumetal Ingot | Furnace | Terumetal Ingot |
 
-Place the smelter block down somewhere and you can then right-click it to access its interface, like a standard furnace:
+Place the smelter block down somewhere and you can then right-click it to access its interface like a standard furnace:
 
 ![Alloy Smelter GUI](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_gui.png)
 
-Before you begin using it, it's important to understand two things about the Alloy Smelter:
+Before you begin using it it's important to understand two things about the Alloy Smelter:
 1. It requires heat to do anything.
 2. The flux metal used to alloy with other materials is melted first and stored inside.
 
-One helpful thing to keep in mind is that unlike vanilla Minetest furnaces, the Terumetal Alloy Smelter *will* drop its contents when you break it. The only thing lost is any stored heat, which will evaporate into the atmosphere. Also, thanks to some form of instant heat transfer technology, any molten flux metal left in the internal tank will be dropped as raw lumps of Terumetal, reusuable again later just at the cost of the heat and time to re-melt them.
+One helpful thing to keep in mind is that unlike vanilla Minetest furnaces the Terumetal Alloy Smelter *will* drop its contents when you break it. The only thing lost is any stored heat which will evaporate into the atmosphere. Also, thanks to some form of instant heat transfer technology any molten flux metal left in the internal tank will be dropped as raw lumps of Terumetal, reusuable again later just at the cost of the heat and time to re-melt them.
 
 ### Heating the Alloy Smelter
-The simplest way to get lots of heat quickly is with lava, and that is how the Smelter is heated.
-When cold, the smelter displays its fuel slot in the upper-right corner, and is expecting a bucket of lava to be inserted into it.
+The simplest way to get lots of heat quickly is with lava and that is how the Smelter is heated.
+When cold, the smelter displays its fuel slot in the upper-right corner and is expecting a bucket of lava to be inserted into it.
 
 ![Alloy Smelter Fueling](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling.png)
 
-Once inserted, the heat level will reflect the bucket-worth of lava now inside the machine by filling the heat bar, and your empty bucket will be refunded in the output section.
+Once inserted, the heat level will reflect the bucket-worth of lava now inside the machine by filling the heat bar and your empty bucket will be refunded in the output section.
 
 ![Alloy Smelter Heat](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling_2.png)
 
@@ -60,10 +60,10 @@ A single bucket of lava provides enough heat to operate for quite a while, but n
 
 ![Alloy Smelter Empty Heat](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling_3.png)
 
-In quite a user-friendly manner, the smelter is amazingly heat efficient and none will be lost except by doing processing functions or by breaking the smelter itself.
+In quite a user-friendly manner the smelter is amazingly heat efficient and none will be lost except by doing processing functions or by breaking the smelter itself.
 
 ### Flux Metal
-The Terumetal Alloy Smelter is a specialized smelter only for making alloys from combining Terumetal and other materials, therefore it has an internal tank especially for molten Terumetal. This tank is shown on the left. It can be filled by inserting raw lumps of Terumetal into the input slot (*not* ingots) and then waiting a few seconds for each lump to melt. Naturally, this process requires heat and some will be spent by how much flux is melted.
+The Terumetal Alloy Smelter is a specialized smelter only for making alloys from combining Terumetal and other materials, therefore it has an internal tank especially for molten Terumetal. This tank is the meter in the center of the screen to the left. It can be filled by inserting raw lumps of Terumetal into the input slot (*not* ingots) then waiting a few seconds for each lump to melt. Naturally, this process requires heat and some will be spent by how much flux is melted.
 
 ![Alloy Smelter Melting Flux](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_melting_flux.png)
 
@@ -71,10 +71,10 @@ The Terumetal Alloy Smelter is a specialized smelter only for making alloys from
 
 ![Alloy Smelter Melted Flux](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_melting_flux_2.png)
 
-When processing materials for alloying, a specific amount of molten flux will need to be in the tank to create the alloy. If not enough is present, it will indicate so and how much more is required until alloying can begin.
+When processing materials for alloying a specific amount of molten flux will need to be in the tank to create the alloy. If not enough is present, it will indicate so and how much more is required until alloying can begin.
 
 ## Alloys
-In total there are four alloys the smelter can create, all based on Terumetal and other materials available in the default Minetest game world. Each of them can be used to create hardened metal blocks and, of course, tools of considerable speed and durability. Each alloy has much greater tool performance than any of their constituent materials.
+In total there are four alloys the smelter can create all based on Terumetal and other materials available in the default Minetest game world. Each of them can be used to create hardened metal blocks and tools of considerable speed and durability. Each alloy has much greater tool performance than any of their constituent materials.
 
 | Material | Flux/Ingot* | Time* | Alloy |  |
 |----------------------------|-------------|---------|------------|----------------------|
@@ -87,9 +87,9 @@ In total there are four alloys the smelter can create, all based on Terumetal an
 
 Like melting flux, creating an alloy requires heat. The amount of heat required is dependent on how long the alloying process takes; therefore, the alloys that require more time also require more heat.
 
-Each of the four alloys can also be created in **block form** by inserting a block of the source material (eg. a Copper Block instead of a Copper Lump, or a Diamond Block and Obsidian Block for Coreglass) -- alloying an entire block will take longer along with the required preperation of making the blocks but will consume quite a bit less flux than doing them individually.
+Each of the four alloys can also be created in **block form** by inserting a block of the source material -- a Copper Block instead of a Copper Lump or a Diamond Block and Obsidian Block for Coreglass -- alloying an entire block will take longer along with the required preperation of making the blocks but will consume quite a bit less flux than doing them individually.
 
-To create an alloy, simply place the source materials into the input, and if there's enough molten flux all that's left is to wait. If an insufficient amount of flux is in the internal tank, the smelter will indicate how much additional flux is required.
+To create an alloy simply place the source materials into the input, and if there's enough molten flux all that's left is to wait. If an insufficient amount of flux is in the internal tank the smelter will indicate how much additional flux is required.
 
 ![Alloying Copper to Terucopper](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_alloying.png)
 
