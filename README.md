@@ -44,7 +44,7 @@ Before you begin using it, it's important to understand two things about the All
 1. It requires heat to do anything.
 2. The flux metal used to alloy with other materials is melted first and stored inside.
 
-One useful thing to keep in mind is that unlike vanilla Minetest furnaces, the Terumetal Alloy Smelter *will* drop its contents when you break it. The only thing lost is any stored heat, which will be evaporated into the atmosphere. Also, thanks to some form of instant heat transfer techology, any molten flux metal left in the internal tank will be dropped as raw lumps of Terumetal, reusuable again later just at the cost of the heat and time to re-melt them.
+One helpful thing to keep in mind is that unlike vanilla Minetest furnaces, the Terumetal Alloy Smelter *will* drop its contents when you break it. The only thing lost is any stored heat, which will evaporate into the atmosphere. Also, thanks to some form of instant heat transfer technology, any molten flux metal left in the internal tank will be dropped as raw lumps of Terumetal, reusuable again later just at the cost of the heat and time to re-melt them.
 
 ### Heating the Alloy Smelter
 The simplest way to get lots of heat quickly is with lava, and that is how the Smelter is heated.
