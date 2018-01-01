@@ -5,11 +5,15 @@ Creates a new ore in the world which can be used to make useful alloys from many
 
 ![Screenshot](https://github.com/Terumoc/terumet/blob/master/terumet/screenshot.png)
 
+## Installing
+
 ## Worldgen
 The only new thing generated in the world is a new type of ore:
+
 ![Terumetal Ore](https://github.com/Terumoc/terumet/blob/master/tutorial/ore_stone.png)
 
 Which can be found in stone or desert stone:
+
 ![Terumetal Desert Ore](https://github.com/Terumoc/terumet/blob/master/tutorial/ore_desert_stone.png)
 
 Like any other standard Minetest ore, mining it provides you with one or more raw lumps of ore, which can be cooked in a furnace to create ingots.
