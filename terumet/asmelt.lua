@@ -1,17 +1,9 @@
-terumet.FLUX_MELTING_TIME = 1.0
-terumet.FLUX_SOURCE = terumet.id('lump_raw')
-terumet.SMELTER_FLUX_MAXIMUM = 99
-
-terumet.SMELTER_FUEL_ITEM = 'bucket:bucket_lava'
-terumet.SMELTER_FUEL_RETURN = 'bucket:bucket_empty'
-terumet.SMELTER_FUEL_FINISH = 'default:cobble'
-terumet.SMELTER_HEAT_LEVEL = 1000 -- from one fuel item
-
--- time between smelter ticks
-terumet.SMELTER_TIMER = 0.5
+local opts = terumet.options.smelter
 
 local asmelt = {}
 asmelt.full_id = terumet.id('mach_asmelt')
+-- time between smelter ticks
+asmelt.timer = 0.5
 
 -- state identifier consts
 asmelt.STATE = {}
@@ -20,12 +12,12 @@ asmelt.STATE.FLUX_MELT = 1
 asmelt.STATE.ALLOYING = 2
 
 function asmelt.start_timer(pos)
-    minetest.get_node_timer(pos):start(terumet.SMELTER_TIMER)
+    minetest.get_node_timer(pos):start(asmelt.timer)
 end
 
 function asmelt.generate_formspec(smelter)
-    local heat_pct = 100.0 * smelter.heat_level / 1000
-    local flux_pct = 100.0 * smelter.flux_tank / terumet.SMELTER_FLUX_MAXIMUM
+    local heat_pct = 100.0 * smelter.heat_level / opts.FULL_HEAT
+    local flux_pct = 100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM
     local fs = 'size[8,9]'..
     --player inventory
     'list[current_player;main;0,4.75;8,1;]'..
@@ -57,7 +49,7 @@ function asmelt.generate_formspec(smelter)
 end
 
 function asmelt.generate_infotext(smelter)
-    return string.format('Alloy Smelter (%.1f%% heat): %s', 100.0 * smelter.heat_level / terumet.SMELTER_HEAT_LEVEL, smelter.status_text)
+    return string.format('Alloy Smelter (%.0f%% heat): %s', 100.0 * smelter.heat_level / opts.FULL_HEAT, smelter.status_text)
 end
 
 function asmelt.init(pos)
@@ -181,13 +173,13 @@ function asmelt.check_new_processing(smelter)
         end
     end
     -- if could not begin alloying anything, check for flux to melt
-    if smelter.state == asmelt.STATE.IDLE and smelter.inv:contains_item('inp', terumet.FLUX_SOURCE) then
-        if smelter.flux_tank >= terumet.SMELTER_FLUX_MAXIMUM then
+    if smelter.state == asmelt.STATE.IDLE and smelter.inv:contains_item('inp', opts.FLUX_ITEM) then
+        if smelter.flux_tank >= opts.FLUX_MAXIMUM then
             smelter.status_text = 'Flux tank full!'
         else
             smelter.state = asmelt.STATE.FLUX_MELT
-            smelter.state_time = terumet.FLUX_MELTING_TIME
-            smelter.inv:remove_item('inp', terumet.FLUX_SOURCE)
+            smelter.state_time = opts.FLUX_MELTING_TIME
+            smelter.inv:remove_item('inp', opts.FLUX_ITEM)
             smelter.status_text = 'Melting flux...'
         end
     end
@@ -198,11 +190,11 @@ function asmelt.tick(pos, dt)
     local smelter = asmelt.read_state(pos)
 
     if smelter.heat_level == 0 then
-        if smelter.inv:contains_item('fuel', terumet.SMELTER_FUEL_ITEM) then
-            if smelter.inv:room_for_item('out', terumet.SMELTER_FUEL_RETURN) then
-                smelter.inv:remove_item('fuel', terumet.SMELTER_FUEL_ITEM)
-                smelter.inv:add_item('out', terumet.SMELTER_FUEL_RETURN)
-                smelter.heat_level = terumet.SMELTER_HEAT_LEVEL
+        if smelter.inv:contains_item('fuel', opts.FUEL_ITEM) then
+            if smelter.inv:room_for_item('out', opts.FUEL_RETURN) then
+                smelter.inv:remove_item('fuel', opts.FUEL_ITEM)
+                smelter.inv:add_item('out', opts.FUEL_RETURN)
+                smelter.heat_level = opts.FULL_HEAT
             else
                 smelter.status_text = 'No space for return bucket'
             end
@@ -222,7 +214,7 @@ function asmelt.tick(pos, dt)
         else
             -- if heat reached zero this tick, expel the fuel finish item (cobblestone by default)
             -- no need to check if fuel slot is empty because in normal usage it's been hidden since last fueling
-            smelter.inv:set_stack('fuel', 1, terumet.SMELTER_FUEL_FINISH)
+            smelter.inv:set_stack('fuel', 1, opts.FUEL_COMPLETE)
         end
     end
     -- if idle, make sure status text has been set to something (if no other error happened)
@@ -241,7 +233,7 @@ function asmelt.allow_put(pos, listname, index, stack, player)
         return 0 -- number of items allowed to move
     end
     if listname == "fuel" then
-        if stack:get_name() == terumet.SMELTER_FUEL_ITEM then
+        if stack:get_name() == opts.FUEL_ITEM then
             return stack:get_count()
         else
             return 0

@@ -1,13 +1,30 @@
+-- Terumet v1.0
+
+-- Mod for open-source voxel game Minetest (https://www.minetest.net/)
+-- Written for Minetest version 0.4.16
+-- Creates a new ore in the world which can be used to make useful alloys
+-- from many already available materials.
+
+--[[ Copyright (C) 2017-2018 Terumoc (Scott Horvath)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
 terumet.version = {major=1, minor=0, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
-
--- will hold alloys creatable by alloy smelter in the format {result={teru=X, constituent_1, constituent_2, etc.}}
--- X = number of raw terumetal lumps required
-terumet.alloy_recipes = {}
 
 function terumet.format_time(t)
     return string.format('%.1f s', t or 0)
@@ -40,6 +57,11 @@ function terumet.reg_item(item_id, texture, name)
     })
 end
 
+-- will hold alloys creatable by alloy smelter in the format {result={teru=X, constituent_1, constituent_2, etc.}}
+-- X = number of raw terumetal lumps required
+terumet.alloy_recipes = {}
+dofile(terumet.lua_file('options'))
+
 dofile(terumet.lua_file('reg_metal'))
 dofile(terumet.lua_file('reg_alloy'))
 dofile(terumet.lua_file('reg_tools'))
@@ -66,15 +88,16 @@ minetest.register_ore{
     y_max = 64
 }
 
-terumet.reg_alloy('Terucopper', 'tcop', 1, {flux=1, time=3.0, 'default:copper_lump'})
-terumet.reg_alloy('Terusteel', 'tste', 2, {flux=2, time=4.0, 'default:iron_lump'})
-terumet.reg_alloy('Terugold', 'tgol', 3, {flux=3, time=5.0, 'default:gold_lump'})
-terumet.reg_alloy('Coreglass', 'cgls', 4, {flux=5, time=10.0, 'default:diamond', 'default:obsidian_shard'})
+local opts = terumet.options.alloys
+terumet.reg_alloy('Terucopper', 'tcop', 1, opts.COPPER)
+terumet.reg_alloy('Terusteel', 'tste', 2, opts.IRON)
+terumet.reg_alloy('Terugold', 'tgol', 3, opts.GOLD)
+terumet.reg_alloy('Coreglass', 'cgls', 4, opts.COREGLASS)
 
-terumet.alloy_recipes[terumet.id('block_alloy_tcop')] = {flux=7, time=35.0, 'default:copperblock'}
-terumet.alloy_recipes[terumet.id('block_alloy_tste')] = {flux=15, time=45.0, 'default:ironblock'}
-terumet.alloy_recipes[terumet.id('block_alloy_tgol')] = {flux=24, time=60.0, 'default:goldblock'}
-terumet.alloy_recipes[terumet.id('block_alloy_cgls')] = {flux=30, time=180.0, 'default:diamondblock', 'default:obsidian'}
+terumet.alloy_recipes[terumet.id('block_alloy_tcop')] = opts.COPPER_BLOCK
+terumet.alloy_recipes[terumet.id('block_alloy_tste')] = opts.IRON_BLOCK
+terumet.alloy_recipes[terumet.id('block_alloy_tgol')] = opts.GOLD_BLOCK
+terumet.alloy_recipes[terumet.id('block_alloy_cgls')] = opts.COREGLASS_BLOCK
 
 terumet.reg_tools('Terumetal', 'traw',
     terumet.id('ingot_raw'),
