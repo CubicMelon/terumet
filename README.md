@@ -38,21 +38,28 @@ One useful thing to keep in mind is that unlike vanilla Minetest furnaces, the T
 ### Heating the Alloy Smelter
 The simplest way to get lots of heat quickly is with lava, and that is how the Smelter is heated.
 When cold, the smelter displays its fuel slot in the upper-right corner, and is expecting a bucket of lava to be inserted into it.
+
 ![Alloy Smelter Fueling](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling.png)
 
 Once inserted, the heat level will reflect the bucket-worth of lava now inside the machine by filling the heat bar, and your empty bucket will be refunded in the output section.
+
 ![Alloy Smelter Heat](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling_2.png)
 
 A single bucket of lava provides enough heat to operate for quite a while, but not forever. When the heat from the lava is fully dissipated, the fuel slot will reappear with the remaining cobblestone from the lava and any processing will stop until a new bucket of lava is inserted.
+
 ![Alloy Smelter Empty Heat](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling_3.png)
 
 In quite a user-friendly manner, the smelter is amazingly heat efficient and none will be lost except by doing processing functions or by breaking the smelter itself.
 
 ### Flux Metal
 The Terumetal Alloy Smelter is a specialized smelter only for making alloys from combining Terumetal and other materials, therefore it has an internal tank especially for molten Terumetal. This tank is shown on the left. It can be filled by inserting raw lumps of Terumetal into the input slot (*not* ingots) and then waiting a few seconds for each lump to melt. Naturally, this process requires heat and some will be spent by how much flux is melted.
+
 ![Alloy Smelter Melting Flux](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_melting_flux.png)
 
+(some time later...)
+
 ![Alloy Smelter Melted Flux](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_melting_flux_2.png)
+
 When processing materials for alloying, a specific amount of molten flux will need to be in the tank to create the alloy. If not enough is present, it will indicate so and how much more is required until alloying can begin.
 
 ## Alloys
