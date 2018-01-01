@@ -23,34 +23,41 @@ function asmelt.start_timer(pos)
     minetest.get_node_timer(pos):start(terumet.SMELTER_TIMER)
 end
 
-function asmelt.stack_is_valid_fuel(stack)
-    return minetest.get_craft_result({method="fuel", width=1, items={stack}}).time ~= 0
-end
-
 function asmelt.generate_formspec(smelter)
+    local heat_pct = 100.0 * smelter.heat_level / 1000
+    local flux_pct = 100.0 * smelter.flux_tank / terumet.SMELTER_FLUX_MAXIMUM
     local fs = 'size[8,9]'..
     --player inventory
     'list[current_player;main;0,4.75;8,1;]'..
     'list[current_player;main;0,6;8,3;8]'..
     --input inventory
     'list[context;inp;0,1.5;2,2;]'..
+    'label[0.5,3.5;Input Slots]'..
     --output inventory
-    'list[context;out;6,1.5;2,2;]'
+    'list[context;out;6,1.5;2,2;]'..
+    'label[6.5,3.5;Output Slots]'
     if smelter.heat_level == 0 or (not smelter.inv:is_empty('fuel')) then
     --fuel inventory (if needed/not empty)
-        fs = fs..'list[context;fuel;3,3.5;1,1;]'
+        fs = fs..'list[context;fuel;6.5,0;1,1;]'..
+        'label[6.5,1;Fuel Slot]'
     end
-    --current status text
+    --current status texts
     fs = fs..'label[0,0;Terumetal Alloy Smelter]'..
     'label[0,0.5;' .. smelter.status_text .. ']'..
-    'label[4,3.5;Heat: ' .. smelter.heat_level .. ' HU]'..
-    --molten readout
-    'label[2.4,2;Molten flux: ' .. (smelter.flux_tank or '???') .. '/' .. terumet.SMELTER_FLUX_MAXIMUM .. ' lumps' .. ']'
+    'image[2,1.5;2,2;terumet_asmeltgui_flux_bg.png^[lowpart:'..flux_pct..':terumet_asmeltgui_flux_fg.png]'..
+    'label[2.5,3.5;Molten Flux]'..
+    'image[4,1.5;2,2;terumet_asmeltgui_heat_bg.png^[lowpart:'..heat_pct..':terumet_asmeltgui_heat_fg.png]'..
+    'label[4.5,3.5;Heat Level]'..
+    --list rings
+    "listring[current_player;main]"..
+	"listring[context;inp]"..
+    "listring[current_player;main]"..
+    "listring[context;out]"
     return fs
 end
 
 function asmelt.generate_infotext(smelter)
-    return 'Alloy Smelter: ' .. smelter.status_text
+    return string.format('Alloy Smelter (%.1f%% heat): %s', 100.0 * smelter.heat_level / terumet.SMELTER_HEAT_LEVEL, smelter.status_text)
 end
 
 function asmelt.init(pos)
@@ -94,7 +101,7 @@ function asmelt.read_state(pos)
     smelter.state = meta:get_int('state') or asmelt.STATE.IDLE
     smelter.heat_level = meta:get_int('heat_level') or 0
     smelter.state_time = meta:get_float('state_time') or 0
-    smelter.status_text = 'STATUS TEXT NOT SET'
+    smelter.status_text = nil
     return smelter
 end
 
@@ -112,42 +119,20 @@ function asmelt.expend_heat(smelter, value)
     smelter.heat_level = math.max(0, smelter.heat_level - value)
 end
 
-function asmelt.tick(pos, dt)
-    -- read status from metadata
-    local smelter = asmelt.read_state(pos)
-    local heat_empty = smelter.heat_level == 0
-
-    if heat_empty then
-        if smelter.inv:contains_item('fuel', terumet.SMELTER_FUEL_ITEM) then
-            if smelter.inv:room_for_item('out', terumet.SMELTER_FUEL_RETURN) then
-                smelter.inv:remove_item('fuel', terumet.SMELTER_FUEL_ITEM)
-                smelter.inv:add_item('out', terumet.SMELTER_FUEL_RETURN)
-                smelter.heat_level = terumet.SMELTER_HEAT_LEVEL
-                heat_empty = false
-            else
-                smelter.status_text = 'No space for return bucket'
-                goto skip_processing
-            end
-        else
-            smelter.status_text = 'Need heat (lava bucket)'
-            goto skip_processing
-        end
-    end
-
-    -- do processing
+function asmelt.do_processing(smelter, dt)
     if smelter.state == asmelt.STATE.FLUX_MELT then
         smelter.state_time = smelter.state_time - dt
-        smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
-        asmelt.expend_heat(smelter, 1)
+        asmelt.expend_heat(smelter, 2)
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
             smelter.state = asmelt.STATE.IDLE
+        else
+            smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
         end
     elseif smelter.state == asmelt.STATE.ALLOYING then
         local result_stack = smelter.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         smelter.state_time = smelter.state_time - dt
-        smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(smelter.state_time) .. ')'
         asmelt.expend_heat(smelter, 1)
         if smelter.state_time <= 0 then
             if smelter.inv:room_for_item('out', result_stack) then
@@ -158,68 +143,95 @@ function asmelt.tick(pos, dt)
                 smelter.status_text = result_name .. ' ready - no space!'
                 smelter.state_time = -0.1
             end
-        end 
-    end
-
-    -- check for new processing states if now idle
-    if smelter.state == asmelt.STATE.IDLE then
-        -- check for flux to melt
-        if smelter.inv:contains_item('inp', terumet.FLUX_SOURCE) then
-            if smelter.flux_tank >= terumet.SMELTER_FLUX_MAXIMUM then
-                smelter.status_text = 'Melting flux: tank full!'
-            else
-                smelter.state = asmelt.STATE.FLUX_MELT
-                smelter.state_time = terumet.FLUX_MELTING_TIME
-                smelter.inv:remove_item('inp', terumet.FLUX_SOURCE)
-                smelter.status_text = 'Melting flux...'
-            end
         else
-            -- check for any matched recipes in input
-            local matched_result = nil
-            for result, recipe in pairs(terumet.alloy_recipes) do
-                --minetest.chat_send_all('checking recipe' .. dump(result) .. ' to list: ' .. dump(source_list))
-                local sources_count = 0
-                for i = 1,#recipe do
-                    --minetest.chat_send_all('looking for srcitem: ' .. source_list[i])
-                    if smelter.inv:contains_item('inp', recipe[i]) then
-                        sources_count = sources_count + 1
-                    end
-                end
-                if sources_count == #recipe then
-                    matched_result = result
-                    break
-                end
-            end
-            if matched_result and minetest.registered_items[matched_result] then
-                local recipe = terumet.alloy_recipes[matched_result]
-                local result_name = minetest.registered_items[matched_result].description
-                if smelter.flux_tank < recipe.flux then
-                    smelter.status_text = 'Alloying ' .. result_name .. ': ' .. recipe.flux .. ' flux required'
-                else
-                    smelter.state = asmelt.STATE.ALLOYING
-                    for _, consumed_source in ipairs(recipe) do
-                        smelter.inv:remove_item('inp', consumed_source)
-                    end
-                    smelter.state_time = recipe.time
-                    smelter.inv:set_stack('result', 1, ItemStack(matched_result, recipe.result_count))
-                    smelter.flux_tank = smelter.flux_tank - recipe.flux
-                    smelter.status_text = 'Alloying ' .. result_name .. '...'
-                end
-            else
-                smelter.status_text = 'Idle'
-            end
+            smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(smelter.state_time) .. ')'
         end
     end
-    
-    if (not heat_empty) and smelter.heat_level == 0 then
-        -- heat reached zero this tick?
-        smelter.inv:set_stack('fuel', 1, terumet.SMELTER_FUEL_FINISH)
+end
+
+function asmelt.check_new_processing(smelter)
+    -- first, check for elements of an alloying recipe in input
+    local matched_result = nil
+    for result, recipe in pairs(terumet.alloy_recipes) do
+        local sources_count = 0
+        for i = 1,#recipe do
+            if smelter.inv:contains_item('inp', recipe[i]) then
+                sources_count = sources_count + 1
+            end
+        end
+        if sources_count == #recipe then
+            matched_result = result
+            break
+        end
     end
+    if matched_result and minetest.registered_items[matched_result] then
+        local recipe = terumet.alloy_recipes[matched_result]
+        local result_name = minetest.registered_items[matched_result].description
+        if smelter.flux_tank < recipe.flux then
+            smelter.status_text = 'Alloying ' .. result_name .. ': ' .. recipe.flux .. ' flux required'
+        else
+            smelter.state = asmelt.STATE.ALLOYING
+            for _, consumed_source in ipairs(recipe) do
+                smelter.inv:remove_item('inp', consumed_source)
+            end
+            smelter.state_time = recipe.time
+            smelter.inv:set_stack('result', 1, ItemStack(matched_result, recipe.result_count))
+            smelter.flux_tank = smelter.flux_tank - recipe.flux
+            smelter.status_text = 'Alloying ' .. result_name .. '...'
+        end
+    end
+    -- if could not begin alloying anything, check for flux to melt
+    if smelter.state == asmelt.STATE.IDLE and smelter.inv:contains_item('inp', terumet.FLUX_SOURCE) then
+        if smelter.flux_tank >= terumet.SMELTER_FLUX_MAXIMUM then
+            smelter.status_text = 'Flux tank full!'
+        else
+            smelter.state = asmelt.STATE.FLUX_MELT
+            smelter.state_time = terumet.FLUX_MELTING_TIME
+            smelter.inv:remove_item('inp', terumet.FLUX_SOURCE)
+            smelter.status_text = 'Melting flux...'
+        end
+    end
+end
 
-    -- if not currently idle, set next timer tick
-    if smelter.state ~= asmelt.STATE.IDLE then asmelt.start_timer(pos) end
+function asmelt.tick(pos, dt)
+    -- read status from metadata
+    local smelter = asmelt.read_state(pos)
 
-::skip_processing::
+    if smelter.heat_level == 0 then
+        if smelter.inv:contains_item('fuel', terumet.SMELTER_FUEL_ITEM) then
+            if smelter.inv:room_for_item('out', terumet.SMELTER_FUEL_RETURN) then
+                smelter.inv:remove_item('fuel', terumet.SMELTER_FUEL_ITEM)
+                smelter.inv:add_item('out', terumet.SMELTER_FUEL_RETURN)
+                smelter.heat_level = terumet.SMELTER_HEAT_LEVEL
+            else
+                smelter.status_text = 'No space for return bucket'
+            end
+        else
+            smelter.status_text = 'Need heat (lava bucket)'
+        end
+    end
+    -- not an else since it could have changed!
+    if smelter.heat_level > 0 then
+        asmelt.do_processing(smelter, dt)
+
+        if smelter.heat_level > 0 then
+            -- if still heated and idle now, check for new processing to start
+            if smelter.state == asmelt.STATE.IDLE then
+                asmelt.check_new_processing(smelter) 
+            end
+        else
+            -- if heat reached zero this tick, expel the fuel finish item (cobblestone by default)
+            -- no need to check if fuel slot is empty because in normal usage it's been hidden since last fueling
+            smelter.inv:set_stack('fuel', 1, terumet.SMELTER_FUEL_FINISH)
+        end
+    end
+    -- if idle, make sure status text has been set to something (if no other error happened)
+    -- if still processing, set up timer for next tick
+    if smelter.state == asmelt.STATE.IDLE then
+        if not smelter.status_text then smelter.status_text = 'Idle' end
+    else
+        asmelt.start_timer(pos)
+    end
     -- write status back to metadata
     asmelt.write_state(pos, smelter)
 end

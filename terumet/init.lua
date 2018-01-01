@@ -1,7 +1,8 @@
 
 terumet = {}
-terumet.version = {0, 0, 1}
-terumet.version_text = terumet.version[1] .. '.' .. terumet.version[2] .. '.' .. terumet.version[3]
+terumet.version = {major=1, minor=0, patch=0}
+local ver = terumet.version
+terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
 
 -- will hold alloys creatable by alloy smelter in the format {result={teru=X, constituent_1, constituent_2, etc.}}
@@ -68,12 +69,12 @@ minetest.register_ore{
 terumet.reg_alloy('Terucopper', 'tcop', 1, {flux=1, time=3.0, 'default:copper_lump'})
 terumet.reg_alloy('Terusteel', 'tste', 2, {flux=2, time=4.0, 'default:iron_lump'})
 terumet.reg_alloy('Terugold', 'tgol', 3, {flux=3, time=5.0, 'default:gold_lump'})
-terumet.reg_alloy('Coreglass', 'cgls', 4, {flux=5, time=6.0, 'default:diamond', 'default:obsidian_shard'})
+terumet.reg_alloy('Coreglass', 'cgls', 4, {flux=5, time=10.0, 'default:diamond', 'default:obsidian_shard'})
 
-terumet.alloy_recipes[terumet.id('block_alloy_tcop')] = {flux=9, time=24.0, 'default:copperblock'}
-terumet.alloy_recipes[terumet.id('block_alloy_tste')] = {flux=17, time=34.0, 'default:ironblock'}
-terumet.alloy_recipes[terumet.id('block_alloy_tgol')] = {flux=25, time=40.0, 'default:goldblock'}
-terumet.alloy_recipes[terumet.id('block_alloy_cgls')] = {flux=40, time=45.0, 'default:diamondblock', 'default:obsidian'}
+terumet.alloy_recipes[terumet.id('block_alloy_tcop')] = {flux=7, time=35.0, 'default:copperblock'}
+terumet.alloy_recipes[terumet.id('block_alloy_tste')] = {flux=15, time=45.0, 'default:ironblock'}
+terumet.alloy_recipes[terumet.id('block_alloy_tgol')] = {flux=24, time=60.0, 'default:goldblock'}
+terumet.alloy_recipes[terumet.id('block_alloy_cgls')] = {flux=30, time=180.0, 'default:diamondblock', 'default:obsidian'}
 
 terumet.reg_tools('Terumetal', 'traw',
     terumet.id('ingot_raw'),
