@@ -85,7 +85,7 @@ In total there are four alloys the smelter can create, all based on Terumetal an
 
 *note: Flux required and time shown are default.
 
-Each of the four alloys can also be created in **block form** but inserting a block of the source material (eg. a Copper Block instead of a Copper Lump, or a Diamond Block and Obsidian Block for Coreglass) -- alloying an entire block will take longer along with the required preperation of making the blocks but will consume quite a bit less flux than doing them individually.
+Each of the four alloys can also be created in **block form** by inserting a block of the source material (eg. a Copper Block instead of a Copper Lump, or a Diamond Block and Obsidian Block for Coreglass) -- alloying an entire block will take longer along with the required preperation of making the blocks but will consume quite a bit less flux than doing them individually.
 
 ## Options
 See options.lua for ways to some ways to modify how the alloying process works.
