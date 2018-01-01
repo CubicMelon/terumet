@@ -22,6 +22,7 @@ Do not make too many ingots from this new ore though because it is much better u
 
 ## Alloy Smelter
 The real use of Terumetal Ingots is creating an Alloy Smelter:
+
 ![Alloy Smelter Recipe](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_recipe.png)
 
 | Recipe items |-|-|
@@ -31,6 +32,7 @@ The real use of Terumetal Ingots is creating an Alloy Smelter:
 | Terumetal Ingot | Furnace | Terumetal Ingot |
 
 Place the smelter block down somewhere and you can then right-click it to access its interface, like a standard furnace:
+
 ![Alloy Smelter GUI](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_gui.png)
 
 Before you begin using it, it's important to understand two things about the Alloy Smelter:
