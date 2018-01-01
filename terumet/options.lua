@@ -25,14 +25,14 @@ alloys.COREGLASS_BLOCK = {flux=30, time=180.0, 'default:diamondblock', 'default:
 --
 terumet.options.machine = {}
 local machine = terumet.options.machine
--- Item used to start a smelter's heat cycle
+-- Item used to heat a machine
 machine.FUEL_ITEM = 'bucket:bucket_lava'
--- Item returned after starting a heat cycle
+-- Item returned after heating machine
 machine.FUEL_RETURN = 'bucket:bucket_empty'
--- Item provided after a full heat cycle is completed
-machine.FUEL_COMPLETE = 'default:cobble'
--- Heat Units provided by one cycle - melting flux is 2HU/tick and alloying is 1HU/tick
-machine.FULL_HEAT = 1500
+-- Item provided in fuel slot after expending value of one entire fuel item
+machine.FUEL_CYCLE = 'default:stone'
+-- Heat Units provided by one fuel item
+machine.FULL_HEAT = 36
 
 --
 -- ALLOY SMELTER SETTINGS
@@ -47,3 +47,7 @@ smelter.FLUX_MELTING_TIME = 3.0
 -- Maximum size (in item count) of an alloy smelter's flux tank
 -- (note if greater than 99, some flux could be lost when breaking a smelter -- only up to 99 flux will be dropped)
 smelter.FLUX_MAXIMUM = 99
+-- Heat expended per tick melting flux
+smelter.COST_FLUX_MELT_HU = 2
+-- Heat expended per tick alloying
+smelter.COST_FLUX_ALLOYING_HU = 10

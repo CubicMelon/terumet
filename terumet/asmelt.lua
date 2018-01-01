@@ -20,7 +20,7 @@ end
 
 function asmelt.generate_formspec(smelter)
     local heat_pct = 100.0 * smelter.heat_level / base_opts.FULL_HEAT
-    local fs = 'size[8,9]'..base_mach.fs_gui_bg..
+    local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     --input inventory
@@ -62,9 +62,11 @@ function asmelt.init(pos)
         state_time = 0,
         heat_level = 0,
         status_text = 'New',
+        inv = inv,
+        meta = meta
     }
-
-    asmelt.write_state(pos, init_smelter)
+    base_mach.write_state(pos, init_smelter, asmelt.generate_formspec(init_smelter), asmelt.generate_infotext(init_smelter))
+    meta:set_int('flux_tank', init_smelter.flux_tank)
 end
 
 function asmelt.get_drops(pos, include_self)
@@ -80,44 +82,19 @@ function asmelt.get_drops(pos, include_self)
     return drops
 end
 
-function asmelt.read_state(pos)
-    local smelter = {}
-    local meta = minetest.get_meta(pos)
-    smelter.meta = meta
-    smelter.inv = meta:get_inventory()
-    smelter.flux_tank = meta:get_int('flux_tank') or 0
-    smelter.state = meta:get_int('state') or asmelt.STATE.IDLE
-    smelter.heat_level = meta:get_int('heat_level') or 0
-    smelter.state_time = meta:get_float('state_time') or 0
-    smelter.status_text = nil
-    return smelter
-end
-
-function asmelt.write_state(pos, smelter)
-    local meta = minetest.get_meta(pos)
-    meta:set_string('formspec', asmelt.generate_formspec(smelter))
-    meta:set_string('infotext', asmelt.generate_infotext(smelter))
-    meta:set_int('flux_tank', smelter.flux_tank)
-    meta:set_int('state', smelter.state)
-    meta:set_float('state_time', smelter.state_time)
-    meta:set_int('heat_level', smelter.heat_level)
-end
-
 function asmelt.do_processing(smelter, dt)
-    if smelter.state == asmelt.STATE.FLUX_MELT then
+    if smelter.state == asmelt.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELT_HU, 'Melting flux') then
         smelter.state_time = smelter.state_time - dt
-        base_mach.expend_heat(smelter, 2)
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
             smelter.state = asmelt.STATE.IDLE
         else
             smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
         end
-    elseif smelter.state == asmelt.STATE.ALLOYING then
+    elseif smelter.state == asmelt.STATE.ALLOYING and base_mach.expend_heat(smelter, opts.COST_FLUX_ALLOYING_HU, 'Alloying') then
         local result_stack = smelter.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         smelter.state_time = smelter.state_time - dt
-        base_mach.expend_heat(smelter, 1)
         if smelter.state_time <= 0 then
             if smelter.inv:room_for_item('out', result_stack) then
                 smelter.inv:set_stack('result', 1, nil)
@@ -165,48 +142,45 @@ function asmelt.check_new_processing(smelter)
         end
     end
     -- if could not begin alloying anything, check for flux to melt
-    if smelter.state == asmelt.STATE.IDLE and smelter.inv:contains_item('inp', opts.FLUX_ITEM) then
-        if smelter.flux_tank >= opts.FLUX_MAXIMUM then
-            smelter.status_text = 'Flux tank full!'
+    if smelter.state == asmelt.STATE.IDLE then
+        if smelter.inv:contains_item('inp', opts.FLUX_ITEM) then
+            if smelter.flux_tank >= opts.FLUX_MAXIMUM then
+                smelter.status_text = 'Flux tank full!'
+            else
+                smelter.state = asmelt.STATE.FLUX_MELT
+                smelter.state_time = opts.FLUX_MELTING_TIME
+                smelter.inv:remove_item('inp', opts.FLUX_ITEM)
+                smelter.status_text = 'Melting flux...'
+            end
         else
-            smelter.state = asmelt.STATE.FLUX_MELT
-            smelter.state_time = opts.FLUX_MELTING_TIME
-            smelter.inv:remove_item('inp', opts.FLUX_ITEM)
-            smelter.status_text = 'Melting flux...'
+            -- nothing to do at this point
+            smelter.status_text = 'Idle'
         end
     end
+
 end
 
 function asmelt.tick(pos, dt)
-    -- read status from metadata
-    local smelter = asmelt.read_state(pos)
+    -- read state from meta
+    local smelter = base_mach.read_state(pos)
+    smelter.flux_tank = smelter.meta:get_int('flux_tank')
+    
+    asmelt.do_processing(smelter, dt)
 
-    if smelter.heat_level == 0 then
-        base_mach.process_fuel(smelter)
-    end
-    -- not an else since it could have changed!
-    if smelter.heat_level > 0 then
-        asmelt.do_processing(smelter, dt)
-
-        if smelter.heat_level > 0 then
-            -- if still heated and idle now, check for new processing to start
-            if smelter.state == asmelt.STATE.IDLE then
-                asmelt.check_new_processing(smelter) 
-            end
-        else
-            -- if heat reached zero this tick
-            base_mach.heat_exhausted(smelter)
-        end
-    end
-    -- if idle, make sure status text has been set to something (if no other error happened)
-    -- if still processing, set up timer for next tick
     if smelter.state == asmelt.STATE.IDLE then
-        if not smelter.status_text then smelter.status_text = 'Idle' end
-    else
+        asmelt.check_new_processing(smelter)
+    end
+
+    -- we only know if we need heat at this point after trying to process
+    base_mach.process_fuel(smelter)
+
+    if not smelter.need_heat then
+        -- if still processing and not waiting for heat, reset timer
         asmelt.start_timer(pos)
     end
-    -- write status back to metadata
-    asmelt.write_state(pos, smelter)
+    -- write status back to meta
+    base_mach.write_state(pos, smelter, asmelt.generate_formspec(smelter), asmelt.generate_infotext(smelter))
+    smelter.meta:set_int('flux_tank', smelter.flux_tank)
 end
 
 asmelt.nodedef = {
