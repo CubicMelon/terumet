@@ -85,6 +85,8 @@ In total there are four alloys the smelter can create, all based on Terumetal an
 
 *note: Flux required and time shown are default.
 
+Like melting flux, creating an alloy requires heat. The amount of heat required is dependent on how long the alloying process takes; therefore, the alloys that require more time also require more heat.
+
 Each of the four alloys can also be created in **block form** by inserting a block of the source material (eg. a Copper Block instead of a Copper Lump, or a Diamond Block and Obsidian Block for Coreglass) -- alloying an entire block will take longer along with the required preperation of making the blocks but will consume quite a bit less flux than doing them individually.
 
 To create an alloy, simply place the source materials into the input, and if there's enough molten flux all that's left is to wait. If an insufficient amount of flux is in the internal tank, the smelter will indicate how much additional flux is required.
