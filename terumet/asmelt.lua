@@ -35,9 +35,14 @@ function asmelt.generate_formspec(smelter)
     'label[0,0;Terumetal Alloy Smelter]'..
     'label[0,0.5;' .. smelter.status_text .. ']'..
     base_mach.fs_flux_info(smelter,2,1.5,100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM)..
-    base_mach.fs_heat_info(smelter,4,1.5)..
+    base_mach.fs_heat_info(smelter,4.25,1.5)
+    if smelter.state == asmelt.STATE.FLUX_MELT then
+        fs=fs..'item_image[3.5,1.75;1,1;'..terumet.id('lump_raw')..']'
+    elseif smelter.state == asmelt.STATE.ALLOYING then
+        fs=fs..'item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
+    end
     --list rings
-    "listring[current_player;main]"..
+    fs=fs.."listring[current_player;main]"..
 	"listring[context;inp]"..
     "listring[current_player;main]"..
     "listring[context;out]"
@@ -111,6 +116,7 @@ function asmelt.do_processing(smelter, dt)
 end
 
 function asmelt.check_new_processing(smelter)
+    local error_msg = nil
     -- first, check for elements of an alloying recipe in input
     local matched_result = nil
     for result, recipe in pairs(terumet.alloy_recipes) do
@@ -129,7 +135,7 @@ function asmelt.check_new_processing(smelter)
         local recipe = terumet.alloy_recipes[matched_result]
         local result_name = minetest.registered_items[matched_result].description
         if smelter.flux_tank < recipe.flux then
-            smelter.status_text = 'Alloying ' .. result_name .. ': ' .. recipe.flux - smelter.flux_tank .. ' more flux needed'
+            error_msg = 'Alloying ' .. result_name .. ': ' .. recipe.flux - smelter.flux_tank .. ' more flux needed'
         else
             smelter.state = asmelt.STATE.ALLOYING
             for _, consumed_source in ipairs(recipe) do
@@ -138,7 +144,8 @@ function asmelt.check_new_processing(smelter)
             smelter.state_time = recipe.time
             smelter.inv:set_stack('result', 1, ItemStack(matched_result, recipe.result_count))
             smelter.flux_tank = smelter.flux_tank - recipe.flux
-            smelter.status_text = 'Alloying ' .. result_name .. '...'
+            smelter.status_text = 'Accepting materials to alloy ' .. result_name .. '...'
+
         end
     end
     -- if could not begin alloying anything, check for flux to melt
@@ -150,11 +157,11 @@ function asmelt.check_new_processing(smelter)
                 smelter.state = asmelt.STATE.FLUX_MELT
                 smelter.state_time = opts.FLUX_MELTING_TIME
                 smelter.inv:remove_item('inp', opts.FLUX_ITEM)
-                smelter.status_text = 'Melting flux...'
+                smelter.status_text = 'Accepting flux...'
             end
         else
-            -- nothing to do at this point
-            smelter.status_text = 'Idle'
+            -- nothing to do at this point - if no error from before then display idle
+            smelter.status_text = error_msg or 'Idle'
         end
     end
 
@@ -171,11 +178,10 @@ function asmelt.tick(pos, dt)
         asmelt.check_new_processing(smelter)
     end
 
-    -- we only know if we need heat at this point after trying to process
     base_mach.process_fuel(smelter)
 
-    if not smelter.need_heat then
-        -- if still processing and not waiting for heat, reset timer
+    if smelter.state ~= asmelt.STATE.IDLE and (not smelter.need_heat) then
+        -- if still processing and not waiting for heat, reset timer to continue processing
         asmelt.start_timer(pos)
     end
     -- write status back to meta

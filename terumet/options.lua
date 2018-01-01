@@ -32,7 +32,7 @@ machine.FUEL_RETURN = 'bucket:bucket_empty'
 -- Item provided in fuel slot after expending value of one entire fuel item
 machine.FUEL_CYCLE = 'default:stone'
 -- Heat Units provided by one fuel item
-machine.FULL_HEAT = 36
+machine.FULL_HEAT = 100
 
 --
 -- ALLOY SMELTER SETTINGS
@@ -46,8 +46,8 @@ smelter.FLUX_ITEM = terumet.id('lump_raw')
 smelter.FLUX_MELTING_TIME = 3.0
 -- Maximum size (in item count) of an alloy smelter's flux tank
 -- (note if greater than 99, some flux could be lost when breaking a smelter -- only up to 99 flux will be dropped)
-smelter.FLUX_MAXIMUM = 99
+smelter.FLUX_MAXIMUM = 50
 -- Heat expended per tick melting flux
 smelter.COST_FLUX_MELT_HU = 2
 -- Heat expended per tick alloying
-smelter.COST_FLUX_ALLOYING_HU = 10
+smelter.COST_FLUX_ALLOYING_HU = 1

@@ -84,18 +84,14 @@ end
 
 -- handle reheating input
 function base_mach.process_fuel(machine)
-    if machine.need_heat then
-        if machine.inv:contains_item('fuel', opts.FUEL_ITEM) then
-            if machine.inv:room_for_item('out', opts.FUEL_RETURN) then
-                machine.inv:remove_item('fuel', opts.FUEL_ITEM)
-                machine.inv:add_item('out', opts.FUEL_RETURN)
-                machine.heat_level = opts.FULL_HEAT
-                machine.need_heat = false
-            else
-                machine.status_text = 'No space for '..minetest.registered_items[opts.FUEL_RETURN].description
-            end
+    if machine.need_heat and machine.inv:contains_item('fuel', opts.FUEL_ITEM) then
+        if machine.inv:room_for_item('out', opts.FUEL_RETURN) then
+            machine.inv:remove_item('fuel', opts.FUEL_ITEM)
+            machine.inv:add_item('out', opts.FUEL_RETURN)
+            machine.heat_level = opts.FULL_HEAT
+            machine.need_heat = false
         else
-            base_mach.set_low_heat_msg(machine)
+            machine.status_text = 'No space for '..minetest.registered_items[opts.FUEL_RETURN].description
         end
     end
 end
