@@ -12,6 +12,13 @@ Unzip the folder into a temporary space then move/copy the subfolder **terumet**
 
 The items outside of that folder are development files and are *not needed* to use the mod.
 
+## Mod Dependencies
+This mod depends on:
+* default
+* bucket
+
+Both mods should normally be already included if playing the default Minetest subgame.
+
 ## Worldgen
 The only new thing generated in the world is a new type of ore:
 
