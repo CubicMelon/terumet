@@ -6,8 +6,10 @@ Creates a new ore in the world which can be used to make useful alloys from many
 ![Screenshot](https://github.com/Terumoc/terumet/blob/master/terumet/screenshot.png)
 
 ## Installing
-Download the current version straight from Github [Here](https://github.com/Terumoc/terumet/archive/master.zip)
+Download the current version straight from Github [Here](https://github.com/Terumoc/terumet/archive/master.zip).
+
 Unzip the folder into a temporary space, then move/copy the subfolder **terumet** into your minetest **mods** folder.
+
 The items outside of that folder are development files and are *not needed* to use the mod.
 
 ## Worldgen
