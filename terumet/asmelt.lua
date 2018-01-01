@@ -18,7 +18,7 @@ end
 function asmelt.generate_formspec(smelter)
     local heat_pct = 100.0 * smelter.heat_level / opts.FULL_HEAT
     local flux_pct = 100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM
-    local fs = 'size[8,9]'..
+    local fs = 'size[8,9]background[0,0;8,9;terumet_asmeltgui_bg.png;true]listcolors[#3a101b;#905564;#521626;#114f51;#d2fdff]'..
     --player inventory
     'list[current_player;main;0,4.75;8,1;]'..
     'list[current_player;main;0,6;8,3;8]'..
@@ -199,7 +199,7 @@ function asmelt.tick(pos, dt)
                 smelter.status_text = 'No space for return bucket'
             end
         else
-            smelter.status_text = 'Need heat (lava bucket)'
+            smelter.status_text = 'Need heat ('..minetest.registered_items[opts.FUEL_ITEM].description..')'
         end
     end
     -- not an else since it could have changed!

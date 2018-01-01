@@ -41,4 +41,4 @@ smelter.FUEL_RETURN = 'bucket:bucket_empty'
 -- Item provided after a full heat cycle is completed
 smelter.FUEL_COMPLETE = 'default:cobble'
 -- Heat Units provided by one cycle - melting flux is 2HU/tick and alloying is 1HU/tick
-smelter.FULL_HEAT = 1000
+smelter.FULL_HEAT = 2000
