@@ -1,4 +1,4 @@
-# terumet
+# Terumetal [terumet]
 A mod for the open-source voxel game Minetest (https://www.minetest.net/)
 
 Creates a new ore in the world which can be used to make useful alloys from many already available materials.
