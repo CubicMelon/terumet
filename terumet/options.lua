@@ -32,7 +32,7 @@ machine.FUEL_RETURN = 'bucket:bucket_empty'
 -- Item provided in fuel slot after expending value of one entire fuel item
 machine.FUEL_CYCLE = 'default:stone'
 -- Heat Units provided by one fuel item
-machine.FULL_HEAT = 100
+machine.FULL_HEAT = 1500
 
 --
 -- ALLOY SMELTER SETTINGS
