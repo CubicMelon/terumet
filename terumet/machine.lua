@@ -16,7 +16,7 @@ base_mach.fs_start = 'background[0,0;8,9;terumet_gui_bg.png;true]listcolors[#3a1
 
 -- fuel slot formspec (only if necessary)
 function base_mach.fs_fuel_slot(machine, fsx, fsy)
-    if machine.need_heat or (not machine.inv:is_empty('fuel')) then
+    if machine.need_heat or (not machine.inv:is_empty('fuel')) or machine.heat_level == 0 then
         return 'list[context;fuel;'..fsx..','..fsy..';1,1;]label['..fsx..','..fsy+1 ..';Fuel Slot]'
     end
     return ''

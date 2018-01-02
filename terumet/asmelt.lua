@@ -4,7 +4,9 @@ local base_opts = terumet.options.machine
 local base_mach = terumet.machine
 
 local asmelt = {}
-asmelt.full_id = terumet.id('mach_asmelt')
+asmelt.unlit_id = terumet.id('mach_asmelt')
+asmelt.lit_id = terumet.id('mach_asmelt_lit')
+
 -- time between smelter ticks
 asmelt.timer = 0.5
 
@@ -13,6 +15,19 @@ asmelt.STATE = {}
 asmelt.STATE.IDLE = 0
 asmelt.STATE.FLUX_MELT = 1
 asmelt.STATE.ALLOYING = 2
+
+
+function asmelt.new_particle(pos)
+    return {
+        pos={x=pos.x, y=pos.y, z=pos.z},
+        velocity={x=0, y=-0.01, z=0},
+        acceleration={x=0, y=-0.01, z=0},
+        expirationtime=1.5,
+        size=1,
+        collisiondetection=false,
+        texture='default_item_smoke.png'
+    }
+end
 
 function asmelt.start_timer(pos)
     minetest.get_node_timer(pos):start(asmelt.timer)
@@ -37,9 +52,9 @@ function asmelt.generate_formspec(smelter)
     base_mach.fs_flux_info(smelter,2,1.5,100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM)..
     base_mach.fs_heat_info(smelter,4.25,1.5)
     if smelter.state == asmelt.STATE.FLUX_MELT then
-        fs=fs..'item_image[3.5,1.75;1,1;'..terumet.id('lump_raw')..']'
+        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('lump_raw')..']'
     elseif smelter.state == asmelt.STATE.ALLOYING then
-        fs=fs..'item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
+        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
@@ -51,6 +66,13 @@ end
 
 function asmelt.generate_infotext(smelter)
     return string.format('Alloy Smelter (%.0f%% heat): %s', base_mach.heat_pct(smelter), smelter.status_text)
+end
+
+function asmelt.set_node(pos, target_node)
+    local node = minetest.get_node(pos)
+    if node.name == target_node then return end
+    node.name = target_node
+    minetest.swap_node(pos, node)
 end
 
 function asmelt.init(pos)
@@ -83,7 +105,7 @@ function asmelt.get_drops(pos, include_self)
     if flux_tank > 0 then
         drops[#drops+1] = terumet.id('lump_raw', math.min(99, flux_tank))
     end
-    if include_self then drops[#drops+1] = asmelt.full_id end
+    if include_self then drops[#drops+1] = asmelt.unlit_id end
     return drops
 end
 
@@ -187,15 +209,34 @@ function asmelt.tick(pos, dt)
     -- write status back to meta
     base_mach.write_state(pos, smelter, asmelt.generate_formspec(smelter), asmelt.generate_infotext(smelter))
     smelter.meta:set_int('flux_tank', smelter.flux_tank)
+    
+    if smelter.heat_level > 0 then
+        asmelt.set_node(pos, asmelt.lit_id)
+        minetest.add_particle(asmelt.new_particle(pos))
+    else
+        asmelt.set_node(pos, asmelt.unlit_id)
+    end
 end
 
-asmelt.nodedef = {
+function asmelt.on_destruct(pos)
+    for _,item in ipairs(asmelt.get_drops(pos, false)) do
+        minetest.add_item(pos, item)
+    end
+end
+
+function asmelt.on_blast(pos)
+    drops = asmelt.get_drops(pos, true)
+    minetest.remove_node(pos)
+    return drops
+end
+
+asmelt.unlit_nodedef = {
     -- node properties
     description = "Terumetal Alloy Smelter",
     tiles = {
-        terumet.tex_file('block_raw'), terumet.tex_file('block_raw'),
-        terumet.tex_file('asmelt_sides'), terumet.tex_file('asmelt_sides'),
-        terumet.tex_file('asmelt_sides'), terumet.tex_file('asmelt_front')
+        terumet.tex_file('mach_top'), terumet.tex_file('mach_bot'),
+        terumet.tex_file('asmelt_sides_unlit'), terumet.tex_file('asmelt_sides_unlit'),
+        terumet.tex_file('asmelt_sides_unlit'), terumet.tex_file('asmelt_front_unlit')
     },
     paramtype2 = 'facedir',
     groups = {cracky=1},
@@ -212,21 +253,27 @@ asmelt.nodedef = {
     on_metadata_inventory_put = asmelt.start_timer,
     on_metadata_inventory_take = asmelt.start_timer,
     on_timer = asmelt.tick,
-    on_destruct = function(pos)
-        for _,item in ipairs(asmelt.get_drops(pos, false)) do
-            minetest.add_item(pos, item)
-        end
-    end,
-    on_blast = function(pos)
-        drops = asmelt.get_drops(pos, true)
-        minetest.remove_node(pos)
-        return drops
-    end
+    on_destruct = asmelt.on_destruct,
+    on_blast = asmelt.on_blast,
 }
 
-minetest.register_node(asmelt.full_id, asmelt.nodedef)
+asmelt.lit_nodedef = {}
+for k,v in pairs(asmelt.unlit_nodedef) do asmelt.lit_nodedef[k] = v end
+asmelt.lit_nodedef.on_construct = nil -- lit smeltery node shouldn't be constructed by player
+asmelt.lit_nodedef.tiles = {
+    terumet.tex_file('mach_top'), terumet.tex_file('mach_bot'),
+    terumet.tex_file('asmelt_sides_lit'), terumet.tex_file('asmelt_sides_lit'),
+    terumet.tex_file('asmelt_sides_lit'), terumet.tex_file('asmelt_front_lit')
+}
+asmelt.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
+asmelt.lit_nodedef.drop = asmelt.unlit_id
+asmelt.lit_nodedef.light_source = 10
 
-minetest.register_craft{ output = asmelt.full_id, recipe = {
+
+minetest.register_node(asmelt.unlit_id, asmelt.unlit_nodedef)
+minetest.register_node(asmelt.lit_id, asmelt.lit_nodedef)
+
+minetest.register_craft{ output = asmelt.unlit_id, recipe = {
     {terumet.id('ingot_raw'), 'default:furnace', terumet.id('ingot_raw')},
     {'bucket:bucket_empty', 'default:copperblock', 'bucket:bucket_empty'},
     {terumet.id('ingot_raw'), 'default:furnace', terumet.id('ingot_raw')}
