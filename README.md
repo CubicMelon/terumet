@@ -1,9 +1,17 @@
 # Terumetal [terumet]
+### Current version v1.1
 A mod for the open-source voxel game Minetest (https://www.minetest.net/)
 
 Creates a new ore in the world which can be used to make useful alloys from many already available materials.
 
 ![Screenshot](https://github.com/Terumoc/terumet/blob/master/terumet/screenshot.png)
+
+### Changes from v1.0
+* A lot of under-the-hood stuff to make future new machines much easier to make
+* To make it feel a bit less pointless, when the lava in the Smelter is fully used up you now get regular stone (aka smooth stone) back instead of cobblestone. Saves you a little cooking cobblestone I guess?
+* The smelter now lights up and changes textures when there is heat.
+* The groundwork for particle effects is there but still not apparently functional. TODO.
+* It's no longer possible to theoretically get a Smelter 'stuck' without heat and not showing the fuel slot because the heat-using system was completely rewritten.
 
 ## Installing
 Download the guaranteed-working v1.0 release from [Here](https://github.com/Terumoc/terumet/archive/v1.0.zip)
