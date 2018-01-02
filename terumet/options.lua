@@ -20,6 +20,10 @@ alloys.GOLD_BLOCK = {flux=24, time=60.0, 'default:goldblock'}
 alloys.COREGLASS = {flux=5, time=10.0, 'default:diamond', 'default:obsidian_shard'}
 alloys.COREGLASS_BLOCK = {flux=30, time=180.0, 'default:diamondblock', 'default:obsidian'}
 
+alloys.CERAMIC_PLATE = {flux=3, time=1.0, 'default:clay_lump'}
+
+alloys.THERMESE_CRYSTAL = {flux=10, time=20.0, 'default:mese_crystal'}
+
 --
 -- GENERAL MACHINE SETTINGS
 --

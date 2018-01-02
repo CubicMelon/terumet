@@ -50,10 +50,10 @@ function terumet.tex_composite(base_tex, overlay_name)
     return base_tex .. '^' .. terumet.tex_file(overlay_name)
 end
 
-function terumet.reg_item(item_id, texture, name)
-    minetest.register_craftitem( terumet.id(item_id), {
+function terumet.reg_item(name, id)
+    minetest.register_craftitem( terumet.id(id), {
         description = name,
-        inventory_image = terumet.tex_file(texture)
+        inventory_image = terumet.tex_file(id)
     })
 end
 
@@ -99,8 +99,21 @@ terumet.alloy_recipes[terumet.id('block_alloy_tste')] = opts.IRON_BLOCK
 terumet.alloy_recipes[terumet.id('block_alloy_tgol')] = opts.GOLD_BLOCK
 terumet.alloy_recipes[terumet.id('block_alloy_cgls')] = opts.COREGLASS_BLOCK
 
+dofile(terumet.lua_file('ceramic'))
+dofile(terumet.lua_file('thermese'))
+
+local raw_ingot_id = terumet.id('ingot_raw')
+
+terumet.reg_item('Terumetal Coil', 'item_coil')
+minetest.register_craft{ output=terumet.id('item_coil', 8),
+recipe = {
+    {raw_ingot_id, raw_ingot_id, raw_ingot_id},
+    {raw_ingot_id, 'default:stick', raw_ingot_id},
+    {raw_ingot_id, raw_ingot_id, raw_ingot_id}
+}}
+
 terumet.reg_tools('Terumetal', 'traw',
-    terumet.id('ingot_raw'),
+    raw_ingot_id,
     {2.0}, 10, 2
 )
 terumet.reg_tools('Terucopper', 'tcop', 
