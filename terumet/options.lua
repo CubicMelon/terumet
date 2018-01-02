@@ -33,6 +33,8 @@ machine.FUEL_RETURN = 'bucket:bucket_empty'
 machine.FUEL_CYCLE = 'default:stone'
 -- Heat Units provided by one fuel item
 machine.FULL_HEAT = 1500
+-- Whether machines emit particles or not while working
+machine.PARTICLES = true
 
 --
 -- ALLOY SMELTER SETTINGS

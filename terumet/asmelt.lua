@@ -16,14 +16,19 @@ asmelt.STATE.IDLE = 0
 asmelt.STATE.FLUX_MELT = 1
 asmelt.STATE.ALLOYING = 2
 
+asmelt.RAND = PcgRandom(os.time())
 
 function asmelt.new_particle(pos)
+    local xoff = asmelt.RAND:next(-5,5) / 10
+    local zoff = asmelt.RAND:next(-5,5) / 10
+    local sz = asmelt.RAND:next(50,400) / 100
+    local vel = asmelt.RAND:next(2,5) / 10
     return {
-        pos={x=pos.x, y=pos.y, z=pos.z},
-        velocity={x=0, y=-0.01, z=0},
-        acceleration={x=0, y=-0.01, z=0},
+        pos={x=pos.x+xoff, y=pos.y+0.5, z=pos.z+zoff},
+        velocity={x=0, y=vel, z=0},
+        acceleration={x=0, y=0.6, z=0},
         expirationtime=1.5,
-        size=1,
+        size=sz,
         collisiondetection=false,
         texture='default_item_smoke.png'
     }
@@ -212,7 +217,7 @@ function asmelt.tick(pos, dt)
     
     if smelter.heat_level > 0 then
         asmelt.set_node(pos, asmelt.lit_id)
-        minetest.add_particle(asmelt.new_particle(pos))
+        if base_opts.PARTICLES then minetest.add_particle(asmelt.new_particle(pos)) end
     else
         asmelt.set_node(pos, asmelt.unlit_id)
     end
