@@ -7,15 +7,16 @@ Creates a new ore in the world which can be used to make useful alloys from many
 ![Screenshot](https://github.com/Terumoc/terumet/blob/master/terumet/screenshot.png)
 
 ### Changes from v1.0
-* A lot of under-the-hood stuff to make future new machines much easier to make
+* What the Smelter is currently processing now displays on the GUI in the center, rather than just in text.
 * To make it feel a bit less pointless, when the lava in the Smelter is fully used up you now get regular stone (aka smooth stone) back instead of cobblestone. Saves you a little cooking cobblestone I guess?
 * The smelter now lights up and changes textures when there is heat.
 * The groundwork for particle effects is there but still not apparently functional. TODO.
 * It's no longer possible to theoretically get a Smelter 'stuck' without heat and not showing the fuel slot because the heat-using system was completely rewritten.
+* A lot of under-the-hood stuff to make future new machines much easier to make
 
 ## Installing
-Download the guaranteed-working v1.0 release from [Here](https://github.com/Terumoc/terumet/archive/v1.0.zip)
-or the in-progress version [Here](https://github.com/Terumoc/terumet/archive/master.zip).
+Download the guaranteed-working v1.1 release from [Here](https://github.com/Terumoc/terumet/archive/v1.1.zip)
+or the current repo version [Here](https://github.com/Terumoc/terumet/archive/master.zip) (may NOT be functional).
 
 Unzip the folder into a temporary space then move/copy the subfolder **terumet** into your minetest **mods** folder.
 
