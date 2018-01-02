@@ -12,6 +12,7 @@ Creates a new ore in the world which can be used to make useful alloys from many
 * The smelter now lights up and changes textures when there is heat.
 * The groundwork for particle effects is there but still not apparently functional. TODO.
 * It's no longer possible to theoretically get a Smelter 'stuck' without heat and not showing the fuel slot because the heat-using system was completely rewritten.
+* Because of the new heat system, a bucket of lava will not be consumed until the Smelter needs it to process something.
 * A lot of under-the-hood stuff to make future new machines much easier to make
 
 ## Installing
