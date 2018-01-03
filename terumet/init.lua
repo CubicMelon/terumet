@@ -55,6 +55,9 @@ function terumet.id(id, number)
 end
 
 function terumet.tex(id)
+    -- accepts both base ids (assuming this mod) and full mod ids
+    -- ex: terumet.tex('ingot_raw') -> 'terumet_ingot_raw.png'
+    --     terumet.tex('default:cobble') -> 'default_cobble.png'
     if id:match(':') then
         return string.format('%s.png', id:gsub(':', '_'))
     else
