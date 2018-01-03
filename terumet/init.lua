@@ -1,4 +1,4 @@
--- Terumet v1.2
+-- Terumet v1.3
 
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
 -- Written for Minetest version 0.4.16
@@ -21,116 +21,102 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=1, minor=2, patch=0}
+terumet.version = {major=1, minor=3, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
+
+function terumet.recipe_3x3(i)
+    return { 
+        {i, i, i}, {i, i, i}, {i, i, i}
+    }
+end
+
+function terumet.recipe_box(outer, inner)
+    return {
+        {outer, outer, outer}, {outer, inner, outer}, {outer, outer, outer}
+    }
+end
 
 function terumet.format_time(t)
     return string.format('%.1f s', t or 0)
 end
 
-function terumet.lua_file(name)
-    return minetest.get_modpath(terumet.mod_name) .. '/' .. name .. '.lua'
+function terumet.do_lua_file(name)
+    dofile(minetest.get_modpath(terumet.mod_name) .. '/' .. name .. '.lua')
 end
 
-function terumet.id(item_name, count)
-    if count then
-        return terumet.mod_name .. ':' .. item_name .. ' ' .. count
+function terumet.id(id, number)
+    if number then
+        return string.format('%s:%s %d', terumet.mod_name, id, number)
     else
-        return terumet.mod_name .. ':' .. item_name
+        return string.format('%s:%s', terumet.mod_name, id)
     end
 end
 
-function terumet.tex_file(tex_name)
-    return terumet.mod_name .. "_" .. tex_name .. '.png'
+function terumet.tex(id)
+    if id:match(':') then
+        return string.format('%s.png', id:gsub(':', '_'))
+    else
+        return string.format('%s_%s.png', terumet.mod_name, id)
+    end
 end
 
-function terumet.tex_composite(base_tex, overlay_name)
-    return base_tex .. '^' .. terumet.tex_file(overlay_name)
+function terumet.tex_comp(base_tex, overlay_id)
+    return base_tex .. '^' .. terumet.tex(overlay_id)
 end
 
 function terumet.reg_item(name, id)
-    minetest.register_craftitem( terumet.id(id), {
-        description = name,
-        inventory_image = terumet.tex_file(id)
-    })
+
 end
 
--- will hold alloys creatable by alloy smelter in the format {result={teru=X, constituent_1, constituent_2, etc.}}
--- X = number of raw terumetal lumps required
 terumet.alloy_recipes = {}
-dofile(terumet.lua_file('options'))
-dofile(terumet.lua_file('machine'))
-dofile(terumet.lua_file('reg_metal'))
-dofile(terumet.lua_file('reg_alloy'))
-dofile(terumet.lua_file('reg_tools'))
-
-terumet.reg_metal('Terumetal', 'raw')
-minetest.register_ore{
-    ore_type = 'scatter',
-    ore = terumet.id('ore_raw'),
-    wherein = 'default:stone',
-    clust_scarcity = 12 * 12 * 12,
-    clust_num_ores = 6,
-    clust_size = 4,
-    y_min = -30000,
-    y_max = 8
-}
-minetest.register_ore{
-    ore_type = 'scatter',
-    ore = terumet.id('ore_raw_desert'),
-    wherein = 'default:desert_stone',
-    clust_scarcity = 12 * 10 * 8,
-    clust_num_ores = 6,
-    clust_size = 6,
-    y_min = -30000,
-    y_max = 64
-}
+terumet.do_lua_file('options')
+terumet.do_lua_file('machine/machine')
+terumet.do_lua_file('material/raw')
+terumet.do_lua_file('material/reg_alloy')
 
 local opts = terumet.options.alloys
-terumet.reg_alloy('Terucopper', 'tcop', 1, opts.COPPER)
-terumet.reg_alloy('Terusteel', 'tste', 2, opts.IRON)
-terumet.reg_alloy('Terugold', 'tgol', 3, opts.GOLD)
-terumet.reg_alloy('Coreglass', 'cgls', 4, opts.COREGLASS)
+terumet.reg_alloy('Terucopper', 'tcop', 1, opts.COPPER_ALLOY, opts.COPPER_ALLOY_BLOCK)
+terumet.reg_alloy('Terusteel', 'tste', 2, opts.IRON_ALLOY, opts.IRON_ALLOY_BLOCK)
+terumet.reg_alloy('Terugold', 'tgol', 3, opts.GOLD_ALLOY, opts.GOLD_ALLOY_BLOCK)
+terumet.reg_alloy('Coreglass', 'cgls', 4, opts.COREGLASS, opts.COREGLASS_BLOCK)
 
-terumet.alloy_recipes[terumet.id('block_alloy_tcop')] = opts.COPPER_BLOCK
-terumet.alloy_recipes[terumet.id('block_alloy_tste')] = opts.IRON_BLOCK
-terumet.alloy_recipes[terumet.id('block_alloy_tgol')] = opts.GOLD_BLOCK
-terumet.alloy_recipes[terumet.id('block_alloy_cgls')] = opts.COREGLASS_BLOCK
+terumet.do_lua_file('material/ceramic')
+terumet.do_lua_file('material/thermese')
 
-dofile(terumet.lua_file('ceramic'))
-dofile(terumet.lua_file('thermese'))
+local id = terumet.id
+local tex = terumet.tex
 
-local raw_ingot_id = terumet.id('ingot_raw')
+minetest.register_craftitem( id('item_coil'), {
+    description = 'Terumetal Coil',
+    inventory_image = tex('item_coil')
+})
+minetest.register_craft{ output=id('item_coil',8),
+    recipe = terumet.recipe_box(id('ingot_raw'), 'default:stick')
+}
 
-terumet.reg_item('Terumetal Coil', 'item_coil')
-minetest.register_craft{ output=terumet.id('item_coil', 8),
-recipe = {
-    {raw_ingot_id, raw_ingot_id, raw_ingot_id},
-    {raw_ingot_id, 'default:stick', raw_ingot_id},
-    {raw_ingot_id, raw_ingot_id, raw_ingot_id}
-}}
+terumet.do_lua_file('tool/reg_tools')
 
-terumet.reg_tools('Terumetal', 'traw',
-    raw_ingot_id,
+terumet.reg_tools('Pure Terumetal', 'raw',
+    id('ingot_raw'),
     {2.0}, 10, 2
 )
 terumet.reg_tools('Terucopper', 'tcop', 
-    terumet.id('ingot_alloy_tcop'),
+    id('ingot_tcop'),
     {3.2, 1.4, 0.8}, 40, 1 
 )
 terumet.reg_tools('Terusteel', 'tste', 
-    terumet.id('ingot_alloy_tste'),
+    id('ingot_tste'),
     {2.9, 1.3, 0.7}, 50, 2
 )
 terumet.reg_tools('Terugold', 'tgol', 
-    terumet.id('ingot_alloy_tgol'),
+    id('ingot_tgol'),
     {2.7, 1.2, 0.63}, 60, 3
 )
 terumet.reg_tools('Coreglass', 'cgls',
-    terumet.id('ingot_alloy_cgls'),
+    id('ingot_cgls'),
     {2.5, 1.2, 0.7}, 75, 4
 )
 
-dofile(terumet.lua_file('asmelt'))
+terumet.do_lua_file('machine/asmelt')

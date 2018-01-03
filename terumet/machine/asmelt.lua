@@ -239,9 +239,9 @@ asmelt.unlit_nodedef = {
     -- node properties
     description = "Terumetal Alloy Smelter",
     tiles = {
-        terumet.tex_file('mach_top'), terumet.tex_file('mach_bot'),
-        terumet.tex_file('asmelt_sides_unlit'), terumet.tex_file('asmelt_sides_unlit'),
-        terumet.tex_file('asmelt_sides_unlit'), terumet.tex_file('asmelt_front_unlit')
+        terumet.tex('mach_top'), terumet.tex('mach_bot'),
+        terumet.tex('asmelt_sides_unlit'), terumet.tex('asmelt_sides_unlit'),
+        terumet.tex('asmelt_sides_unlit'), terumet.tex('asmelt_front_unlit')
     },
     paramtype2 = 'facedir',
     groups = {cracky=1},
@@ -266,9 +266,9 @@ asmelt.lit_nodedef = {}
 for k,v in pairs(asmelt.unlit_nodedef) do asmelt.lit_nodedef[k] = v end
 asmelt.lit_nodedef.on_construct = nil -- lit smeltery node shouldn't be constructed by player
 asmelt.lit_nodedef.tiles = {
-    terumet.tex_file('mach_top'), terumet.tex_file('mach_bot'),
-    terumet.tex_file('asmelt_sides_lit'), terumet.tex_file('asmelt_sides_lit'),
-    terumet.tex_file('asmelt_sides_lit'), terumet.tex_file('asmelt_front_lit')
+    terumet.tex('mach_top'), terumet.tex('mach_bot'),
+    terumet.tex('asmelt_sides_lit'), terumet.tex('asmelt_sides_lit'),
+    terumet.tex('asmelt_sides_lit'), terumet.tex('asmelt_front_lit')
 }
 asmelt.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
 asmelt.lit_nodedef.drop = asmelt.unlit_id

@@ -1,3 +1,4 @@
+rem Delete old copy of mod from Minetest mods folder and copy over WIP one
 @echo off
 set MODNAME=terumet
 set MTMODSDIR=E:\MineTest\minetest-0.4.16-win64\mods

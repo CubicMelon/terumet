@@ -8,14 +8,14 @@ local alloys = terumet.options.alloys
 -- flux = number of flux in tank required
 -- time = in seconds (normal maximum granularity 0.5s = 1 tick)
 
-alloys.COPPER = {flux=1, time=3.0, 'default:copper_lump'}
-alloys.COPPER_BLOCK = {flux=7, time=35.0, 'default:copperblock'}
+alloys.COPPER_ALLOY = {flux=1, time=3.0, 'default:copper_lump'}
+alloys.COPPER_ALLOY_BLOCK = {flux=7, time=35.0, 'default:copperblock'}
 
-alloys.IRON = {flux=2, time=4.0, 'default:iron_lump'}
-alloys.IRON_BLOCK = {flux=15, time=45.0, 'default:ironblock'}
+alloys.IRON_ALLOY = {flux=2, time=4.0, 'default:iron_lump'}
+alloys.IRON_ALLOY_BLOCK = {flux=15, time=45.0, 'default:ironblock'}
 
-alloys.GOLD = {flux=3, time=5.0, 'default:gold_lump'}
-alloys.GOLD_BLOCK = {flux=24, time=60.0, 'default:goldblock'}
+alloys.GOLD_ALLOY = {flux=3, time=5.0, 'default:gold_lump'}
+alloys.GOLD_ALLOY_BLOCK = {flux=24, time=60.0, 'default:goldblock'}
 
 alloys.COREGLASS = {flux=5, time=10.0, 'default:diamond', 'default:obsidian_shard'}
 alloys.COREGLASS_BLOCK = {flux=30, time=180.0, 'default:diamondblock', 'default:obsidian'}
