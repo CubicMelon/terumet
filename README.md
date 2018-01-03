@@ -1,19 +1,13 @@
 # Terumetal [terumet]
-### Current version v1.1
+### Current release version: v1.1
 A mod for the open-source voxel game Minetest (https://www.minetest.net/)
 
 Creates a new ore in the world which can be used to make useful alloys from many already available materials.
 
 ![Screenshot](https://github.com/Terumoc/terumet/blob/master/terumet/screenshot.png)
 
-### Changes from v1.0
-* What the Smelter is currently processing now displays on the GUI in the center, rather than just in text.
-* To make it feel a bit less pointless, when the lava in the Smelter is fully used up you now get regular stone (aka smooth stone) back instead of cobblestone. Saves you a little cooking cobblestone I guess?
-* The smelter now lights up and changes textures when there is heat.
-* The groundwork for particle effects is there but still not apparently functional. TODO.
-* It's no longer possible to theoretically get a Smelter 'stuck' without heat and not showing the fuel slot because the heat-using system was completely rewritten.
-* Because of the new heat system, a bucket of lava will not be consumed until the Smelter needs it to process something.
-* A lot of under-the-hood stuff to make future new machines much easier to make
+### Changelog
+See the changelog [Here](terumet/changelog.md)
 
 ## Installing
 Download the guaranteed-working v1.1 release from [Here](https://github.com/Terumoc/terumet/archive/v1.1.zip)
@@ -30,14 +24,21 @@ This mod depends on:
 
 Both mods should normally be already included if playing the default Minetest subgame.
 
+Additonal __optional__ support for:
+* unified_inventory
+
+# Overview/Tutorial
+
+(Images are from v1.0 and may not be entirely accurate. The information continues to be, however.)
+
 ## Worldgen
 The only new thing generated in the world is a new type of ore:
 
-![Terumetal Ore](https://github.com/Terumoc/terumet/blob/master/tutorial/ore_stone.png)
+![Terumetal Ore](tutorial/ore_stone.png)
 
 Which can be found in stone or desert stone:
 
-![Terumetal Desert Ore](https://github.com/Terumoc/terumet/blob/master/tutorial/ore_desert_stone.png)
+![Terumetal Desert Ore](tutorial/ore_desert_stone.png)
 
 Like any other standard Minetest ore mining it provides you with one or more raw lumps of ore, which can be cooked in a furnace to create ingots.
 
@@ -46,7 +47,7 @@ Do not make too many ingots from this new ore though because it is much better u
 ## Alloy Smelter
 The real use of Terumetal Ingots is creating an Alloy Smelter:
 
-![Alloy Smelter Recipe](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_recipe.png)
+![Alloy Smelter Recipe](tutorial/smelter_recipe.png)
 
 | Recipe items |-|-|
 |-----------------|-----------|---------------|
@@ -56,7 +57,7 @@ The real use of Terumetal Ingots is creating an Alloy Smelter:
 
 Place the smelter block down somewhere and you can then right-click it to access its interface like a standard furnace:
 
-![Alloy Smelter GUI](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_gui.png)
+![Alloy Smelter GUI](tutorial/smelter_gui.png)
 
 Before you begin using it it's important to understand two things about the Alloy Smelter:
 1. It requires heat to do anything.
@@ -68,38 +69,40 @@ One helpful thing to keep in mind is that unlike vanilla Minetest furnaces the T
 The simplest way to get lots of heat quickly is with lava and that is how the Smelter is heated.
 When cold, the smelter displays its fuel slot in the upper-right corner and is expecting a bucket of lava to be inserted into it.
 
-![Alloy Smelter Fueling](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling.png)
+![Alloy Smelter Fueling](tutorial/smelter_fueling.png)
 
 Once inserted, the heat level will reflect the bucket-worth of lava now inside the machine by filling the heat bar and your empty bucket will be refunded in the output section.
 
-![Alloy Smelter Heat](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling_2.png)
+![Alloy Smelter Heat](tutorial/smelter_fueling_2.png)
 
 A single bucket of lava provides enough heat to operate for quite a while, but not forever. When the heat from the lava is fully dissipated, the fuel slot will reappear with the remaining cobblestone from the lava and any processing will stop until a new bucket of lava is inserted.
 
-![Alloy Smelter Empty Heat](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_fueling_3.png)
+![Alloy Smelter Empty Heat](tutorial/smelter_fueling_3.png)
 
 In quite a user-friendly manner the smelter is amazingly heat efficient and none will be lost except by doing processing functions or by breaking the smelter itself.
 
 ### Flux Metal
 The Terumetal Alloy Smelter is a specialized smelter only for making alloys from combining Terumetal and other materials, therefore it has an internal tank especially for molten Terumetal. This tank is the meter in the center of the screen to the left. It can be filled by inserting raw lumps of Terumetal into the input slot (*not* ingots) then waiting a few seconds for each lump to melt. Naturally, this process requires heat and some will be spent by how much flux is melted.
 
-![Alloy Smelter Melting Flux](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_melting_flux.png)
+![Alloy Smelter Melting Flux](tutorial/smelter_melting_flux.png)
 
 (some time later...)
 
-![Alloy Smelter Melted Flux](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_melting_flux_2.png)
+![Alloy Smelter Melted Flux](tutorial/smelter_melting_flux_2.png)
 
 When processing materials for alloying a specific amount of molten flux will need to be in the tank to create the alloy. If not enough is present, it will indicate so and how much more is required until alloying can begin.
 
 ## Alloys
 In total there are four alloys the smelter can create all based on Terumetal and other materials available in the default Minetest game world. Each of them can be used to create hardened metal blocks and tools of considerable speed and durability. Each alloy has much greater tool performance than any of their constituent materials.
 
+(new in v1.3) If you have the mod unified_inventory installed, you can look up the names of these alloys and view the recipes in-game.
+
 | Material | Flux/Ingot* | Time* | Alloy |  |
 |----------------------------|-------------|---------|------------|----------------------|
-| Copper Lump | 1 | 3 sec. | Terucopper | ![Terucopper Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tcop.png) |
-| Iron Lump | 2 | 4 sec. | Terusteel | ![Terusteel Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tste.png) |
-| Gold Lump | 3 | 5 sec. | Terugold | ![Terugold Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_tgol.png) |
-| Diamond and Obsidian Shard | 5 | 10 sec. | Coreglass | ![Coreglass Ingot](https://github.com/Terumoc/terumet/blob/master/terumet/textures/terumet_ingot_alloy_cgls.png) |
+| Copper Lump | 1 | 3 sec. | Terucopper | ![Terucopper Ingot](terumet/textures/terumet_ingot_tcop.png) |
+| Iron Lump | 2 | 4 sec. | Terusteel | ![Terusteel Ingot](terumet/textures/terumet_ingot_tste.png) |
+| Gold Lump | 3 | 5 sec. | Terugold | ![Terugold Ingot](terumet/textures/terumet_ingot_tgol.png) |
+| Diamond and Obsidian Shard | 5 | 10 sec. | Coreglass | ![Coreglass Ingot](terumet/textures/terumet_ingot_cgls.png) |
 
 *note: Flux required and time shown are default.
 
@@ -109,7 +112,7 @@ Each of the four alloys can also be created in **block form** by inserting a blo
 
 To create an alloy simply place the source materials into the input, and if there's enough molten flux all that's left is to wait. If an insufficient amount of flux is in the internal tank the smelter will indicate how much additional flux is required.
 
-![Alloying Copper to Terucopper](https://github.com/Terumoc/terumet/blob/master/tutorial/smelter_alloying.png)
+![Alloying Copper to Terucopper](tutorial/smelter_alloying.png)
 
 ## Options
 See options.lua for some ways to modify how the alloying process works.
