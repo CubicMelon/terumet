@@ -4,7 +4,7 @@ Newer versions listed first
 ### Version 1.3
 * Reorganized file structure (minimal gameplay effects)
 * Added textures for future items
-* Implemeted support for mod unified_inventory - now alloy smelter recipes are listed along with the required flux and time it takes. This was much easier than I thought it would be!
+* Implemented support for mod unified_inventory - now alloy smelter recipes are listed along with the required flux and time it takes. This was much easier than I thought it would be!
 
 ### Version 1.2
 * Made particle effects functional - smelter smokes when working. Uses a texture from default mod presently but this should be changed...eventually
