@@ -7,7 +7,7 @@ Creates a new ore in the world which can be used to make useful alloys from many
 ![Screenshot](https://github.com/Terumoc/terumet/blob/master/terumet/screenshot.png)
 
 ### Changelog
-See the changelog [Here](terumet/changelog.md)
+See the changelog [Here](changelog.md)
 
 ## Installing
 Download the guaranteed-working v1.1 release from [Here](https://github.com/Terumoc/terumet/archive/v1.1.zip)
