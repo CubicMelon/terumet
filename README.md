@@ -10,7 +10,7 @@ Creates a new ore in the world which can be used to make useful alloys from many
 See the changelog [Here](changelog.md)
 
 ## Installing
-Download the guaranteed-working v1.1 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v1.3)
+Download the guaranteed-working v1.3 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v1.3)
 or the current repo version [Here](https://github.com/Terumoc/terumet/archive/master.zip) (may NOT be functional).
 
 Unzip the folder into a temporary space then move/copy the subfolder **terumet** into your minetest **mods** folder.
