@@ -199,7 +199,7 @@ minetest.register_node(base_htf.unlit_id, base_htf.unlit_nodedef)
 minetest.register_node(base_htf.lit_id, base_htf.lit_nodedef)
 
 minetest.register_craft{ output = base_htf.unlit_id, recipe = {
-    {terumet.id('item_coil'), 'default:furnace', terumet.id('item_coil')},
+    {terumet.id('item_coil_tcop'), terumet.id('item_coil_tcop'), terumet.id('item_coil_tcop')},
     {terumet.id('item_ceramic'), terumet.id('frame_tste'), terumet.id('item_ceramic')},
     {terumet.id('item_ceramic'), terumet.id('item_ceramic'), terumet.id('item_ceramic')}
 }}

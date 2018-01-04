@@ -91,17 +91,10 @@ terumet.reg_alloy('Coreglass', 'cgls', 4, opts.COREGLASS, opts.COREGLASS_BLOCK)
 
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
+terumet.do_lua_file('material/coil')
 
 local id = terumet.id
 local tex = terumet.tex
-
-minetest.register_craftitem( id('item_coil'), {
-    description = 'Terumetal Coil',
-    inventory_image = tex('item_coil')
-})
-minetest.register_craft{ output=id('item_coil',8),
-    recipe = terumet.recipe_box(id('ingot_raw'), 'default:stick')
-}
 
 terumet.do_lua_file('tool/reg_tools')
 
@@ -128,5 +121,6 @@ terumet.reg_tools('Coreglass', 'cgls',
 
 terumet.do_lua_file('machine/asmelt')
 terumet.do_lua_file('machine/htfurnace')
+terumet.do_lua_file('machine/thermobox')
 
 if unified_inventory then terumet.do_lua_file('interop/unified_inventory') end

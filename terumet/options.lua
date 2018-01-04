@@ -12,7 +12,7 @@ alloys.COPPER_ALLOY = {flux=1, time=3.0, 'default:copper_lump'}
 alloys.COPPER_ALLOY_BLOCK = {flux=7, time=35.0, 'default:copperblock'}
 
 alloys.IRON_ALLOY = {flux=2, time=4.0, 'default:iron_lump'}
-alloys.IRON_ALLOY_BLOCK = {flux=15, time=45.0, 'default:ironblock'}
+alloys.IRON_ALLOY_BLOCK = {flux=15, time=45.0, 'default:steelblock'}
 
 alloys.GOLD_ALLOY = {flux=3, time=5.0, 'default:gold_lump'}
 alloys.GOLD_ALLOY_BLOCK = {flux=24, time=60.0, 'default:goldblock'}
