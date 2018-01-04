@@ -1,4 +1,4 @@
--- Terumet v1.4
+-- Terumet v1.5
 
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
 -- Written for Minetest version 0.4.16
@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=1, minor=4, patch=0}
+terumet.version = {major=1, minor=5, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
@@ -123,7 +123,7 @@ function terumet.register_crystal(src_item, crys_id_suffix, crys_name, crys_colo
     local crys_id = id('item_cryst_' .. crys_id_suffix)
     minetest.register_craftitem( crys_id, {
         description = crys_name,
-        inventory_image = 'default_stone.png^('..terumet.tex('item_cryst')..'^[colorize:'..crys_color..':128)',
+        inventory_image = terumet.tex('item_cryst_bg')..'^('..terumet.tex('item_cryst')..'^[multiply:'..crys_color..')',
     })
 
     minetest.register_craft{ type = 'cooking', 
