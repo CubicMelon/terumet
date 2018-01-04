@@ -30,10 +30,8 @@ alloys.THERMESE_CRYSTAL = {flux=10, time=20.0, 'default:mese_crystal'}
 terumet.options.machine = {}
 local machine = terumet.options.machine
 -- Heat sources that can be used directly in any machine
--- NOTE: only unstackable items should be used!
 machine.basic_heat_sources = {
-    ['bucket:bucket_lava']={ hus=1000, return_item='bucket:bucket_empty' },
-    ['default:obsidian']={ hus=10, return_item='default:obsidian_shard' }
+    ['bucket:bucket_lava']={ hus=1000, return_item='bucket:bucket_empty' }
 }
 -- Whether machines emit particles or not while working
 machine.PARTICLES = true
