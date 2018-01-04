@@ -14,12 +14,9 @@ end
 -- general preamble setting background, colors
 base_mach.fs_start = 'background[0,0;8,9;terumet_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
 
--- fuel slot formspec (only if necessary)
+-- fuel slot formspec
 function base_mach.fs_fuel_slot(machine, fsx, fsy)
-    if machine.need_heat or (not machine.inv:is_empty('fuel')) or machine.heat_level == 0 then
-        return 'list[context;fuel;'..fsx..','..fsy..';1,1;]label['..fsx..','..fsy+1 ..';Fuel Slot]'
-    end
-    return ''
+    return 'list[context;fuel;'..fsx..','..fsy..';1,1;]label['..fsx..','..fsy+1 ..';Fuel Slot]'
 end
 
 -- heat display formspec
@@ -74,35 +71,32 @@ end
 --
 
 function base_mach.set_low_heat_msg(machine, process)
-    local fuel_item_desc = minetest.registered_items[opts.FUEL_ITEM].description
     if process then
-        machine.status_text = process .. ': Insufficient heat - fuel with ' .. fuel_item_desc
+        machine.status_text = process .. ': Insufficient heat'
     else
-        machine.status_text = 'Insufficient heat - fuel with ' .. fuel_item_desc
+        machine.status_text = 'Insufficient heat'
     end
 end
 
--- handle reheating input
+-- handle basic fuel heating
 function base_mach.process_fuel(machine)
-    if machine.need_heat then
-        fuel_item = inv:get_stack('fuel',1)
-        local heat_source = machine.basic_heat_sources[fuel_item:get_name()]
-        if heat_source then
-            return_item = heat_source.return_item
-            if fuel_item:get_max_stack() > 1 then
-                if (not return_item) or machine.inv:room_for_item('out', return_item) then
-                    machine:inv:add_item('out', return_item)
-                else
-                    machine.status_text = 'Fuel: no space for ' .. minetest.registered_items[return_item].description
-                    return
-                end
-                machine:inv:take_item(1)
+    local fuel_item = machine.inv:get_stack('fuel',1)
+    local heat_source = opts.basic_heat_sources[fuel_item:get_name()]
+    if heat_source and (machine.max_heat - machine.heat_level) >= heat_source.hus then
+        local return_item = heat_source.return_item
+        if fuel_item:get_stack_max() > 1 then
+            if (not return_item) or machine.inv:room_for_item('out', return_item) then
+                machine.inv:add_item('out', return_item)
             else
-                machine:inv:set_stack('fuel', 1, return_item)
+                machine.status_text = 'Fuel: no space for ' .. minetest.registered_items[return_item].description
+                return
             end
-            machine.heat_level = math.min(machine.max_heat, machine.heat_level + heat_source.hus)
-            machine.need_heat = false
+            machine.inv:remove_item('fuel', fuel_item:get_name())
+        else
+            machine.inv:set_stack('fuel', 1, return_item)
         end
+        machine.heat_level = math.min(machine.max_heat, machine.heat_level + heat_source.hus)
+        machine.need_heat = false
     end
 end
 
@@ -128,7 +122,7 @@ function base_mach.allow_put(pos, listname, index, stack, player)
         return 0 -- number of items allowed to move
     end
     if listname == "fuel" then
-        if stack:get_name() == opts.FUEL_ITEM then
+        if opts.basic_heat_sources[stack:get_name()] then
             return stack:get_count()
         else
             return 0
