@@ -41,17 +41,17 @@ terumet.options.machine = machine -- do not remove
 --
 local smelter = {} -- do not remove
 -- Maximum HUs smelter can contain
-smelter.MAX_HEAT = 2000
--- Item used as flux
-smelter.FLUX_ITEM = terumet.id('lump_raw')
--- Time (in seconds) one piece of flux is melted
--- Heat cost will be equal to this time
-smelter.FLUX_MELTING_TIME = 3.0
+smelter.MAX_HEAT = 1500
+-- Items usable as flux
+smelter.flux_providing_items = { 
+    [terumet.id('lump_raw')]={time=3.0},
+    [terumet.id('item_pure_raw')]={time=1.0}
+}
 -- Maximum size (in item count) of an alloy smelter's flux tank
 -- (note if greater than 99, some flux could be lost when breaking a smelter -- only up to 99 flux will be dropped)
 smelter.FLUX_MAXIMUM = 50
 -- Heat expended per tick melting flux
-smelter.COST_FLUX_MELT_HU = 2
+smelter.COST_FLUX_MELTING_HU = 1
 -- Heat expended per tick alloying
 smelter.COST_FLUX_ALLOYING_HU = 1
 terumet.options.smelter = smelter -- do not remove
@@ -63,7 +63,7 @@ local furnace = {} -- do not remove
 -- Maximum HUs ht-furnace can contain
 furnace.MAX_HEAT = 3000
 -- Heat cost per tick of cooking
-furnace.COST_COOKING = 3
+furnace.COST_COOKING_HU = 3
 -- Multiplier applied to normal cooking time
 furnace.TIME_MULT = 0.5
 terumet.options.furnace = furnace -- do not remove

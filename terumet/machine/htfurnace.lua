@@ -81,7 +81,7 @@ function base_htf.get_drops(pos, include_self)
 end
 
 function base_htf.do_processing(furnace, dt)
-    if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, opts.COST_COOKING, 'Cooking') then
+    if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, opts.COST_COOKING_HU, 'Cooking') then
         local result_stack = furnace.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         furnace.state_time = furnace.state_time - dt

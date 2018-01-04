@@ -91,7 +91,7 @@ function base_asm.get_drops(pos, include_self)
 end
 
 function base_asm.do_processing(smelter, dt)
-    if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELT_HU, 'Melting flux') then
+    if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELTING_HU, 'Melting flux') then
         smelter.state_time = smelter.state_time - dt
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
@@ -120,8 +120,7 @@ end
 
 function base_asm.check_new_processing(smelter)
     if smelter.state ~= base_asm.STATE.IDLE then return end
-
-    local error_msg = nil
+    local error_msg
     -- first, check for elements of an alloying recipe in input
     local matched_result = nil
     for result, recipe in pairs(terumet.alloy_recipes) do
@@ -150,26 +149,25 @@ function base_asm.check_new_processing(smelter)
             smelter.inv:set_stack('result', 1, ItemStack(matched_result, recipe.result_count))
             smelter.flux_tank = smelter.flux_tank - recipe.flux
             smelter.status_text = 'Accepting materials to alloy ' .. result_name .. '...'
-
+            return
         end
     end
     -- if could not begin alloying anything, check for flux to melt
-    if smelter.state == base_asm.STATE.IDLE then
-        if smelter.inv:contains_item('inp', opts.FLUX_ITEM) then
+    for flux_item, flux_params in pairs(opts.flux_providing_items) do
+        if smelter.inv:contains_item('inp', flux_item) then
             if smelter.flux_tank >= opts.FLUX_MAXIMUM then
-                smelter.status_text = 'Flux tank full!'
+                error_msg = 'Flux tank full!'
             else
                 smelter.state = base_asm.STATE.FLUX_MELT
-                smelter.state_time = opts.FLUX_MELTING_TIME
-                smelter.inv:remove_item('inp', opts.FLUX_ITEM)
-                smelter.status_text = 'Accepting flux...'
+                smelter.state_time = flux_params.time
+                smelter.inv:remove_item('inp', flux_item)
+                smelter.status_text = 'Accepting flux from '.. minetest.registered_items[flux_item].description ..'...'
+                return
             end
-        else
-            -- nothing to do at this point - if no error from before then display idle
-            smelter.status_text = error_msg or 'Idle'
         end
     end
-
+    -- at this point nothing we can do
+    smelter.status_text = error_msg or 'Idle'
 end
 
 function base_asm.tick(pos, dt)

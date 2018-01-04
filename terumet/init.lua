@@ -119,6 +119,23 @@ terumet.reg_tools('Coreglass', 'cgls',
     {2.5, 1.2, 0.7}, 75, 4
 )
 
+function terumet.register_crystal(src_item, crys_id_suffix, crys_name, crys_color, cook_result)
+    local crys_id = id('item_cryst_' .. crys_id_suffix)
+    minetest.register_craftitem( crys_id, {
+        description = crys_name,
+        inventory_image = 'default_stone.png^('..terumet.tex('item_cryst')..'^[colorize:'..crys_color..':128)',
+    })
+
+    minetest.register_craft{ type = 'cooking', 
+        output = cook_result,
+        recipe = crys_id,
+        cooktime = 5
+    }
+end
+
+terumet.register_crystal(id('lump_raw'), 'raw', 'Crystallized Terumetal', '#dd859c', id('ingot_raw'))
+terumet.register_crystal('default:copper_lump', 'copper', 'Crystallized Copper', '#ebba5d', 'default:copper_ingot')
+
 terumet.do_lua_file('machine/asmelt')
 terumet.do_lua_file('machine/htfurnace')
 terumet.do_lua_file('machine/thermobox')
