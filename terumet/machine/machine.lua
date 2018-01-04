@@ -7,6 +7,41 @@ function base_mach.heat_pct(machine)
     return 100.0 * machine.heat_level / machine.max_heat
 end
 
+-- added and modified from https://github.com/Terumoc/terumet/pull/1 by RSL-Redstonier - thanks!
+minetest.register_node(terumet.id("frame_tste"), {
+    description = "Terusteel Frame",
+    tiles = {terumet.tex('frame_tste')},
+    drawtype = "nodebox",
+    node_box = {
+        type = "fixed",
+        fixed = {
+            {0.375, 0.375, -0.5, 0.5, 0.5, 0.5}, -- NodeBox1
+            {-0.5, 0.375, -0.5, -0.375, 0.5, 0.5}, -- NodeBox2
+            {-0.5, -0.5, -0.5, -0.375, -0.375, 0.5}, -- NodeBox3
+            {0.375, -0.5, -0.5, 0.5, -0.375, 0.5}, -- NodeBox4
+            {-0.5, -0.5, -0.5, -0.375, 0.4375, -0.375}, -- NodeBox5
+            {-0.5, -0.5, 0.375, -0.375, 0.5, 0.5}, -- NodeBox6
+            {0.375, -0.5, 0.375, 0.5, 0.5, 0.5}, -- NodeBox7
+            {0.375, -0.5, -0.5, 0.5, 0.5, -0.375}, -- NodeBox8
+            {-0.5, 0.375, 0.375, 0.5, 0.5, 0.5}, -- NodeBox9
+            {-0.5, -0.5, 0.375, 0.5, -0.375, 0.5}, -- NodeBox10
+            {-0.5, -0.5, -0.5, 0.5, -0.375, -0.375}, -- NodeBox11
+            {-0.5, 0.375, -0.5, 0.5, 0.5, -0.375}, -- NodeBox12
+        }
+    },
+    is_ground_content = false,
+    groups = {cracky = 2}
+})
+
+minetest.register_craft({
+        output = "skytest:machine_frame",
+        recipe = {
+            {"terumet:ingot_alloy_tste","default:obsidian_glass","terumet:ingot_alloy_tste"},
+            {"terumet:ingot_raw","","terumet:ingot_raw"},
+            {"terumet:ingot_alloy_tste","default:obsidian_glass","terumet:ingot_alloy_tste"},
+        }
+    })
+
 --
 -- GENERIC FORMSPECS
 --

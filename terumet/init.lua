@@ -5,6 +5,10 @@
 -- Creates a new ore in the world which can be used to make useful alloys
 -- from many already available materials.
 
+-- By Terumoc [https://github.com/Terumoc]
+-- and with contribution from:
+--  > RSL-Redstonier [https://github.com/RSL-Redstonier]
+
 --[[ Copyright (C) 2017-2018 Terumoc (Scott Horvath)
 
 This program is free software: you can redistribute it and/or modify
