@@ -9,7 +9,7 @@ local reg_coil = function(name, mat)
     }
 end
 
-reg_coil('Raw Terumetal Coil', 'raw')
+reg_coil('Pure Terumetal Coil', 'raw')
 reg_coil('Terucopper Coil', 'tcop')
 reg_coil('Terugold Coil', 'tgol')
 
