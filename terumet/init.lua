@@ -127,5 +127,6 @@ terumet.reg_tools('Coreglass', 'cgls',
 )
 
 terumet.do_lua_file('machine/asmelt')
+terumet.do_lua_file('machine/htfurnace')
 
 if unified_inventory then terumet.do_lua_file('interop/unified_inventory') end

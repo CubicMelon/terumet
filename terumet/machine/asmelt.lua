@@ -3,42 +3,24 @@ local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
-local asmelt = {}
-asmelt.unlit_id = terumet.id('mach_asmelt')
-asmelt.lit_id = terumet.id('mach_asmelt_lit')
+local base_asm = {}
+base_asm.unlit_id = terumet.id('mach_asmelt')
+base_asm.lit_id = terumet.id('mach_asmelt_lit')
 
 -- time between smelter ticks
-asmelt.timer = 0.5
+base_asm.timer = 0.5
 
 -- state identifier consts
-asmelt.STATE = {}
-asmelt.STATE.IDLE = 0
-asmelt.STATE.FLUX_MELT = 1
-asmelt.STATE.ALLOYING = 2
+base_asm.STATE = {}
+base_asm.STATE.IDLE = 0
+base_asm.STATE.FLUX_MELT = 1
+base_asm.STATE.ALLOYING = 2
 
-asmelt.RAND = PcgRandom(os.time())
-
-function asmelt.new_particle(pos)
-    local xoff = asmelt.RAND:next(-5,5) / 10
-    local zoff = asmelt.RAND:next(-5,5) / 10
-    local sz = asmelt.RAND:next(50,400) / 100
-    local vel = asmelt.RAND:next(2,5) / 10
-    return {
-        pos={x=pos.x+xoff, y=pos.y+0.5, z=pos.z+zoff},
-        velocity={x=0, y=vel, z=0},
-        acceleration={x=0, y=0.6, z=0},
-        expirationtime=1.5,
-        size=sz,
-        collisiondetection=false,
-        texture='default_item_smoke.png'
-    }
+function base_asm.start_timer(pos)
+    minetest.get_node_timer(pos):start(base_asm.timer)
 end
 
-function asmelt.start_timer(pos)
-    minetest.get_node_timer(pos):start(asmelt.timer)
-end
-
-function asmelt.generate_formspec(smelter)
+function base_asm.generate_formspec(smelter)
     local heat_pct = 100.0 * smelter.heat_level / smelter.max_heat
     local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
@@ -56,9 +38,9 @@ function asmelt.generate_formspec(smelter)
     'label[0,0.5;' .. smelter.status_text .. ']'..
     base_mach.fs_flux_info(smelter,2,1.5,100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM)..
     base_mach.fs_heat_info(smelter,4.25,1.5)
-    if smelter.state == asmelt.STATE.FLUX_MELT then
+    if smelter.state == base_asm.STATE.FLUX_MELT then
         fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('lump_raw')..']'
-    elseif smelter.state == asmelt.STATE.ALLOYING then
+    elseif smelter.state == base_asm.STATE.ALLOYING then
         fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
     end
     --list rings
@@ -69,18 +51,11 @@ function asmelt.generate_formspec(smelter)
     return fs
 end
 
-function asmelt.generate_infotext(smelter)
+function base_asm.generate_infotext(smelter)
     return string.format('Alloy Smelter (%.0f%% heat): %s', base_mach.heat_pct(smelter), smelter.status_text)
 end
 
-function asmelt.set_node(pos, target_node)
-    local node = minetest.get_node(pos)
-    if node.name == target_node then return end
-    node.name = target_node
-    minetest.swap_node(pos, node)
-end
-
-function asmelt.init(pos)
+function base_asm.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('fuel', 1)
@@ -90,7 +65,7 @@ function asmelt.init(pos)
 
     local init_smelter = {
         flux_tank = 0,
-        state = asmelt.STATE.IDLE,
+        state = base_asm.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
@@ -98,11 +73,11 @@ function asmelt.init(pos)
         inv = inv,
         meta = meta
     }
-    base_mach.write_state(pos, init_smelter, asmelt.generate_formspec(init_smelter), asmelt.generate_infotext(init_smelter))
+    base_mach.write_state(pos, init_smelter, base_asm.generate_formspec(init_smelter), base_asm.generate_infotext(init_smelter))
     meta:set_int('flux_tank', init_smelter.flux_tank)
 end
 
-function asmelt.get_drops(pos, include_self)
+function base_asm.get_drops(pos, include_self)
     local drops = {}
     default.get_inventory_drops(pos, "fuel", drops)
     default.get_inventory_drops(pos, "inp", drops)
@@ -111,20 +86,20 @@ function asmelt.get_drops(pos, include_self)
     if flux_tank > 0 then
         drops[#drops+1] = terumet.id('lump_raw', math.min(99, flux_tank))
     end
-    if include_self then drops[#drops+1] = asmelt.unlit_id end
+    if include_self then drops[#drops+1] = base_asm.unlit_id end
     return drops
 end
 
-function asmelt.do_processing(smelter, dt)
-    if smelter.state == asmelt.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELT_HU, 'Melting flux') then
+function base_asm.do_processing(smelter, dt)
+    if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELT_HU, 'Melting flux') then
         smelter.state_time = smelter.state_time - dt
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
-            smelter.state = asmelt.STATE.IDLE
+            smelter.state = base_asm.STATE.IDLE
         else
             smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
         end
-    elseif smelter.state == asmelt.STATE.ALLOYING and base_mach.expend_heat(smelter, opts.COST_FLUX_ALLOYING_HU, 'Alloying') then
+    elseif smelter.state == base_asm.STATE.ALLOYING and base_mach.expend_heat(smelter, opts.COST_FLUX_ALLOYING_HU, 'Alloying') then
         local result_stack = smelter.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         smelter.state_time = smelter.state_time - dt
@@ -132,7 +107,7 @@ function asmelt.do_processing(smelter, dt)
             if smelter.inv:room_for_item('out', result_stack) then
                 smelter.inv:set_stack('result', 1, nil)
                 smelter.inv:add_item('out', result_stack)
-                smelter.state = asmelt.STATE.IDLE
+                smelter.state = base_asm.STATE.IDLE
             else
                 smelter.status_text = result_name .. ' ready - no space!'
                 smelter.state_time = -0.1
@@ -143,7 +118,9 @@ function asmelt.do_processing(smelter, dt)
     end
 end
 
-function asmelt.check_new_processing(smelter)
+function base_asm.check_new_processing(smelter)
+    if smelter.state ~= base_asm.STATE.IDLE then return end
+
     local error_msg = nil
     -- first, check for elements of an alloying recipe in input
     local matched_result = nil
@@ -165,7 +142,7 @@ function asmelt.check_new_processing(smelter)
         if smelter.flux_tank < recipe.flux then
             error_msg = 'Alloying ' .. result_name .. ': ' .. recipe.flux - smelter.flux_tank .. ' more flux needed'
         else
-            smelter.state = asmelt.STATE.ALLOYING
+            smelter.state = base_asm.STATE.ALLOYING
             for _, consumed_source in ipairs(recipe) do
                 smelter.inv:remove_item('inp', consumed_source)
             end
@@ -177,12 +154,12 @@ function asmelt.check_new_processing(smelter)
         end
     end
     -- if could not begin alloying anything, check for flux to melt
-    if smelter.state == asmelt.STATE.IDLE then
+    if smelter.state == base_asm.STATE.IDLE then
         if smelter.inv:contains_item('inp', opts.FLUX_ITEM) then
             if smelter.flux_tank >= opts.FLUX_MAXIMUM then
                 smelter.status_text = 'Flux tank full!'
             else
-                smelter.state = asmelt.STATE.FLUX_MELT
+                smelter.state = base_asm.STATE.FLUX_MELT
                 smelter.state_time = opts.FLUX_MELTING_TIME
                 smelter.inv:remove_item('inp', opts.FLUX_ITEM)
                 smelter.status_text = 'Accepting flux...'
@@ -195,48 +172,43 @@ function asmelt.check_new_processing(smelter)
 
 end
 
-function asmelt.tick(pos, dt)
+function base_asm.tick(pos, dt)
     -- read state from meta
     local smelter = base_mach.read_state(pos)
     smelter.flux_tank = smelter.meta:get_int('flux_tank')
     
-    asmelt.do_processing(smelter, dt)
+    base_asm.do_processing(smelter, dt)
 
-    if smelter.state == asmelt.STATE.IDLE then
-        asmelt.check_new_processing(smelter)
-    end
+    base_asm.check_new_processing(smelter)
 
     base_mach.process_fuel(smelter)
 
-    if smelter.state ~= asmelt.STATE.IDLE and (not smelter.need_heat) then
+    if smelter.state ~= base_asm.STATE.IDLE and (not smelter.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
-        asmelt.start_timer(pos)
+        base_asm.start_timer(pos)
+        base_mach.set_node(pos, base_asm.lit_id)
+        base_mach.generate_particle(pos)
+    else
+        base_mach.set_node(pos, base_asm.unlit_id)
     end
     -- write status back to meta
-    base_mach.write_state(pos, smelter, asmelt.generate_formspec(smelter), asmelt.generate_infotext(smelter))
+    base_mach.write_state(pos, smelter, base_asm.generate_formspec(smelter), base_asm.generate_infotext(smelter))
     smelter.meta:set_int('flux_tank', smelter.flux_tank)
-    
-    if smelter.heat_level > 0 then
-        asmelt.set_node(pos, asmelt.lit_id)
-        if base_opts.PARTICLES then minetest.add_particle(asmelt.new_particle(pos)) end
-    else
-        asmelt.set_node(pos, asmelt.unlit_id)
-    end
 end
 
-function asmelt.on_destruct(pos)
-    for _,item in ipairs(asmelt.get_drops(pos, false)) do
+function base_asm.on_destruct(pos)
+    for _,item in ipairs(base_asm.get_drops(pos, false)) do
         minetest.add_item(pos, item)
     end
 end
 
-function asmelt.on_blast(pos)
-    drops = asmelt.get_drops(pos, true)
+function base_asm.on_blast(pos)
+    drops = base_asm.get_drops(pos, true)
     minetest.remove_node(pos)
     return drops
 end
 
-asmelt.unlit_nodedef = {
+base_asm.unlit_nodedef = {
     -- node properties
     description = "Terumetal Alloy Smelter",
     tiles = {
@@ -254,33 +226,33 @@ asmelt.unlit_nodedef = {
     allow_metadata_inventory_move = base_mach.allow_move,
     allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
-    on_construct = asmelt.init,
-    on_metadata_inventory_move = asmelt.start_timer,
-    on_metadata_inventory_put = asmelt.start_timer,
-    on_metadata_inventory_take = asmelt.start_timer,
-    on_timer = asmelt.tick,
-    on_destruct = asmelt.on_destruct,
-    on_blast = asmelt.on_blast,
+    on_construct = base_asm.init,
+    on_metadata_inventory_move = base_asm.start_timer,
+    on_metadata_inventory_put = base_asm.start_timer,
+    on_metadata_inventory_take = base_asm.start_timer,
+    on_timer = base_asm.tick,
+    on_destruct = base_asm.on_destruct,
+    on_blast = base_asm.on_blast,
 }
 
-asmelt.lit_nodedef = {}
-for k,v in pairs(asmelt.unlit_nodedef) do asmelt.lit_nodedef[k] = v end
-asmelt.lit_nodedef.on_construct = nil -- lit smeltery node shouldn't be constructed by player
-asmelt.lit_nodedef.tiles = {
+base_asm.lit_nodedef = {}
+for k,v in pairs(base_asm.unlit_nodedef) do base_asm.lit_nodedef[k] = v end
+base_asm.lit_nodedef.on_construct = nil -- lit smeltery node shouldn't be constructed by player
+base_asm.lit_nodedef.tiles = {
     terumet.tex('mach_top'), terumet.tex('mach_bot'),
     terumet.tex('asmelt_sides_lit'), terumet.tex('asmelt_sides_lit'),
     terumet.tex('asmelt_sides_lit'), terumet.tex('asmelt_front_lit')
 }
-asmelt.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
-asmelt.lit_nodedef.drop = asmelt.unlit_id
-asmelt.lit_nodedef.light_source = 10
+base_asm.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
+base_asm.lit_nodedef.drop = base_asm.unlit_id
+base_asm.lit_nodedef.light_source = 10
 
 
-minetest.register_node(asmelt.unlit_id, asmelt.unlit_nodedef)
-minetest.register_node(asmelt.lit_id, asmelt.lit_nodedef)
+minetest.register_node(base_asm.unlit_id, base_asm.unlit_nodedef)
+minetest.register_node(base_asm.lit_id, base_asm.lit_nodedef)
 
-minetest.register_craft{ output = asmelt.unlit_id, recipe = {
-    {terumet.id('ingot_raw'), 'default:furnace', terumet.id('ingot_raw')},
-    {'bucket:bucket_empty', 'default:copperblock', 'bucket:bucket_empty'},
-    {terumet.id('ingot_raw'), 'default:furnace', terumet.id('ingot_raw')}
+minetest.register_craft{ output = base_asm.unlit_id, recipe = {
+    {terumet.id('item_coil'), terumet.id('item_coil'), terumet.id('item_coil')},
+    {'bucket:bucket_empty', terumet.id('frame_raw'), 'bucket:bucket_empty'},
+    {'default:furnace', 'default:furnace', 'default:furnace'}
 }}

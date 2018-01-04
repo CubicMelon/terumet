@@ -14,7 +14,8 @@ TEXTURE_FILES = [
     [MT('item_ceramic'), MT('ingot_tste'), MT('block_tste'), MT('tool_pick_tste'), MT('tool_shovel_tste'), MT('tool_axe_tste'), MT('tool_sword_tste')],
     [MT('block_ceramic'), MT('ingot_tgol'), MT('block_tgol'), MT('tool_pick_tgol'), MT('tool_shovel_tgol'), MT('tool_axe_tgol'), MT('tool_sword_tgol')],
     [None, MT('ingot_cgls'), MT('block_cgls'), MT('tool_pick_cgls'), MT('tool_shovel_cgls'), MT('tool_axe_cgls'), MT('tool_sword_cgls')],
-    [MT('block_thermbox'), MT('item_thermese'), MT('block_thermese'), MT('frame_tste'), MT('frame_cgls')]
+    [MT('block_thermbox'), MT('item_thermese'), MT('block_thermese'), MT('frame_tste'), MT('frame_cgls'), MT('frame_raw')],
+    [MT('htfurn_front'), MT('htfurn_top_unlit'), MT('htfurn_sides'), MT('htfurn_top_lit')]
 ]
 
 with Image(filename=SOURCE_FILE) as source:

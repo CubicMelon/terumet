@@ -7,7 +7,11 @@ function base_mach.heat_pct(machine)
     return 100.0 * machine.heat_level / machine.max_heat
 end
 
-function base_mach.register_frame(id, name, craft_item)
+-- 
+-- CRAFTING MATERIALS
+--
+
+function base_mach.register_frame(id, name, craft_item, center_item)
     -- added and modified from https://github.com/Terumoc/terumet/pull/1 by RSL-Redstonier - thanks!
     minetest.register_node(terumet.id(id), {
         description = name,
@@ -37,12 +41,13 @@ function base_mach.register_frame(id, name, craft_item)
 
     minetest.register_craft({
         output = terumet.id(id),
-        recipe = terumet.recipe_box(terumet.id(craft_item), '')
+        recipe = terumet.recipe_box(terumet.id(craft_item), center_item or '')
     })
 end
 
-base_mach.register_frame('frame_tste', 'Terusteel Frame', 'ingot_tste')
-base_mach.register_frame('frame_cgls', 'Coreglass Frame', 'ingot_cgls')
+base_mach.register_frame('frame_raw', 'Terumetal Machine Frame\nFoundation of simple Terumetal machinery', 'ingot_raw', 'bucket:bucket_empty')
+base_mach.register_frame('frame_tste', 'Terusteel Machine Frame\nFoundation of advanced Terumetal machinery', 'ingot_tste', terumet.id('item_thermese'))
+base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame\nFoundation of highly advanced Terumetal machinery', 'ingot_cgls', terumet.id('block_thermese'))
 
 --
 -- GENERIC FORMSPECS
@@ -103,6 +108,12 @@ function base_mach.write_state(pos, machine, formspec, infotext)
     meta:set_float('state_time', machine.state_time)
 end
 
+function base_mach.set_node(pos, target_node)
+    local node = minetest.get_node(pos)
+    if node.name == target_node then return end
+    node.name = target_node
+    minetest.swap_node(pos, node)
+end
 --
 -- GENERIC MACHINE PROCESSES
 --
@@ -148,6 +159,25 @@ function base_mach.expend_heat(machine, value, process)
     end
     machine.heat_level = machine.heat_level - value
     return true
+end
+
+base_mach.RAND = PcgRandom(os.time())
+
+function base_mach.generate_particle(pos, particle_tex)
+    if not opts.PARTICLES then return end
+    local xoff = base_mach.RAND:next(-5,5) / 10
+    local zoff = base_mach.RAND:next(-5,5) / 10
+    local sz = base_mach.RAND:next(50,400) / 100
+    local vel = base_mach.RAND:next(2,5) / 10
+    minetest.add_particle{
+        pos={x=pos.x+xoff, y=pos.y+0.5, z=pos.z+zoff},
+        velocity={x=0, y=vel, z=0},
+        acceleration={x=0, y=0.6, z=0},
+        expirationtime=1.5,
+        size=sz,
+        collisiondetection=false,
+        texture=(particle_tex or 'default_item_smoke.png')
+    }
 end
 
 --

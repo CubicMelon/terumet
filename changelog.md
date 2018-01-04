@@ -1,6 +1,13 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+### Version 1.4
+* Alloy items ID change (sorry if anything breaks!)
+* Addition of machine frames, node design contributed by RSL-Redstonier
+* Alloy smelter has new recipe based on new machine frames
+* Addition of high-temperature furnace! (still using smeltery gui mostly though)
+* Change to lightning effects for machinery, now lights when in use rather than when heated
+
 ### Version 1.3
 * Reorganized file structure (minimal gameplay effects)
 * Added textures for future items

@@ -27,20 +27,19 @@ alloys.THERMESE_CRYSTAL = {flux=10, time=20.0, 'default:mese_crystal'}
 --
 -- GENERAL MACHINE SETTINGS
 --
-terumet.options.machine = {}
-local machine = terumet.options.machine
+local machine = {} -- do not remove
 -- Heat sources that can be used directly in any machine
 machine.basic_heat_sources = {
     ['bucket:bucket_lava']={ hus=1000, return_item='bucket:bucket_empty' }
 }
 -- Whether machines emit particles or not while working
 machine.PARTICLES = true
+terumet.options.machine = machine -- do not remove
 
 --
 -- ALLOY SMELTER SETTINGS
 --
-terumet.options.smelter = {}
-local smelter = terumet.options.smelter
+local smelter = {} -- do not remove
 -- Maximum HUs smelter can contain
 smelter.MAX_HEAT = 2000
 -- Item used as flux
@@ -55,3 +54,16 @@ smelter.FLUX_MAXIMUM = 50
 smelter.COST_FLUX_MELT_HU = 2
 -- Heat expended per tick alloying
 smelter.COST_FLUX_ALLOYING_HU = 1
+terumet.options.smelter = smelter -- do not remove
+
+--
+-- HT FURNACE SETTINGS
+--
+local furnace = {} -- do not remove
+-- Maximum HUs ht-furnace can contain
+furnace.MAX_HEAT = 3000
+-- Heat cost per tick of cooking
+furnace.COST_COOKING = 3
+-- Multiplier applied to normal cooking time
+furnace.TIME_MULT = 0.5
+terumet.options.furnace = furnace -- do not remove
