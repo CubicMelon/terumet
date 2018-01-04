@@ -39,7 +39,7 @@ function asmelt.start_timer(pos)
 end
 
 function asmelt.generate_formspec(smelter)
-    local heat_pct = 100.0 * smelter.heat_level / base_opts.FULL_HEAT
+    local heat_pct = 100.0 * smelter.heat_level / smelter.max_heat
     local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
@@ -93,6 +93,7 @@ function asmelt.init(pos)
         state = asmelt.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
+        max_heat = opts.MAX_HEAT,
         status_text = 'New',
         inv = inv,
         meta = meta

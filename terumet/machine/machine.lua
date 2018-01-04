@@ -4,7 +4,7 @@ local base_mach = terumet.machine
 local opts = terumet.options.machine
 
 function base_mach.heat_pct(machine)
-    return 100.0 * machine.heat_level / opts.FULL_HEAT
+    return 100.0 * machine.heat_level / machine.max_heat
 end
 
 --
@@ -49,7 +49,7 @@ function base_mach.read_state(pos)
     machine.meta = meta
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
-    machine.hus_spent = meta:get_int('hus_spent') or 0
+    machine.max_heat = meta:get_int('max_heat') or 0
     machine.state = meta:get_int('state')
     machine.state_time = meta:get_float('state_time') or 0
     machine.status_text = meta:get_string('status_text') or 'No Status'
@@ -64,7 +64,7 @@ function base_mach.write_state(pos, machine, formspec, infotext)
     meta:set_string('infotext', infotext)
     meta:set_string('status_text', machine.status_text)
     meta:set_int('heat_level', machine.heat_level)
-    meta:set_int('hus_spent', machine.hus_spent)
+    meta:set_int('max_heat', machine.max_heat)
     meta:set_int('state', machine.state)
     meta:set_float('state_time', machine.state_time)
 end
@@ -84,14 +84,24 @@ end
 
 -- handle reheating input
 function base_mach.process_fuel(machine)
-    if machine.need_heat and machine.inv:contains_item('fuel', opts.FUEL_ITEM) then
-        if machine.inv:room_for_item('out', opts.FUEL_RETURN) then
-            machine.inv:remove_item('fuel', opts.FUEL_ITEM)
-            machine.inv:add_item('out', opts.FUEL_RETURN)
-            machine.heat_level = opts.FULL_HEAT
+    if machine.need_heat then
+        fuel_item = inv:get_stack('fuel',1)
+        local heat_source = machine.basic_heat_sources[fuel_item:get_name()]
+        if heat_source then
+            return_item = heat_source.return_item
+            if fuel_item:get_max_stack() > 1 then
+                if (not return_item) or machine.inv:room_for_item('out', return_item) then
+                    machine:inv:add_item('out', return_item)
+                else
+                    machine.status_text = 'Fuel: no space for ' .. minetest.registered_items[return_item].description
+                    return
+                end
+                machine:inv:take_item(1)
+            else
+                machine:inv:set_stack('fuel', 1, return_item)
+            end
+            machine.heat_level = math.min(machine.max_heat, machine.heat_level + heat_source.hus)
             machine.need_heat = false
-        else
-            machine.status_text = 'No space for '..minetest.registered_items[opts.FUEL_RETURN].description
         end
     end
 end
@@ -106,11 +116,6 @@ function base_mach.expend_heat(machine, value, process)
         return false 
     end
     machine.heat_level = machine.heat_level - value
-    machine.hus_spent = machine.hus_spent + value
-    while machine.hus_spent >= opts.FULL_HEAT do
-        machine.hus_spent = machine.hus_spent - opts.FULL_HEAT
-        machine.inv:add_item('fuel', opts.FUEL_CYCLE)
-    end
     return true
 end
 

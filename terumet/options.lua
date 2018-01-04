@@ -29,14 +29,11 @@ alloys.THERMESE_CRYSTAL = {flux=10, time=20.0, 'default:mese_crystal'}
 --
 terumet.options.machine = {}
 local machine = terumet.options.machine
--- Item used to heat a machine
-machine.FUEL_ITEM = 'bucket:bucket_lava'
--- Item returned after heating machine
-machine.FUEL_RETURN = 'bucket:bucket_empty'
--- Item provided in fuel slot after expending value of one entire fuel item
-machine.FUEL_CYCLE = 'default:stone'
--- Heat Units provided by one fuel item
-machine.FULL_HEAT = 1500
+-- Heat sources that can be used directly in any machine
+-- NOTE: only unstackable items should be used!
+machine.basic_heat_sources = {
+    ['bucket:bucket_lava']={ hus=1000, return_item='bucket:bucket_empty' }
+}
 -- Whether machines emit particles or not while working
 machine.PARTICLES = true
 
@@ -45,6 +42,8 @@ machine.PARTICLES = true
 --
 terumet.options.smelter = {}
 local smelter = terumet.options.smelter
+-- Maximum HUs smelter can contain
+smelter.MAX_HEAT = 2000
 -- Item used as flux
 smelter.FLUX_ITEM = terumet.id('lump_raw')
 -- Time (in seconds) one piece of flux is melted
