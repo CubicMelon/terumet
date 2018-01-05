@@ -47,13 +47,16 @@ Do not make too many ingots from this new ore though because it is much better u
 ## Alloy Smelter
 The real use of Terumetal Ingots is creating an Alloy Smelter. First you'll need some intermediate materials that use them:
 
-![Pure Terumetal Coil Recipe](tutorial/coil_recipe.png)
+![Pure Terumetal Coil Recipe](tutorial/coil_recipe.PNG)
+
 You'll need heating coils made from pure terumetal. Note that you'll get 8 from the recipe so you only need to do this once.
 
-![Terumetal Frame Recipe](tutorial/frame_recipe.png)
+![Terumetal Frame Recipe](tutorial/frame_recipe.PNG)
+
 Additionally, you'll need a basic Terumetal Machine Frame like above. The bucket of water might seem out of place, but in the final machine it acts as the 'battery' for the heat it uses to function. All Terumetal machinery runs on heat, so every machine frame has some sort of heat-storing element in the center.
 
 Once you have both of these materials, you're ready to make the Alloy Smelter itself:
+
 ![Alloy Smelter Recipe](tutorial/smelter_recipe.png)
 
 Place the smelter block down somewhere and you can then right-click it to access its interface like a standard furnace:
