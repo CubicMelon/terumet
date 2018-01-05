@@ -45,15 +45,19 @@ Like any other standard Minetest ore mining it provides you with one or more raw
 Do not make too many ingots from this new ore though because it is much better used as a flux for alloying than by itself; most tools made from raw Terumetal Ore will be very brittle and break quickly. In a pinch they *can* be useful since they are capable of digging very hard material quickly (and curiously, *ONLY* very hard material) but will only last a few blocks worth of digging.
 
 ## Alloy Smelter
-The real use of Terumetal Ingots is creating an Alloy Smelter:
+The real use of Terumetal Ingots is creating an Alloy Smelter. First you'll need some intermediate materials that use them:
+
+![Pure Terumetal Coil Recipe](tutorial/coil_recipe.PNG)
+
+You'll need heating coils made from pure terumetal. Note that you'll get 8 from the recipe so you only need to do this once.
+
+![Terumetal Frame Recipe](tutorial/frame_recipe.PNG)
+
+Additionally, you'll need a basic Terumetal Machine Frame like above. The bucket of water might seem out of place, but in the final machine it acts as the 'battery' for the heat it uses to function. All Terumetal machinery runs on heat, so every machine frame has some sort of heat-storing element in the center.
+
+Once you have both of these materials, you're ready to make the Alloy Smelter itself:
 
 ![Alloy Smelter Recipe](tutorial/smelter_recipe.png)
-
-| Recipe items |-|-|
-|-----------------|-----------|---------------|
-| Terumetal Ingot | Furnace | Terumetal Ingot |
-| Empty Bucket | Copper Block | Empty Bucket |
-| Terumetal Ingot | Furnace | Terumetal Ingot |
 
 Place the smelter block down somewhere and you can then right-click it to access its interface like a standard furnace:
 
