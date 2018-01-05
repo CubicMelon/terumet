@@ -21,7 +21,6 @@ function base_asm.start_timer(pos)
 end
 
 function base_asm.generate_formspec(smelter)
-    local heat_pct = 100.0 * smelter.heat_level / smelter.max_heat
     local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
@@ -122,38 +121,37 @@ function base_asm.check_new_processing(smelter)
     if smelter.state ~= base_asm.STATE.IDLE then return end
     local error_msg
     -- first, check for elements of an alloying recipe in input
-    local matched_result = nil
-    for result, recipe in pairs(terumet.alloy_recipes) do
+    local matched_recipe = nil
+    for _,recipe in ipairs(opts.recipes) do
         local sources_count = 0
-        for i = 1,#recipe do
-            if smelter.inv:contains_item('inp', recipe[i]) then
+        for i = 1,#recipe.input do
+            if smelter.inv:contains_item('inp', recipe.input[i]) then
                 sources_count = sources_count + 1
             end
         end
-        if sources_count == #recipe then
-            matched_result = result
+        if sources_count == #recipe.input then
+            matched_recipe = recipe
             break
         end
     end
-    if matched_result and minetest.registered_items[matched_result] then
-        local recipe = terumet.alloy_recipes[matched_result]
-        local result_name = minetest.registered_items[matched_result].description
-        if smelter.flux_tank < recipe.flux then
-            error_msg = 'Alloying ' .. result_name .. ': ' .. recipe.flux - smelter.flux_tank .. ' more flux needed'
+    if matched_recipe then
+        local result_name = minetest.registered_items[matched_recipe.result].description
+        if smelter.flux_tank < matched_recipe.flux then
+            error_msg = 'Alloying ' .. result_name .. ': ' .. matched_recipe.flux - smelter.flux_tank .. ' more flux needed'
         else
             smelter.state = base_asm.STATE.ALLOYING
-            for _, consumed_source in ipairs(recipe) do
+            for _, consumed_source in ipairs(matched_recipe.input) do
                 smelter.inv:remove_item('inp', consumed_source)
             end
-            smelter.state_time = recipe.time
-            smelter.inv:set_stack('result', 1, ItemStack(matched_result, recipe.result_count))
-            smelter.flux_tank = smelter.flux_tank - recipe.flux
+            smelter.state_time = matched_recipe.time
+            smelter.inv:set_stack('result', 1, matched_recipe.result)
+            smelter.flux_tank = smelter.flux_tank - matched_recipe.flux
             smelter.status_text = 'Accepting materials to alloy ' .. result_name .. '...'
             return
         end
     end
     -- if could not begin alloying anything, check for flux to melt
-    for flux_item, flux_params in pairs(opts.flux_providing_items) do
+    for flux_item, flux_params in pairs(opts.flux_items) do
         if smelter.inv:contains_item('inp', flux_item) then
             if smelter.flux_tank >= opts.FLUX_MAXIMUM then
                 error_msg = 'Flux tank full!'

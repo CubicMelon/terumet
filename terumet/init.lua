@@ -73,25 +73,22 @@ function terumet.tex_comp(base_tex, overlay_id)
     return base_tex .. '^' .. terumet.tex(overlay_id)
 end
 
-function terumet.reg_item(name, id)
+terumet.do_lua_file('interop/terumet_api')
 
-end
-
-terumet.alloy_recipes = {}
 terumet.do_lua_file('options')
 terumet.do_lua_file('machine/machine')
 terumet.do_lua_file('material/raw')
 terumet.do_lua_file('material/reg_alloy')
 
-local opts = terumet.options.alloys
-terumet.reg_alloy('Terucopper', 'tcop', 1, opts.COPPER_ALLOY, opts.COPPER_ALLOY_BLOCK)
-terumet.reg_alloy('Terusteel', 'tste', 2, opts.IRON_ALLOY, opts.IRON_ALLOY_BLOCK)
-terumet.reg_alloy('Terugold', 'tgol', 3, opts.GOLD_ALLOY, opts.GOLD_ALLOY_BLOCK)
-terumet.reg_alloy('Coreglass', 'cgls', 4, opts.COREGLASS, opts.COREGLASS_BLOCK)
+terumet.reg_alloy('Terucopper', 'tcop', 1)
+terumet.reg_alloy('Terusteel', 'tste', 2)
+terumet.reg_alloy('Terugold', 'tgol', 3)
+terumet.reg_alloy('Coreglass', 'cgls', 4)
 
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
 terumet.do_lua_file('material/coil')
+terumet.do_lua_file('material/crystallized')
 
 local id = terumet.id
 local tex = terumet.tex
@@ -118,26 +115,11 @@ terumet.reg_tools('Coreglass', 'cgls',
     id('ingot_cgls'),
     {2.5, 1.2, 0.7}, 75, 4
 )
-
-function terumet.register_crystal(src_item, crys_id_suffix, crys_name, crys_color, cook_result)
-    local crys_id = id('item_cryst_' .. crys_id_suffix)
-    minetest.register_craftitem( crys_id, {
-        description = crys_name,
-        inventory_image = terumet.tex('item_cryst_bg')..'^('..terumet.tex('item_cryst')..'^[multiply:'..crys_color..')',
-    })
-
-    minetest.register_craft{ type = 'cooking', 
-        output = cook_result,
-        recipe = crys_id,
-        cooktime = 5
-    }
-end
-
-terumet.register_crystal(id('lump_raw'), 'raw', 'Crystallized Terumetal', '#dd859c', id('ingot_raw'))
-terumet.register_crystal('default:copper_lump', 'copper', 'Crystallized Copper', '#ebba5d', 'default:copper_ingot')
+terumet.do_lua_file('tool/ore_saw')
 
 terumet.do_lua_file('machine/asmelt')
 terumet.do_lua_file('machine/htfurnace')
+terumet.do_lua_file('machine/vulcan')
 terumet.do_lua_file('machine/thermobox')
 
 if unified_inventory then terumet.do_lua_file('interop/unified_inventory') end

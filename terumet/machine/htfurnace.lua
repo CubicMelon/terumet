@@ -20,7 +20,6 @@ function base_htf.start_timer(pos)
 end
 
 function base_htf.generate_formspec(furnace)
-    local heat_pct = 100.0 * furnace.heat_level / furnace.max_heat
     local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
@@ -103,7 +102,7 @@ end
 function base_htf.check_new_processing(furnace)
     if furnace.state ~= base_htf.STATE.IDLE then return end
     local cook_result
-    local cook_return
+    local cook_after
     for slot = 1,4 do
         local input_stack = furnace.inv:get_stack('inp', slot)
         cook_result, cook_after = minetest.get_craft_result({method = 'cooking', width = 1, items = {input_stack}})

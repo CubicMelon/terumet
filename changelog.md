@@ -1,6 +1,13 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+### Version 1.5
+* Unified_inventory support expanded: Flux items for smelter and crystal vulcanizer recipes added
+* API for other mods to easily add new recipes to the alloy smelter and define new crystals for vulcanizer to create added under interop/terumet_api.lua
+* Crystallized forms of metals added. Similar to the classic concept of 'grinding' ore into dusts to multiply yield, a Crystal Vulcanizer machine now exists that takes ore lumps or other raw materials and purifies and crystallizes them through extreme temperature processing. Currently Vulcanizer provides 2 crystallized metals for 1 input, but this is planned to be based on machine setup in future.
+* Internal structure of alloy smelter recipes rewritten -- old system turned out to be flawed because multiple ways to create the same item were impossible. This has been fixed but I'm sorry if it broke anything RSL_Redstonier :(
+* A new heating method other than buckets of lava is now available: heated thermese blocks. Place a block of thermese adjacent to lava in the world and it will heat up enough to use as a small heat boost in a machine. Renewable because it doesn't consume the lava! (much more to come when it comes to providing heat to machines)
+
 ### Version 1.4
 * Alloy items ID change (sorry if anything breaks!)
 * Addition of machine frames, node design contributed by RSL-Redstonier

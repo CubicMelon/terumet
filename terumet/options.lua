@@ -1,36 +1,13 @@
 terumet.options = {}
 
 --
--- ALLOY RECIPES
---
-terumet.options.alloys = {}
-local alloys = terumet.options.alloys
--- flux = number of flux in tank required
--- time = in seconds (normal maximum granularity 0.5s = 1 tick)
-
-alloys.COPPER_ALLOY = {flux=1, time=3.0, 'default:copper_lump'}
-alloys.COPPER_ALLOY_BLOCK = {flux=7, time=35.0, 'default:copperblock'}
-
-alloys.IRON_ALLOY = {flux=2, time=4.0, 'default:iron_lump'}
-alloys.IRON_ALLOY_BLOCK = {flux=15, time=45.0, 'default:steelblock'}
-
-alloys.GOLD_ALLOY = {flux=3, time=5.0, 'default:gold_lump'}
-alloys.GOLD_ALLOY_BLOCK = {flux=24, time=60.0, 'default:goldblock'}
-
-alloys.COREGLASS = {flux=5, time=10.0, 'default:diamond', 'default:obsidian_shard'}
-alloys.COREGLASS_BLOCK = {flux=30, time=180.0, 'default:diamondblock', 'default:obsidian'}
-
-alloys.CERAMIC_PLATE = {flux=3, time=1.0, 'default:clay_lump'}
-
-alloys.THERMESE_CRYSTAL = {flux=10, time=20.0, 'default:mese_crystal'}
-
---
 -- GENERAL MACHINE SETTINGS
 --
 local machine = {} -- do not remove
 -- Heat sources that can be used directly in any machine
 machine.basic_heat_sources = {
-    ['bucket:bucket_lava']={ hus=1000, return_item='bucket:bucket_empty' }
+    ['bucket:bucket_lava']={ hus=2000, return_item='bucket:bucket_empty' },
+    ['terumet:block_thermese_hot']={ hus=400, return_item='terumet:block_thermese'}
 }
 -- Whether machines emit particles or not while working
 machine.PARTICLES = true
@@ -40,20 +17,46 @@ terumet.options.machine = machine -- do not remove
 -- ALLOY SMELTER SETTINGS
 --
 local smelter = {} -- do not remove
+
 -- Maximum HUs smelter can contain
-smelter.MAX_HEAT = 1500
--- Items usable as flux
-smelter.flux_providing_items = { 
-    [terumet.id('lump_raw')]={time=3.0},
-    [terumet.id('item_pure_raw')]={time=1.0}
-}
+smelter.MAX_HEAT = 2000
+
 -- Maximum size (in item count) of an alloy smelter's flux tank
 -- (note if greater than 99, some flux could be lost when breaking a smelter -- only up to 99 flux will be dropped)
 smelter.FLUX_MAXIMUM = 50
 -- Heat expended per tick melting flux
-smelter.COST_FLUX_MELTING_HU = 1
+smelter.COST_FLUX_MELTING_HU = 2
 -- Heat expended per tick alloying
 smelter.COST_FLUX_ALLOYING_HU = 1
+-- Default items usable as flux
+smelter.flux_items = { 
+    ['terumet:lump_raw']={time=3.0},
+    ['terumet:item_cryst_raw']={time=1.0}
+}
+-- Default alloy-making recipes
+smelter.recipes = {
+-- Terucopper
+    {result='terumet:ingot_tcop', flux=1, time=3.0, input={'default:copper_lump'}},
+    {result='terumet:block_tcop', flux=7, time=35.0, input={'default:copperblock'}},
+    {result='terumet:ingot_tcop', flux=1, time=1.0, input={'terumet:item_cryst_copper'}},
+-- Terusteel
+    {result='terumet:ingot_tste', flux=2, time=4.0, input={'default:iron_lump'}},
+    {result='terumet:block_tste', flux=15, time=45.0, input={'default:steelblock'}},
+    {result='terumet:ingot_tste', flux=2, time=1.5, input={'terumet:item_cryst_iron'}},
+-- Terugold
+    {result='terumet:ingot_tgol', flux=3, time=4.0, input={'default:gold_lump'}},
+    {result='terumet:block_tgol', flux=24, time=60.0, input={'default:goldblock'}},
+    {result='terumet:ingot_tgol', flux=3, time=2.0, input={'terumet:item_cryst_gold'}},
+-- Coreglass
+    {result='terumet:ingot_cgls', flux=5, time=10.0, input={'default:diamond', 'default:obsidian_shard'}},
+    {result='terumet:block_cgls', flux=30, time=180.0, input={'default:diamondblock', 'default:obsidian'}},
+    {result='terumet:ingot_cgls', flux=5, time=3.5, input={'terumet:item_cryst_dia', 'terumet:item_cryst_ob'}},
+-- Teruceramic
+    {result='terumet:item_ceramic', flux=3, time=1.0, input={'default:clay_lump'}},
+-- Thermese
+    {result='terumet:item_thermese', flux=10, time=20.0, input={'default:mese_crystal'}},
+}
+
 terumet.options.smelter = smelter -- do not remove
 
 --
@@ -67,3 +70,17 @@ furnace.COST_COOKING_HU = 3
 -- Multiplier applied to normal cooking time
 furnace.TIME_MULT = 0.5
 terumet.options.furnace = furnace -- do not remove
+
+--
+-- CRYSTAL VULCANIZER SETTINGS
+--
+
+local vulcan = {} -- do not remove
+vulcan.recipes = {} -- do not remove - populated when crystals are registered
+-- Maximum HUs vulcanizer can contain
+vulcan.MAX_HEAT = 6000
+-- Heat cost per tick of vulcanizing
+vulcan.COST_VULCANIZE = 10
+-- Time to process one item (in seconds)
+vulcan.PROCESS_TIME = 10.0
+terumet.options.vulcan = vulcan

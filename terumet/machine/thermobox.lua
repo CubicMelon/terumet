@@ -3,7 +3,7 @@ local tbox_id = terumet.id('mach_thermobox')
 
 minetest.register_node( tbox_id, {
     description = 'Thermobox',
-    tiles = {terumet.tex(tbox_id)},
+    tiles = {terumet.tex('thermobox')},
     is_ground_content = false,
     groups={cracky=1, level=2},
     sounds = default.node_sound_glass_defaults(),

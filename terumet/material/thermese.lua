@@ -22,4 +22,31 @@ minetest.register_craft{ type = 'shapeless', output = terumet.id('item_thermese'
     recipe = {thblock_id}
 }
 
-terumet.alloy_recipes[thcrys_id] = terumet.options.alloys.THERMESE_CRYSTAL
+local thblock_hot_id = terumet.id('block_thermese_hot')
+
+minetest.register_node( thblock_hot_id, {
+    description = 'Heated Thermese Block',
+    tiles = {terumet.tex('block_thermese_hot')},
+    is_ground_content = false,
+    light_source=6,
+    groups={cracky=2, level=2},
+    sounds = default.node_sound_glass_defaults()
+})
+
+minetest.register_abm{
+    label = 'Thermese Block Heating',
+    nodenames = {thblock_id},
+    neighbors = {'default:lava_source'},
+    interval = 3.0,
+    chance = 1,
+    catch_up = false,
+    action = function(pos, node, active_obj_ct, active_obj_ct_wider)
+        minetest.sound_play( 'terumet_heat_up', {
+            pos = pos,
+            gain = 1.0,
+            max_hear_distance = 32
+        })
+        node.name = thblock_hot_id
+        minetest.swap_node(pos, node)
+    end
+}

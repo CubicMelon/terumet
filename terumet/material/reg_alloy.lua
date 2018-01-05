@@ -26,7 +26,4 @@ function terumet.reg_alloy(name, alloy_id, block_level, source_list, block_sourc
     minetest.register_craft{ type = 'shapeless', output = id(ingot_id, 9),
         recipe = {id(block_id)}
     }
-
-    terumet.alloy_recipes[id(ingot_id)] = source_list
-    terumet.alloy_recipes[id(block_id)] = block_source_list
 end

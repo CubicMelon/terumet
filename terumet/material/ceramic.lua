@@ -21,5 +21,3 @@ minetest.register_craft{ output = cblock_id,
 minetest.register_craft{ type = 'shapeless', output = terumet.id('item_ceramic', 9),
     recipe = {cblock_id}
 }
-
-terumet.alloy_recipes[cplate_id] = terumet.options.alloys.CERAMIC_PLATE
