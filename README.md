@@ -53,7 +53,7 @@ You'll need heating coils made from pure terumetal. Note that you'll get 8 from 
 
 ![Terumetal Frame Recipe](tutorial/frame_recipe.PNG)
 
-Additionally, you'll need a basic Terumetal Machine Frame like above. The bucket of water might seem out of place, but in the final machine it acts as the 'battery' for the heat it uses to function. All Terumetal machinery runs on heat, so every machine frame has some sort of heat-storing element in the center.
+Additionally, you'll need a basic Terumetal Machine Frame like above. The copper block might seem out of place, but in the final machine it acts as a rudimentary 'battery' for the heat it uses to function. All Terumetal machinery runs on heat, so every machine frame has some sort of heat-storing element in the center.
 
 Once you have both of these materials, you're ready to make the Alloy Smelter itself:
 
