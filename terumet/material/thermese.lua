@@ -43,10 +43,16 @@ minetest.register_abm{
     action = function(pos, node, active_obj_ct, active_obj_ct_wider)
         minetest.sound_play( 'terumet_heat_up', {
             pos = pos,
-            gain = 1.0,
+            gain = 0.6,
             max_hear_distance = 32
         })
         node.name = thblock_hot_id
         minetest.swap_node(pos, node)
     end
+}
+
+minetest.register_craft{ type = 'cooking', 
+    output = thblock_hot_id,
+    recipe = thblock_id,
+    cooktime = 10
 }

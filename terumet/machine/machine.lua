@@ -85,6 +85,7 @@ end
 function base_mach.read_state(pos)
     local machine = {}
     local meta = minetest.get_meta(pos)
+    machine.pos = pos
     machine.meta = meta
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0

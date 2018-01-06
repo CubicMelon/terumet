@@ -52,9 +52,9 @@ smelter.recipes = {
     {result='terumet:block_cgls', flux=30, time=180.0, input={'default:diamondblock', 'default:obsidian'}},
     {result='terumet:ingot_cgls', flux=5, time=3.5, input={'terumet:item_cryst_dia', 'terumet:item_cryst_ob'}},
 -- Teruceramic
-    {result='terumet:item_ceramic', flux=3, time=1.0, input={'default:clay_lump'}},
+    {result='terumet:item_ceramic', flux=2, time=2.0, input={'default:clay_lump'}},
 -- Thermese
-    {result='terumet:item_thermese', flux=10, time=20.0, input={'default:mese_crystal'}},
+    {result='terumet:item_thermese', flux=4, time=10.0, input={'default:mese_crystal'}},
 }
 
 terumet.options.smelter = smelter -- do not remove
