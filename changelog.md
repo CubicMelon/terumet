@@ -1,6 +1,11 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+### Version 1.6
+* Furnace Heater added: use standard furnace fuel for generating heat
+* Heat transfer between machines implemented, currently only adjacently. Furnace heater will send heat to any adjacent heat machines that need it, split evenly.
+* A lot of internal work on moving code out of specific machines and into general use
+
 ### Version 1.5
 * Unified_inventory support expanded: Flux items for smelter and crystal vulcanizer recipes added
 * API for other mods to easily add new recipes to the alloy smelter and define new crystals for vulcanizer to create added under interop/terumet_api.lua
