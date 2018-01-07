@@ -7,18 +7,11 @@ local base_asm = {}
 base_asm.unlit_id = terumet.id('mach_asmelt')
 base_asm.lit_id = terumet.id('mach_asmelt_lit')
 
--- time between smelter ticks
-base_asm.timer = 0.5
-
 -- state identifier consts
 base_asm.STATE = {}
 base_asm.STATE.IDLE = 0
 base_asm.STATE.FLUX_MELT = 1
 base_asm.STATE.ALLOYING = 2
-
-function base_asm.start_timer(pos)
-    minetest.get_node_timer(pos):start(base_asm.timer)
-end
 
 function base_asm.generate_formspec(smelter)
     local fs = 'size[8,9]'..base_mach.fs_start..
@@ -51,11 +44,7 @@ function base_asm.generate_formspec(smelter)
 end
 
 function base_asm.generate_infotext(smelter)
-    return string.format('Alloy Smelter (%.0f%% heat): %s', base_mach.heat_pct(smelter), smelter.status_text)
-end
-
-function base_asm.write_state(pos, smelter)
-    base_mach.write_state(pos, smelter, base_asm.generate_formspec(smelter), base_asm.generate_infotext(smelter))
+    return string.format('Alloy Smelter (%.1f%% heat): %s', base_mach.heat_pct(smelter), smelter.status_text)
 end
 
 function base_asm.init(pos)
@@ -67,17 +56,18 @@ function base_asm.init(pos)
     inv:set_size('out', 4)
 
     local init_smelter = {
+        class = base_asm.unlit_nodedef._terumach_class,
         flux_tank = 0,
         state = base_asm.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
+        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta
     }
-    base_asm.write_state(pos, init_smelter)
-    meta:set_int('flux_tank', init_smelter.flux_tank)
+    base_mach.write_state(pos, init_smelter)
 end
 
 function base_asm.get_drops(pos, include_self)
@@ -175,7 +165,6 @@ end
 function base_asm.tick(pos, dt)
     -- read state from meta
     local smelter = base_mach.read_state(pos)
-    smelter.flux_tank = smelter.meta:get_int('flux_tank')
     
     base_asm.do_processing(smelter, dt)
 
@@ -185,15 +174,18 @@ function base_asm.tick(pos, dt)
 
     if smelter.state ~= base_asm.STATE.IDLE and (not smelter.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
-        base_asm.start_timer(pos)
+        base_mach.set_timer(smelter)
         base_mach.set_node(pos, base_asm.lit_id)
         base_mach.generate_particle(pos)
     else
         base_mach.set_node(pos, base_asm.unlit_id)
     end
     -- write status back to meta
-    base_asm.write_state(pos, smelter)
-    smelter.meta:set_int('flux_tank', smelter.flux_tank)
+    base_mach.write_state(pos, smelter)
+end
+
+function base_asm.inventory_change(pos)
+    base_asm.tick(pos, 0)
 end
 
 function base_asm.on_destruct(pos)
@@ -206,11 +198,6 @@ function base_asm.on_blast(pos)
     drops = base_asm.get_drops(pos, true)
     minetest.remove_node(pos)
     return drops
-end
-
-function base_asm.on_external_heat(new_state)
-    base_asm.start_timer(new_state.pos)
-    base_asm.write_state(new_state.pos, new_state)
 end
 
 base_asm.unlit_nodedef = {
@@ -232,13 +219,27 @@ base_asm.unlit_nodedef = {
     allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = base_asm.init,
-    on_metadata_inventory_move = base_asm.start_timer,
-    on_metadata_inventory_put = base_asm.start_timer,
-    on_metadata_inventory_take = base_asm.start_timer,
+    on_metadata_inventory_move = base_asm.inventory_change,
+    on_metadata_inventory_put = base_asm.inventory_change,
+    on_metadata_inventory_take = base_asm.inventory_change,
     on_timer = base_asm.tick,
     on_destruct = base_asm.on_destruct,
     on_blast = base_asm.on_blast,
-    _on_external_heat = base_asm.on_external_heat
+    -- terumet machine class data
+    _terumach_class = {
+        timer = 0.5,
+        on_external_heat = function(asmelt)
+            base_mach.set_timer(asmelt)
+        end,
+        on_read_state = function(asmelt)
+            asmelt.flux_tank = asmelt.meta:get_int('flux_tank')
+        end,
+        on_write_state = function(asmelt)
+            asmelt.meta:set_int('flux_tank', asmelt.flux_tank)
+            asmelt.meta:set_string('formspec', base_asm.generate_formspec(asmelt))
+            asmelt.meta:set_string('infotext', base_asm.generate_infotext(asmelt))
+        end
+    }
 }
 
 base_asm.lit_nodedef = {}

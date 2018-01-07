@@ -7,17 +7,10 @@ local base_htf = {}
 base_htf.unlit_id = terumet.id('mach_htfurn')
 base_htf.lit_id = terumet.id('mach_htfurn_lit')
 
--- time between furnace ticks
-base_htf.timer = 0.5
-
 -- state identifier consts
 base_htf.STATE = {}
 base_htf.STATE.IDLE = 0
 base_htf.STATE.COOKING = 1
-
-function base_htf.start_timer(pos)
-    minetest.get_node_timer(pos):start(base_htf.timer)
-end
 
 function base_htf.generate_formspec(furnace)
     local fs = 'size[8,9]'..base_mach.fs_start..
@@ -47,11 +40,7 @@ function base_htf.generate_formspec(furnace)
 end
 
 function base_htf.generate_infotext(furnace)
-    return string.format('High-Temp Furnace (%.0f%% heat): %s', base_mach.heat_pct(furnace), furnace.status_text)
-end
-
-function base_htf.write_state(pos, furnace)
-    base_mach.write_state(pos, furnace, base_htf.generate_formspec(furnace), base_htf.generate_infotext(furnace))
+    return string.format('High-Temp Furnace (%.1f%% heat): %s', base_mach.heat_pct(furnace), furnace.status_text)
 end
 
 function base_htf.init(pos)
@@ -63,15 +52,17 @@ function base_htf.init(pos)
     inv:set_size('out', 4)
 
     local init_furnace = {
+        class = base_htf.unlit_nodedef._terumach_class,
         state = base_htf.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
+        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta
     }
-    base_htf.write_state(pos, init_furnace)
+    base_mach.write_state(pos, init_furnace)
 end
 
 function base_htf.get_drops(pos, include_self)
@@ -122,7 +113,7 @@ function base_htf.check_new_processing(furnace)
             furnace.state = base_htf.STATE.COOKING
             furnace.inv:set_stack('inp', slot, cook_after.items[1])
             furnace.inv:set_stack('result', 1, cook_result.item)
-            furnace.state_time = math.floor(cook_result.time * opts.TIME_MULT * base_htf.timer)
+            furnace.state_time = math.floor(cook_result.time * opts.TIME_MULT * furnace.class.timer)
             furnace.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for cooking...'
             return
         end
@@ -142,7 +133,7 @@ function base_htf.tick(pos, dt)
 
     if furnace.state ~= base_htf.STATE.IDLE and (not furnace.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
-        base_htf.start_timer(pos)
+        base_mach.set_timer(furnace)
         base_mach.set_node(pos, base_htf.lit_id)
         base_mach.generate_particle(pos)
     else
@@ -150,8 +141,12 @@ function base_htf.tick(pos, dt)
     end
 
     -- write status back to meta
-    base_htf.write_state(pos, furnace)
+    base_mach.write_state(pos, furnace)
 
+end
+
+function base_htf.inventory_change(pos)
+    base_htf.tick(pos, 0)
 end
 
 function base_htf.on_destruct(pos)
@@ -164,11 +159,6 @@ function base_htf.on_blast(pos)
     drops = base_htf.get_drops(pos, true)
     minetest.remove_node(pos)
     return drops
-end
-
-function base_asm.on_external_heat(new_state)
-    base_htf.start_timer(new_state.pos)
-    base_htf.write_state(new_state.pos, new_state)
 end
 
 base_htf.unlit_nodedef = {
@@ -190,13 +180,23 @@ base_htf.unlit_nodedef = {
     allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = base_htf.init,
-    on_metadata_inventory_move = base_htf.start_timer,
-    on_metadata_inventory_put = base_htf.start_timer,
-    on_metadata_inventory_take = base_htf.start_timer,
+    on_metadata_inventory_move = base_htf.inventory_change,
+    on_metadata_inventory_put = base_htf.inventory_change,
+    on_metadata_inventory_take = base_htf.inventory_change,
     on_timer = base_htf.tick,
     on_destruct = base_htf.on_destruct,
     on_blast = base_htf.on_blast,
-    _on_external_heat = base_htf.on_external_heat
+    -- terumet machine class data
+    _terumach_class = {
+        timer = 0.5,
+        on_external_heat = function(htfurnace)
+            base_mach.set_timer(htfurnace)
+        end,
+        on_write_state = function(htfurnace)
+            htfurnace.meta:set_string('formspec', base_htf.generate_formspec(htfurnace))
+            htfurnace.meta:set_string('infotext', base_htf.generate_infotext(htfurnace))
+        end
+    }
 }
 
 base_htf.lit_nodedef = {}

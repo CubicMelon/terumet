@@ -6,17 +6,10 @@ local base_mach = terumet.machine
 local base_vul = {}
 base_vul.id = terumet.id('mach_vulcan')
 
--- time between vulcanizer ticks
-base_vul.timer = 0.5
-
 -- state identifier consts
 base_vul.STATE = {}
 base_vul.STATE.IDLE = 0
 base_vul.STATE.VULCANIZING = 1
-
-function base_vul.start_timer(pos)
-    minetest.get_node_timer(pos):start(base_vul.timer)
-end
 
 function base_vul.generate_formspec(vulcan)
     local fs = 'size[8,9]'..base_mach.fs_start..
@@ -46,11 +39,7 @@ function base_vul.generate_formspec(vulcan)
 end
 
 function base_vul.generate_infotext(vulcan)
-    return string.format('Crystal Vulcanizer (%.0f%% heat): %s', base_mach.heat_pct(vulcan), vulcan.status_text)
-end
-
-function base_vul.write_state(pos, vulcan)
-    base_mach.write_state(pos, vulcan, base_vul.generate_formspec(vulcan), base_vul.generate_infotext(vulcan))
+    return string.format('Crystal Vulcanizer (%.1f%% heat): %s', base_mach.heat_pct(vulcan), vulcan.status_text)
 end
 
 function base_vul.init(pos)
@@ -62,15 +51,17 @@ function base_vul.init(pos)
     inv:set_size('out', 4)
 
     local init_vulcan = {
+        class = base_vul.nodedef._terumach_class,
         state = base_vul.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
+        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta
     }
-    base_vul.write_state(pos, init_vulcan)
+    base_mach.write_state(pos, init_vulcan)
 end
 
 function base_vul.get_drops(pos, include_self)
@@ -133,12 +124,16 @@ function base_vul.tick(pos, dt)
 
     if vulcan.state ~= base_vul.STATE.IDLE and (not vulcan.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
-        base_vul.start_timer(pos)
+        base_mach.set_timer(vulcan)
     end
 
     -- write status back to meta
-    base_vul.write_state(pos, vulcan)
+    base_mach.write_state(pos, vulcan)
 
+end
+
+function base_vul.inventory_change(pos)
+    base_vul.tick(pos, 0)
 end
 
 function base_vul.on_destruct(pos)
@@ -151,11 +146,6 @@ function base_vul.on_blast(pos)
     drops = base_vul.get_drops(pos, true)
     minetest.remove_node(pos)
     return drops
-end
-
-function base_vul.on_external_heat(new_state)
-    base_vul.start_timer(new_state.pos)
-    base_vul.write_state(new_state.pos, new_state)
 end
 
 base_vul.nodedef = {
@@ -177,13 +167,23 @@ base_vul.nodedef = {
     allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = base_vul.init,
-    on_metadata_inventory_move = base_vul.start_timer,
-    on_metadata_inventory_put = base_vul.start_timer,
-    on_metadata_inventory_take = base_vul.start_timer,
+    on_metadata_inventory_move = base_vul.inventory_change,
+    on_metadata_inventory_put = base_vul.inventory_change,
+    on_metadata_inventory_take = base_vul.inventory_change,
     on_timer = base_vul.tick,
     on_destruct = base_vul.on_destruct,
     on_blast = base_vul.on_blast,
-    _on_external_heat = base_vul.on_external_heat
+    -- terumet machine class data
+    _terumach_class = {
+        timer = 0.5,
+        on_external_heat = function(vulcan)
+            base_mach.set_timer(vulcan)
+        end,
+        on_write_state = function(vulcan)
+            vulcan.meta:set_string('formspec', base_vul.generate_formspec(vulcan))
+            vulcan.meta:set_string('infotext', base_vul.generate_infotext(vulcan))
+        end
+    }
 }
 
 minetest.register_node(base_vul.id, base_vul.nodedef)

@@ -7,11 +7,6 @@ function base_mach.heat_pct(machine)
     return 100.0 * machine.heat_level / machine.max_heat
 end
 
--- constants for heat behavior of machines
-base_mach.HEAT_MODE= {}
-base_mach.HEAT_MODE.TAKE_ONLY = 0 -- default if not specified
-base_mach.HEAT_MODE.GIVE_ONLY = 1
-
 -- 
 -- CRAFTING MATERIALS
 --
@@ -86,51 +81,75 @@ end
 --
 -- GENERIC META
 --
+-- constants for interactive heat behavior of machines
+base_mach.HEAT_XFER_MODE= {
+    IGNORE=0, -- default if not specified
+    ACCEPT=1,
+    PROVIDE_ONLY=2,
+}
 
-local ADJACENT_OFFSETS = {
+base_mach.ADJACENT_OFFSETS = {
     east={x=1,y=0,z=0}, west={x=-1,y=0,z=0},
     up={x=0,y=1,z=0}, down={x=0,y=-1,z=0},
     north={x=0,y=0,z=1}, south={x=0,y=0,z=-1}
 }
--- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent poitions 
--- where there is a machine w/heat_mode of TAKE_HEAT and heat_level < max_heat
-function base_mach.adjacent_need_heat(pos)
+
+-- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent positions 
+-- where there is a machine w/heat_xfer_mode of ACCEPT and heat_level < max_heat
+function base_mach.find_adjacent_need_heat(pos)
     local result = {}
     local count = 0
-    for dir,offset in ipairs(ADJACENT_OFFSETS) do
+    for dir,offset in pairs(base_mach.ADJACENT_OFFSETS) do
         local opos = {x=pos.x+offset.x, y=pos.y+offset.y, z=pos.z+offset.z}
         local ostate = base_mach.read_state(opos)
-        -- read_state returns nil if area unloaded
+        -- read_state returns nil if area unloaded or not a terumetal machine
         if ostate then 
-            if ostate.heat_mode == base_mach.HEAT_MODE.TAKE_HEAT and ostate.heat_level < ostate.max_heat then
+            if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and ostate.heat_level < ostate.max_heat then
                 result[dir] = ostate
                 count = count + 1
             end
         end
     end
+    minetest.chat_send_all('found ' .. count .. ' adjacent machines that accept and need heat')
     result.count = count
     return result
 end
 
-function base_htr.provide_heat_adjacent(machine, total_hus)
-    if machine.heat_level <= 0 then return end
-    local adj_list = base_mach.adjacent_need_heat(machine.pos)
-    if adj_list.count == 0 then return end
-    -- can't afford to even give 1 HU to each adjacent machine?
-    if machine.heat_level < adj_list.count then return end
-    local total_distrib = math.min(machine.heat_level, total_hus)
-    local hus_each = math.floor(total_distrib / adj_list.count)
-    local real_hus_sent = 0
-    for dir, mach_data in pairs(adj_list) do
-        local send_amount = math.min(hus_each, mach_data.max_heat - mach_data.heat_level)
-        mach_data.heat_level = mach_data.heat_level + send_amount
-        -- call heat receive callback for node if exists
-        if mach_data.nodedef._on_external_heat then
-            mach_data.nodedef._on_external_heat(mach_data)
+function base_mach.push_heat(from, total_hus, targets)
+    if from.heat_level < total_hus then return end
+    if #targets == 0 then return end
+    -- can't afford to even give 1 HU to each target?
+    if from.heat_level < #targets then return end
+    local total_distrib = math.min(from.heat_level, total_hus)
+    local hus_each = math.floor(total_distrib / #targets)
+    local actual_hus_sent = 0
+    for i=1,#targets do
+        local to_machine = targets[i]
+        local send_amount = math.min(hus_each, to_machine.max_heat - to_machine.heat_level)
+        if send_amount > 0 then
+            to_machine.heat_level = to_machine.heat_level + send_amount
+            -- call heat receive callback for node if exists
+            if to_machine.class_on_external_heat then
+                to_machine.class.on_external_heat(to_machine)
+            end
+            base_mach.write_state(to_machine.pos, to_machine)
+            actual_hus_sent = actual_hus_sent + send_amount
         end
-        real_hus_sent = real_hus_sent + send_amount
     end
-    machine.heat_level = machine.heat_level - real_hus_sent
+    from.heat_level = from.heat_level - actual_hus_sent
+end
+
+-- find all adjacent accepting machines and push desired amount of heat to them, split evenly
+function base_mach.push_heat_adjacent(machine, hus)
+    if hus == 0 or hus > machine.heat_level then return end
+    local adjacent_needy = base_mach.find_adjacent_need_heat(machine.pos)
+    if adjacent_needy.count > 0 then
+        local send_targets = {}
+        for dir, target in pairs(adjacent_needy) do
+            if dir ~= 'count' then send_targets[#send_targets+1] = target end
+        end
+        base_mach.push_heat(machine, hus, send_targets)
+    end
 end
 
 function base_mach.read_state(pos)
@@ -139,30 +158,34 @@ function base_mach.read_state(pos)
     local node_info = minetest.get_node_or_nil(pos)
     if not node_info then return nil end -- unloaded
     machine.nodedef = minetest.registered_nodes[node_info.name]
+    machine.class = machine.nodedef._terumach_class
+    if not machine.class then return nil end -- not a terumetal machine
     machine.pos = pos
     machine.meta = meta
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
     machine.max_heat = meta:get_int('max_heat') or 0
-    machine.heat_mode = meta:get_int('heat_mode')
+    machine.heat_xfer_mode = meta:get_int('heat_xfer_mode')
     machine.state = meta:get_int('state')
     machine.state_time = meta:get_float('state_time') or 0
     machine.status_text = meta:get_string('status_text') or 'No Status'
+    -- call read callback on node def if exists
+    if machine.class.on_read_state then machine.class.on_read_state(machine) end
     -- following attributes are not saved in meta, but reset every tick
     machine.need_heat = false
     return machine
 end
 
-function base_mach.write_state(pos, machine, formspec, infotext)
+function base_mach.write_state(pos, machine)
     local meta = minetest.get_meta(pos)
-    meta:set_string('formspec', formspec)
-    meta:set_string('infotext', infotext)
     meta:set_string('status_text', machine.status_text)
     meta:set_int('heat_level', machine.heat_level or 0)
     meta:set_int('max_heat', machine.max_heat or 0)
-    meta:set_int('heat_mode', machine.heat_mode or base_mach.HEAT_MODE.TAKE_ONLY)
+    meta:set_int('heat_xfer_mode', machine.heat_xfer_mode or base_mach.HEAT_XFER_MODE.IGNORE)
     meta:set_int('state', machine.state)
     meta:set_float('state_time', machine.state_time)
+    -- call write callback on node def if exists
+    if machine.class.on_write_state then machine.class.on_write_state(machine) end
 end
 
 function base_mach.set_node(pos, target_node)
@@ -171,9 +194,14 @@ function base_mach.set_node(pos, target_node)
     node.name = target_node
     minetest.swap_node(pos, node)
 end
+
 --
 -- GENERIC MACHINE PROCESSES
 --
+
+function base_mach.set_timer(machine)
+    minetest.get_node_timer(machine.pos):start(machine.class.timer)
+end
 
 function base_mach.set_low_heat_msg(machine, process)
     if process then
