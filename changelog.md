@@ -5,6 +5,8 @@ Newer versions listed first
 * Furnace Heater added: use standard furnace fuel for generating heat
 * Heat transfer between machines implemented, currently only adjacently. Furnace heater will send heat to any adjacent heat machines that need it, split evenly.
 * A lot of internal work on moving code out of specific machines and into general use
+* Furnace heater looks like old alloy smelter, Alloy Smelter has new appearance
+* Machines now react instantly to items being inserted/removed rather than with a delay
 
 ### Version 1.5
 * Unified_inventory support expanded: Flux items for smelter and crystal vulcanizer recipes added
