@@ -117,6 +117,7 @@ terumet.reg_tools('Coreglass', 'cgls',
 )
 terumet.do_lua_file('tool/ore_saw')
 
+terumet.do_lua_file('machine/fheater')
 terumet.do_lua_file('machine/asmelt')
 terumet.do_lua_file('machine/htfurnace')
 terumet.do_lua_file('machine/vulcan')

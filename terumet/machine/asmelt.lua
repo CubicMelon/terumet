@@ -54,6 +54,10 @@ function base_asm.generate_infotext(smelter)
     return string.format('Alloy Smelter (%.0f%% heat): %s', base_mach.heat_pct(smelter), smelter.status_text)
 end
 
+function base_asm.write_state(pos, smelter)
+    base_mach.write_state(pos, smelter, base_asm.generate_formspec(smelter), base_asm.generate_infotext(smelter))
+end
+
 function base_asm.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
@@ -72,7 +76,7 @@ function base_asm.init(pos)
         inv = inv,
         meta = meta
     }
-    base_mach.write_state(pos, init_smelter, base_asm.generate_formspec(init_smelter), base_asm.generate_infotext(init_smelter))
+    base_asm.write_state(pos, init_smelter)
     meta:set_int('flux_tank', init_smelter.flux_tank)
 end
 
@@ -188,7 +192,7 @@ function base_asm.tick(pos, dt)
         base_mach.set_node(pos, base_asm.unlit_id)
     end
     -- write status back to meta
-    base_mach.write_state(pos, smelter, base_asm.generate_formspec(smelter), base_asm.generate_infotext(smelter))
+    base_asm.write_state(pos, smelter)
     smelter.meta:set_int('flux_tank', smelter.flux_tank)
 end
 
@@ -204,13 +208,18 @@ function base_asm.on_blast(pos)
     return drops
 end
 
+function base_asm.on_external_heat(new_state)
+    base_asm.start_timer(new_state.pos)
+    base_asm.write_state(new_state.pos, new_state)
+end
+
 base_asm.unlit_nodedef = {
     -- node properties
     description = "Terumetal Alloy Smelter",
     tiles = {
-        terumet.tex('mach_top'), terumet.tex('mach_bot'),
-        terumet.tex('asmelt_sides_unlit'), terumet.tex('asmelt_sides_unlit'),
-        terumet.tex('asmelt_sides_unlit'), terumet.tex('asmelt_front_unlit')
+        terumet.tex('raw_mach_top'), terumet.tex('raw_mach_bot'),
+        terumet.tex('raw_sides_unlit'), terumet.tex('raw_sides_unlit'),
+        terumet.tex('raw_sides_unlit'), terumet.tex('asmelt_front_unlit')
     },
     paramtype2 = 'facedir',
     groups = {cracky=1},
@@ -229,15 +238,16 @@ base_asm.unlit_nodedef = {
     on_timer = base_asm.tick,
     on_destruct = base_asm.on_destruct,
     on_blast = base_asm.on_blast,
+    _on_external_heat = base_asm.on_external_heat
 }
 
 base_asm.lit_nodedef = {}
 for k,v in pairs(base_asm.unlit_nodedef) do base_asm.lit_nodedef[k] = v end
 base_asm.lit_nodedef.on_construct = nil -- lit smeltery node shouldn't be constructed by player
 base_asm.lit_nodedef.tiles = {
-    terumet.tex('mach_top'), terumet.tex('mach_bot'),
-    terumet.tex('asmelt_sides_lit'), terumet.tex('asmelt_sides_lit'),
-    terumet.tex('asmelt_sides_lit'), terumet.tex('asmelt_front_lit')
+    terumet.tex('raw_mach_top'), terumet.tex('raw_mach_bot'),
+    terumet.tex('raw_sides_lit'), terumet.tex('raw_sides_lit'),
+    terumet.tex('raw_sides_lit'), terumet.tex('asmelt_front_lit')
 }
 base_asm.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
 base_asm.lit_nodedef.drop = base_asm.unlit_id

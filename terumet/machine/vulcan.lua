@@ -49,6 +49,10 @@ function base_vul.generate_infotext(vulcan)
     return string.format('Crystal Vulcanizer (%.0f%% heat): %s', base_mach.heat_pct(vulcan), vulcan.status_text)
 end
 
+function base_vul.write_state(pos, vulcan)
+    base_mach.write_state(pos, vulcan, base_vul.generate_formspec(vulcan), base_vul.generate_infotext(vulcan))
+end
+
 function base_vul.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
@@ -66,7 +70,7 @@ function base_vul.init(pos)
         inv = inv,
         meta = meta
     }
-    base_mach.write_state(pos, init_vulcan, base_vul.generate_formspec(init_vulcan), base_vul.generate_infotext(init_vulcan))
+    base_vul.write_state(pos, init_vulcan)
 end
 
 function base_vul.get_drops(pos, include_self)
@@ -133,7 +137,7 @@ function base_vul.tick(pos, dt)
     end
 
     -- write status back to meta
-    base_mach.write_state(pos, vulcan, base_vul.generate_formspec(vulcan), base_vul.generate_infotext(vulcan))
+    base_vul.write_state(pos, vulcan)
 
 end
 
@@ -147,6 +151,11 @@ function base_vul.on_blast(pos)
     drops = base_vul.get_drops(pos, true)
     minetest.remove_node(pos)
     return drops
+end
+
+function base_vul.on_external_heat(new_state)
+    base_vul.start_timer(new_state.pos)
+    base_vul.write_state(new_state.pos, new_state)
 end
 
 base_vul.nodedef = {
@@ -174,6 +183,7 @@ base_vul.nodedef = {
     on_timer = base_vul.tick,
     on_destruct = base_vul.on_destruct,
     on_blast = base_vul.on_blast,
+    _on_external_heat = base_vul.on_external_heat
 }
 
 minetest.register_node(base_vul.id, base_vul.nodedef)

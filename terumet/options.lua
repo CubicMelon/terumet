@@ -14,6 +14,14 @@ machine.PARTICLES = true
 terumet.options.machine = machine -- do not remove
 
 --
+-- FURNACE HEATER SETTINGS
+--
+local heater = {} -- do not remove
+heater.MAX_HEAT = 500
+heater.HEAT_TRANSFER_RATE = 10
+terumet.options.heater = heater -- do not remove
+
+--
 -- ALLOY SMELTER SETTINGS
 --
 local smelter = {} -- do not remove

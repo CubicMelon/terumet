@@ -50,6 +50,10 @@ function base_htf.generate_infotext(furnace)
     return string.format('High-Temp Furnace (%.0f%% heat): %s', base_mach.heat_pct(furnace), furnace.status_text)
 end
 
+function base_htf.write_state(pos, furnace)
+    base_mach.write_state(pos, furnace, base_htf.generate_formspec(furnace), base_htf.generate_infotext(furnace))
+end
+
 function base_htf.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
@@ -67,7 +71,7 @@ function base_htf.init(pos)
         inv = inv,
         meta = meta
     }
-    base_mach.write_state(pos, init_furnace, base_htf.generate_formspec(init_furnace), base_htf.generate_infotext(init_furnace))
+    base_htf.write_state(pos, init_furnace)
 end
 
 function base_htf.get_drops(pos, include_self)
@@ -146,7 +150,7 @@ function base_htf.tick(pos, dt)
     end
 
     -- write status back to meta
-    base_mach.write_state(pos, furnace, base_htf.generate_formspec(furnace), base_htf.generate_infotext(furnace))
+    base_htf.write_state(pos, furnace)
 
 end
 
@@ -160,6 +164,11 @@ function base_htf.on_blast(pos)
     drops = base_htf.get_drops(pos, true)
     minetest.remove_node(pos)
     return drops
+end
+
+function base_asm.on_external_heat(new_state)
+    base_htf.start_timer(new_state.pos)
+    base_htf.write_state(new_state.pos, new_state)
 end
 
 base_htf.unlit_nodedef = {
@@ -187,6 +196,7 @@ base_htf.unlit_nodedef = {
     on_timer = base_htf.tick,
     on_destruct = base_htf.on_destruct,
     on_blast = base_htf.on_blast,
+    _on_external_heat = base_htf.on_external_heat
 }
 
 base_htf.lit_nodedef = {}
