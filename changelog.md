@@ -3,7 +3,8 @@ Newer versions listed first
 
 ### Version 1.6
 * Furnace Heater added: use standard furnace fuel for generating heat
-* Heat transfer between machines implemented, currently only adjacently. Furnace heater will send heat to any adjacent heat machines that need it, split evenly.
+* Solar Heater added: use (sun)light for generating heat
+* Heat transfer between machines implemented, currently only adjacently. Either heater will send heat to any adjacent heat machines that need it, split evenly.
 * A lot of internal work on moving code out of specific machines and into general use
 * Furnace heater looks like old alloy smelter, Alloy Smelter has new appearance
 * Machines now react instantly to items being inserted/removed rather than with a delay
