@@ -1,0 +1,461 @@
+
+function string.starts(String, Start)
+   return string.sub(String,1,string.len(Start))==Start
+end
+
+function string.ends(String, End)
+   return End=='' or string.sub(String,-string.len(End))==End
+end
+
+function saveToFile(fileName, table)
+   local file = io.open(minetest.get_worldpath().."/"..fileName..".txt", "w")
+   if file then
+      file:write(minetest.serialize(table))
+      file:close()
+   end
+end
+
+function loadFromFile(fileName)
+    local file = io.open(minetest.get_worldpath().."/"..fileName..".txt", "r")
+    if file then
+        local fileContent = file:read("*all")
+        file:close()
+        local deserTable = minetest.deserialize(fileContent)
+        if type(deserTable) == "table" then
+            return deserTable
+        end
+    else
+--        print("file was null?")
+    end
+    return nil
+end
+
+function splitStringToTable(inputString, splitter)
+    local ret = {};
+    local tmp;
+
+    if inputString == nil then return nil; end
+
+    if (splitter == nil) then
+        table.insert(ret, inputString);
+        return ret;
+    end
+
+    -- print("inputString: " .. inputString .. ", splitter:" .. splitter);
+    local found = true;
+    while found do
+        local s,e = inputString:find(splitter);
+        if s == nil then
+            table.insert(ret, inputString);
+            found = false;
+        else
+            -- print("s/e=" .. s .. "/" .. e);
+            tmp = inputString:sub(0,s - 1);
+            table.insert(ret, tmp);
+            inputString = inputString:sub(e + 1);
+        end
+    end
+    -- for k,v in pairs(ret) do print(k,v) end
+    return ret;
+end
+
+
+function tableLength(table)
+    if (table == nil) then return 0; end
+    local count = 0
+    for _ in pairs(table) do count = count + 1 end
+    return count
+end
+
+function clamp(value, min, max)
+    if value == nil then return nil; end
+    if max == nil and min == nil then return value; end
+    if min == nil then return math.min(value, max); end
+    if max == nil then return math.max(value, min); end
+    return math.max(math.min(value, max), min);
+end
+
+function toNum(number, default)
+    default = default or 0;
+    return tonumber(number) or default;
+end
+
+function randomCheck(normalizedIntProb, minValue, maxValue)
+    minValue = toNum(minValue, 1);
+    maxValue = toNum(maxValue, 100);
+    return math.random(1,100) <= toNum(normalizedIntProb);
+end
+
+
+
+local metaLiquidType = "liquidType"
+local metaLiquidLevel = "liquidLevel"
+local metaOwner = "owner"
+
+local liquidNone = "none"
+
+local defaultReservoirDescription = "Reservoir"
+
+local steelName = "terumet:steel_reservoir"
+local steelMax = 32
+local steelTexture = "terumet_steel_reservoir.png"
+
+local obsidianName="terumet:obsidian_reservoir"
+local obsidianMax=128
+local obsidianTexture="terumet_obsidian_reservoir.png"
+
+local lavaNameSuffix = "_lava"
+
+local reservoir = {}
+
+----------------------------------------------------------------
+-- general helper functions
+----------------------------------------------------------------
+
+function reservoir.getReservoirItemStack(metadata, itemName)
+    local liquidType = metadata:get_string(metaLiquidType) or liquidNone
+    local liquidLevel = metadata:get_int(metaLiquidLevel) or 0
+    local newStack = ItemStack({name=itemName, count=1, wear=0})
+    local stackMeta = newStack:get_meta()
+    stackMeta:set_string(metaLiquidType, liquidType)
+    stackMeta:set_int(metaLiquidLevel, liquidLevel)
+    if liquidLevel == 0 or liquidType == liquidNone then
+        stackMeta:set_string("description", defaultReservoirDescription.."\nEmpty")
+    else
+        stackMeta:set_string("description", defaultReservoirDescription.."\nContains "..liquidLevel.." buckets of " .. liquidType)
+    end
+    -- print("returning reservoid? stack = " .. dump(itemMeta))
+    return newStack
+end
+
+function reservoir.dropItem(pos, stack)
+    minetest.add_item(pos, stack)"terumet:steel_reservoir"
+end
+
+function reservoir.giveItemToPlayer(pos, player, stack)
+    local inv = player:get_inventory()
+    local leftover = inv:add_item("main", stack)
+    if leftover and not leftover:is_empty() then
+        -- print("leftover not empty, size = " .. leftover:get_count())
+        minetest.item_drop(leftover, player, player:get_pos())
+    end
+end
+
+function reservoir.get_param2(val, max)
+    local ret = math.floor(63*(val/max))
+    if val > 0 and ret == 0 then
+        ret = 1     -- this ensures we always have at least 1 visible liquid level
+    end
+    return ret
+end
+
+function reservoir.get_infotext(val, max, type, playername)
+    if val == 0 then
+        return val.."/"..max.." buckets (Empty) owned by: " .. (playername or "")
+    else
+        return val.."/"..max.." buckets of "..type .." owned by: " .. (playername or "")
+    end
+
+end
+
+----------------------------------------------------------------
+-- specific functions
+----------------------------------------------------------------
+
+function reservoir.can_dig(pos, player)
+    local nodeMeta = minetest.get_meta(pos)
+    local nodeOwner = nodeMeta:get_string(metaOwner, "")
+    local playerName = player:get_player_name()
+    return nodeOwner == "" or playerName == nodeOwner or minetest.check_player_privs(playerName, {protection_bypass=true})
+end
+
+function reservoir.after_dig_node(pos, oldnode, oldmetadata, digger, itemName)
+    local meta = minetest.get_meta(pos)
+    meta:from_table(oldmetadata)
+    if not digger:is_player() then
+        reservoir.dropItem(pos, reservoir.getReservoirItemStack(meta, itemName));
+    else
+        reservoir.giveItemToPlayer(pos, digger, reservoir.getReservoirItemStack(meta, itemName))
+    end
+end
+
+function reservoir.on_construct(pos)
+    local meta = minetest.get_meta(pos)
+    if meta then
+        -- print("on construct setting meta..")
+        meta:set_string(metaLiquidType, liquidNone)
+        meta:set_int(metaLiquidLevel, 0)
+    end
+end
+
+function reservoir.after_place_node(pos, placer, itemstack, pointed_thing, maxLevel)
+
+    local nodeMeta = minetest.get_meta(pos)
+    local stackMeta = itemstack:get_meta()
+
+    if not stackMeta
+        or not stackMeta:get_string(metaLiquidType)
+        or string.len(stackMeta:get_string(metaLiquidType)) == 0
+        or not stackMeta:get_int(metaLiquidLevel) then
+        -- print("after place, defaulting to none/0")
+        stackMeta:set_string(metaLiquidType, liquidNone)
+        stackMeta:set_int(metaLiquidLevel, 0)
+    end
+
+    -- print("after place, stackMeta = " .. dump(stackMeta))
+
+    local num = stackMeta:get_int(metaLiquidLevel);
+    local type =  stackMeta:get_string(metaLiquidType)
+    nodeMeta:set_string(metaLiquidType, type)
+    nodeMeta:set_int(metaLiquidLevel, num)
+    local playername = ""
+    if (placer:is_player()) then
+        playername = placer:get_player_name()
+    end
+    nodeMeta:set_string(metaOwner, playername)
+    if stackMeta:get_int(metaLiquidLevel) == 0 then
+        nodeMeta:set_string("infotext", reservoir.get_infotext(0, maxLevel, nil, playername))
+    else
+        nodeMeta:set_string("infotext", reservoir.get_infotext(num, maxLevel, type, playername))
+    end
+    local node = minetest.get_node(pos)
+    if type == "lava" then
+        node["name"] = node["name"]..lavaNameSuffix
+    end
+    node["param2"] = reservoir.get_param2(stackMeta:get_int(metaLiquidLevel), maxLevel)
+    minetest.swap_node(pos, node)
+end
+
+function reservoir.on_rightclick(pos, node, player, itemstack, pointed_thing, max)
+    -- print("on_rightclick_called")
+    local itemName = itemstack:get_name()
+    local metadata = minetest.get_meta(pos)
+    local nodeLiquid = metadata:get_string(metaLiquidType)
+    local nodeLiquidLevel = metadata:get_int(metaLiquidLevel)
+    local nodeOwner = metadata:get_string(metaOwner, "");
+    local playername = ""
+    if player:is_player() then
+       playername = player:get_player_name()
+       if not minetest.check_player_privs(playername, {protection_bypass="true"}) and
+        string.len(nodeOwner) > 0 and playername ~= nodeOwner then
+           return itemstack -- Not owned, return
+       end
+    end
+    -- print("node param2 was = ".. (nodeLiquidLevel or "nil"))
+    if itemName == "bucket:bucket_empty" then
+        -- print("empty bucket... must fill if possible")
+        if nodeLiquid == liquidNone or nodeLiquidLevel == 0 then
+            return itemstack
+        end
+        nodeLiquidLevel = nodeLiquidLevel - 1
+        local nodeName = node["name"]
+        if nodeLiquidLevel == 0 and string.ends(nodeName, lavaNameSuffix) then
+            node["name"] = string.sub(nodeName, 0, -string.len(lavaNameSuffix)-1)
+        end
+        node["param2"] = reservoir.get_param2(nodeLiquidLevel, max)
+        minetest.swap_node(pos, node)
+        if nodeLiquidLevel == 0 then
+            metadata:set_string(metaLiquidType, liquidNone)
+            metadata:set_string("infotext", reservoir.get_infotext(0, max, nil, playername))
+        else
+            metadata:set_string(metaLiquidType, nodeLiquid)
+            metadata:set_string("infotext", reservoir.get_infotext(nodeLiquidLevel, max, nodeLiquid, playername))
+        end
+        metadata:set_int(metaLiquidLevel, nodeLiquidLevel)
+
+        local newItemStack = ItemStack("bucket:bucket_"..nodeLiquid)
+        if itemstack:get_count() == 1 then
+            return newItemStack
+        else
+            reservoir.giveItemToPlayer(pos, player, newItemStack)
+            itemstack:take_item(1)
+            return itemstack
+        end
+
+    end
+
+    local bucketPrefix = "bucket:bucket_"
+    if string.starts(itemName, bucketPrefix) then
+        local liquidType = string.sub(itemName,string.len(bucketPrefix)+1,string.len(itemName))
+        -- print("liquid type was = "..liquidType)
+        if nodeLiquidLevel == max or (liquidType ~= nodeLiquid and not (nodeLiquid == liquidNone)) then
+            -- print("can't add, node full or contains another liquid. Node liquid = "..(liquidNode or "nil"))
+            return itemstack
+        end
+
+        nodeLiquidLevel = nodeLiquidLevel + 1
+        node["param2"] = reservoir.get_param2(nodeLiquidLevel, max)
+        if liquidType == "lava" and nodeLiquidLevel == 1 then
+            node["name"] = node["name"] .. lavaNameSuffix
+        end
+        minetest.swap_node(pos, node)
+        metadata:set_string(metaLiquidType, liquidType)
+        metadata:set_int(metaLiquidLevel, nodeLiquidLevel)
+
+        if nodeLiquidLevel == 0 then
+            metadata:set_string("infotext", reservoir.get_infotext(0, maxLevel, nil, playername))
+        else
+            metadata:set_string("infotext", reservoir.get_infotext(nodeLiquidLevel, max, liquidType, playername))
+        end
+
+        -- silly, but in case full buckets (aka the ones we're trying to add) were stacked, lets not destroy the stack
+        local newItemStack = ItemStack("bucket:bucket_empty")
+        if itemstack:get_count() == 1 then
+            return newItemStack
+        else
+            reservoir.giveItemToPlayer(pos, player, newItemStack)
+            itemstack:take_item(1)
+            return itemstack
+        end
+    end
+end
+
+
+----------------------------------------------------------------
+-- minetest registration
+----------------------------------------------------------------
+
+minetest.register_node(steelName, {
+	description = defaultReservoirDescription.."\nEmpty",
+	drawtype = "glasslike_framed_optional",
+	tiles = {steelTexture},
+    special_tiles = {"terumet_reservoir_liquid.png"},
+	paramtype = "light",
+	paramtype2 = "glasslikeliquidlevel",
+	is_ground_content = false,
+	sunlight_propagates = false,
+	sounds = default.node_sound_metal_defaults(),
+	groups = {cracky = 3, level = 1},
+    drop = "",
+
+    can_dig = reservoir.can_dig,
+
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        return reservoir.after_dig_node(pos, oldnode, oldmetadata, digger, steelName)
+    end,
+
+    on_construct = reservoir.on_construct,
+
+    after_place_node = function (pos, placer, itemstack, pointed_thing)
+        return reservoir.after_place_node(pos, placer, itemstack, pointed_thing, steelMax)
+    end,
+
+    on_rightclick = function(pos, node, player, itemstack, pointed_thing, max)
+        return reservoir.on_rightclick(pos, node, player, itemstack, pointed_thing, steelMax)
+    end
+})
+
+minetest.register_node(obsidianName, {
+	description = defaultReservoirDescription.."\nEmpty",
+	drawtype = "glasslike_framed_optional",
+	tiles = {obsidianTexture},
+    special_tiles = {"terumet_reservoir_liquid.png"},
+	paramtype = "light",
+	paramtype2 = "glasslikeliquidlevel",
+	is_ground_content = false,
+	sunlight_propagates = false,
+	sounds = default.node_sound_stone_defaults(),
+	groups = {cracky = 3, level = 2},
+    drop = "",
+
+    can_dig = reservoir.can_dig,
+
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        return reservoir.after_dig_node(pos, oldnode, oldmetadata, digger, obsidianName)
+    end,
+
+    on_construct = reservoir.on_construct,
+
+    after_place_node = function (pos, placer, itemstack, pointed_thing)
+        return reservoir.after_place_node(pos, placer, itemstack, pointed_thing, obsidianMax)
+    end,
+
+    on_rightclick = function(pos, node, player, itemstack, pointed_thing, max)
+        return reservoir.on_rightclick(pos, node, player, itemstack, pointed_thing, obsidianMax)
+    end
+})
+
+
+-- special lava versions
+
+minetest.register_node(steelName..lavaNameSuffix, {
+	description = defaultReservoirDescription.."\nEmpty",
+	drawtype = "glasslike_framed_optional",
+	tiles = {steelTexture},
+    special_tiles = {"terumet_reservoir_liquid_lava.png"},
+	paramtype = "light",
+	paramtype2 = "glasslikeliquidlevel",
+    light_source = default.LIGHT_MAX - 2,
+	is_ground_content = false,
+	sunlight_propagates = false,
+	sounds = default.node_sound_metal_defaults(),
+	groups = {cracky = 3, level = 1},
+    drop = "",
+
+    can_dig = reservoir.can_dig,
+
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        return reservoir.after_dig_node(pos, oldnode, oldmetadata, digger, steelName)
+    end,
+
+    on_construct = reservoir.on_construct,
+
+    after_place_node = function (pos, placer, itemstack, pointed_thing)
+        return reservoir.after_place_node(pos, placer, itemstack, pointed_thing, steelMax)
+    end,
+
+    on_rightclick = function(pos, node, player, itemstack, pointed_thing, max)
+        return reservoir.on_rightclick(pos, node, player, itemstack, pointed_thing, steelMax)
+    end
+})
+
+minetest.register_node(obsidianName..lavaNameSuffix, {
+	description = defaultReservoirDescription.."\nEmpty",
+	drawtype = "glasslike_framed_optional",
+	tiles = {obsidianTexture},
+    special_tiles = {"terumet_reservoir_liquid_lava.png"},
+	paramtype = "light",
+	paramtype2 = "glasslikeliquidlevel",
+    light_source = default.LIGHT_MAX - 2,
+	is_ground_content = false,
+	sunlight_propagates = false,
+	sounds = default.node_sound_stone_defaults(),
+	groups = {cracky = 3, level = 2},
+    drop = "",
+
+    can_dig = reservoir.can_dig,
+
+    after_dig_node = function (pos, oldnode, oldmetadata, digger)
+        return reservoir.after_dig_node(pos, oldnode, oldmetadata, digger, obsidianName)
+    end,
+
+    on_construct = reservoir.on_construct,
+
+    after_place_node = function (pos, placer, itemstack, pointed_thing)
+        return reservoir.after_place_node(pos, placer, itemstack, pointed_thing, obsidianMax)
+    end,
+
+    on_rightclick = function(pos, node, player, itemstack, pointed_thing, max)
+        return reservoir.on_rightclick(pos, node, player, itemstack, pointed_thing, obsidianMax)
+    end
+})
+
+-- Crafting Recipes
+
+minetest.register_craft({
+	output = "terumet:steel_reservoir 1",
+	recipe = {
+		{"default:glass", "default:steel_ingot", "default:glass"},
+		{"default:steel_ingot", "default:steel_ingot", "default:steel_ingot"},
+		{"default:glass", "default:steel_ingot", "default:glass"}
+	}
+})
+
+minetest.register_craft({
+	output = "terumet:obsidian_reservoir 1",
+	recipe = {
+		{"default:obsidian_glass", "default:obsidian", "default:obsidian_glass"},
+		{"default:obsidian", "default:obsidian", "default:obsidian"},
+		{"default:obsidian_glass", "default:obsidian", "default:obsidian_glass"}
+	}
+})
