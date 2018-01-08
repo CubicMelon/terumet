@@ -25,9 +25,9 @@ heater.furnace.HEAT_TRANSFER_RATE = 10
 --
 -- SOLAR HEATER SETTINGS
 --
-heater.solar.MAX_HEAT = 2000
-heater.solar.SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 5, 10, 30 }
-heater.solar.HEAT_TRANSFER_RATE = 30
+heater.solar.MAX_HEAT = 4000
+heater.solar.SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 5, 10, 20 }
+heater.solar.HEAT_TRANSFER_RATE = 100
 
 terumet.options.heater = heater -- do not remove
 

@@ -54,7 +54,7 @@ base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame\nFoundation of h
 --
 
 -- general preamble setting background, colors
-base_mach.fs_start = 'background[0,0;8,9;terumet_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
+base_mach.fs_start = 'background[0,0;8,9;terumet_raw_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
 
 -- fuel slot formspec
 function base_mach.fs_fuel_slot(machine, fsx, fsy)
@@ -110,14 +110,13 @@ function base_mach.find_adjacent_need_heat(pos)
             end
         end
     end
-    minetest.chat_send_all('found ' .. count .. ' adjacent machines that accept and need heat')
     result.count = count
     return result
 end
 
 function base_mach.push_heat(from, total_hus, targets)
-    if from.heat_level < total_hus then return end
-    if #targets == 0 then return end
+    total_hus = math.min(from.heat_level, total_hus)
+    if total_hus == 0 or #targets == 0 then return end
     -- can't afford to even give 1 HU to each target?
     if from.heat_level < #targets then return end
     local total_distrib = math.min(from.heat_level, total_hus)
@@ -140,15 +139,15 @@ function base_mach.push_heat(from, total_hus, targets)
 end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
-function base_mach.push_heat_adjacent(machine, hus)
-    if hus == 0 or hus > machine.heat_level then return end
+function base_mach.push_heat_adjacent(machine, max_send)
+    if max_send == 0 then return end
     local adjacent_needy = base_mach.find_adjacent_need_heat(machine.pos)
     if adjacent_needy.count > 0 then
         local send_targets = {}
         for dir, target in pairs(adjacent_needy) do
             if dir ~= 'count' then send_targets[#send_targets+1] = target end
         end
-        base_mach.push_heat(machine, hus, send_targets)
+        base_mach.push_heat(machine, max_send, send_targets)
     end
 end
 
