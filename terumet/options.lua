@@ -13,12 +13,22 @@ machine.basic_heat_sources = {
 machine.PARTICLES = true
 terumet.options.machine = machine -- do not remove
 
+local heater = {
+    furnace={},
+    solar={}
+} -- do not remove
 --
 -- FURNACE HEATER SETTINGS
 --
-local heater = {} -- do not remove
-heater.MAX_HEAT = 500
-heater.HEAT_TRANSFER_RATE = 10
+heater.furnace.MAX_HEAT = 500
+heater.furnace.HEAT_TRANSFER_RATE = 10
+--
+-- SOLAR HEATER SETTINGS
+--
+heater.solar.MAX_HEAT = 2000
+heater.solar.SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 5, 10, 30 }
+heater.solar.HEAT_TRANSFER_RATE = 30
+
 terumet.options.heater = heater -- do not remove
 
 --

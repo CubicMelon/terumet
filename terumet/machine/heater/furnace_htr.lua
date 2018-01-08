@@ -1,4 +1,4 @@
-local opts = terumet.options.heater
+local opts = terumet.options.heater.furnace
 local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
