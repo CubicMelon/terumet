@@ -114,12 +114,12 @@ function base_mach.find_adjacent_need_heat(pos)
     return result
 end
 
+-- given a list of target machines, evenly distribute up to total_hus from 'from' machine to them all
 function base_mach.push_heat(from, total_hus, targets)
-    total_hus = math.min(from.heat_level, total_hus)
-    if total_hus == 0 or #targets == 0 then return end
+    local total_distrib = math.min(from.heat_level, total_hus)
+    if total_distrib == 0 or #targets == 0 then return end
     -- can't afford to even give 1 HU to each target?
     if from.heat_level < #targets then return end
-    local total_distrib = math.min(from.heat_level, total_hus)
     local hus_each = math.floor(total_distrib / #targets)
     local actual_hus_sent = 0
     for i=1,#targets do
@@ -128,7 +128,7 @@ function base_mach.push_heat(from, total_hus, targets)
         if send_amount > 0 then
             to_machine.heat_level = to_machine.heat_level + send_amount
             -- call heat receive callback for node if exists
-            if to_machine.class_on_external_heat then
+            if to_machine.class.on_external_heat then
                 to_machine.class.on_external_heat(to_machine)
             end
             base_mach.write_state(to_machine.pos, to_machine)
