@@ -145,6 +145,7 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         timer = 0.5,
+        drop_id = furn_htr.unlit_id,
         on_external_heat = nil,
         get_drop_contents = furn_htr.get_drop_contents,
         on_write_state = function(fheater)
@@ -163,7 +164,6 @@ furn_htr.lit_nodedef.tiles = {
     terumet.tex('raw_sides_lit'), terumet.tex('htr_furnace_front_lit')
 }
 furn_htr.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
-furn_htr.lit_nodedef.drop = furn_htr.unlit_id
 furn_htr.lit_nodedef.light_source = 10
 
 

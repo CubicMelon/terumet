@@ -199,6 +199,7 @@ base_asm.unlit_nodedef = base_mach.nodedef{
     -- machine class data
     _terumach_class = {
         timer = 0.5,
+        drop_id = base_asm.unlit_id,
         get_drop_contents = base_asm.get_drop_contents,
         on_read_state = function(asmelt)
             asmelt.flux_tank = asmelt.meta:get_int('flux_tank')
@@ -220,7 +221,6 @@ base_asm.lit_nodedef.tiles = {
     terumet.tex('raw_sides_lit'), terumet.tex('asmelt_front_lit')
 }
 base_asm.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
-base_asm.lit_nodedef.drop = base_asm.unlit_id
 base_asm.lit_nodedef.light_source = 10
 
 

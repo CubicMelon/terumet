@@ -274,6 +274,19 @@ function base_mach.generate_particle(pos, particle_tex)
     }
 end
 
+-- convert state of a machine to an itemstack
+-- requires id of machine node and meta.fields (table of old meta, as per after_dig_node returns)
+function base_mach.machine_to_itemstack(machine_id, machine_meta_fields)
+    local stack = ItemStack{name = machine_id, count=1, wear=0}
+    local nodedef = stack:get_definition()
+    local stackmeta = stack:get_meta()
+    local machine_heat = machine_meta_fields.heat_level
+    local machine_max = machine_meta_fields.max_heat
+    stackmeta:set_int('heat_level', machine_heat)
+    stackmeta:set_string('description', string.format('%s\nHeat: %.1f%%', nodedef.description, 100.0*machine_heat/machine_max) )
+    return stack
+end
+
 --
 -- BASIC MACHINE NODEDEF TEMPLATE GENERATOR
 -- (makes considerable use of generic callbacks below)
@@ -287,6 +300,7 @@ function base_mach.nodedef(additions)
         legacy_facedir_simple = true,
         paramtype2 = 'facedir',
         groups = {cracky=1},
+        drop = '',
         -- default inventory slot control
         allow_metadata_inventory_put = base_mach.allow_put,
         allow_metadata_inventory_move = base_mach.allow_move,
@@ -297,10 +311,15 @@ function base_mach.nodedef(additions)
         on_metadata_inventory_move = base_mach.simple_inventory_event,-- base_mach.on_inventory_move, for event_data
         on_metadata_inventory_put = base_mach.simple_inventory_event,-- base_mach.on_inventory_put, for event_data
         on_metadata_inventory_take = base_mach.simple_inventory_event,-- base_mach.on_inventory_take, for event_data
+        -- callbacks for saving/loading heat level
+        after_dig_node = base_mach.after_dig_machine,
+        after_place_node = base_mach.after_place_machine,
         -- terumetal machine class
         _terumach_class = {
             -- timer: standard time (in seconds) for node timer to tick
             timer = 1.0,
+            -- -
+            -- drop_id: id of base machine that is dropped when broken
             -- -
             -- get_drop_contents: (machine) -> list of additional items to drop when broken (don't include self)
             get_drop_contents = function(machine)
@@ -353,7 +372,8 @@ function base_mach.on_destruct(pos)
     if not mach then return end
     local drops = mach.class.get_drop_contents(mach)
     for _,item in ipairs(drops) do
-        minetest.add_item(pos, item)
+        minetest.item_drop(item, nil, pos)
+        --minetest.add_item(pos, item)
     end
 end
 
@@ -361,10 +381,33 @@ function base_mach.on_blast(pos)
     local mach = base_mach.read_state(pos)
     if not mach then return end
     local drops = mach.class.get_drop_contents(mach)
-    minetest.remove_node(pos)
     -- always need to return machine as well when exploded
-    drops[#drops+1] = mach.nodedef.drop or mach.nodedef.name
+    drops[#drops+1] = base_mach.machine_to_itemstack(mach.class.drop_id or mach.nodedef.name, mach.meta:to_table().fields)
+    minetest.remove_node(pos)
     return drops
+end
+
+function base_mach.after_dig_machine(pos, oldnode, oldmeta_table, digger)
+    local drop_id = minetest.registered_nodes[oldnode.name]._terumach_class.drop_id or oldnode.name
+    local drop_item = base_mach.machine_to_itemstack(drop_id, oldmeta_table.fields)
+    if not digger:is_player() then
+        minetest.add_item(pos, drop_item)
+    else
+        terumet.give_player_item(pos, digger, drop_item)
+    end
+end
+
+function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
+    local item_meta = itemstack:get_meta()
+    if item_meta then
+        local heat_level = item_meta:get_int('heat_level')
+        if heat_level then
+            local machine = base_mach.read_state(pos)
+            machine.heat_level = heat_level
+            base_mach.set_timer(machine)
+            base_mach.write_state(pos, machine)
+        end
+    end
 end
 
 -- used by default instead of the following on_inventory_* callbacks to reduce unnecessary tables

@@ -6,7 +6,7 @@
 -- and heat-powered machines.
 
 -- By Terumoc [https://github.com/Terumoc]
--- and with contribution from:
+-- and with contributions from:
 --  > RSL-Redstonier [https://github.com/RSL-Redstonier]
 
 --[[ Copyright (C) 2017-2018 Terumoc (Scott Horvath)
@@ -55,6 +55,14 @@ function terumet.id(id, number)
         return string.format('%s:%s %d', terumet.mod_name, id, number)
     else
         return string.format('%s:%s', terumet.mod_name, id)
+    end
+end
+
+function terumet.give_player_item(pos, player, stack)
+    local inv = player:get_inventory()
+    local leftover = inv:add_item("main", stack)
+    if leftover and not leftover:is_empty() then
+        minetest.item_drop(leftover, player, player:get_pos())
     end
 end
 
