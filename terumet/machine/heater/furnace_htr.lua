@@ -56,10 +56,9 @@ function furn_htr.init(pos)
     base_mach.write_state(pos, init_heater)
 end
 
-function furn_htr.get_drops(pos, include_self)
+function furn_htr.get_drop_contents(machine)
     local drops = {}
-    default.get_inventory_drops(pos, "inp", drops)
-    if include_self then drops[#drops+1] = furn_htr.unlit_id end
+    default.get_inventory_drops(machine.pos, "inp", drops)
     return drops
 end
 
@@ -129,23 +128,7 @@ function furn_htr.tick(pos, dt)
 
 end
 
-function furn_htr.inventory_change(pos)
-    furn_htr.tick(pos, 0)
-end
-
-function furn_htr.on_destruct(pos)
-    for _,item in ipairs(furn_htr.get_drops(pos, false)) do
-        minetest.add_item(pos, item)
-    end
-end
-
-function furn_htr.on_blast(pos)
-    drops = furn_htr.get_drops(pos, true)
-    minetest.remove_node(pos)
-    return drops
-end
-
-furn_htr.unlit_nodedef = {
+furn_htr.unlit_nodedef = base_mach.nodedef{
     -- node properties
     description = "Furnace Heater",
     tiles = {
@@ -153,26 +136,14 @@ furn_htr.unlit_nodedef = {
         terumet.tex('raw_sides_unlit'), terumet.tex('raw_sides_unlit'),
         terumet.tex('raw_sides_unlit'), terumet.tex('htr_furnace_front_unlit')
     },
-    paramtype2 = 'facedir',
-    groups = {cracky=1},
-    is_ground_content = false,
-    sounds = default.node_sound_metal_defaults(),
-    legacy_facedir_simple = true,
-    -- inventory slot control
-    allow_metadata_inventory_put = base_mach.allow_put,
-    allow_metadata_inventory_move = base_mach.allow_move,
-    allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = furn_htr.init,
-    on_metadata_inventory_move = furn_htr.inventory_change,
-    on_metadata_inventory_put = furn_htr.inventory_change,
-    on_metadata_inventory_take = furn_htr.inventory_change,
     on_timer = furn_htr.tick,
-    on_destruct = furn_htr.on_destruct,
-    on_blast = furn_htr.on_blast,
     -- terumet machine class data
     _terumach_class = {
         timer = 0.5,
+        on_external_heat = nil,
+        get_drop_contents = furn_htr.get_drop_contents,
         on_write_state = function(fheater)
             fheater.meta:set_string('formspec', furn_htr.generate_formspec(fheater))
             fheater.meta:set_string('infotext', furn_htr.generate_infotext(fheater))

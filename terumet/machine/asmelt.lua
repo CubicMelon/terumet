@@ -65,21 +65,21 @@ function base_asm.init(pos)
         heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
-        meta = meta
+        meta = meta,
+        pos = pos
     }
     base_mach.write_state(pos, init_smelter)
 end
 
-function base_asm.get_drops(pos, include_self)
+function base_asm.get_drop_contents(machine)
     local drops = {}
-    default.get_inventory_drops(pos, "fuel", drops)
-    default.get_inventory_drops(pos, "inp", drops)
-    default.get_inventory_drops(pos, "out", drops)
-    local flux_tank = minetest.get_meta(pos):get_int('flux_tank') or 0
+    default.get_inventory_drops(machine.pos, "fuel", drops)
+    default.get_inventory_drops(machine.pos, "inp", drops)
+    default.get_inventory_drops(machine.pos, "out", drops)
+    local flux_tank = machine.meta:get_int('flux_tank') or 0
     if flux_tank > 0 then
         drops[#drops+1] = terumet.id('lump_raw', math.min(99, flux_tank))
     end
-    if include_self then drops[#drops+1] = base_asm.unlit_id end
     return drops
 end
 
@@ -184,23 +184,7 @@ function base_asm.tick(pos, dt)
     base_mach.write_state(pos, smelter)
 end
 
-function base_asm.inventory_change(pos)
-    base_asm.tick(pos, 0)
-end
-
-function base_asm.on_destruct(pos)
-    for _,item in ipairs(base_asm.get_drops(pos, false)) do
-        minetest.add_item(pos, item)
-    end
-end
-
-function base_asm.on_blast(pos)
-    drops = base_asm.get_drops(pos, true)
-    minetest.remove_node(pos)
-    return drops
-end
-
-base_asm.unlit_nodedef = {
+base_asm.unlit_nodedef = base_mach.nodedef{
     -- node properties
     description = "Terumetal Alloy Smelter",
     tiles = {
@@ -208,29 +192,13 @@ base_asm.unlit_nodedef = {
         terumet.tex('raw_sides_unlit'), terumet.tex('raw_sides_unlit'),
         terumet.tex('raw_sides_unlit'), terumet.tex('asmelt_front_unlit')
     },
-    paramtype2 = 'facedir',
-    groups = {cracky=1},
-    is_ground_content = false,
-    sounds = default.node_sound_metal_defaults(),
-    legacy_facedir_simple = true,
-    -- inventory slot control
-    allow_metadata_inventory_put = base_mach.allow_put,
-    allow_metadata_inventory_move = base_mach.allow_move,
-    allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = base_asm.init,
-    on_metadata_inventory_move = base_asm.inventory_change,
-    on_metadata_inventory_put = base_asm.inventory_change,
-    on_metadata_inventory_take = base_asm.inventory_change,
     on_timer = base_asm.tick,
-    on_destruct = base_asm.on_destruct,
-    on_blast = base_asm.on_blast,
-    -- terumet machine class data
+    -- machine class data
     _terumach_class = {
         timer = 0.5,
-        on_external_heat = function(asmelt)
-            base_mach.set_timer(asmelt)
-        end,
+        get_drop_contents = base_asm.get_drop_contents,
         on_read_state = function(asmelt)
             asmelt.flux_tank = asmelt.meta:get_int('flux_tank')
         end,

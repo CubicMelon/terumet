@@ -60,17 +60,17 @@ function base_htf.init(pos)
         heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
-        meta = meta
+        meta = meta,
+        pos = pos
     }
     base_mach.write_state(pos, init_furnace)
 end
 
-function base_htf.get_drops(pos, include_self)
+function base_htf.get_drop_contents(machine)
     local drops = {}
-    default.get_inventory_drops(pos, "fuel", drops)
-    default.get_inventory_drops(pos, "inp", drops)
-    default.get_inventory_drops(pos, "out", drops)
-    if include_self then drops[#drops+1] = base_htf.unlit_id end
+    default.get_inventory_drops(machine.pos, "fuel", drops)
+    default.get_inventory_drops(machine.pos, "inp", drops)
+    default.get_inventory_drops(machine.pos, "out", drops)
     return drops
 end
 
@@ -145,23 +145,7 @@ function base_htf.tick(pos, dt)
 
 end
 
-function base_htf.inventory_change(pos)
-    base_htf.tick(pos, 0)
-end
-
-function base_htf.on_destruct(pos)
-    for _,item in ipairs(base_htf.get_drops(pos, false)) do
-        minetest.add_item(pos, item)
-    end
-end
-
-function base_htf.on_blast(pos)
-    drops = base_htf.get_drops(pos, true)
-    minetest.remove_node(pos)
-    return drops
-end
-
-base_htf.unlit_nodedef = {
+base_htf.unlit_nodedef = base_mach.nodedef{
     -- node properties
     description = "High-Temperature Furnace",
     tiles = {
@@ -169,29 +153,13 @@ base_htf.unlit_nodedef = {
         terumet.tex('htfurn_sides'), terumet.tex('htfurn_sides'),
         terumet.tex('htfurn_sides'), terumet.tex('htfurn_front')
     },
-    paramtype2 = 'facedir',
-    groups = {cracky=1},
-    is_ground_content = false,
-    sounds = default.node_sound_metal_defaults(),
-    legacy_facedir_simple = true,
-    -- inventory slot control
-    allow_metadata_inventory_put = base_mach.allow_put,
-    allow_metadata_inventory_move = base_mach.allow_move,
-    allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = base_htf.init,
-    on_metadata_inventory_move = base_htf.inventory_change,
-    on_metadata_inventory_put = base_htf.inventory_change,
-    on_metadata_inventory_take = base_htf.inventory_change,
     on_timer = base_htf.tick,
-    on_destruct = base_htf.on_destruct,
-    on_blast = base_htf.on_blast,
     -- terumet machine class data
     _terumach_class = {
         timer = 0.5,
-        on_external_heat = function(htfurnace)
-            base_mach.set_timer(htfurnace)
-        end,
+        get_drop_contents = base_htf.get_drop_contents,
         on_write_state = function(htfurnace)
             htfurnace.meta:set_string('formspec', base_htf.generate_formspec(htfurnace))
             htfurnace.meta:set_string('infotext', base_htf.generate_infotext(htfurnace))

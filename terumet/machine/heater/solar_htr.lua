@@ -45,28 +45,31 @@ function sol_htr.init(pos)
     base_mach.set_timer(init_heater)
 end
 
-function sol_htr.get_drops(pos, include_self)
-    local drops = {}
-    if include_self then drops[#drops+1] = sol_htr.id end
-    return drops
-end
-
+local LIGHT_LEEWAY = 4
 function sol_htr.do_processing(solar, dt)
     local above = {x=solar.pos.x, y=solar.pos.y+1, z=solar.pos.z}
-    local light_level = minetest.get_node_light(above, nil) -- nil=at this time of day
-    local gain = opts.SOLAR_GAIN_RATES[light_level+1]
+    -- use light level at midnight to determine how much artificial light is affecting light level
+    local night_light = minetest.get_node_light(above, 0)
+    local present_light = minetest.get_node_light(above, nil)
+    if not (night_light and present_light) then return end -- in case above is not loaded?
+    
+    local effective_light = math.min(15, math.max(0, present_light - night_light + LIGHT_LEEWAY))
+    
+    local gain = opts.SOLAR_GAIN_RATES[effective_light+1]
 
     if gain == 0 then
-        solar.status_text = 'Waiting for light'
-        return 
-    end
-
-    local under_cap = solar.heat_level < (solar.max_heat - gain)
-    if under_cap then
-        base_mach.gain_heat(solar, gain)
-        solar.status_text = 'Collection (Light: ' .. light_level .. ')'
+        solar.status_text = 'Waiting for sufficient sunlight'
     else
-        solar.status_text = 'Heat maximum'
+        local under_cap = solar.heat_level < (solar.max_heat - gain)
+        if under_cap then
+            base_mach.gain_heat(solar, gain)
+            solar.status_text = string.format('Sunlight: %.0f%% ', 100.0*effective_light/15)
+        else
+            solar.status_text = 'Heat is maximum'
+        end
+    end
+    if night_light > LIGHT_LEEWAY then
+        solar.status_text = solar.status_text .. string.format(', Interference: %.0f%%', 100.0*(night_light-LIGHT_LEEWAY)/15)
     end
 end
 
@@ -82,23 +85,7 @@ function sol_htr.tick(pos, dt)
     base_mach.set_timer(solar)
 end
 
-function sol_htr.inventory_change(pos)
-    sol_htr.tick(pos, 0)
-end
-
-function sol_htr.on_destruct(pos)
-    for _,item in ipairs(sol_htr.get_drops(pos, false)) do
-        minetest.add_item(pos, item)
-    end
-end
-
-function sol_htr.on_blast(pos)
-    drops = sol_htr.get_drops(pos, true)
-    minetest.remove_node(pos)
-    return drops
-end
-
-sol_htr.nodedef = {
+sol_htr.nodedef = base_mach.nodedef{
     -- node properties
     description = "Solar Heater",
     tiles = {
@@ -106,24 +93,14 @@ sol_htr.nodedef = {
         terumet.tex('frame_tste'), terumet.tex('frame_tste'),
         terumet.tex('frame_tste'), terumet.tex('frame_tste')
     },
-    groups = {cracky=1},
-    is_ground_content = false,
-    sounds = default.node_sound_metal_defaults(),
-    -- inventory slot control
-    allow_metadata_inventory_put = base_mach.allow_put,
-    allow_metadata_inventory_move = base_mach.allow_move,
-    allow_metadata_inventory_take = base_mach.allow_take,
+    paramtype2 = 'none',
     -- callbacks
     on_construct = sol_htr.init,
-    on_metadata_inventory_move = sol_htr.inventory_change,
-    on_metadata_inventory_put = sol_htr.inventory_change,
-    on_metadata_inventory_take = sol_htr.inventory_change,
     on_timer = sol_htr.tick,
-    on_destruct = sol_htr.on_destruct,
-    on_blast = sol_htr.on_blast,
     -- terumet machine class data
     _terumach_class = {
         timer = 1.0,
+        on_external_heat = nil,
         on_write_state = function(solar)
             solar.meta:set_string('formspec', sol_htr.generate_formspec(solar))
             solar.meta:set_string('infotext', sol_htr.generate_infotext(solar))

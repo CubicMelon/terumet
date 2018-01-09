@@ -59,17 +59,17 @@ function base_vul.init(pos)
         heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
-        meta = meta
+        meta = meta,
+        pos = pos
     }
     base_mach.write_state(pos, init_vulcan)
 end
 
-function base_vul.get_drops(pos, include_self)
+function base_vul.get_drop_contents(machine)
     local drops = {}
-    default.get_inventory_drops(pos, "fuel", drops)
-    default.get_inventory_drops(pos, "inp", drops)
-    default.get_inventory_drops(pos, "out", drops)
-    if include_self then drops[#drops+1] = base_vul.id end
+    default.get_inventory_drops(machine.pos, "fuel", drops)
+    default.get_inventory_drops(machine.pos, "inp", drops)
+    default.get_inventory_drops(machine.pos, "out", drops)
     return drops
 end
 
@@ -132,23 +132,7 @@ function base_vul.tick(pos, dt)
 
 end
 
-function base_vul.inventory_change(pos)
-    base_vul.tick(pos, 0)
-end
-
-function base_vul.on_destruct(pos)
-    for _,item in ipairs(base_vul.get_drops(pos, false)) do
-        minetest.add_item(pos, item)
-    end
-end
-
-function base_vul.on_blast(pos)
-    drops = base_vul.get_drops(pos, true)
-    minetest.remove_node(pos)
-    return drops
-end
-
-base_vul.nodedef = {
+base_vul.nodedef = base_mach.nodedef{
     -- node properties
     description = "Crystal Vulcanizer",
     tiles = {
@@ -156,29 +140,13 @@ base_vul.nodedef = {
         terumet.tex('vulcan_sides'), terumet.tex('vulcan_sides'),
         terumet.tex('vulcan_sides'), terumet.tex('vulcan_sides')
     },
-    paramtype2 = 'facedir',
-    groups = {cracky=1},
-    is_ground_content = false,
-    sounds = default.node_sound_metal_defaults(),
-    legacy_facedir_simple = true,
-    -- inventory slot control
-    allow_metadata_inventory_put = base_mach.allow_put,
-    allow_metadata_inventory_move = base_mach.allow_move,
-    allow_metadata_inventory_take = base_mach.allow_take,
     -- callbacks
     on_construct = base_vul.init,
-    on_metadata_inventory_move = base_vul.inventory_change,
-    on_metadata_inventory_put = base_vul.inventory_change,
-    on_metadata_inventory_take = base_vul.inventory_change,
     on_timer = base_vul.tick,
-    on_destruct = base_vul.on_destruct,
-    on_blast = base_vul.on_blast,
     -- terumet machine class data
     _terumach_class = {
         timer = 0.5,
-        on_external_heat = function(vulcan)
-            base_mach.set_timer(vulcan)
-        end,
+        get_drop_contents = base_vul.get_drop_contents,
         on_write_state = function(vulcan)
             vulcan.meta:set_string('formspec', base_vul.generate_formspec(vulcan))
             vulcan.meta:set_string('infotext', base_vul.generate_infotext(vulcan))

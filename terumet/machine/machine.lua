@@ -198,8 +198,9 @@ end
 -- GENERIC MACHINE PROCESSES
 --
 
-function base_mach.set_timer(machine)
-    minetest.get_node_timer(machine.pos):start(machine.class.timer)
+function base_mach.set_timer(machine, specific_time)
+    specific_time = specific_time or machine.class.timer
+    minetest.get_node_timer(machine.pos):start(specific_time)
 end
 
 function base_mach.set_low_heat_msg(machine, process)
@@ -269,8 +270,130 @@ function base_mach.generate_particle(pos, particle_tex)
 end
 
 --
+-- BASIC MACHINE NODEDEF TEMPLATE GENERATOR
+-- (makes considerable use of generic callbacks below)
+--
+
+function base_mach.nodedef(additions)
+    local new_nodedef = {
+        stack_max = 0,
+        is_ground_content = false,
+        sounds = default.node_sound_metal_defaults(),
+        legacy_facedir_simple = true,
+        paramtype2 = 'facedir',
+        groups = {cracky=1},
+        -- default inventory slot control
+        allow_metadata_inventory_put = base_mach.allow_put,
+        allow_metadata_inventory_move = base_mach.allow_move,
+        allow_metadata_inventory_take = base_mach.allow_take,
+        -- default callbacks
+        on_destruct = base_mach.on_destruct,
+        on_blast = base_mach.on_blast,
+        on_metadata_inventory_move = base_mach.on_inventory_move,
+        on_metadata_inventory_put = base_mach.on_inventory_put,
+        on_metadata_inventory_take = base_mach.on_inventory_take,
+        -- terumetal machine class
+        _terumach_class = {
+            -- timer: standard time (in seconds) for node timer to tick
+            timer = 1.0,
+            -- -
+            -- get_drop_contents: (machine) -> list of additional items to drop when broken (don't include self)
+            get_drop_contents = function(machine)
+                return {}
+            end,
+            -- -
+            -- on_inventory_change: (machine, event_data) -> nil
+            -- called whenever items are put in/taken out/moved within inventory
+            -- event_data.event can be 'move', 'put' or 'take'
+            -- by default just resets node timer
+            on_inventory_change = function(machine, event_data)
+                base_mach.set_timer(machine, 0)
+            end,
+            -- -
+            -- on_read_state: (machine) -> nil
+            -- called whenever state is read from node metadata
+            -- -
+            -- on_write_state: (machine) -> nil
+            -- called whenever state is written to node metadata
+            -- usually used to update formspec/infotext
+            -- -
+            -- on_external_heat: (machine) -> nil
+            -- called whenever machine receives heat from an external source
+            -- by default just resets node timer
+            on_external_heat = function(machine)
+                base_mach.set_timer(machine, 0)
+            end
+        }
+    }
+    if additions._terumach_class then
+        for tk,tv in pairs(additions._terumach_class) do
+            new_nodedef._terumach_class[tk] = tv
+        end
+    end
+    for k,v in pairs(additions) do
+        if k ~= '_terumach_class' then
+            new_nodedef[k] = v
+        end
+    end
+    return new_nodedef
+end
+
+--
 -- GENERIC CALLBACKS
 --
+
+function base_mach.on_destruct(pos)
+    local mach = base_mach.read_state(pos)
+    if not mach then return end
+    local drops = mach.class.get_drop_contents(mach)
+    for _,item in ipairs(drops) do
+        minetest.add_item(pos, item)
+    end
+end
+
+function base_mach.on_blast(pos)
+    local mach = base_mach.read_state(pos)
+    if not mach then return end
+    local drops = mach.class.get_drop_contents(mach)
+    minetest.remove_node(pos)
+    -- always need to return machine as well when exploded
+    drops[#drops+1] = mach.nodedef.drop or mach.nodedef.name
+    return drops
+end
+
+function base_mach.on_inventory_move(pos, list_from, index_from, list_to, index_to, count, player)
+    local mach = base_mach.read_state(pos)
+    if not mach then return end
+    mach.class.on_inventory_change(mach, {
+        event='move',
+        from={list=list_from, index=index_from},
+        to={list=list_to, index=index_to},
+        count=count,
+        player=player
+    })
+end
+
+function base_mach.on_inventory_take(pos, list, index, stack, player)
+    local mach = base_mach.read_state(pos)
+    if not mach then return end
+    mach.class.on_inventory_change(mach, {
+        event='take',
+        from={list=list, index=index},
+        stack=stack,
+        player=player
+    })
+end
+
+function base_mach.on_inventory_put(pos, list, index, stack, player)
+    local mach = base_mach.read_state(pos)
+    if not mach then return end
+    mach.class.on_inventory_change(mach, {
+        event='put',
+        to={list=list, index=index},
+        stack=stack,
+        player=player
+    })
+end
 
 function base_mach.allow_put(pos, listname, index, stack, player)
     if minetest.is_protected(pos, player:get_player_name()) then
