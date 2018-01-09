@@ -26,7 +26,8 @@ function base_vul.generate_formspec(vulcan)
     --current status
     'label[0,0;Crystal Vulcanizer]'..
     'label[0,0.5;' .. vulcan.status_text .. ']'..
-    base_mach.fs_heat_info(vulcan,4.25,1.5)
+    base_mach.fs_heat_info(vulcan,4.25,1.5)..
+    base_mach.fs_heat_mode(vulcan,4.25,4)
     if vulcan.state == base_vul.STATE.VULCANIZING then
         fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..vulcan.inv:get_stack('result',1):get_name()..']'
     end

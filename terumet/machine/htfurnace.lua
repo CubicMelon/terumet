@@ -27,7 +27,8 @@ function base_htf.generate_formspec(furnace)
     --current status
     'label[0,0;High-Temperature Furnace]'..
     'label[0,0.5;' .. furnace.status_text .. ']'..
-    base_mach.fs_heat_info(furnace,4.25,1.5)
+    base_mach.fs_heat_info(furnace,4.25,1.5)..
+    base_mach.fs_heat_mode(furnace,4.25,4)
     if furnace.state == base_htf.STATE.COOKING then
         fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..furnace.inv:get_stack('result',1):get_name()..']'
     end

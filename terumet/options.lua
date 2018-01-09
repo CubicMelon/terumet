@@ -11,7 +11,15 @@ machine.basic_heat_sources = {
 }
 -- Whether machines emit particles or not while working
 machine.PARTICLES = true
+
+machine.HEAT_TRANSFER_MODE_NAMES = {
+    [0]='Disabled',
+    [1]='Accept',
+    [2]='Only Provide',
+}
+
 terumet.options.machine = machine -- do not remove
+
 
 local heater = {
     furnace={},

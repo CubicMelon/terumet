@@ -73,6 +73,11 @@ function base_mach.fs_flux_info(machine, fsx, fsy, percent)
     percent..':terumet_gui_flux_fg.png]label['..fsx..','..fsy+2 ..';Molten Flux]'
 end
 
+-- heat transfer mode display formspec
+function base_mach.fs_heat_mode(machine, fsx, fsy)
+    return 'label['..fsx..','..fsy..';'..string.format('Heat Transfer: %s]', opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
+end
+
 -- player inventory formspec
 function base_mach.fs_player_inv(fsx, fsy)
     return 'list[current_player;main;'..fsx..','..fsy..';8,1;]list[current_player;main;'..fsx..','..fsy+1.25 ..';8,3;8]'
@@ -83,7 +88,7 @@ end
 --
 -- constants for interactive heat behavior of machines
 base_mach.HEAT_XFER_MODE= {
-    IGNORE=0, -- default if not specified
+    NO_XFER=0, -- default if not specified
     ACCEPT=1,
     PROVIDE_ONLY=2,
 }
@@ -164,7 +169,7 @@ function base_mach.read_state(pos)
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
     machine.max_heat = meta:get_int('max_heat') or 0
-    machine.heat_xfer_mode = meta:get_int('heat_xfer_mode')
+    machine.heat_xfer_mode = meta:get_int('heat_xfer_mode') or base_mach.HEAT_XFER_MODE.NO_XFER
     machine.state = meta:get_int('state')
     machine.state_time = meta:get_float('state_time') or 0
     machine.status_text = meta:get_string('status_text') or 'No Status'
@@ -180,7 +185,7 @@ function base_mach.write_state(pos, machine)
     meta:set_string('status_text', machine.status_text)
     meta:set_int('heat_level', machine.heat_level or 0)
     meta:set_int('max_heat', machine.max_heat or 0)
-    meta:set_int('heat_xfer_mode', machine.heat_xfer_mode or base_mach.HEAT_XFER_MODE.IGNORE)
+    meta:set_int('heat_xfer_mode', machine.heat_xfer_mode or base_mach.HEAT_XFER_MODE.NO_XFER)
     meta:set_int('state', machine.state)
     meta:set_float('state_time', machine.state_time)
     -- call write callback on node def if exists
@@ -289,9 +294,9 @@ function base_mach.nodedef(additions)
         -- default callbacks
         on_destruct = base_mach.on_destruct,
         on_blast = base_mach.on_blast,
-        on_metadata_inventory_move = base_mach.on_inventory_move,
-        on_metadata_inventory_put = base_mach.on_inventory_put,
-        on_metadata_inventory_take = base_mach.on_inventory_take,
+        on_metadata_inventory_move = base_mach.simple_inventory_event,-- base_mach.on_inventory_move, for event_data
+        on_metadata_inventory_put = base_mach.simple_inventory_event,-- base_mach.on_inventory_put, for event_data
+        on_metadata_inventory_take = base_mach.simple_inventory_event,-- base_mach.on_inventory_take, for event_data
         -- terumetal machine class
         _terumach_class = {
             -- timer: standard time (in seconds) for node timer to tick
@@ -304,8 +309,9 @@ function base_mach.nodedef(additions)
             -- -
             -- on_inventory_change: (machine, event_data) -> nil
             -- called whenever items are put in/taken out/moved within inventory
-            -- event_data.event can be 'move', 'put' or 'take'
-            -- by default just resets node timer
+            -- event_data will contain specific info ONLY IF the nodedef's 
+            --      on_metadata_inventory_* was pointed to base_mach.on_inventory_*
+            --      instead of base_mach.simple_inventory_event
             on_inventory_change = function(machine, event_data)
                 base_mach.set_timer(machine, 0)
             end,
@@ -359,6 +365,14 @@ function base_mach.on_blast(pos)
     -- always need to return machine as well when exploded
     drops[#drops+1] = mach.nodedef.drop or mach.nodedef.name
     return drops
+end
+
+-- used by default instead of the following on_inventory_* callbacks to reduce unnecessary tables
+-- change nodedef on_metadata_inventory_* callbacks from this to those if specific event data is needed
+function base_mach.simple_inventory_event(pos)
+    local mach = base_mach.read_state(pos)
+    if not mach then return end
+    mach.class.on_inventory_change(mach)
 end
 
 function base_mach.on_inventory_move(pos, list_from, index_from, list_to, index_to, count, player)

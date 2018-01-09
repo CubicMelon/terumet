@@ -17,7 +17,8 @@ function sol_htr.generate_formspec(heater)
     --current status
     'label[0,0;Solar Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
-    base_mach.fs_heat_info(heater,4,1.5)
+    base_mach.fs_heat_info(heater,4,1.5)..
+    base_mach.fs_heat_mode(heater,4,4)
     return fs
 end
 
@@ -78,8 +79,10 @@ function sol_htr.tick(pos, dt)
     local solar = base_mach.read_state(pos)
 
     sol_htr.do_processing(solar, dt)
-    base_mach.push_heat_adjacent(solar, opts.HEAT_TRANSFER_RATE)
 
+    if solar.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then
+        base_mach.push_heat_adjacent(solar, opts.HEAT_TRANSFER_RATE)
+    end
     -- write status back to meta
     base_mach.write_state(pos, solar)
     base_mach.set_timer(solar)

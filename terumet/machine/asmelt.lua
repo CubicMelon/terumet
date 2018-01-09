@@ -29,7 +29,8 @@ function base_asm.generate_formspec(smelter)
     'label[0,0;Terumetal Alloy Smelter]'..
     'label[0,0.5;' .. smelter.status_text .. ']'..
     base_mach.fs_flux_info(smelter,2,1.5,100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM)..
-    base_mach.fs_heat_info(smelter,4.25,1.5)
+    base_mach.fs_heat_info(smelter,4.25,1.5)..
+    base_mach.fs_heat_mode(smelter,4.25,4)
     if smelter.state == base_asm.STATE.FLUX_MELT then
         fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('lump_raw')..']'
     elseif smelter.state == base_asm.STATE.ALLOYING then

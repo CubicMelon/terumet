@@ -22,7 +22,8 @@ function furn_htr.generate_formspec(heater)
     --current status
     'label[0,0;Furnace Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
-    base_mach.fs_heat_info(heater,4,1.5)
+    base_mach.fs_heat_info(heater,4,1.5)..
+    base_mach.fs_heat_mode(heater,4,4)
     if heater.state ~= furn_htr.STATE.IDLE then
         fs=fs..'image[3,3;1,1;terumet_gui_product_bg.png]item_image[3,3;1,1;'..heater.inv:get_stack('burn',1):get_name()..']'
     end
@@ -112,7 +113,9 @@ function furn_htr.tick(pos, dt)
 
     furn_htr.check_new_processing(heater)
 
-    base_mach.push_heat_adjacent(heater, opts.HEAT_TRANSFER_RATE)
+    if heater.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then
+        base_mach.push_heat_adjacent(heater, opts.HEAT_TRANSFER_RATE)
+    end
     -- remain active if currently burning something or have any heat (for distribution)
     if heater.state == furn_htr.STATE.BURNING then
         base_mach.set_timer(heater)
