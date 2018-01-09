@@ -281,7 +281,7 @@ end
 
 function base_mach.nodedef(additions)
     local new_nodedef = {
-        stack_max = 0,
+        stack_max = 1,
         is_ground_content = false,
         sounds = default.node_sound_metal_defaults(),
         legacy_facedir_simple = true,
