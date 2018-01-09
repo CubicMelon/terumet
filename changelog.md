@@ -1,6 +1,10 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+### Version 1.7
+* New alloy added that uses the remaining minetest metals: Teruchalcum, made from standard minetest Bronze, additional Tin, and Terumetal flux in the Alloy Smelter! Mostly an excellent mid-tier tool metal at this point that creates fast and extremely long-lasting tools for usual exploring and mining.
+* All machines now 'save' their heat when broken! If a machine has been placed in the world before, it will state 'Heat: X%' in its tooltip and will retain that amount when re-placed. **REMEMBER** though: if a machine is in the middle of processing something and you break it, what was being processed will be lost! Any items in the input and output slots will be dropped, but anything mid-process will not!
+
 ### Version 1.6
 * Furnace Heater added: use standard furnace fuel for generating heat
 * Solar Heater added: use (sun)light for generating heat

@@ -92,7 +92,7 @@ terumet.reg_alloy('Terucopper', 'tcop', 1)
 terumet.reg_alloy('Terusteel', 'tste', 2)
 terumet.reg_alloy('Terugold', 'tgol', 3)
 terumet.reg_alloy('Coreglass', 'cgls', 4)
-terumet.reg_alloy('Teruchalcum', 'tcha', 3)
+terumet.reg_alloy('Teruchalcum', 'tcha', 2)
 
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
@@ -128,7 +128,7 @@ terumet.reg_tools('Coreglass', 'cgls',
 )
 terumet.reg_tools('Teruchalcum', 'tcha',
     id('ingot_tcha'),
-    {2.3, 1.1, 0.5}, 80, 3
+    {1.8, 0.7, 0.45}, 90, 2
 )
 
 terumet.do_lua_file('tool/ore_saw')
