@@ -84,6 +84,7 @@ terumet.reg_alloy('Terucopper', 'tcop', 1)
 terumet.reg_alloy('Terusteel', 'tste', 2)
 terumet.reg_alloy('Terugold', 'tgol', 3)
 terumet.reg_alloy('Coreglass', 'cgls', 4)
+terumet.reg_alloy('Teruchalcum', 'tcha', 3)
 
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
@@ -117,6 +118,11 @@ terumet.reg_tools('Coreglass', 'cgls',
     id('ingot_cgls'),
     {2.5, 1.2, 0.7}, 75, 4
 )
+terumet.reg_tools('Teruchalcum', 'tcha',
+    id('ingot_tcha'),
+    {2.3, 1.1, 0.5}, 80, 3
+)
+
 terumet.do_lua_file('tool/ore_saw')
 
 terumet.do_lua_file('machine/heater/furnace_htr')
@@ -126,4 +132,6 @@ terumet.do_lua_file('machine/htfurnace')
 terumet.do_lua_file('machine/vulcan')
 terumet.do_lua_file('machine/thermobox')
 
-if unified_inventory then terumet.do_lua_file('interop/unified_inventory') end
+if unified_inventory then 
+    terumet.do_lua_file('interop/unified_inventory')
+end

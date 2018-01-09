@@ -64,7 +64,7 @@ function furn_htr.get_drop_contents(machine)
 end
 
 function furn_htr.do_processing(heater, dt)
-    local gain = math.floor(10 * dt) -- heat gain this tick
+    local gain = math.floor(5 * dt) -- heat gain this tick
     if gain == 0 then return end
     local under_cap = heater.heat_level < (heater.max_heat - gain)
     if heater.state == furn_htr.STATE.BURN_FULL and under_cap then

@@ -327,7 +327,7 @@ function base_mach.nodedef(additions)
             -- called whenever machine receives heat from an external source
             -- by default just resets node timer
             on_external_heat = function(machine)
-                base_mach.set_timer(machine, 0)
+                base_mach.set_timer(machine)
             end
         }
     }
