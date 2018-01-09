@@ -300,7 +300,7 @@ function base_mach.nodedef(additions)
         legacy_facedir_simple = true,
         paramtype2 = 'facedir',
         groups = {cracky=1},
-        drop = '',
+        drop = '', -- since after_dig_node/on_destruct/on_blast handles machines dropping w/stored heat, flag machines as ignoring usual drop mechanic
         -- default inventory slot control
         allow_metadata_inventory_put = base_mach.allow_put,
         allow_metadata_inventory_move = base_mach.allow_move,
@@ -321,12 +321,12 @@ function base_mach.nodedef(additions)
             -- -
             -- drop_id: id of base machine that is dropped when broken
             -- -
-            -- get_drop_contents: (machine) -> list of additional items to drop when broken (don't include self)
+            -- get_drop_contents: fn(machine) -> list of additional items to drop when broken (don't include self)
             get_drop_contents = function(machine)
                 return {}
             end,
             -- -
-            -- on_inventory_change: (machine, event_data) -> nil
+            -- on_inventory_change: fn(machine, event_data) -> nil
             -- called whenever items are put in/taken out/moved within inventory
             -- event_data will contain specific info ONLY IF the nodedef's 
             --      on_metadata_inventory_* was pointed to base_mach.on_inventory_*
@@ -335,14 +335,14 @@ function base_mach.nodedef(additions)
                 base_mach.set_timer(machine, 0)
             end,
             -- -
-            -- on_read_state: (machine) -> nil
+            -- on_read_state: fn(machine) -> nil
             -- called whenever state is read from node metadata
             -- -
-            -- on_write_state: (machine) -> nil
+            -- on_write_state: fn(machine) -> nil
             -- called whenever state is written to node metadata
             -- usually used to update formspec/infotext
             -- -
-            -- on_external_heat: (machine) -> nil
+            -- on_external_heat: fn(machine) -> nil
             -- called whenever machine receives heat from an external source
             -- by default just resets node timer
             on_external_heat = function(machine)
@@ -372,8 +372,7 @@ function base_mach.on_destruct(pos)
     if not mach then return end
     local drops = mach.class.get_drop_contents(mach)
     for _,item in ipairs(drops) do
-        minetest.item_drop(item, nil, pos)
-        --minetest.add_item(pos, item)
+        minetest.add_item(pos, item)
     end
 end
 
@@ -462,10 +461,10 @@ function base_mach.allow_put(pos, listname, index, stack, player)
         else
             return 0
         end
-    elseif listname == "inp" then
-        return stack:get_count()
-    else
+    elseif listname == "out" then
         return 0
+    else
+        return stack:get_count()
     end
 end
 

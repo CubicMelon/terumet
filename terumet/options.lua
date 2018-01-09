@@ -76,7 +76,7 @@ smelter.recipes = {
 -- Teruchalchum
     {result='terumet:ingot_tcha', flux=3, time=4.5, input={'default:bronze_ingot', 'default:tin_lump 2'}},
     {result='terumet:block_tcha', flux=26, time=80.0, input={'default:bronze_block', 'default:tinblock 2'}},
-    {result='terumet:ingot_tcha', flux=3, time=4.5, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
+    {result='terumet:ingot_tcha', flux=3, time=2.5, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
 -- Coreglass
     {result='terumet:ingot_cgls', flux=5, time=10.0, input={'default:diamond', 'default:obsidian_shard'}},
     {result='terumet:block_cgls', flux=30, time=180.0, input={'default:diamondblock', 'default:obsidian'}},
