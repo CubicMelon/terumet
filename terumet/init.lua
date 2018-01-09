@@ -3,7 +3,7 @@
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
 -- Written for Minetest version 0.4.16
 -- Creates a new ore in the world which can be used to make useful alloys
--- from many already available materials.
+-- and heat-powered machines.
 
 -- By Terumoc [https://github.com/Terumoc]
 -- and with contribution from:
