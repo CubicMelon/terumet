@@ -1,7 +1,7 @@
 local id = terumet.id
 local tex = terumet.tex
 
-function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_count, max_level)
+function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_count, max_level, sword_damage)
     local stick = 'default:stick'
     local pick_id = id('tool_pick_'..mat_id)
     local shovel_id = id('tool_shovel_'..mat_id)
@@ -83,7 +83,7 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
             groupcaps = {
                 snappy = {times=dig_times, uses=base_use_count, maxlevel=max_level},
             },
-            damage_groups = {fleshy=1 + (2 * max_level)}
+            damage_groups = {fleshy=sword_damage}
         },
         sound = {breaks = 'default_tool_breaks'}
     })

@@ -106,29 +106,31 @@ local tex = terumet.tex
 
 terumet.do_lua_file('tool/reg_tools')
 
+local opts = terumet.options.tools
+
 terumet.reg_tools('Pure Terumetal', 'raw',
     id('ingot_raw'),
-    {2.0}, 10, 2
+    {2.0}, 10, 2, opts.TERUMETAL
 )
 terumet.reg_tools('Terucopper', 'tcop', 
     id('ingot_tcop'),
-    {3.2, 1.4, 0.8}, 40, 1 
+    {3.2, 1.4, 0.8}, 40, 1, opts.COPPER_ALLOY
 )
 terumet.reg_tools('Terusteel', 'tste', 
     id('ingot_tste'),
-    {2.9, 1.3, 0.7}, 50, 2
+    {2.9, 1.3, 0.7}, 50, 2, opts.IRON_ALLOY
 )
 terumet.reg_tools('Terugold', 'tgol', 
     id('ingot_tgol'),
-    {2.7, 1.2, 0.63}, 60, 3
+    {2.7, 1.2, 0.63}, 60, 3, opts.GOLD_ALLOY
 )
 terumet.reg_tools('Coreglass', 'cgls',
     id('ingot_cgls'),
-    {2.5, 1.2, 0.7}, 75, 4
+    {2.5, 1.2, 0.7}, 75, 4, opts.COREGLASS
 )
 terumet.reg_tools('Teruchalcum', 'tcha',
     id('ingot_tcha'),
-    {1.8, 0.7, 0.45}, 90, 2
+    {1.8, 0.7, 0.45}, 90, 2, opts.BRONZE_ALLOY
 )
 
 terumet.do_lua_file('tool/ore_saw')
