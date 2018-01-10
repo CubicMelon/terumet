@@ -7,6 +7,7 @@ Newer versions listed first
 * The Solar Heater is now much more difficult to exploit with artificial light. ONLY sunlight will do now.
 * Ore-cutting Saw (name was changed since WIP stage) is now implemented and effective. With this tool you can instantly excavate any ore node to collect them whole. Mostly useful for Diamond Ore and Mese Ore, which can be Vulcanized into Crystallized Diamonds/Mese (thus doubling the usual mining yield)
     * Ore-cutting Saw as a method to get whole ore nodes are also shown in unified_inventory
+* Damage of alloy Swords changed to more appropriate values, and can now be easily changed in options.lua
 
 ### Version 1.6
 * Furnace Heater added: use standard furnace fuel for generating heat
