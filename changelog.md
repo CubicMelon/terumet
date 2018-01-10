@@ -6,7 +6,7 @@ Newer versions listed first
 * All machines now 'save' their heat when broken! If a machine has been placed in the world before, it will state 'Heat: X%' in its tooltip and will retain that amount when re-placed. **REMEMBER** though: if a machine is in the middle of processing something and you break it, what was being processed will be lost! Any items in the input and output slots will be dropped, but anything mid-process will not!
 * The Solar Heater is now much more difficult to exploit with artificial light. ONLY sunlight will do now.
 * Ore-cutting Saw (name was changed since WIP stage) is now implemented and effective. With this tool you can instantly excavate any ore node to collect them whole. Mostly useful for Diamond Ore and Mese Ore, which can be Vulcanized into Crystallized Diamonds/Mese (thus doubling the usual mining yield)
-* * Ore-cutting Saw as a method to get whole ore nodes are also shown in unified_inventory
+    * Ore-cutting Saw as a method to get whole ore nodes are also shown in unified_inventory
 
 ### Version 1.6
 * Furnace Heater added: use standard furnace fuel for generating heat
