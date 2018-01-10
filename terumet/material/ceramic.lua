@@ -10,7 +10,7 @@ minetest.register_node( cblock_id, {
     description = 'Teruceramic Block',
     tiles = {terumet.tex(cblock_id)},
     is_ground_content = false,
-    groups={cracky=1, level=1},
+    groups={cracky=1, level=1, puts_out_fire=1},
     sounds = default.node_sound_glass_defaults()
 })
 

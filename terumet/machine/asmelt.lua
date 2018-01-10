@@ -79,7 +79,7 @@ function base_asm.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, "out", drops)
     local flux_tank = machine.meta:get_int('flux_tank') or 0
     if flux_tank > 0 then
-        drops[#drops+1] = terumet.id('lump_raw', math.min(99, flux_tank))
+        drops[#drops+1] = terumet.id('item_cryst_raw', math.min(99, flux_tank))
     end
     return drops
 end

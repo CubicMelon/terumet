@@ -8,6 +8,7 @@ Newer versions listed first
 * Ore-cutting Saw (name was changed since WIP stage) is now implemented and effective. With this tool you can instantly excavate any ore node to collect them whole. Mostly useful for Diamond Ore and Mese Ore, which can be Vulcanized into Crystallized Diamonds/Mese (thus doubling the usual mining yield)
     * Ore-cutting Saw as a method to get whole ore nodes are also shown in unified_inventory
 * Damage of alloy Swords changed to more appropriate values, and can now be easily changed in options.lua
+* Fixed duplication exploit of Terumetal via breaking Alloy Smelters and recrystallizing the dropped lumps: alloy smelter now drops crystallized terumetal instead
 
 ### Version 1.6
 * Furnace Heater added: use standard furnace fuel for generating heat
