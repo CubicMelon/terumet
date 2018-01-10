@@ -219,7 +219,7 @@ end
 -- handle basic fuel heating
 function base_mach.process_fuel(machine)
     local fuel_item = machine.inv:get_stack('fuel',1)
-    local heat_source = opts.basic_heat_sources[fuel_item:get_name()]
+    local heat_source = opts.BASIC_HEAT_SOURCES[fuel_item:get_name()]
     if heat_source and (machine.max_heat - machine.heat_level) >= heat_source.hus then
         local return_item = heat_source.return_item
         if fuel_item:get_stack_max() > 1 then
@@ -456,7 +456,7 @@ function base_mach.allow_put(pos, listname, index, stack, player)
         return 0 -- number of items allowed to move
     end
     if listname == "fuel" then
-        if opts.basic_heat_sources[stack:get_name()] then
+        if opts.BASIC_HEAT_SOURCES[stack:get_name()] then
             return stack:get_count()
         else
             return 0

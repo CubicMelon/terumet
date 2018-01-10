@@ -40,20 +40,20 @@ terumet.register_crystal{
     suffix='ob',
     color='#1f2631',
     name='Crystallized Obsidian',
-    source='nothing_yet',
+    source='default:obsidian',
     cooking_result='default:obsidian'
 }
 terumet.register_crystal{
     suffix='mese',
     color='#fffb81',
     name='Crystallized Mese',
-    source='nothing_yet',
+    source='default:stone_with_mese',
     cooking_result='default:mese_crystal'
 }
 terumet.register_crystal{
     suffix='dia',
     color='#66f6ff',
     name='Crystallized Diamond',
-    source='nothing_yet',
+    source='default:stone_with_diamond',
     cooking_result='default:diamond'
 }

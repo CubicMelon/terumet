@@ -13,7 +13,7 @@ function add_terumet_recipes()
     end
 
     -- add each defined flux source to UnInv
-    for source, details in pairs(terumet.options.smelter.flux_items) do
+    for source, details in pairs(terumet.options.smelter.FLUX_ITEMS) do
         unified_inventory.register_craft{
             type = 'terumet_alloy',
             output = terumet.id('uninv_flux_req'),

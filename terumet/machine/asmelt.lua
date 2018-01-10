@@ -146,7 +146,7 @@ function base_asm.check_new_processing(smelter)
         end
     end
     -- if could not begin alloying anything, check for flux to melt
-    for flux_item, flux_params in pairs(opts.flux_items) do
+    for flux_item, flux_params in pairs(opts.FLUX_ITEMS) do
         if smelter.inv:contains_item('inp', flux_item) then
             if smelter.flux_tank >= opts.FLUX_MAXIMUM then
                 error_msg = 'Flux tank full!'
