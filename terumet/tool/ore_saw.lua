@@ -3,9 +3,9 @@ local saw_id = id('tool_ore_saw')
 local opts = terumet.options.ore_saw
 
 minetest.register_tool( saw_id, {
-    description = 'Ore-Carving Saw',
+    description = 'Ore-cutting Saw\nEasily excavates ore nodes',
     inventory_image = terumet.tex(saw_id),
-    tool_capabilities = {}, -- does not function like normal tool
+    tool_capabilities = {},
     sound = {breaks = 'default_tool_breaks'},
     on_use = function (itemstack, user, pointed_thing)
         if pointed_thing.type == 'node' and pointed_thing.under then
@@ -28,12 +28,13 @@ minetest.register_tool( saw_id, {
                 })
             end
         end
+        return itemstack
     end
 })
 
 minetest.register_craft{ output = saw_id,
     recipe = {
-        {id('ingot_tcha'), id('ingot_tcha'), id('ingot_tcha')},
-        {id('ingot_tcha'), id('ingot_tste'), id('ingot_tcha')},
+        {id('ingot_tcha'), id('ingot_tcha'), id('ingot_tste')},
+        {id('ingot_tcha'), id('ingot_tcha'), id('ingot_tste')},
         {'', id('ingot_tste'), ''}
 }}

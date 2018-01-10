@@ -37,7 +37,7 @@ terumet.options.heater = {
         -- Maximum HUs Solar Heater can store
         MAX_HEAT = 4000,
         -- HUs Solar Heater generates per tick based on sunlight level
-        SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 5, 10, 20 },
+        SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 6, 12 },
         -- Maximum HUs Solar Heater can transfer per tick
         HEAT_TRANSFER_RATE = 100,
     }
@@ -120,15 +120,16 @@ terumet.options.ore_saw = {
     --
     -- ORE SAW SETTINGS
     --
-    -- Nodes that can be gathered directly via saw
+    -- Nodes that can be gathered directly via saw (1 is meaningless and just to provide a value)
     VALID_ORES = {
         ['default:stone_with_diamond']=1,
         ['default:stone_with_mese']=1,
         ['default:stone_with_copper']=1,
         ['default:stone_with_tin']=1,
         ['default:stone_with_iron']=1,
-        ['default:stone_with_coal'=]1
+        ['default:stone_with_gold']=1,
+        ['default:stone_with_coal']=1,
     },
     -- Number of times ore saw can be used before breaking
-    USES = 10, -- TODO increase
+    USES = 50,
 }

@@ -21,11 +21,21 @@ function add_terumet_recipes()
         }
     end
 
+    -- add each crystal vulcanizer recipe to UnInv
     for source, crystal in pairs(terumet.options.vulcan.recipes) do
         unified_inventory.register_craft{
             type = 'terumet_vulcan',
             output = crystal .. ' 2',  -- change here if yield updated
             items = {source}
+        }
+    end
+
+    -- add each valid ore for ore saw to UnInv
+    for node, _ in pairs(terumet.options.ore_saw.VALID_ORES) do
+        unified_inventory.register_craft{
+            type = 'terumet_ore_saw',
+            output = node,
+            items = {node}
         }
     end
 end
@@ -56,6 +66,13 @@ unified_inventory.register_craft_type( 'terumet_alloy', {
 unified_inventory.register_craft_type( 'terumet_vulcan', {
     description = 'Crystal Vulcanizer',
     icon = 'terumet_vulcan_sides.png',
+    width=1,
+    height=1,
+})
+
+unified_inventory.register_craft_type( 'terumet_ore_saw', {
+    description = 'Ore-cutting Saw',
+    icon = 'terumet_tool_ore_saw.png^[transformFX',
     width=1,
     height=1,
 })
