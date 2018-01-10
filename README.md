@@ -97,7 +97,7 @@ The Terumetal Alloy Smelter is a specialized smelter only for making alloys from
 When processing materials for alloying a specific amount of molten flux will need to be in the tank to create the alloy. If not enough is present, it will indicate so and how much more is required until alloying can begin.
 
 ## Alloys
-In total there are four alloys the smelter can create all based on Terumetal and other materials available in the default Minetest game world. Each of them can be used to create hardened metal blocks and tools of considerable speed and durability. Each alloy has much greater tool performance than any of their constituent materials.
+In total there are five alloys the smelter can create all based on Terumetal and other materials available in the default Minetest game world. Each of them can be used to create hardened metal blocks and tools of considerable speed and durability. Each alloy has much greater tool performance than any of their constituent materials.
 
 (new in v1.3) If you have the mod unified_inventory installed, you can look up the names of these alloys and view the recipes in-game.
 
@@ -109,7 +109,7 @@ In total there are four alloys the smelter can create all based on Terumetal and
 | Bronze Ingot + 2 Tin Lumps | 3 | 4.5 sec. | Teruchalcum | ![Teruchalcum Ingot](terumet/textures/terumet_ingot_tcha.png) |
 | Diamond + Obsidian Shard | 5 | 10 sec. | Coreglass | ![Coreglass Ingot](terumet/textures/terumet_ingot_cgls.png) |
 
-*note: Flux required and time shown are default.
+*note: Flux required and time shown are default and can be modified in options.lua.
 
 Like melting flux, creating an alloy requires heat. The amount of heat required is dependent on how long the alloying process takes; therefore, the alloys that require more time also require more heat.
 
