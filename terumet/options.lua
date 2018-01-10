@@ -6,7 +6,7 @@ terumet.options.tools = {
     --
     SWORD_DAMAGE = {
         -- damage inflicted by each type of sword
-        TERUMETAL = 6,
+        TERUMETAL = 8,
         COPPER_ALLOY = 7,
         IRON_ALLOY = 8,
         GOLD_ALLOY = 9,
