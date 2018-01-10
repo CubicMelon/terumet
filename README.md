@@ -105,7 +105,8 @@ In total there are four alloys the smelter can create all based on Terumetal and
 |----------------------------|-------------|---------|------------|----------------------|
 | Copper Lump | 1 | 3 sec. | Terucopper | ![Terucopper Ingot](terumet/textures/terumet_ingot_tcop.png) |
 | Iron Lump | 2 | 4 sec. | Terusteel | ![Terusteel Ingot](terumet/textures/terumet_ingot_tste.png) |
-| Gold Lump | 3 | 5 sec. | Terugold | ![Terugold Ingot](terumet/textures/terumet_ingot_tgol.png) |
+| Gold Lump | 3 | 4 sec. | Terugold | ![Terugold Ingot](terumet/textures/terumet_ingot_tgol.png) |
+| Bronze Ingot + 2 Tin Lumps | 3 | 4.5 sec. | ![Teruchalcum Ingot](terumet/textures/terumet_ingot_tcha.png) |
 | Diamond and Obsidian Shard | 5 | 10 sec. | Coreglass | ![Coreglass Ingot](terumet/textures/terumet_ingot_cgls.png) |
 
 *note: Flux required and time shown are default.
