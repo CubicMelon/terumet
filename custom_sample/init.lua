@@ -19,6 +19,7 @@ local machine_cust_data = {
     -- Name of machine (only)
     name = 'Gravelyzer',
     -- optional: Preamble to machine's formspec; if not provided, uses Terumetal mod's default
+    --  note: custom machine formspec is 8x9 item slots large
     pre_formspec = 'background[0,0;8,9;tmcms_gui_bg.png;true]listcolors[#aaaaaa;#444444]',
     -- how often machine 'ticks' in seconds
     timer = 0.5,
