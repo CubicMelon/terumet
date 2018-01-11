@@ -282,8 +282,10 @@ function base_mach.machine_to_itemstack(machine_id, machine_meta_fields)
     local stackmeta = stack:get_meta()
     local machine_heat = machine_meta_fields.heat_level
     local machine_max = machine_meta_fields.max_heat
-    stackmeta:set_int('heat_level', machine_heat)
-    stackmeta:set_string('description', string.format('%s\nHeat: %.1f%%', nodedef.description, 100.0*machine_heat/machine_max) )
+    if machine_heat and machine_max then
+        stackmeta:set_int('heat_level', machine_heat)
+        stackmeta:set_string('description', string.format('%s\nHeat: %.1f%%', nodedef.description, 100.0*machine_heat/machine_max) )
+    end
     return stack
 end
 
@@ -293,7 +295,7 @@ end
 --
 
 function base_mach.nodedef(additions)
-    local new_nodedef = {
+    local new_nodedef = { -- default properties for all machine nodedefs
         stack_max = 1,
         is_ground_content = false,
         sounds = default.node_sound_metal_defaults(),
@@ -332,7 +334,7 @@ function base_mach.nodedef(additions)
             --      on_metadata_inventory_* was pointed to base_mach.on_inventory_*
             --      instead of base_mach.simple_inventory_event
             on_inventory_change = function(machine, event_data)
-                base_mach.set_timer(machine, 0)
+                base_mach.set_timer(machine)
             end,
             -- -
             -- on_read_state: fn(machine) -> nil

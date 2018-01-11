@@ -18,7 +18,7 @@ function furn_htr.generate_formspec(heater)
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     --input inventory
-    'list[context;inp;3,1.5;1,1;]'..
+    'list[context;in;3,1.5;1,1;]'..
     --current status
     'label[0,0;Furnace Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
@@ -29,7 +29,7 @@ function furn_htr.generate_formspec(heater)
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
-	"listring[context;inp]"
+	"listring[context;in]"
     return fs
 end
 
@@ -40,7 +40,7 @@ end
 function furn_htr.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
-    inv:set_size('inp', 1)
+    inv:set_size('in', 1)
     inv:set_size('burn', 1)
 
     local init_heater = {
@@ -59,7 +59,7 @@ end
 
 function furn_htr.get_drop_contents(machine)
     local drops = {}
-    default.get_inventory_drops(machine.pos, "inp", drops)
+    default.get_inventory_drops(machine.pos, 'in', drops)
     return drops
 end
 
@@ -90,13 +90,13 @@ end
 
 function furn_htr.check_new_processing(heater)
     if heater.state ~= furn_htr.STATE.IDLE or heater.heat_level == heater.max_heat then return end
-    local input_stack = heater.inv:get_stack('inp', 1)
+    local input_stack = heater.inv:get_stack('in', 1)
     local cook_result
     local cook_after
     cook_result, cook_after = minetest.get_craft_result({method = 'fuel', width = 1, items = {input_stack}})
     if cook_result.time ~= 0 then
         heater.state = furn_htr.STATE.BURNING
-        heater.inv:set_stack('inp', 1, cook_after.items[1])
+        heater.inv:set_stack('in', 1, cook_after.items[1])
         heater.inv:set_stack('burn', 1, input_stack)
         heater.state_time = math.floor(cook_result.time * heater.class.timer)
         heater.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for burning...'

@@ -16,7 +16,7 @@ function base_vul.generate_formspec(vulcan)
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     --input inventory
-    'list[context;inp;0,1.5;2,2;]'..
+    'list[context;in;0,1.5;2,2;]'..
     'label[0.5,3.5;Input Slots]'..
     --output inventory
     'list[context;out;6,1.5;2,2;]'..
@@ -33,7 +33,7 @@ function base_vul.generate_formspec(vulcan)
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
-	"listring[context;inp]"..
+	"listring[context;in]"..
     "listring[current_player;main]"..
     "listring[context;out]"
     return fs
@@ -47,7 +47,7 @@ function base_vul.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('fuel', 1)
-    inv:set_size('inp', 4)
+    inv:set_size('in', 4)
     inv:set_size('result', 1)
     inv:set_size('out', 4)
 
@@ -69,7 +69,7 @@ end
 function base_vul.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, "fuel", drops)
-    default.get_inventory_drops(machine.pos, "inp", drops)
+    default.get_inventory_drops(machine.pos, 'in', drops)
     default.get_inventory_drops(machine.pos, "out", drops)
     return drops
 end
@@ -98,12 +98,12 @@ function base_vul.check_new_processing(vulcan)
     if vulcan.state ~= base_vul.STATE.IDLE then return end
     local cook_result
     for slot = 1,4 do
-        local input_stack = vulcan.inv:get_stack('inp', slot)
+        local input_stack = vulcan.inv:get_stack('in', slot)
         local matched_recipe = opts.recipes[input_stack:get_name()]
         if matched_recipe then
             local yield = 2 -- TODO change based on machine setup/heat
             vulcan.state = base_vul.STATE.VULCANIZING
-            vulcan.inv:remove_item('inp', input_stack:get_name())
+            vulcan.inv:remove_item('in', input_stack:get_name())
             vulcan.inv:set_stack('result', 1, matched_recipe .. ' ' .. yield)
             vulcan.state_time = opts.PROCESS_TIME
             vulcan.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for vulcanizing...'

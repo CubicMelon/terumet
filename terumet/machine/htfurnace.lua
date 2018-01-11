@@ -17,7 +17,7 @@ function base_htf.generate_formspec(furnace)
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     --input inventory
-    'list[context;inp;0,1.5;2,2;]'..
+    'list[context;in;0,1.5;2,2;]'..
     'label[0.5,3.5;Input Slots]'..
     --output inventory
     'list[context;out;6,1.5;2,2;]'..
@@ -34,7 +34,7 @@ function base_htf.generate_formspec(furnace)
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
-	"listring[context;inp]"..
+	"listring[context;in]"..
     "listring[current_player;main]"..
     "listring[context;out]"
     return fs
@@ -48,7 +48,7 @@ function base_htf.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('fuel', 1)
-    inv:set_size('inp', 4)
+    inv:set_size('in', 4)
     inv:set_size('result', 1)
     inv:set_size('out', 4)
 
@@ -70,7 +70,7 @@ end
 function base_htf.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, "fuel", drops)
-    default.get_inventory_drops(machine.pos, "inp", drops)
+    default.get_inventory_drops(machine.pos, 'in', drops)
     default.get_inventory_drops(machine.pos, "out", drops)
     return drops
 end
@@ -100,7 +100,7 @@ function base_htf.check_new_processing(furnace)
     local cook_result
     local cook_after
     for slot = 1,4 do
-        local input_stack = furnace.inv:get_stack('inp', slot)
+        local input_stack = furnace.inv:get_stack('in', slot)
         cook_result, cook_after = minetest.get_craft_result({method = 'cooking', width = 1, items = {input_stack}})
         if input_stack:get_name() == 'terumet:block_thermese' then
             cook_result = {item='default:mese_crystal_fragment',time=2} -- fix heat exploit, sorry!
@@ -112,7 +112,7 @@ function base_htf.check_new_processing(furnace)
         end
         if cook_result.time ~= 0 then
             furnace.state = base_htf.STATE.COOKING
-            furnace.inv:set_stack('inp', slot, cook_after.items[1])
+            furnace.inv:set_stack('in', slot, cook_after.items[1])
             furnace.inv:set_stack('result', 1, cook_result.item)
             furnace.state_time = math.floor(cook_result.time * opts.TIME_MULT * furnace.class.timer)
             furnace.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for cooking...'

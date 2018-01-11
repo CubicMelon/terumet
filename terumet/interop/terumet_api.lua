@@ -42,3 +42,37 @@ function terumet.register_crystal(data)
 
     terumet.options.vulcan.recipes[data.source] = crys_id
 end
+
+local required_cust_data = {
+    name='Name of machine (only)',
+    max_heat_base='Base maximum heat units that can be stored by machine',
+    heat_per_tick='Heat expended per tick of processing',
+    process_func='func(machine_inv) that returns nil/{output=itemstack, time=seconds, desc=description}'
+}
+
+function terumet.create_custom_machine( id, cust_nodedef, cust_data )
+    if not cust_data then error('no cust_data provided to terumet.create_custom_machine') end
+    for k,desc in pairs(required_cust_data) do
+        if not cust_data[k] then
+            error('cust_data provided to terumet.create_custom_machine incomplete:\nrequires key "'..k..'":\n' .. desc)
+        end
+    end
+    if not cust_nodedef.description then cust_nodedef.description = cust_data.name end
+    
+    local nodedef = terumet.machine.nodedef(cust_nodedef)
+    local class = nodedef._terumach_class
+
+    nodedef.on_construct = function(pos)
+        terumet.machine.custom.init(pos, class)
+    end
+    nodedef.on_timer = terumet.machine.custom.tick
+    
+    class.cust = cust_data
+    if cust_data.timer then class.timer = cust_data.timer end
+    class.get_drop_contents = terumet.machine.custom.get_drop_contents
+    class.on_write_state = function(cmachine)
+        cmachine.meta:set_string('formspec', terumet.machine.custom.generate_formspec(cmachine))
+        cmachine.meta:set_string('infotext', terumet.machine.custom.generate_infotext(cmachine))
+    end
+    minetest.register_node( id, nodedef )
+end

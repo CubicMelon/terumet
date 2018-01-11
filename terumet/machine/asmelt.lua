@@ -18,7 +18,7 @@ function base_asm.generate_formspec(smelter)
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     --input inventory
-    'list[context;inp;0,1.5;2,2;]'..
+    'list[context;in;0,1.5;2,2;]'..
     'label[0.5,3.5;Input Slots]'..
     --output inventory
     'list[context;out;6,1.5;2,2;]'..
@@ -38,7 +38,7 @@ function base_asm.generate_formspec(smelter)
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
-	"listring[context;inp]"..
+	"listring[context;in]"..
     "listring[current_player;main]"..
     "listring[context;out]"
     return fs
@@ -52,7 +52,7 @@ function base_asm.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('fuel', 1)
-    inv:set_size('inp', 4)
+    inv:set_size('in', 4)
     inv:set_size('result', 1)
     inv:set_size('out', 4)
 
@@ -75,7 +75,7 @@ end
 function base_asm.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, "fuel", drops)
-    default.get_inventory_drops(machine.pos, "inp", drops)
+    default.get_inventory_drops(machine.pos, 'in', drops)
     default.get_inventory_drops(machine.pos, "out", drops)
     local flux_tank = machine.meta:get_int('flux_tank') or 0
     if flux_tank > 0 then
@@ -120,7 +120,7 @@ function base_asm.check_new_processing(smelter)
     for _,recipe in ipairs(opts.recipes) do
         local sources_count = 0
         for i = 1,#recipe.input do
-            if smelter.inv:contains_item('inp', recipe.input[i]) then
+            if smelter.inv:contains_item('in', recipe.input[i]) then
                 sources_count = sources_count + 1
             end
         end
@@ -136,7 +136,7 @@ function base_asm.check_new_processing(smelter)
         else
             smelter.state = base_asm.STATE.ALLOYING
             for _, consumed_source in ipairs(matched_recipe.input) do
-                smelter.inv:remove_item('inp', consumed_source)
+                smelter.inv:remove_item('in', consumed_source)
             end
             smelter.state_time = matched_recipe.time
             smelter.inv:set_stack('result', 1, matched_recipe.result)
@@ -147,13 +147,13 @@ function base_asm.check_new_processing(smelter)
     end
     -- if could not begin alloying anything, check for flux to melt
     for flux_item, flux_params in pairs(opts.FLUX_ITEMS) do
-        if smelter.inv:contains_item('inp', flux_item) then
+        if smelter.inv:contains_item('in', flux_item) then
             if smelter.flux_tank >= opts.FLUX_MAXIMUM then
                 error_msg = 'Flux tank full!'
             else
                 smelter.state = base_asm.STATE.FLUX_MELT
                 smelter.state_time = flux_params.time
-                smelter.inv:remove_item('inp', flux_item)
+                smelter.inv:remove_item('in', flux_item)
                 smelter.status_text = 'Accepting flux from '.. minetest.registered_items[flux_item].description ..'...'
                 return
             end

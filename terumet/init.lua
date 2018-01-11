@@ -1,4 +1,4 @@
--- Terumet v1.7
+-- Terumet v1.8
 
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
 -- Written for Minetest version 0.4.16
@@ -25,7 +25,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=1, minor=7, patch=0}
+terumet.version = {major=1, minor=8, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
@@ -82,9 +82,9 @@ function terumet.tex_comp(base_tex, overlay_id)
 end
 
 terumet.do_lua_file('interop/terumet_api')
-
 terumet.do_lua_file('options')
 terumet.do_lua_file('machine/machine')
+terumet.do_lua_file('machine/custom')
 terumet.do_lua_file('material/raw')
 terumet.do_lua_file('material/reg_alloy')
 
