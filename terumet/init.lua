@@ -97,7 +97,7 @@ terumet.reg_alloy('Teruchalcum', 'tcha', 2)
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
 terumet.do_lua_file('material/coil')
-terumet.do_lua_file('material/solar')
+terumet.do_lua_file('material/htglass')
 
 terumet.do_lua_file('material/crystallized')
 
