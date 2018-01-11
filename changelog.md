@@ -1,6 +1,9 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+### Version 1.9
+* "Solar Glass" is now "Heat-transference Glass" to reflect its expanded use.
+
 ### Version 1.8
 * **POTENTIALLY BREAKING CHANGE**: Machines in the world before 1.8 will not appear to have any input slots because of a inventory list-name change due to new API update. Re-placing the machine should fix this but will not drop items in 'old' input slots. I suggest removing any input items left in the slots before updating to 1.8 to prevent losing any items.
 * API Expansion: now submods can easily create new custom heat machines that can process items. see 'custom_sample' included with the development files for a simple example of how to use this new API. While the example works, there may still be bugs in custom machines. Please report any if you run into them!
