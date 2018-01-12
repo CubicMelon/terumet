@@ -1,5 +1,5 @@
 # Terumetal [terumet]
-### Current release version: v1.6
+### Current release version: v1.8
 A mod for the open-source voxel game Minetest (https://www.minetest.net/)
 
 Creates a new ore in the world which can be used to make useful alloys from many already available materials.
@@ -10,12 +10,12 @@ Creates a new ore in the world which can be used to make useful alloys from many
 See the changelog [Here](changelog.md)
 
 ## Installing
-Download the working v1.6 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v1.6)
+Download the working v1.6 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v1.8)
 or the current repo version [Here](https://github.com/Terumoc/terumet/archive/master.zip) (may NOT be functional).
 
 Unzip the folder into a temporary space then move/copy the subfolder **terumet** into your minetest **mods** folder.
 
-The items outside of that folder are development files and are *not needed* to use the mod.
+**The items outside of that folder are development files and are *not needed* to use the mod.**
 
 ## Mod Dependencies
 This mod depends on:
