@@ -198,6 +198,7 @@ base_asm.unlit_nodedef = base_mach.nodedef{
     on_timer = base_asm.tick,
     -- machine class data
     _terumach_class = {
+        name = 'Terumetal Alloy Smelter',
         timer = 0.5,
         drop_id = base_asm.unlit_id,
         get_drop_contents = base_asm.get_drop_contents,

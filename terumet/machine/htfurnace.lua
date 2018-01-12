@@ -159,6 +159,7 @@ base_htf.unlit_nodedef = base_mach.nodedef{
     on_timer = base_htf.tick,
     -- terumet machine class data
     _terumach_class = {
+        name = 'High-Temperature Furnace',
         timer = 0.5,
         drop_id = base_htf.unlit_id,
         get_drop_contents = base_htf.get_drop_contents,

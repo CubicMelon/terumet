@@ -7,6 +7,36 @@ function base_mach.heat_pct(machine)
     return 100.0 * machine.heat_level / machine.max_heat
 end
 
+--
+-- CONSTANTS
+--
+
+-- constants for interactive heat behavior of machines
+base_mach.HEAT_XFER_MODE= {
+    NO_XFER=0, -- default if not specified
+    ACCEPT=1,
+    PROVIDE_ONLY=2
+}
+
+-- constants for absolute direction = pos offset
+base_mach.ADJACENT_OFFSETS = {
+    east={x=1,y=0,z=0}, west={x=-1,y=0,z=0},
+    up={x=0,y=1,z=0}, down={x=0,y=-1,z=0},
+    north={x=0,y=0,z=1}, south={x=0,y=0,z=-1}
+}
+
+-- constants for facing direction, FACING_DIRECTION[node.param2 / 4] = front absolute direction
+base_mach.FACING_DIRECTION = {
+    [0]='up', [1]='north', [2]='south', [3]='east', [4]='west', [5]='down'
+}
+
+-- auto-generated constants for pos offset in facing direction given index [node.param2 / 4]
+-- ex: FACING_OFFSETS[1]: 1 = facing north so returns offset of {x=0,y=0,z=1} (+1 node north)
+base_mach.FACING_OFFSETS = {}
+for facing,dir in pairs(base_mach.FACING_DIRECTION) do
+    base_mach.FACING_OFFSETS[facing] = base_mach.ADJACENT_OFFSETS[dir]
+end
+
 -- 
 -- CRAFTING MATERIALS
 --
@@ -86,18 +116,6 @@ end
 --
 -- GENERIC META
 --
--- constants for interactive heat behavior of machines
-base_mach.HEAT_XFER_MODE= {
-    NO_XFER=0, -- default if not specified
-    ACCEPT=1,
-    PROVIDE_ONLY=2,
-}
-
-base_mach.ADJACENT_OFFSETS = {
-    east={x=1,y=0,z=0}, west={x=-1,y=0,z=0},
-    up={x=0,y=1,z=0}, down={x=0,y=-1,z=0},
-    north={x=0,y=0,z=1}, south={x=0,y=0,z=-1}
-}
 
 -- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent positions 
 -- where there is a machine w/heat_xfer_mode of ACCEPT and heat_level < max_heat
@@ -166,6 +184,7 @@ function base_mach.read_state(pos)
     if not machine.class then return nil end -- not a terumetal machine
     machine.pos = pos
     machine.meta = meta
+    machine.facing = math.floor(node_info.param2 / 4)
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
     machine.max_heat = meta:get_int('max_heat') or 0
@@ -409,6 +428,13 @@ function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
             base_mach.write_state(pos, machine)
         end
     end
+    --[[local node = minetest.get_node(pos)
+    local nodedef = minetest.registered_nodes[node.name]
+    if nodedef and placer:is_player() then
+        if nodedef.paramtype2 == 'facedir' then
+            node.param2 = minetest.dir_to_facedir(placer:get_look_dir(), -1), true)
+        end
+    end]]--
 end
 
 -- used by default instead of the following on_inventory_* callbacks to reduce unnecessary tables

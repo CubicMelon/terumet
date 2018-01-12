@@ -146,6 +146,7 @@ base_vul.nodedef = base_mach.nodedef{
     on_timer = base_vul.tick,
     -- terumet machine class data
     _terumach_class = {
+        name = 'Crystal Vulcanizer',
         timer = 0.5,
         get_drop_contents = base_vul.get_drop_contents,
         on_write_state = function(vulcan)

@@ -129,6 +129,13 @@ terumet.options.vulcan = {
     PROCESS_TIME = 10.0,
 }
 
+terumet.options.heat_ray = {
+    --
+    -- HEAT RAY SETTINGS
+    --
+    MAX_HEAT = 20000,
+    BURST_AMOUNT = 1000,
+}
 
 terumet.options.ore_saw = {
     --
