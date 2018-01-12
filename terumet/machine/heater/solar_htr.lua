@@ -114,7 +114,7 @@ sol_htr.nodedef = base_mach.nodedef{
 minetest.register_node(sol_htr.id, sol_htr.nodedef)
 
 minetest.register_craft{ output = sol_htr.id, recipe = {
-    {terumet.id('item_solar'), terumet.id('item_solar'), terumet.id('item_solar')},
+    {terumet.id('item_htglass'), terumet.id('item_htglass'), terumet.id('item_htglass')},
     {terumet.id('item_coil_tgol'), terumet.id('frame_tste'), terumet.id('item_coil_tgol')},
     {terumet.id('item_coil_tgol'), 'bucket:bucket_water', terumet.id('item_coil_tgol')}
 }}

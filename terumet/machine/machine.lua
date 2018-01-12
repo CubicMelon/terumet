@@ -332,6 +332,7 @@ function base_mach.nodedef(additions)
         on_metadata_inventory_move = base_mach.simple_inventory_event,-- base_mach.on_inventory_move, for event_data
         on_metadata_inventory_put = base_mach.simple_inventory_event,-- base_mach.on_inventory_put, for event_data
         on_metadata_inventory_take = base_mach.simple_inventory_event,-- base_mach.on_inventory_take, for event_data
+        on_rotate = screwdriver.rotate_simple, -- most machines always remain upright
         -- callbacks for saving/loading heat level
         after_dig_node = base_mach.after_dig_machine,
         after_place_node = base_mach.after_place_machine,
