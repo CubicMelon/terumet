@@ -6,6 +6,7 @@ minetest.register_tool( saw_id, {
     description = 'Ore-cutting Saw\nEasily excavates ore nodes',
     inventory_image = terumet.tex(saw_id),
     tool_capabilities = {},
+    wield_scale={x=2.0, y=2.0, z=1.2},
     sound = {breaks = 'default_tool_breaks'},
     on_use = function (itemstack, user, pointed_thing)
         if pointed_thing.type == 'node' and pointed_thing.under then

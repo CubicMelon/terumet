@@ -71,7 +71,8 @@ terumet.options.smelter = {
     -- Heat expended per tick alloying
     COST_FLUX_ALLOYING_HU = 1,
     -- Default items usable as flux
-    FLUX_ITEMS = { 
+    FLUX_ITEMS = {
+        ['terumet:ingot_raw']={time=2.0},
         ['terumet:lump_raw']={time=3.0},
         ['terumet:item_cryst_raw']={time=1.0},
     },

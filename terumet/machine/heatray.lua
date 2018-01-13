@@ -55,7 +55,6 @@ end
 function base_ray.tick(pos, dt)
     -- read state from meta
     local ray = base_mach.read_state(pos)
-    base_mach.process_fuel(ray)
 
     --[[ TODO BLAH BLAH
 

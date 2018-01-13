@@ -3,6 +3,11 @@ Newer versions listed first
 
 ### Version 1.9
 * "Solar Glass" is now "Heat-transference Glass" to reflect its expanded use.
+* Some overdue graphic cleanup and changes have been made.
+* The Teruchalcum is always greener on the other version.
+    * More seriously, the look of Teruchalcum was changed slightly to be shinier and greenier.
+* The ore-cutting saw is now a proper size when wielded.
+* Overdue but finally: You can use pure terumetal ingots in the Alloy Smelter as flux. Smelting terumetal lumps no longer makes them useless for alloying! This should have been the case since multiple flux items were implemented, but...
 
 ### Version 1.8
 * **POTENTIALLY BREAKING CHANGE**: Machines in the world before 1.8 will not appear to have any input slots because of a inventory list-name change due to new API update. Re-placing the machine should fix this but will not drop items in 'old' input slots. I suggest removing any input items left in the slots before updating to 1.8 to prevent losing any items.
