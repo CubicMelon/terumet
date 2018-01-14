@@ -21,8 +21,9 @@ Unzip the folder into a temporary space then move/copy the subfolder **terumet**
 This mod depends on:
 * default
 * bucket
+* screwdriver
 
-Both mods should normally be already included if playing the default Minetest subgame.
+All above mods should normally be included already if playing the default Minetest subgame.
 
 Additonal **optional** support for:
 * unified_inventory
