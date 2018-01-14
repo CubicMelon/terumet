@@ -95,6 +95,7 @@ terumet.do_lua_file('machine/machine')
 terumet.do_lua_file('machine/custom')
 terumet.do_lua_file('material/raw')
 terumet.do_lua_file('material/reg_alloy')
+terumet.do_lua_file('material/upgrade')
 
 terumet.reg_alloy('Terucopper', 'tcop', 1)
 terumet.reg_alloy('Terusteel', 'tste', 2)
