@@ -6,7 +6,7 @@ minetest.register_craftitem( htg_id, {
     inventory_image = terumet.tex(htg_id)
 })
 
-minetest.register_craft{ output = htg_id,
+minetest.register_craft{ output = htg_id .. ' 3',
     recipe = {
         {'', 'default:obsidian_glass', ''},
         {terumet.id('item_cryst_tin'), terumet.id('item_cryst_tin'), terumet.id('item_cryst_tin')},

@@ -2,7 +2,7 @@
 Newer versions listed first
 
 ### Version 1.9
-* "Solar Glass" is now "Heat-transference Glass" to reflect its expanded use.
+* "Solar Glass" is now "Heat-transference Glass" to reflect its expanded use. Additionally, you now get 3 of them for one recipe.
 * Some overdue graphic cleanup and changes have been made.
 * The Teruchalcum is always greener on the other version.
     * More seriously, the look of Teruchalcum was changed slightly to be shinier and greenier.
