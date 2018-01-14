@@ -13,6 +13,7 @@ function base_cust.generate_formspec(machine)
     local fs = 'size[8,9]'..(cust_data.pre_formspec or base_mach.fs_start)..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
+    base_mach.fs_owner(machine,5,0)..
     --input inventory
     'list[context;in;0,1.5;2,2;]'..
     'label[0.5,3.5;Input Slots]'..

@@ -14,11 +14,12 @@ function base_ray.generate_formspec(ray)
     local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
+    base_mach.fs_owner(ray,5,0)..
     --current status
     'label[0,0;HEAT Ray Emitter]'..
     'label[0,0.5;' .. ray.status_text .. ']'..
     string.format('label[0,1;Last result: %s]', ray.last_error)..
-    base_mach.fs_heat_info(ray,4.25,1.5)..
+    base_mach.fs_heat_info(ray,3,1.5)..
     -- testing facing info
     --string.format('label[0,1;I am facing %s]', base_mach.FACING_DIRECTION[ray.facing])..
     --string.format('label[0,1.5;So forward is %s]', dump(base_mach.FACING_OFFSETS[ray.facing]))..
@@ -216,7 +217,7 @@ function base_ray.tick(pos, dt)
             end
         else
             search = {pos=ray.pos, dir=ray.facing, dist=0}
-            ray.status_text = 'Begin searching'
+            ray.status_text = 'Begin seeking'
         end
         base_ray.write_search(ray.meta, search)
     end

@@ -14,9 +14,10 @@ base_asm.STATE.FLUX_MELT = 1
 base_asm.STATE.ALLOYING = 2
 
 function base_asm.generate_formspec(smelter)
-    local fs = 'size[8,9]'..base_mach.fs_start..
+    local fs = 'size[11,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
+    base_mach.fs_owner(smelter,8,0)..
     --input inventory
     'list[context;in;0,1.5;2,2;]'..
     'label[0.5,3.5;Input Slots]'..

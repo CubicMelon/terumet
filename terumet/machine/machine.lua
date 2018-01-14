@@ -7,6 +7,22 @@ function base_mach.heat_pct(machine)
     return 100.0 * machine.heat_level / machine.max_heat
 end
 
+-- implement machine owner protection
+local old_is_protected = minetest.is_protected
+function minetest.is_protected(pos, name)
+    local node = minetest.get_node_or_nil(pos)
+    if node then
+        local nodedef = minetest.registered_nodes[node]
+        if nodedef and nodedef._terumach_class then
+            local owner = minetest.get_meta(pos):get_string('owner')
+            if (owner == '') or (owner == '*') or (owner == name) then
+                return true
+            end
+        end
+    end
+    return old_is_protected(pos, name)
+end
+
 --
 -- CONSTANTS
 --
@@ -85,6 +101,16 @@ base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame\nFoundation of h
 
 -- general preamble setting background, colors
 base_mach.fs_start = 'background[0,0;8,9;terumet_raw_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
+
+local SPECIAL_OWNERS = {
+    [''] = '<None>',
+    ['*'] = '<Everyone>'
+}
+-- machine owner info formspec
+function base_mach.fs_owner(machine, fsx, fsy)
+    local own = SPECIAL_OWNERS[machine.owner] or machine.owner
+    return string.format('label[%d,%d;Owner: %s]', fsx, fsy, own)
+end
 
 -- fuel slot formspec
 function base_mach.fs_fuel_slot(machine, fsx, fsy)
@@ -187,6 +213,7 @@ function base_mach.read_state(pos)
     if not machine.class then return nil end -- not a terumetal machine
     machine.pos = pos
     machine.meta = meta
+    machine.owner = meta:get_string('owner')
     machine.facing = math.floor(node_info.param2 / 4)
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
@@ -204,6 +231,7 @@ end
 
 function base_mach.write_state(pos, machine)
     local meta = minetest.get_meta(pos)
+    meta:set_string('owner', machine.owner)
     meta:set_string('status_text', machine.status_text)
     meta:set_int('heat_level', machine.heat_level or 0)
     meta:set_int('max_heat', machine.max_heat or 0)
@@ -427,10 +455,15 @@ function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
         local heat_level = item_meta:get_int('heat_level')
         if heat_level then
             machine.heat_level = heat_level
-            base_mach.write_state(pos, machine)
             base_mach.set_timer(machine)
         end
     end
+    if placer:is_player() then
+        machine.owner = placer:get_player_name()
+    else
+        machine.owner = '*'
+    end
+    base_mach.write_state(pos, machine)
 end
 
 -- used by default instead of the following on_inventory_* callbacks to reduce unnecessary tables

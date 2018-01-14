@@ -17,6 +17,7 @@ function furn_htr.generate_formspec(heater)
     local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
+    base_mach.fs_owner(heater,5,0)..
     --input inventory
     'list[context;in;3,1.5;1,1;]'..
     --current status

@@ -14,6 +14,7 @@ function sol_htr.generate_formspec(heater)
     local fs = 'size[8,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
+    base_mach.fs_owner(heater,5,0)..
     --current status
     'label[0,0;Solar Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
