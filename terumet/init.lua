@@ -30,6 +30,14 @@ local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
 
+function terumet.pos_plus(pos, offset)
+    return {
+        x=pos.x + offset.x,
+        y=pos.y + offset.y,
+        z=pos.z + offset.z,
+    }
+end
+
 function terumet.recipe_3x3(i)
     return { 
         {i, i, i}, {i, i, i}, {i, i, i}

@@ -144,6 +144,7 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
     on_timer = furn_htr.tick,
     -- terumet machine class data
     _terumach_class = {
+        name = 'Furnace Heater',
         timer = 0.5,
         drop_id = furn_htr.unlit_id,
         on_external_heat = nil,

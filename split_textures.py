@@ -17,7 +17,7 @@ TEXTURE_FILES = [
     [MT('thermobox'), MT('item_thermese'), MT('block_thermese'), MT('frame_tste'), MT('frame_cgls'), MT('frame_raw'), MT('block_thermese_hot'), MT('item_htg')],
     [MT('htfurn_front'), MT('htfurn_top_unlit'), MT('htfurn_sides'), MT('htfurn_top_lit'), MT('vulcan_sides'), MT('vulcan_top'), MT('htr_solar_top')],
     [MT('item_heatunit'), MT('ingot_tcha'), MT('block_tcha'), MT('tool_pick_tcha'), MT('tool_shovel_tcha'), MT('tool_axe_tcha'), MT('tool_sword_tcha'), MT('tool_ore_saw')],
-    [MT('hray_sides'), MT('hray_front'), MT('hray_back')]
+    [MT('hray_sides'), MT('hray_front'), MT('hray_back'), MT('rayref_sides'), MT('rayref_front'), MT('rayref_back')]
 ]
 
 with Image(filename=SOURCE_FILE) as source:

@@ -24,7 +24,7 @@ terumet.options.machine = {
         ['bucket:bucket_lava']={ hus=2000, return_item='bucket:bucket_empty' },
         ['terumet:block_thermese_hot']={ hus=400, return_item='terumet:block_thermese'}
     },
-    -- Whether machines emit particles or not while working
+    -- Whether machines emit smoke particles or not while working
     PARTICLES = true,
     -- Text descriptions of heat transfer modes of machines
     HEAT_TRANSFER_MODE_NAMES = {
@@ -132,10 +132,18 @@ terumet.options.vulcan = {
 
 terumet.options.heat_ray = {
     --
-    -- HEAT RAY SETTINGS
+    -- HEAT RAY EMITTER SETTINGS
     --
+    -- Maximum HUs emitter can contain
     MAX_HEAT = 20000,
-    BURST_AMOUNT = 1000,
+    -- HUs sent in one ray
+    SEND_AMOUNT = 1000,
+    -- maximum number of nodes emitter will seek before giving up
+    MAX_DISTANCE = 100,
+    -- set to zero to disable particle display of ray
+    RAY_PARTICLES_PER_NODE = 4,
+    -- show crosshair of ray target-seeking
+    SEEKING_VISIBLE = false
 }
 
 terumet.options.ore_saw = {

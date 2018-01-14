@@ -123,7 +123,7 @@ function base_mach.find_adjacent_need_heat(pos)
     local result = {}
     local count = 0
     for dir,offset in pairs(base_mach.ADJACENT_OFFSETS) do
-        local opos = {x=pos.x+offset.x, y=pos.y+offset.y, z=pos.z+offset.z}
+        local opos = terumet.pos_plus(pos, offset)
         local ostate = base_mach.read_state(opos)
         -- read_state returns nil if area unloaded or not a terumetal machine
         if ostate then 
@@ -147,15 +147,18 @@ function base_mach.push_heat(from, total_hus, targets)
     local actual_hus_sent = 0
     for i=1,#targets do
         local to_machine = targets[i]
-        local send_amount = math.min(hus_each, to_machine.max_heat - to_machine.heat_level)
-        if send_amount > 0 then
-            to_machine.heat_level = to_machine.heat_level + send_amount
-            -- call heat receive callback for node if exists
-            if to_machine.class.on_external_heat then
-                to_machine.class.on_external_heat(to_machine)
+        -- if from and to_machine are the same, don't bother sending any heat
+        if not vector.equals(from.pos, to_machine.pos) then
+            local send_amount = math.min(hus_each, to_machine.max_heat - to_machine.heat_level)
+            if send_amount > 0 then
+                to_machine.heat_level = to_machine.heat_level + send_amount
+                -- call heat receive callback for node if exists
+                if to_machine.class.on_external_heat then
+                    to_machine.class.on_external_heat(to_machine)
+                end
+                base_mach.write_state(to_machine.pos, to_machine)
+                actual_hus_sent = actual_hus_sent + send_amount
             end
-            base_mach.write_state(to_machine.pos, to_machine)
-            actual_hus_sent = actual_hus_sent + send_amount
         end
     end
     from.heat_level = from.heat_level - actual_hus_sent
@@ -318,7 +321,6 @@ function base_mach.nodedef(additions)
         stack_max = 1,
         is_ground_content = false,
         sounds = default.node_sound_metal_defaults(),
-        legacy_facedir_simple = true,
         paramtype2 = 'facedir',
         groups = {cracky=1},
         drop = '', -- since after_dig_node/on_destruct/on_blast handles machines dropping w/stored heat, flag machines as ignoring usual drop mechanic
@@ -420,22 +422,15 @@ end
 
 function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
     local item_meta = itemstack:get_meta()
+    local machine = base_mach.read_state(pos)
     if item_meta then
         local heat_level = item_meta:get_int('heat_level')
         if heat_level then
-            local machine = base_mach.read_state(pos)
             machine.heat_level = heat_level
-            base_mach.set_timer(machine)
             base_mach.write_state(pos, machine)
+            base_mach.set_timer(machine)
         end
     end
-    --[[local node = minetest.get_node(pos)
-    local nodedef = minetest.registered_nodes[node.name]
-    if nodedef and placer:is_player() then
-        if nodedef.paramtype2 == 'facedir' then
-            node.param2 = minetest.dir_to_facedir(placer:get_look_dir(), -1), true)
-        end
-    end]]--
 end
 
 -- used by default instead of the following on_inventory_* callbacks to reduce unnecessary tables

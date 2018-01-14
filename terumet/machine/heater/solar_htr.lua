@@ -102,6 +102,7 @@ sol_htr.nodedef = base_mach.nodedef{
     on_timer = sol_htr.tick,
     -- terumet machine class data
     _terumach_class = {
+        name = 'Solar Heater',
         timer = 1.0,
         on_external_heat = nil,
         on_write_state = function(solar)
