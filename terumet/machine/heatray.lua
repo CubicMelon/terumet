@@ -144,7 +144,7 @@ function base_ray.fire(ray, target)
             end
             last = trace.pos
         end
-        trace.invisible = false
+        if trace then trace.invisible = false end
     end
 
     -- if we hit the expected target, create the particles and send the heat!
