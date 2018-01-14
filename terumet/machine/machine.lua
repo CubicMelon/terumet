@@ -9,13 +9,16 @@ end
 
 -- implement machine owner protection
 local old_is_protected = minetest.is_protected
-function minetest.is_protected(pos, name)
+minetest.is_protected = function(pos, name)
     local node = minetest.get_node_or_nil(pos)
     if node then
-        local nodedef = minetest.registered_nodes[node]
+        local nodedef = minetest.registered_nodes[node.name]
         if nodedef and nodedef._terumach_class then
             local owner = minetest.get_meta(pos):get_string('owner')
             if (owner == '') or (owner == '*') or (owner == name) then
+                return false
+            else
+                minetest.record_protection_violation(pos, name)
                 return true
             end
         end
