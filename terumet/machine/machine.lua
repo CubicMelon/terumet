@@ -137,8 +137,14 @@ end
 
 -- heat display formspec
 function base_mach.fs_heat_info(machine, fsx, fsy)
-    return 'image['..fsx..','..fsy..';2,2;terumet_gui_heat_bg.png^[lowpart:'..
-    base_mach.heat_pct(machine)..':terumet_gui_heat_fg.png]label['..fsx..','..fsy+2 ..';Heat Level]'
+    if machine.heat_level > machine.max_heat then
+        return string.format('image[%f,%f;2,2;terumet_gui_heat_over.png]label[%f,%f;Heat Overflow]', fsx, fsy, fsx, fsy+2)
+    else
+        return string.format('image[%f,%f;2,2;terumet_gui_heat_bg.png^[lowpart:%f:terumet_gui_heat_fg.png]label[%f,%f;Heat Level]',
+            fsx, fsy, base_mach.heat_pct(machine), fsx, fsy+2 )
+    end
+    -- return 'image['..fsx..','..fsy..';2,2;terumet_gui_heat_bg.png^[lowpart:'..
+    -- base_mach.heat_pct(machine)..':terumet_gui_heat_fg.png]label['..fsx..','..fsy+2 ..';Heat Level]'
 end
 
 -- flux display formspec
@@ -273,32 +279,6 @@ function base_mach.read_state(pos)
     return machine
 end
 
-function base_mach.has_upgrade(machine, upgrade)
-    if not machine.installed_upgrades then return false end
-    return machine.installed_upgrades[upgrade]
-end
-
-function base_mach.get_installed_upgrades(machine)
-    local upgrades = {}
-    local upgrade_inv = machine.inv:get_list('upgrade')
-    if not upgrade_inv then return upgrades end
-    for _, stack in ipairs(upgrade_inv) do
-        local itemdef = stack:get_definition()
-        if itemdef and itemdef._upgradetype then
-            upgrades[itemdef._upgradetype] = true
-        end
-    end
-    return upgrades
-end
-
-function base_mach.check_upgrade_updates(machine, base_max_heat)
-    if base_mach.has_upgrade(machine, 'max_heat') then
-        machine.max_heat = math.floor(base_max_heat * 1.5)
-    else
-        machine.max_heat = base_max_heat
-    end
-end
-
 function base_mach.write_state(pos, machine)
     local meta = minetest.get_meta(pos)
     meta:set_string('owner', machine.owner)
@@ -323,6 +303,7 @@ end
 -- GENERIC MACHINE PROCESSES
 --
 
+-- return inventory, list of where to acquire input
 function base_mach.get_input(machine)
     if base_mach.has_upgrade(machine, 'ext_input') then
         local lpos = base_mach.get_leftside_pos(machine.rot, machine.pos)
@@ -334,6 +315,7 @@ function base_mach.get_input(machine)
     end
 end
 
+-- return inventory, list of where to put output
 function base_mach.get_output(machine)
     if base_mach.has_upgrade(machine, 'ext_output') then
         local rpos = base_mach.get_rightside_pos(machine.rot, machine.pos)
@@ -343,6 +325,45 @@ function base_mach.get_output(machine)
     else
         return machine.inv, 'out'
     end
+end
+
+-- return true if machine has upgrade now installed
+function base_mach.has_upgrade(machine, upgrade)
+    if not machine.installed_upgrades then return false end
+    return machine.installed_upgrades[upgrade]
+end
+
+-- return list of {upgrade_id=true, upgrade_id=true...} of machine's installed upgrades
+-- automatically called on load_state and placed into machine.installed_upgrades but can be called seperately too
+function base_mach.get_installed_upgrades(machine)
+    local upgrades = {}
+    local upgrade_inv = machine.inv:get_list('upgrade')
+    if not upgrade_inv then return upgrades end
+    for _, stack in ipairs(upgrade_inv) do
+        local itemdef = stack:get_definition()
+        if itemdef and itemdef._terumach_upgrade_id then
+            upgrades[itemdef._terumach_upgrade_id] = true
+        end
+    end
+    return upgrades
+end
+
+-- should be called every tick to change max_heat and/or vent excess heat
+-- returns true if venting
+function base_mach.check_heat_max(machine, base_max_heat)
+    if base_mach.has_upgrade(machine, 'max_heat') then
+        machine.max_heat = math.floor(base_max_heat * 1.5)
+    else
+        machine.max_heat = base_max_heat
+    end
+
+    if machine.heat_level > machine.max_heat then
+        if opts.PARTICLES then base_mach.generate_particle(machine.pos) end
+        machine.heat_level = machine.heat_level - 50
+        machine.status_text = 'Venting excess heat'
+        return true
+    end
+    return false
 end
 
 function base_mach.set_timer(machine, specific_time)
@@ -389,7 +410,7 @@ function base_mach.expend_heat(machine, value, process)
         machine.need_heat = true
         return false 
     end
-    machine.heat_level = math.min(machine.max_heat, machine.heat_level - value)
+    machine.heat_level = machine.heat_level - value
     return true
 end
 
@@ -611,7 +632,7 @@ function base_mach.allow_put(pos, listname, index, stack, player)
             return 0
         end
     elseif listname == 'upgrade' then
-        if minetest.registered_items[stack:get_name()]._upgradetype then
+        if stack:get_definition()._terumach_upgrade_id then
             return 1
         end
         return 0

@@ -12,6 +12,7 @@ base_asm.STATE = {}
 base_asm.STATE.IDLE = 0
 base_asm.STATE.FLUX_MELT = 1
 base_asm.STATE.ALLOYING = 2
+base_asm.STATE.VENTING = 3
 
 function base_asm.generate_formspec(smelter)
     local fs = 'size[10,9]'..base_mach.fs_start..
@@ -101,12 +102,18 @@ function base_asm.do_processing(smelter, dt)
         local result_name = result_stack:get_definition().description
         smelter.state_time = smelter.state_time - dt
         if smelter.state_time <= 0 then
-            if smelter.inv:room_for_item('out', result_stack) then
-                smelter.inv:set_stack('result', 1, nil)
-                smelter.inv:add_item('out', result_stack)
-                smelter.state = base_asm.STATE.IDLE
+            local out_inv, out_list = base_mach.get_output(smelter)
+            if out_inv then
+                if out_inv:room_for_item(out_list, result_stack) then
+                    smelter.inv:set_stack('result', 1, nil)
+                    out_inv:add_item(out_list, result_stack)
+                    smelter.state = base_asm.STATE.IDLE
+                else
+                    smelter.status_text = result_name .. ' ready - no output space!'
+                    smelter.state_time = -0.1
+                end
             else
-                smelter.status_text = result_name .. ' ready - no space!'
+                smelter.status_text = 'No output'
                 smelter.state_time = -0.1
             end
         else
@@ -117,13 +124,18 @@ end
 
 function base_asm.check_new_processing(smelter)
     if smelter.state ~= base_asm.STATE.IDLE then return end
+    local in_inv, in_list = base_mach.get_input(smelter)
+    if not in_inv then
+        smelter.status_text = "No input"
+        return
+    end
     local error_msg
     -- first, check for elements of an alloying recipe in input
     local matched_recipe = nil
     for _,recipe in ipairs(opts.recipes) do
         local sources_count = 0
         for i = 1,#recipe.input do
-            if smelter.inv:contains_item('in', recipe.input[i]) then
+            if in_inv:contains_item(in_list, recipe.input[i]) then
                 sources_count = sources_count + 1
             end
         end
@@ -139,7 +151,7 @@ function base_asm.check_new_processing(smelter)
         else
             smelter.state = base_asm.STATE.ALLOYING
             for _, consumed_source in ipairs(matched_recipe.input) do
-                smelter.inv:remove_item('in', consumed_source)
+                in_inv:remove_item(in_list, consumed_source)
             end
             if base_mach.has_upgrade(smelter, 'speed_up') then
                 smelter.state_time = matched_recipe.time / 2
@@ -154,7 +166,7 @@ function base_asm.check_new_processing(smelter)
     end
     -- if could not begin alloying anything, check for flux to melt
     for flux_item, flux_params in pairs(opts.FLUX_ITEMS) do
-        if smelter.inv:contains_item('in', flux_item) then
+        if in_inv:contains_item(in_list, flux_item) then
             if smelter.flux_tank >= opts.FLUX_MAXIMUM then
                 error_msg = 'Flux tank full!'
             else
@@ -164,7 +176,7 @@ function base_asm.check_new_processing(smelter)
                 else
                     smelter.state_time = flux_params.time
                 end
-                smelter.inv:remove_item('in', flux_item)
+                in_inv:remove_item(in_list, flux_item)
                 smelter.status_text = 'Accepting flux from '.. minetest.registered_items[flux_item].description ..'...'
                 return
             end
@@ -177,13 +189,16 @@ end
 function base_asm.tick(pos, dt)
     -- read state from meta
     local smelter = base_mach.read_state(pos)
-    base_mach.check_upgrade_updates(smelter, opts.MAX_HEAT)
-
-    base_asm.do_processing(smelter, dt)
-
-    base_asm.check_new_processing(smelter)
-
-    base_mach.process_fuel(smelter)
+    local venting
+    if base_mach.check_heat_max(smelter, opts.MAX_HEAT) then
+        -- venting heat
+        venting = true
+    else
+        -- normal operation
+        base_asm.do_processing(smelter, dt)
+        base_asm.check_new_processing(smelter)
+        base_mach.process_fuel(smelter)
+    end
 
     if smelter.state ~= base_asm.STATE.IDLE and (not smelter.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
@@ -194,7 +209,7 @@ function base_asm.tick(pos, dt)
         base_mach.set_node(pos, base_asm.unlit_id)
     end
 
-    if base_mach.has_upgrade(smelter, 'ext_input') then
+    if venting or base_mach.has_upgrade(smelter, 'ext_input') then
         base_mach.set_timer(smelter)
     end
     -- write status back to meta

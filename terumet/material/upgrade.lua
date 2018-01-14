@@ -14,12 +14,12 @@ minetest.register_craft{ output = upg_base_id, recipe = {
     {terumet.id('item_coil_raw'), terumet.id('item_ceramic'), terumet.id('item_coil_raw')}
 }}
 
-function terumet.register_machine_upgrade(suffix, desc, source, source2, src_pattern)
-    local item_id = id('item_upg_'..suffix)
+function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src_pattern)
+    local item_id = id('item_upg_'..upgrade_id)
     minetest.register_craftitem( item_id, {
         description = desc,
-        inventory_image = tex('upg_'..suffix),
-        _upgradetype = suffix
+        inventory_image = tex('upg_'..upgrade_id),
+        _terumach_upgrade_id = upgrade_id
     })
 
     if not src_pattern then src_pattern = 'default' end
