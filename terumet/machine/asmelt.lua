@@ -14,18 +14,18 @@ base_asm.STATE.FLUX_MELT = 1
 base_asm.STATE.ALLOYING = 2
 
 function base_asm.generate_formspec(smelter)
-    local fs = 'size[11,9]'..base_mach.fs_start..
+    local fs = 'size[10,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     base_mach.fs_owner(smelter,8,0)..
     --input inventory
-    'list[context;in;0,1.5;2,2;]'..
-    'label[0.5,3.5;Input Slots]'..
+    base_mach.fs_input(smelter,0,1.5,2,2)..
     --output inventory
-    'list[context;out;6,1.5;2,2;]'..
-    'label[6.5,3.5;Output Slots]'..
+    base_mach.fs_output(smelter,6,1.5,2,2)..
     --fuel slot
     base_mach.fs_fuel_slot(smelter,6.5,0)..
+    --upgrade slots
+    base_mach.fs_upgrades(smelter,8.75,1)..
     --current status
     'label[0,0;Terumetal Alloy Smelter]'..
     'label[0,0.5;' .. smelter.status_text .. ']'..
@@ -33,7 +33,7 @@ function base_asm.generate_formspec(smelter)
     base_mach.fs_heat_info(smelter,4.25,1.5)..
     base_mach.fs_heat_mode(smelter,4.25,4)
     if smelter.state == base_asm.STATE.FLUX_MELT then
-        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('lump_raw')..']'
+        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('item_cryst_raw')..']'
     elseif smelter.state == base_asm.STATE.ALLOYING then
         fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
     end
@@ -56,6 +56,7 @@ function base_asm.init(pos)
     inv:set_size('in', 4)
     inv:set_size('result', 1)
     inv:set_size('out', 4)
+    inv:set_size('upgrade', 4)
 
     local init_smelter = {
         class = base_asm.unlit_nodedef._terumach_class,
@@ -68,7 +69,7 @@ function base_asm.init(pos)
         status_text = 'New',
         inv = inv,
         meta = meta,
-        pos = pos
+        pos = pos,
     }
     base_mach.write_state(pos, init_smelter)
 end
@@ -78,6 +79,7 @@ function base_asm.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, "fuel", drops)
     default.get_inventory_drops(machine.pos, 'in', drops)
     default.get_inventory_drops(machine.pos, "out", drops)
+    default.get_inventory_drops(machine.pos, 'upgrade', drops)
     local flux_tank = machine.meta:get_int('flux_tank') or 0
     if flux_tank > 0 then
         drops[#drops+1] = terumet.id('item_cryst_raw', math.min(99, flux_tank))
@@ -139,7 +141,11 @@ function base_asm.check_new_processing(smelter)
             for _, consumed_source in ipairs(matched_recipe.input) do
                 smelter.inv:remove_item('in', consumed_source)
             end
-            smelter.state_time = matched_recipe.time
+            if base_mach.has_upgrade(smelter, 'speed_up') then
+                smelter.state_time = matched_recipe.time / 2
+            else
+                smelter.state_time = matched_recipe.time
+            end
             smelter.inv:set_stack('result', 1, matched_recipe.result)
             smelter.flux_tank = smelter.flux_tank - matched_recipe.flux
             smelter.status_text = 'Accepting materials to alloy ' .. result_name .. '...'
@@ -153,7 +159,11 @@ function base_asm.check_new_processing(smelter)
                 error_msg = 'Flux tank full!'
             else
                 smelter.state = base_asm.STATE.FLUX_MELT
-                smelter.state_time = flux_params.time
+                if base_mach.has_upgrade(smelter, 'speed_up') then
+                    smelter.state_time = flux_params.time / 2
+                else
+                    smelter.state_time = flux_params.time
+                end
                 smelter.inv:remove_item('in', flux_item)
                 smelter.status_text = 'Accepting flux from '.. minetest.registered_items[flux_item].description ..'...'
                 return
@@ -167,7 +177,8 @@ end
 function base_asm.tick(pos, dt)
     -- read state from meta
     local smelter = base_mach.read_state(pos)
-    
+    base_mach.check_upgrade_updates(smelter, opts.MAX_HEAT)
+
     base_asm.do_processing(smelter, dt)
 
     base_asm.check_new_processing(smelter)
@@ -181,6 +192,10 @@ function base_asm.tick(pos, dt)
         base_mach.generate_particle(pos)
     else
         base_mach.set_node(pos, base_asm.unlit_id)
+    end
+
+    if base_mach.has_upgrade(smelter, 'ext_input') then
+        base_mach.set_timer(smelter)
     end
     -- write status back to meta
     base_mach.write_state(pos, smelter)

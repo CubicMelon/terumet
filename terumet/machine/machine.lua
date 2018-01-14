@@ -56,6 +56,21 @@ for facing,dir in pairs(base_mach.FACING_DIRECTION) do
     base_mach.FACING_OFFSETS[facing] = base_mach.ADJACENT_OFFSETS[dir]
 end
 
+-- index = rotation
+base_mach.SIDE_OFFSETS = {
+    [0]={left={x=-1,y=0,z=0}, right={x=1,y=0,z=0}},
+    [1]={left={x=0,y=0,z=1}, right={x=0,y=0,z=-1}},
+    [2]={left={x=1,y=0,z=0}, right={x=-1,y=0,z=0}},
+    [3]={left={x=0,y=0,z=-1}, right={x=0,y=0,z=1}},
+}
+
+function base_mach.get_leftside_pos(rot, pos)
+    return terumet.pos_plus(pos, base_mach.SIDE_OFFSETS[rot].left)
+end
+function base_mach.get_rightside_pos(rot, pos)
+    return terumet.pos_plus(pos, base_mach.SIDE_OFFSETS[rot].right)
+end
+
 -- 
 -- CRAFTING MATERIALS
 --
@@ -112,7 +127,7 @@ local SPECIAL_OWNERS = {
 -- machine owner info formspec
 function base_mach.fs_owner(machine, fsx, fsy)
     local own = SPECIAL_OWNERS[machine.owner] or machine.owner
-    return string.format('label[%d,%d;Owner: %s]', fsx, fsy, own)
+    return string.format('label[%f,%f;Owner: %s]', fsx, fsy, own)
 end
 
 -- fuel slot formspec
@@ -142,6 +157,30 @@ function base_mach.fs_player_inv(fsx, fsy)
     return 'list[current_player;main;'..fsx..','..fsy..';8,1;]list[current_player;main;'..fsx..','..fsy+1.25 ..';8,3;8]'
 end
 
+-- input formspec
+function base_mach.fs_input(machine, fsx, fsy, width, height)
+    if base_mach.has_upgrade(machine, 'ext_input') then
+        local input_node = minetest.get_node(base_mach.get_leftside_pos(machine.rot, machine.pos))
+        return string.format('label[%f,%f;Input From]item_image[%f,%f;1,1;%s]', fsx+0.5, fsy+2, fsx+0.5, fsy+0.5, input_node.name)
+    else
+        return string.format('list[context;in;%f,%f;%d,%d;]label[%f,%f;Input Slots]', fsx, fsy, width, height, fsx+0.5, fsy+2)
+    end
+end
+
+-- output formspec
+function base_mach.fs_output(machine, fsx, fsy, width, height)
+    if base_mach.has_upgrade(machine, 'ext_output') then
+        local output_node = minetest.get_node(base_mach.get_rightside_pos(machine.rot, machine.pos))
+        return string.format('label[%f,%f;Output To]item_image[%f,%f;1,1;%s]', fsx+0.5, fsy+2, fsx+0.5, fsy+0.5, output_node.name)
+    else
+        return string.format('list[context;out;%f,%f;%d,%d;]label[%f,%f;Output Slots]', fsx, fsy, width, height, fsx+0.5, fsy+2)
+    end
+end
+
+-- upgrade slots formspec
+function base_mach.fs_upgrades(machine, fsx, fsy)
+    return string.format('label[%f,%f;Upgrades]list[context;upgrade;%f,%f;1,6]', fsx, fsy, fsx, fsy+1.0)
+end
 --
 -- GENERIC META
 --
@@ -218,6 +257,7 @@ function base_mach.read_state(pos)
     machine.meta = meta
     machine.owner = meta:get_string('owner')
     machine.facing = math.floor(node_info.param2 / 4)
+    machine.rot = node_info.param2 % 4
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
     machine.max_heat = meta:get_int('max_heat') or 0
@@ -225,11 +265,38 @@ function base_mach.read_state(pos)
     machine.state = meta:get_int('state')
     machine.state_time = meta:get_float('state_time') or 0
     machine.status_text = meta:get_string('status_text') or 'No Status'
+    machine.installed_upgrades = base_mach.get_installed_upgrades(machine)
     -- call read callback on node def if exists
     if machine.class.on_read_state then machine.class.on_read_state(machine) end
     -- following attributes are not saved in meta, but reset every tick
     machine.need_heat = false
     return machine
+end
+
+function base_mach.has_upgrade(machine, upgrade)
+    if not machine.installed_upgrades then return false end
+    return machine.installed_upgrades[upgrade]
+end
+
+function base_mach.get_installed_upgrades(machine)
+    local upgrades = {}
+    local upgrade_inv = machine.inv:get_list('upgrade')
+    if not upgrade_inv then return upgrades end
+    for _, stack in ipairs(upgrade_inv) do
+        local itemdef = stack:get_definition()
+        if itemdef and itemdef._upgradetype then
+            upgrades[itemdef._upgradetype] = true
+        end
+    end
+    return upgrades
+end
+
+function base_mach.check_upgrade_updates(machine, base_max_heat)
+    if base_mach.has_upgrade(machine, 'max_heat') then
+        machine.max_heat = math.floor(base_max_heat * 1.5)
+    else
+        machine.max_heat = base_max_heat
+    end
 end
 
 function base_mach.write_state(pos, machine)
@@ -255,6 +322,28 @@ end
 --
 -- GENERIC MACHINE PROCESSES
 --
+
+function base_mach.get_input(machine)
+    if base_mach.has_upgrade(machine, 'ext_input') then
+        local lpos = base_mach.get_leftside_pos(machine.rot, machine.pos)
+        local lmeta = minetest.get_meta(lpos)
+        if lmeta then return lmeta:get_inventory(), 'main' end
+        return nil, nil
+    else
+        return machine.inv, 'in'
+    end
+end
+
+function base_mach.get_output(machine)
+    if base_mach.has_upgrade(machine, 'ext_output') then
+        local rpos = base_mach.get_rightside_pos(machine.rot, machine.pos)
+        local rmeta = minetest.get_meta(rpos)
+        if rmeta then return rmeta:get_inventory(), 'main' end
+        return nil, nil
+    else
+        return machine.inv, 'out'
+    end
+end
 
 function base_mach.set_timer(machine, specific_time)
     specific_time = specific_time or machine.class.timer
@@ -300,7 +389,7 @@ function base_mach.expend_heat(machine, value, process)
         machine.need_heat = true
         return false 
     end
-    machine.heat_level = machine.heat_level - value
+    machine.heat_level = math.min(machine.max_heat, machine.heat_level - value)
     return true
 end
 
@@ -521,6 +610,11 @@ function base_mach.allow_put(pos, listname, index, stack, player)
         else
             return 0
         end
+    elseif listname == 'upgrade' then
+        if minetest.registered_items[stack:get_name()]._upgradetype then
+            return 1
+        end
+        return 0
     elseif listname == "out" then
         return 0
     else
