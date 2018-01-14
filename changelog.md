@@ -8,6 +8,9 @@ Newer versions listed first
     * More seriously, the look of Teruchalcum was changed slightly to be shinier and greenier.
 * The ore-cutting saw is now a proper size when wielded.
 * Overdue but finally: You can use pure terumetal ingots in the Alloy Smelter as flux. Smelting terumetal lumps no longer makes them useless for alloying! This should have been the case since multiple flux items were implemented, but...
+* The first Coreglass Framed machine has now been added: HEAT Ray Emitters! This amazing device takes heat like any other machine but is made to transmit it over long distances. Using a standard screwdriver, rotate the emitter so its brightly-colored output side points to and is aligned with another machine far away. After a period where it seeks out a target (the longer distance, the longer it takes) it will fire a High Energy Alpha-wave Trasmission beam, sending a large amount of heat from its own storage to that machine.
+    * You can change settings regarding the particle effects for the ray and whether it displays a "seeking" effect while searching in options.lua
+* Additionally, a much less expensive HEAT Ray Reflector block was added to assist with sending HEAT Rays around corners. A Reflector points in only one direction, but any rays that strike it from any of the other sides will be sent through the direction it points. HEAT Ray Emitters take Reflectors into consideration automatically when seeking.
 
 ### Version 1.8
 * **POTENTIALLY BREAKING CHANGE**: Machines in the world before 1.8 will not appear to have any input slots because of a inventory list-name change due to new API update. Re-placing the machine should fix this but will not drop items in 'old' input slots. I suggest removing any input items left in the slots before updating to 1.8 to prevent losing any items.
