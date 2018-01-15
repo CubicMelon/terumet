@@ -23,8 +23,8 @@ function furn_htr.generate_formspec(heater)
     --current status
     'label[0,0;Furnace Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
-    base_mach.fs_heat_info(heater,4,1.5)..
-    base_mach.fs_heat_mode(heater,4,4)
+    base_mach.fs_heat_info(heater,3,1.5)..
+    base_mach.fs_heat_mode(heater,3,4)
     if heater.state ~= furn_htr.STATE.IDLE then
         fs=fs..'image[3,3;1,1;terumet_gui_product_bg.png]item_image[3,3;1,1;'..heater.inv:get_stack('burn',1):get_name()..']'
     end

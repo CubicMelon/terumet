@@ -57,6 +57,14 @@ terumet.options.heater = {
     }
 }
 
+terumet.options.thermobox = {
+    --
+    -- THERMOBOX SETTINGS
+    --
+    MAX_HEAT = 20000,
+    HEAT_TRANSFER_RATE = 1000
+}
+
 terumet.options.smelter = {
     --
     -- ALLOY SMELTER SETTINGS
@@ -135,7 +143,7 @@ terumet.options.heat_ray = {
     -- HEAT RAY EMITTER SETTINGS
     --
     -- Maximum HUs emitter can contain
-    MAX_HEAT = 20000,
+    MAX_HEAT = 2000,
     -- HUs sent in one ray
     SEND_AMOUNT = 1000,
     -- maximum number of nodes emitter will seek before giving up
