@@ -88,7 +88,7 @@ base_tbox.nodedef = base_mach.nodedef{
     -- callbacks
     on_construct = base_tbox.init,
     on_timer = base_tbox.tick,
-    on_rotate = function() return nil end,
+    on_rotate = function() return nil end, -- default rotation
     -- terumet machine class data
     _terumach_class = {
         name = 'Thermobox',

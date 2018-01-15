@@ -42,7 +42,7 @@ terumet.options.heater = {
         -- Maximum HUs Furnace Heater can store
         MAX_HEAT = 500,
         -- Maximum HUs Furnace Heater can transfer per tick
-        HEAT_TRANSFER_RATE = 10,
+        HEAT_TRANSFER_RATE = 20,
     },
     solar={
         --
@@ -62,7 +62,7 @@ terumet.options.thermobox = {
     -- THERMOBOX SETTINGS
     --
     MAX_HEAT = 20000,
-    HEAT_TRANSFER_RATE = 1000
+    HEAT_TRANSFER_RATE = 250
 }
 
 terumet.options.smelter = {
