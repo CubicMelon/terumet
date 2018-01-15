@@ -161,7 +161,7 @@ base_vul.nodedef = base_mach.nodedef{
     tiles = {
         terumet.tex('vulcan_top'), terumet.tex('block_ceramic'),
         terumet.tex('vulcan_sides'), terumet.tex('vulcan_sides'),
-        terumet.tex('vulcan_sides'), terumet.tex('vulcan_sides')
+        terumet.tex('vulcan_sides'), terumet.tex('vulcan_front')
     },
     -- callbacks
     on_construct = base_vul.init,
