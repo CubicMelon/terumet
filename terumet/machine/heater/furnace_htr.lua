@@ -19,14 +19,15 @@ function furn_htr.generate_formspec(heater)
     base_mach.fs_player_inv(0,4.75)..
     base_mach.fs_owner(heater,5,0)..
     --input inventory
-    'list[context;in;3,1.5;1,1;]'..
+    base_mach.fs_input(heater,1,1.5,1,1)..
     --current status
     'label[0,0;Furnace Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
     base_mach.fs_heat_info(heater,3,1.5)..
-    base_mach.fs_heat_mode(heater,3,4)
+    base_mach.fs_heat_mode(heater,3,4)..
+    base_mach.fs_upgrades(heater,6.75,1)
     if heater.state ~= furn_htr.STATE.IDLE then
-        fs=fs..'image[3,3;1,1;terumet_gui_product_bg.png]item_image[3,3;1,1;'..heater.inv:get_stack('burn',1):get_name()..']'
+        fs=fs..'image[1,3;1,1;terumet_gui_product_bg.png]item_image[1,3;1,1;'..heater.inv:get_stack('burn',1):get_name()..']'
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
@@ -43,7 +44,7 @@ function furn_htr.init(pos)
     local inv = meta:get_inventory()
     inv:set_size('in', 1)
     inv:set_size('burn', 1)
-
+    inv:set_size('upgrade', 2)
     local init_heater = {
         class = furn_htr.unlit_nodedef._terumach_class,
         state = furn_htr.STATE.IDLE,
@@ -61,11 +62,13 @@ end
 function furn_htr.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, 'in', drops)
+    default.get_inventory_drops(machine.pos, 'upgrade', drops)
     return drops
 end
 
 function furn_htr.do_processing(heater, dt)
-    local gain = math.floor(5 * dt) -- heat gain this tick
+    local gain = math.floor(heater.gen_rate * dt) -- heat gain this tick
+    if base_mach.has_upgrade(heater, 'gen_up') then gain = gain * 3 end
     if gain == 0 then return end
     local under_cap = heater.heat_level < (heater.max_heat - gain)
     if heater.state == furn_htr.STATE.BURN_FULL and under_cap then
@@ -91,17 +94,28 @@ end
 
 function furn_htr.check_new_processing(heater)
     if heater.state ~= furn_htr.STATE.IDLE or heater.heat_level == heater.max_heat then return end
-    local input_stack = heater.inv:get_stack('in', 1)
-    local cook_result
-    local cook_after
-    cook_result, cook_after = minetest.get_craft_result({method = 'fuel', width = 1, items = {input_stack}})
-    if cook_result.time ~= 0 then
-        heater.state = furn_htr.STATE.BURNING
-        heater.inv:set_stack('in', 1, cook_after.items[1])
-        heater.inv:set_stack('burn', 1, input_stack)
-        heater.state_time = math.floor(cook_result.time * heater.class.timer)
-        heater.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for burning...'
-        return
+    local in_inv, in_list = base_mach.get_input(heater)
+    if not in_inv then
+        heater.status_text = 'No input'
+    end
+    for slot=1,in_inv:get_size(in_list) do
+        local input_stack = in_inv:get_stack(in_list, slot)
+        local cook_result
+        local cook_after
+        cook_result, cook_after = minetest.get_craft_result({method = 'fuel', width = 1, items = {input_stack}})
+        if cook_result.time ~= 0 then
+            heater.state = furn_htr.STATE.BURNING
+            in_inv:set_stack(in_list, slot, cook_after.items[1])
+            heater.inv:set_stack('burn', 1, input_stack)
+            heater.state_time = math.floor(cook_result.time * heater.class.timer)
+            heater.gen_rate = 5
+            if base_mach.has_upgrade(heater, 'speed_up') then
+                heater.state_time = heater.state_time / 2
+                heater.gen_rate = heater.gen_rate * 2
+            end
+            heater.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for burning...'
+            return
+        end
     end
     heater.status_text = 'Idle'
 end
@@ -109,12 +123,15 @@ end
 function furn_htr.tick(pos, dt)
     -- read state from meta
     local heater = base_mach.read_state(pos)
+    local venting
+    if base_mach.check_heat_max(heater, opts.MAX_HEAT) then
+        venting = true
+    else
+        furn_htr.do_processing(heater, dt)
+        furn_htr.check_new_processing(heater)
+    end
 
-    furn_htr.do_processing(heater, dt)
-
-    furn_htr.check_new_processing(heater)
-
-    if heater.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then
+    if (not venting) and heater.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then
         base_mach.push_heat_adjacent(heater, opts.HEAT_TRANSFER_RATE)
     end
     -- remain active if currently burning something or have any heat (for distribution)
@@ -127,6 +144,7 @@ function furn_htr.tick(pos, dt)
         if heater.heat_level > 0 then base_mach.set_timer(heater) end
     end
 
+    if venting or base_mach.has_upgrade(heater, 'ext_input') then base_mach.set_timer(heater) end
     -- write status back to meta
     base_mach.write_state(pos, heater)
 
@@ -150,9 +168,13 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
         drop_id = furn_htr.unlit_id,
         on_external_heat = nil,
         get_drop_contents = furn_htr.get_drop_contents,
+        on_read_state = function(fheater)
+            fheater.gen_rate = fheater.meta:get_int('genrate') or 0
+        end,
         on_write_state = function(fheater)
             fheater.meta:set_string('formspec', furn_htr.generate_formspec(fheater))
             fheater.meta:set_string('infotext', furn_htr.generate_infotext(fheater))
+            fheater.meta:set_int('genrate', fheater.gen_rate or 0)
         end
     }
 }

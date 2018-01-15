@@ -19,7 +19,8 @@ function sol_htr.generate_formspec(heater)
     'label[0,0;Solar Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
     base_mach.fs_heat_info(heater,3,1.5)..
-    base_mach.fs_heat_mode(heater,3,4)
+    base_mach.fs_heat_mode(heater,3,4)..
+    base_mach.fs_upgrades(heater,6.75,1)
     return fs
 end
 
@@ -30,7 +31,8 @@ end
 function sol_htr.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
-    
+    inv:set_size('upgrade', 2)
+
     local init_heater = {
         class = sol_htr.nodedef._terumach_class,
         state = sol_htr.STATE.GENERATING,
@@ -47,6 +49,12 @@ function sol_htr.init(pos)
     base_mach.set_timer(init_heater)
 end
 
+function sol_htr.get_drop_contents(machine)
+    local drops = {}
+    default.get_inventory_drops(machine.pos, 'upgrade', drops)
+    return drops
+end
+
 local LIGHT_LEEWAY = 4
 function sol_htr.do_processing(solar, dt)
     local above = {x=solar.pos.x, y=solar.pos.y+1, z=solar.pos.z}
@@ -59,6 +67,7 @@ function sol_htr.do_processing(solar, dt)
     
     local gain = opts.SOLAR_GAIN_RATES[effective_light+1]
 
+    if base_mach.has_upgrade(solar, 'gen_up') then gain = gain * 2 end
     if gain == 0 then
         solar.status_text = 'Waiting for sufficient sunlight'
     else
@@ -78,11 +87,12 @@ end
 function sol_htr.tick(pos, dt)
     -- read state from meta
     local solar = base_mach.read_state(pos)
+    if not base_mach.check_heat_max(solar, opts.MAX_HEAT) then
+        sol_htr.do_processing(solar, dt)
 
-    sol_htr.do_processing(solar, dt)
-
-    if solar.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then
-        base_mach.push_heat_adjacent(solar, opts.HEAT_TRANSFER_RATE)
+        if solar.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then
+            base_mach.push_heat_adjacent(solar, opts.HEAT_TRANSFER_RATE)
+        end
     end
     -- write status back to meta
     base_mach.write_state(pos, solar)
@@ -106,6 +116,7 @@ sol_htr.nodedef = base_mach.nodedef{
         name = 'Solar Heater',
         timer = 1.0,
         on_external_heat = nil,
+        get_drop_contents = sol_htr.get_drop_contents,
         on_write_state = function(solar)
             solar.meta:set_string('formspec', sol_htr.generate_formspec(solar))
             solar.meta:set_string('infotext', sol_htr.generate_infotext(solar))

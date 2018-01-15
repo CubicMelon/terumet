@@ -127,7 +127,7 @@ local SPECIAL_OWNERS = {
 -- machine owner info formspec
 function base_mach.fs_owner(machine, fsx, fsy)
     local own = SPECIAL_OWNERS[machine.owner] or machine.owner
-    return string.format('label[%f,%f;Owner: %s]', fsx, fsy, own)
+    return string.format('label[%f,%f;Owner: \n%s]', fsx, fsy, own)
 end
 
 -- fuel slot formspec
@@ -140,8 +140,8 @@ function base_mach.fs_heat_info(machine, fsx, fsy)
     if machine.heat_level > machine.max_heat then
         return string.format('image[%f,%f;2,2;terumet_gui_heat_over.png]label[%f,%f;Heat Overflow]', fsx, fsy, fsx, fsy+2)
     else
-        return string.format('image[%f,%f;2,2;terumet_gui_heat_bg.png^[lowpart:%f:terumet_gui_heat_fg.png]label[%f,%f;Heat Level]',
-            fsx, fsy, base_mach.heat_pct(machine), fsx, fsy+2 )
+        return string.format('image[%f,%f;2,2;terumet_gui_heat_bg.png^[lowpart:%f:terumet_gui_heat_fg.png]label[%f,%f;%d HU]',
+            fsx, fsy, base_mach.heat_pct(machine), fsx, fsy+2, machine.heat_level )
     end
     -- return 'image['..fsx..','..fsy..';2,2;terumet_gui_heat_bg.png^[lowpart:'..
     -- base_mach.heat_pct(machine)..':terumet_gui_heat_fg.png]label['..fsx..','..fsy+2 ..';Heat Level]'
@@ -185,7 +185,7 @@ end
 
 -- upgrade slots formspec
 function base_mach.fs_upgrades(machine, fsx, fsy)
-    return string.format('label[%f,%f;Upgrades]list[context;upgrade;%f,%f;1,6]', fsx, fsy, fsx, fsy+1.0)
+    return string.format('vertlabel[%f,%f;Upgrades]list[context;upgrade;%f,%f;1,6]', fsx+1.0, fsy, fsx, fsy)
 end
 --
 -- GENERIC META
@@ -212,7 +212,7 @@ function base_mach.find_adjacent_need_heat(pos)
 end
 
 -- given a list of target machines, evenly distribute up to total_hus from 'from' machine to them all
-function base_mach.push_heat(from, total_hus, targets)
+function base_mach.do_push_heat(from, total_hus, targets)
     local total_distrib = math.min(from.heat_level, total_hus)
     if total_distrib == 0 or #targets == 0 then return end
     -- can't afford to even give 1 HU to each target?
@@ -239,16 +239,41 @@ function base_mach.push_heat(from, total_hus, targets)
 end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
-function base_mach.push_heat_adjacent(machine, max_send)
-    if max_send == 0 then return end
+-- amount may be modified by heat_xfer upgrades in src or target(s)
+function base_mach.push_heat_adjacent(machine, send_amount)
+    if send_amount <= 0 then return end
     local adjacent_needy = base_mach.find_adjacent_need_heat(machine.pos)
     if adjacent_needy.count > 0 then
+        if base_mach.has_upgrade(machine, 'heat_xfer') then
+            send_amount = send_amount * 2
+        end
         local send_targets = {}
         for dir, target in pairs(adjacent_needy) do
-            if dir ~= 'count' then send_targets[#send_targets+1] = target end
+            if dir ~= 'count' then 
+                send_targets[#send_targets+1] = target 
+                if base_mach.has_upgrade(target, 'heat_xfer') then
+                    send_amount = math.floor(send_amount * 1.25)
+                end
+            end
         end
-        base_mach.push_heat(machine, max_send, send_targets)
+        base_mach.do_push_heat(machine, send_amount, send_targets)
     end
+end
+
+-- try to push an amount of heat to single target machine
+-- amount may be modified by heat_xfer upgrades in src or target
+-- returns true if we did
+function base_mach.push_heat_single(machine, target, send_amount)
+    if send_amount <= 0 then return false end
+    if target.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.ACCEPT or target.heat_level >= target.max_heat then return false end
+    if base_mach.has_upgrade(machine, 'heat_xfer') then
+        send_amount = send_amount * 2
+    end
+    if base_mach.has_upgrade(target, 'heat_xfer') then
+        send_amount = math.floor(send_amount * 1.25)
+    end
+    base_mach.do_push_heat(machine, send_amount, {target})
+    return true
 end
 
 function base_mach.read_state(pos)

@@ -15,6 +15,7 @@ function base_tbox.generate_formspec(box)
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     base_mach.fs_owner(box,5,0)..
+    base_mach.fs_upgrades(box,6.75,1)..
     --current status
     'label[0,0;Thermobox]'..
     'label[0,0.5;' .. box.status_text .. ']'..
@@ -30,7 +31,7 @@ end
 function base_tbox.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
-    
+    inv:set_size('upgrade', 2)
     local init_box = {
         class = base_tbox.nodedef._terumach_class,
         state = base_tbox.STATE.PUSHING,
@@ -47,6 +48,12 @@ function base_tbox.init(pos)
     base_mach.set_timer(init_box)
 end
 
+function base_tbox.get_drop_contents(machine)
+    local drops = {}
+    default.get_inventory_drops(machine.pos, 'upgrade', drops)
+    return drops
+end
+
 function base_tbox.do_processing(tbox, dt)
     if tbox.heat_level == 0 then
         tbox.status_text = "Waiting for heat..."
@@ -56,8 +63,7 @@ function base_tbox.do_processing(tbox, dt)
     local out_mach = base_mach.read_state(out_pos)
 
     if out_mach then
-        if out_mach.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and out_mach.heat_level < out_mach.max_heat then
-            base_mach.push_heat(tbox, opts.HEAT_TRANSFER_RATE, {out_mach})
+        if base_mach.push_heat_single(tbox, out_mach, opts.HEAT_TRANSFER_RATE) then
             tbox.status_text = "Providing heat to " .. out_mach.class.name
         else
             tbox.status_text = out_mach.class.name .. " does not require heat"
@@ -70,9 +76,9 @@ end
 function base_tbox.tick(pos, dt)
     -- read state from meta
     local tbox = base_mach.read_state(pos)
-
-    base_tbox.do_processing(tbox, dt)
-
+    if not base_mach.check_heat_max(tbox, opts.MAX_HEAT) then
+        base_tbox.do_processing(tbox, dt)
+    end
     -- write status back to meta
     base_mach.write_state(pos, tbox)
     base_mach.set_timer(tbox)
@@ -96,9 +102,10 @@ base_tbox.nodedef = base_mach.nodedef{
         drop_id = base_tbox.id,
         on_external_heat = nil,
         on_inventory_change = nil,
-        on_write_state = function(ray)
-            ray.meta:set_string('formspec', base_tbox.generate_formspec(ray))
-            ray.meta:set_string('infotext', base_tbox.generate_infotext(ray))
+        get_drop_contents = base_tbox.get_drop_contents,
+        on_write_state = function(tbox)
+            tbox.meta:set_string('formspec', base_tbox.generate_formspec(tbox))
+            tbox.meta:set_string('infotext', base_tbox.generate_infotext(tbox))
         end
     }
 }

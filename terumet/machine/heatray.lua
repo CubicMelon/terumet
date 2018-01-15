@@ -164,7 +164,7 @@ function base_ray.fire(ray, target)
                 glow=100,
             }
         end
-        base_mach.push_heat(ray, opts.SEND_AMOUNT, {target})
+        base_mach.push_heat_single(ray, target, opts.SEND_AMOUNT)
         base_ray.set_search_result(ray, 'Successful fire at ' .. target.class.name .. ' at ' .. minetest.pos_to_string(target.pos) .. '!')
     end
 end

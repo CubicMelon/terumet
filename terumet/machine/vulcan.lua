@@ -12,18 +12,18 @@ base_vul.STATE.IDLE = 0
 base_vul.STATE.VULCANIZING = 1
 
 function base_vul.generate_formspec(vulcan)
-    local fs = 'size[8,9]'..base_mach.fs_start..
+    local fs = 'size[10,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
     base_mach.fs_owner(vulcan,5,0)..
     --input inventory
-    'list[context;in;0,1.5;2,2;]'..
-    'label[0.5,3.5;Input Slots]'..
+    base_mach.fs_input(vulcan,0,1.5,2,2)..
     --output inventory
-    'list[context;out;6,1.5;2,2;]'..
-    'label[6.5,3.5;Output Slots]'..
+    base_mach.fs_output(vulcan,6,1.5,2,2)..
     --fuel slot
     base_mach.fs_fuel_slot(vulcan,6.5,0)..
+    --upgrade slots
+    base_mach.fs_upgrades(vulcan,8.75,1)..
     --current status
     'label[0,0;Crystal Vulcanizer]'..
     'label[0,0.5;' .. vulcan.status_text .. ']'..
@@ -51,6 +51,7 @@ function base_vul.init(pos)
     inv:set_size('in', 4)
     inv:set_size('result', 1)
     inv:set_size('out', 4)
+    inv:set_size('upgrade', 4)
 
     local init_vulcan = {
         class = base_vul.nodedef._terumach_class,
@@ -72,6 +73,7 @@ function base_vul.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, "fuel", drops)
     default.get_inventory_drops(machine.pos, 'in', drops)
     default.get_inventory_drops(machine.pos, "out", drops)
+    default.get_inventory_drops(machine.pos, 'upgrade', drops)
     return drops
 end
 
@@ -81,12 +83,18 @@ function base_vul.do_processing(vulcan, dt)
         local result_name = result_stack:get_definition().description
         vulcan.state_time = vulcan.state_time - dt
         if vulcan.state_time <= 0 then
-            if vulcan.inv:room_for_item('out', result_stack) then
-                vulcan.inv:set_stack('result', 1, nil)
-                vulcan.inv:add_item('out', result_stack)
-                vulcan.state = base_vul.STATE.IDLE
+            local out_inv, out_list = base_mach.get_output(vulcan)
+            if out_inv then
+                if out_inv:room_for_item(out_list, result_stack) then
+                    vulcan.inv:set_stack('result', 1, nil)
+                    out_inv:add_item(out_list, result_stack)
+                    vulcan.state = base_vul.STATE.IDLE
+                else
+                    vulcan.status_text = result_name .. ' ready - no output space!'
+                    vulcan.state_time = -0.1
+                end
             else
-                vulcan.status_text = result_name .. ' ready - no space!'
+                vulcan.status_text = 'No output'
                 vulcan.state_time = -0.1
             end
         else
@@ -97,16 +105,22 @@ end
 
 function base_vul.check_new_processing(vulcan)
     if vulcan.state ~= base_vul.STATE.IDLE then return end
+    local in_inv, in_list = base_mach.get_input(vulcan)
     local cook_result
-    for slot = 1,4 do
-        local input_stack = vulcan.inv:get_stack('in', slot)
+    for slot = 1,in_inv:get_size(in_list) do
+        local input_stack = in_inv:get_stack(in_list, slot)
         local matched_recipe = opts.recipes[input_stack:get_name()]
         if matched_recipe then
-            local yield = 2 -- TODO change based on machine setup/heat
+            local yield = 2
             vulcan.state = base_vul.STATE.VULCANIZING
-            vulcan.inv:remove_item('in', input_stack:get_name())
-            vulcan.inv:set_stack('result', 1, matched_recipe .. ' ' .. yield)
             vulcan.state_time = opts.PROCESS_TIME
+            if base_mach.has_upgrade(vulcan, 'cryst') then 
+                yield = yield + 1
+                vulcan.state_time = vulcan.state_time * 3
+            end
+            in_inv:remove_item(in_list, input_stack:get_name())
+            vulcan.inv:set_stack('result', 1, matched_recipe .. ' ' .. yield)
+            if base_mach.has_upgrade(vulcan, 'speed_up') then vulcan.state_time = vulcan.state_time / 2 end
             vulcan.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for vulcanizing...'
             return
         end
@@ -117,15 +131,20 @@ end
 function base_vul.tick(pos, dt)
     -- read state from meta
     local vulcan = base_mach.read_state(pos)
+    local venting
 
-    base_vul.do_processing(vulcan, dt)
-
-    base_vul.check_new_processing(vulcan)
-
-    base_mach.process_fuel(vulcan)
+    if base_mach.check_heat_max(vulcan, opts.MAX_HEAT) then
+        venting = true
+    else
+        base_vul.do_processing(vulcan, dt)
+        base_vul.check_new_processing(vulcan)
+        base_mach.process_fuel(vulcan)
+    end
 
     if vulcan.state ~= base_vul.STATE.IDLE and (not vulcan.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
+        base_mach.set_timer(vulcan)
+    elseif venting or base_mach.has_upgrade(vulcan, 'ext_input') then
         base_mach.set_timer(vulcan)
     end
 

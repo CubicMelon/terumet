@@ -13,23 +13,22 @@ base_htf.STATE.IDLE = 0
 base_htf.STATE.COOKING = 1
 
 function base_htf.generate_formspec(furnace)
-    local fs = 'size[8,9]'..base_mach.fs_start..
+    local fs = 'size[10,9]'..base_mach.fs_start..
     --player inventory
     base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(furnace,5,0)..
+    base_mach.fs_owner(furnace,8,0)..
     --input inventory
-    'list[context;in;0,1.5;2,2;]'..
-    'label[0.5,3.5;Input Slots]'..
+    base_mach.fs_input(furnace,0,1.5,2,2)..
     --output inventory
-    'list[context;out;6,1.5;2,2;]'..
-    'label[6.5,3.5;Output Slots]'..
+    base_mach.fs_output(furnace,6,1.5,2,2)..
     --fuel slot
     base_mach.fs_fuel_slot(furnace,6.5,0)..
     --current status
     'label[0,0;High-Temperature Furnace]'..
     'label[0,0.5;' .. furnace.status_text .. ']'..
     base_mach.fs_heat_info(furnace,4.25,1.5)..
-    base_mach.fs_heat_mode(furnace,4.25,4)
+    base_mach.fs_heat_mode(furnace,4.25,4)..
+    base_mach.fs_upgrades(furnace,8.75,1)
     if furnace.state == base_htf.STATE.COOKING then
         fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..furnace.inv:get_stack('result',1):get_name()..']'
     end
@@ -52,7 +51,7 @@ function base_htf.init(pos)
     inv:set_size('in', 4)
     inv:set_size('result', 1)
     inv:set_size('out', 4)
-
+    inv:set_size('upgrade', 4)
     local init_furnace = {
         class = base_htf.unlit_nodedef._terumach_class,
         state = base_htf.STATE.IDLE,
@@ -73,6 +72,7 @@ function base_htf.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, "fuel", drops)
     default.get_inventory_drops(machine.pos, 'in', drops)
     default.get_inventory_drops(machine.pos, "out", drops)
+    default.get_inventory_drops(machine.pos, 'upgrade', drops)
     return drops
 end
 
@@ -82,12 +82,18 @@ function base_htf.do_processing(furnace, dt)
         local result_name = result_stack:get_definition().description
         furnace.state_time = furnace.state_time - dt
         if furnace.state_time <= 0 then
-            if furnace.inv:room_for_item('out', result_stack) then
-                furnace.inv:set_stack('result', 1, nil)
-                furnace.inv:add_item('out', result_stack)
-                furnace.state = base_htf.STATE.IDLE
+            local out_inv, out_list = base_mach.get_output(furnace)
+            if out_inv then
+                if out_inv:room_for_item(out_list, result_stack) then
+                    furnace.inv:set_stack('result', 1, nil)
+                    out_inv:add_item(out_list, result_stack)
+                    furnace.state = base_htf.STATE.IDLE
+                else
+                    furnace.status_text = result_name .. ' ready - no output space!'
+                    furnace.state_time = -0.1
+                end
             else
-                furnace.status_text = result_name .. ' ready - no space!'
+                furnace.status_text = 'No output'
                 furnace.state_time = -0.1
             end
         else
@@ -100,8 +106,13 @@ function base_htf.check_new_processing(furnace)
     if furnace.state ~= base_htf.STATE.IDLE then return end
     local cook_result
     local cook_after
-    for slot = 1,4 do
-        local input_stack = furnace.inv:get_stack('in', slot)
+    local in_inv, in_list = base_mach.get_input(furnace)
+    if not in_inv then
+        furnace.status_text = 'No input'
+        return
+    end
+    for slot = 1,in_inv:get_size(in_list) do
+        local input_stack = in_inv:get_stack(in_list, slot)
         cook_result, cook_after = minetest.get_craft_result({method = 'cooking', width = 1, items = {input_stack}})
         if input_stack:get_name() == 'terumet:block_thermese' then
             cook_result = {item='default:mese_crystal_fragment',time=2} -- fix heat exploit, sorry!
@@ -113,9 +124,10 @@ function base_htf.check_new_processing(furnace)
         end
         if cook_result.time ~= 0 then
             furnace.state = base_htf.STATE.COOKING
-            furnace.inv:set_stack('in', slot, cook_after.items[1])
+            in_inv:set_stack(in_list, slot, cook_after.items[1])
             furnace.inv:set_stack('result', 1, cook_result.item)
             furnace.state_time = math.floor(cook_result.time * opts.TIME_MULT * furnace.class.timer)
+            if base_mach.has_upgrade(furnace, 'speed_up') then furnace.state_time = furnace.state_time / 2 end
             furnace.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for cooking...'
             return
         end
@@ -127,11 +139,14 @@ function base_htf.tick(pos, dt)
     -- read state from meta
     local furnace = base_mach.read_state(pos)
 
-    base_htf.do_processing(furnace, dt)
-
-    base_htf.check_new_processing(furnace)
-
-    base_mach.process_fuel(furnace)
+    local venting
+    if base_mach.check_heat_max(furnace, opts.MAX_HEAT) then
+        venting = true
+    else
+        base_htf.do_processing(furnace, dt)
+        base_htf.check_new_processing(furnace)
+        base_mach.process_fuel(furnace)
+    end
 
     if furnace.state ~= base_htf.STATE.IDLE and (not furnace.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
@@ -142,6 +157,7 @@ function base_htf.tick(pos, dt)
         base_mach.set_node(pos, base_htf.unlit_id)
     end
 
+    if venting or base_mach.has_upgrade(furnace, 'ext_input') then base_mach.set_timer(furnace) end
     -- write status back to meta
     base_mach.write_state(pos, furnace)
 
