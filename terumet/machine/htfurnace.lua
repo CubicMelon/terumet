@@ -77,7 +77,7 @@ function base_htf.get_drop_contents(machine)
 end
 
 function base_htf.do_processing(furnace, dt)
-    if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, opts.COST_COOKING_HU, 'Cooking') then
+    if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, furnace.heat_cost, 'Cooking') then
         local result_stack = furnace.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         furnace.state_time = furnace.state_time - dt
@@ -127,7 +127,11 @@ function base_htf.check_new_processing(furnace)
             in_inv:set_stack(in_list, slot, cook_after.items[1])
             furnace.inv:set_stack('result', 1, cook_result.item)
             furnace.state_time = math.floor(cook_result.time * opts.TIME_MULT * furnace.class.timer)
-            if base_mach.has_upgrade(furnace, 'speed_up') then furnace.state_time = furnace.state_time / 2 end
+            furnace.heat_cost = opts.COST_COOKING_HU
+            if base_mach.has_upgrade(furnace, 'speed_up') then 
+                furnace.state_time = furnace.state_time / 2 
+                furnace.heat_cost = furnace.heat_cost * 2
+            end
             furnace.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for cooking...'
             return
         end
@@ -180,9 +184,13 @@ base_htf.unlit_nodedef = base_mach.nodedef{
         timer = 0.5,
         drop_id = base_htf.unlit_id,
         get_drop_contents = base_htf.get_drop_contents,
+        on_read_state = function(htfurnace)
+            htfurnace.heat_cost = htfurnace.meta:get_int('heatcost') or 0
+        end,
         on_write_state = function(htfurnace)
             htfurnace.meta:set_string('formspec', base_htf.generate_formspec(htfurnace))
             htfurnace.meta:set_string('infotext', base_htf.generate_infotext(htfurnace))
+            htfurnace.meta:set_int('heatcost', htfurnace.heat_cost or 0)
         end
     }
 }

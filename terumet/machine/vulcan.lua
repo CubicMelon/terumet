@@ -78,7 +78,7 @@ function base_vul.get_drop_contents(machine)
 end
 
 function base_vul.do_processing(vulcan, dt)
-    if vulcan.state == base_vul.STATE.VULCANIZING and base_mach.expend_heat(vulcan, opts.COST_VULCANIZE, 'Vulcanizing') then
+    if vulcan.state == base_vul.STATE.VULCANIZING and base_mach.expend_heat(vulcan, vulcan.heat_cost, 'Vulcanizing') then
         local result_stack = vulcan.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
         vulcan.state_time = vulcan.state_time - dt
@@ -114,9 +114,11 @@ function base_vul.check_new_processing(vulcan)
             local yield = 2
             vulcan.state = base_vul.STATE.VULCANIZING
             vulcan.state_time = opts.PROCESS_TIME
+            vulcan.heat_cost = opts.COST_VULCANIZE
             if base_mach.has_upgrade(vulcan, 'cryst') then 
                 yield = yield + 1
                 vulcan.state_time = vulcan.state_time * 3
+                vulcan.heat_cost = vulcan.heat_cost * 2
             end
             in_inv:remove_item(in_list, input_stack:get_name())
             vulcan.inv:set_stack('result', 1, matched_recipe .. ' ' .. yield)
@@ -169,9 +171,13 @@ base_vul.nodedef = base_mach.nodedef{
         name = 'Crystal Vulcanizer',
         timer = 0.5,
         get_drop_contents = base_vul.get_drop_contents,
+        on_read_state = function(vulcan)
+            vulcan.heat_cost = vulcan.meta:get_int('heatcost') or 0
+        end,
         on_write_state = function(vulcan)
             vulcan.meta:set_string('formspec', base_vul.generate_formspec(vulcan))
             vulcan.meta:set_string('infotext', base_vul.generate_infotext(vulcan))
+            vulcan.meta:set_int('heatcost', vulcan.heat_cost or 0)
         end
     }
 }

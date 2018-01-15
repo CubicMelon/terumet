@@ -8,7 +8,7 @@ Newer versions listed first
     * Maximum Heat Upgrade: Increases the maximum heat the machine can store so it may run longer without needing reheating. If the upgrade is removed and heat is above the standard maximum, the machine will slowly vent excess heat until back to normal and will not act normally until that occurs.
     * Heat Transfer Upgrade: When placed in a machine that sends heat to others, greatly increases the amount of heat it can send at once. Additionally, when placed in a machine that receives heat from others, it increases the amount of heat it can receive from any other machine by a bit.
     * Heat Generation Upgrade: Roughly doubles the amount of heat Furnace Heaters and Solar Heaters can generate.
-    * Speed Upgrade: A highly lucrative upgrade that generally halves the amount of time for any machine to do its process. It also halves the time fuel in a Furnace Heater takes to burn, but additionally doubles the rate of heat generated to make it even.
+    * Speed Upgrade: A highly lucrative upgrade that generally halves the amount of time for any machine to do its process, though it will consume the same amount of heat. It also halves the time fuel in a Furnace Heater takes to burn, but additionally doubles the rate of heat generated to make it even.
     * Crystallization Upgrade: The most specialized upgrade but likely the most powerful. When placed in a Crystal Vulcanizer, the yield of crystals it creates increases from 2 per raw item to 3 crystals each, making it triple normal yield. However, the time and heat cost it takes also increases very considerably.
 * The mystique of heat power and its measurement is now gone; the actual number of HU (heat units) in a machine are now shown on their GUIs, underneath the heat bar.
 
