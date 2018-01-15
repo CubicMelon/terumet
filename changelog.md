@@ -11,6 +11,7 @@ Newer versions listed first
     * Speed Upgrade: A highly lucrative upgrade that generally halves the amount of time for any machine to do its process, though it will consume the same amount of heat. It also halves the time fuel in a Furnace Heater takes to burn, but additionally doubles the rate of heat generated to make it even.
     * Crystallization Upgrade: The most specialized upgrade but likely the most powerful. When placed in a Crystal Vulcanizer, the yield of crystals it creates increases from 2 per raw item to 3 crystals each, making it triple normal yield. However, the time and heat cost it takes also increases very considerably.
 * The mystique of heat power and its measurement is now gone; the actual number of HU (heat units) in a machine are now shown on their GUIs, underneath the heat bar.
+* Last but not least, Thermoboxes finally function! They are a combination heat-storage device and also director of heat. Five of its six sides (blue marked ones) act as usual inputs from adjacent heaters, HEAT rays or even other thermoboxes, while its output (the orange-marked side) will send heat to an adjacent machine.
 
 ### Version 1.9
 * "Solar Glass" is now "Heat-transference Glass" to reflect its expanded use. Additionally, you now get 3 of them for one recipe.
