@@ -1,6 +1,17 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+### Version 1.10
+* Upgrade system for machines implemented! Machines that support upgrades have slots for them on the right side of their GUI vertically. Only a single upgrade of a particular type has any effect, so adding mutiple of the same type or trying to force in a stack bigger than 1 accomplishes nothing. The following upgrades are implemented:
+    * External Input Upgrade: Removes the input slots from the machine's GUI and instead pulls items from the node to the left of the machine (when viewed from the front). This includes chests and any other node that has a "main" inventory.
+    * External Output Upgrade: Removes the output slots from the machine's GUI and instead places output items into the node to the right of the machine (when viewed from the front). This includes chests and any other node that has a "main" inventory.
+    * Maximum Heat Upgrade: Increases the maximum heat the machine can store so it may run longer without needing reheating. If the upgrade is removed and heat is above the standard maximum, the machine will slowly vent excess heat until back to normal and will not act normally until that occurs.
+    * Heat Transfer Upgrade: When placed in a machine that sends heat to others, greatly increases the amount of heat it can send at once. Additionally, when placed in a machine that receives heat from others, it increases the amount of heat it can receive from any other machine by a bit.
+    * Heat Generation Upgrade: Roughly doubles the amount of heat Furnace Heaters and Solar Heaters can generate.
+    * Speed Upgrade: A highly lucrative upgrade that generally halves the amount of time for any machine to do its process. It also halves the time fuel in a Furnace Heater takes to burn, but additionally doubles the rate of heat generated to make it even.
+    * Crystallization Upgrade: The most specialized upgrade but likely the most powerful. When placed in a Crystal Vulcanizer, the yield of crystals it creates increases from 2 per raw item to 3 crystals each, making it triple normal yield. However, the time and heat cost it takes also increases very considerably.
+* The mystique of heat power and its measurement is now gone; the actual number of HU (heat units) in a machine are now shown on their GUIs, underneath the heat bar.
+
 ### Version 1.9
 * "Solar Glass" is now "Heat-transference Glass" to reflect its expanded use. Additionally, you now get 3 of them for one recipe.
 * Some overdue graphic cleanup and changes have been made.
