@@ -87,7 +87,7 @@ end
 function sol_htr.tick(pos, dt)
     -- read state from meta
     local solar = base_mach.read_state(pos)
-    if not base_mach.check_heat_max(solar, opts.MAX_HEAT) then
+    if not base_mach.check_overheat(solar, opts.MAX_HEAT) then
         sol_htr.do_processing(solar, dt)
 
         if solar.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then

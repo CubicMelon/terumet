@@ -194,19 +194,17 @@ end
 -- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent positions 
 -- where there is a machine w/heat_xfer_mode of ACCEPT and heat_level < max_heat
 -- if any sides are provided as keys in table in 2rd argument, those sides will be ignored
-function base_mach.find_adjacent_need_heat(pos, ignore_sides)
+function base_mach.find_adjacent_need_heat(pos)
     local result = {}
     local count = 0
     for dir,offset in pairs(base_mach.ADJACENT_OFFSETS) do
-        if not (ignore_sides and ignore_sides[dir]) then
-            local opos = terumet.pos_plus(pos, offset)
-            local ostate = base_mach.read_state(opos)
-            -- read_state returns nil if area unloaded or not a terumetal machine
-            if ostate then 
-                if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and ostate.heat_level < ostate.max_heat then
-                    result[dir] = ostate
-                    count = count + 1
-                end
+        local opos = terumet.pos_plus(pos, offset)
+        local ostate = base_mach.read_state(opos)
+        -- read_state returns nil if area unloaded or not a terumetal machine
+        if ostate then 
+            if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and ostate.heat_level < ostate.max_heat then
+                result[dir] = ostate
+                count = count + 1
             end
         end
     end
@@ -229,11 +227,12 @@ function base_mach.do_push_heat(from, total_hus, targets)
             local send_amount = math.min(hus_each, to_machine.max_heat - to_machine.heat_level)
             if send_amount > 0 then
                 to_machine.heat_level = to_machine.heat_level + send_amount
+                --minetest.get_meta(to_machine.pos):set_int('heat_level', to_machine.heat_level)
+                base_mach.write_state(to_machine.pos, to_machine)
                 -- call heat receive callback for node if exists
                 if to_machine.class.on_external_heat then
                     to_machine.class.on_external_heat(to_machine)
                 end
-                base_mach.write_state(to_machine.pos, to_machine)
                 actual_hus_sent = actual_hus_sent + send_amount
             end
         end
@@ -243,10 +242,18 @@ end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
 -- amount may be modified by heat_xfer upgrades in src or target(s)
--- if any sides are provided as keys in a table in 3rd argument, those sides will be ignored
+-- if any sides are provided in table in 3rd argument, those specific sides will be ignored
 function base_mach.push_heat_adjacent(machine, send_amount, ignore_sides)
     if send_amount <= 0 then return end
     local adjacent_needy = base_mach.find_adjacent_need_heat(machine.pos, ignore_sides)
+    if ignore_sides then
+        for _,ignored_side in ipairs(ignore_sides) do
+            if adjacent_needy[ignored_side] then 
+                adjacent_needy[ignored_side] = nil
+                adjacent_needy.count = adjacent_needy.count - 1
+            end
+        end
+    end
     if adjacent_needy.count > 0 then
         if base_mach.has_upgrade(machine, 'heat_xfer') then
             send_amount = send_amount * 2
@@ -379,7 +386,7 @@ end
 
 -- should be called every tick to change max_heat and/or vent excess heat
 -- returns true if venting
-function base_mach.check_heat_max(machine, base_max_heat)
+function base_mach.check_overheat(machine, base_max_heat)
     if base_mach.has_upgrade(machine, 'max_heat') then
         machine.max_heat = math.floor(base_max_heat * 1.5)
     else
@@ -397,7 +404,8 @@ end
 
 function base_mach.set_timer(machine, specific_time)
     specific_time = specific_time or machine.class.timer
-    minetest.get_node_timer(machine.pos):start(specific_time)
+    local timer = minetest.get_node_timer(machine.pos)
+    if not timer:is_started() then timer:start(specific_time) end
 end
 
 function base_mach.set_low_heat_msg(machine, process)

@@ -76,7 +76,7 @@ end
 function base_tbox.tick(pos, dt)
     -- read state from meta
     local tbox = base_mach.read_state(pos)
-    if not base_mach.check_heat_max(tbox, opts.MAX_HEAT) then
+    if not base_mach.check_overheat(tbox, opts.MAX_HEAT) then
         base_tbox.do_processing(tbox, dt)
     end
     -- write status back to meta

@@ -135,7 +135,7 @@ function base_vul.tick(pos, dt)
     local vulcan = base_mach.read_state(pos)
     local venting
 
-    if base_mach.check_heat_max(vulcan, opts.MAX_HEAT) then
+    if base_mach.check_overheat(vulcan, opts.MAX_HEAT) then
         venting = true
     else
         base_vul.do_processing(vulcan, dt)

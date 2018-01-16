@@ -144,7 +144,7 @@ function base_htf.tick(pos, dt)
     local furnace = base_mach.read_state(pos)
 
     local venting
-    if base_mach.check_heat_max(furnace, opts.MAX_HEAT) then
+    if base_mach.check_overheat(furnace, opts.MAX_HEAT) then
         venting = true
     else
         base_htf.do_processing(furnace, dt)

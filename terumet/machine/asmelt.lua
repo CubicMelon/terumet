@@ -194,7 +194,7 @@ function base_asm.tick(pos, dt)
     -- read state from meta
     local smelter = base_mach.read_state(pos)
     local venting
-    if base_mach.check_heat_max(smelter, opts.MAX_HEAT) then
+    if base_mach.check_overheat(smelter, opts.MAX_HEAT) then
         -- venting heat
         venting = true
     else

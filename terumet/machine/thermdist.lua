@@ -6,10 +6,6 @@ local base_mach = terumet.machine
 local base_tdist = {}
 base_tdist.id = terumet.id('mach_thermdist')
 
--- state identifier consts
-base_tdist.STATE = {}
-base_tdist.STATE.PULLING = 0
-
 function base_tdist.generate_formspec(box)
     local fs = 'size[8,9]'..base_mach.fs_start..
     --fuel slot
@@ -40,7 +36,7 @@ function base_tdist.init(pos)
     inv:set_size('upgrade', 2)
     local init_box = {
         class = base_tdist.nodedef._terumach_class,
-        state = base_tdist.STATE.PULLING,
+        state = 0,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
@@ -68,23 +64,22 @@ function base_tdist.do_processing(tbox, dt)
         return
     end
 
+    -- ignore node in output direction (facing dir)
     local facing_dir = base_mach.FACING_DIRECTION[tbox.facing]
-    local input_sides = {}
-    input_sides[facing_dir] = true
-    base_mach.push_heat_adjacent(tbox, opts.HEAT_TRANSFER_RATE, input_sides)
+    base_mach.push_heat_adjacent(tbox, opts.HEAT_TRANSFER_RATE, {facing_dir})
     tbox.status_text = "Distributing heat to orange sides"
 end
 
 function base_tdist.tick(pos, dt)
     -- read state from meta
     local tbox = base_mach.read_state(pos)
-    if not base_mach.check_heat_max(tbox, opts.MAX_HEAT) then
+    if not base_mach.check_overheat(tbox, opts.MAX_HEAT) then
         base_mach.process_fuel(tbox)
         base_tdist.do_processing(tbox, dt)
     end
+    base_mach.set_timer(tbox)
     -- write status back to meta
     base_mach.write_state(pos, tbox)
-    base_mach.set_timer(tbox)
 end
 
 base_tdist.nodedef = base_mach.nodedef{

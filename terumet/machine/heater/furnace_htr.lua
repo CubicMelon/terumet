@@ -27,7 +27,7 @@ function furn_htr.generate_formspec(heater)
     base_mach.fs_heat_mode(heater,3,4)..
     base_mach.fs_upgrades(heater,6.75,1)
     if heater.state ~= furn_htr.STATE.IDLE then
-        fs=fs..'image[1,3;1,1;terumet_gui_product_bg.png]item_image[1,3;1,1;'..heater.inv:get_stack('burn',1):get_name()..']'
+        fs=fs..'image[5,1.5;1,1;terumet_gui_product_bg.png]item_image[5,1.5;1,1;'..heater.inv:get_stack('burn',1):get_name()..']'
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
@@ -124,7 +124,7 @@ function furn_htr.tick(pos, dt)
     -- read state from meta
     local heater = base_mach.read_state(pos)
     local venting
-    if base_mach.check_heat_max(heater, opts.MAX_HEAT) then
+    if base_mach.check_overheat(heater, opts.MAX_HEAT) then
         venting = true
     else
         furn_htr.do_processing(heater, dt)
