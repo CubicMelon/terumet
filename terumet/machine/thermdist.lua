@@ -73,6 +73,7 @@ end
 function base_tdist.tick(pos, dt)
     -- read state from meta
     local tbox = base_mach.read_state(pos)
+    
     if not base_mach.check_overheat(tbox, opts.MAX_HEAT) then
         base_mach.process_fuel(tbox)
         base_tdist.do_processing(tbox, dt)
@@ -98,8 +99,8 @@ base_tdist.nodedef = base_mach.nodedef{
         name = 'Thermal Distributor',
         timer = 1.0,
         drop_id = base_tdist.id,
-        on_external_heat = nil,
-        on_inventory_change = nil,
+        on_external_heat = terumet.NO_FUNCTION,
+        on_inventory_change = terumet.NO_FUNCTION,
         get_drop_contents = base_tdist.get_drop_contents,
         on_write_state = function(tbox)
             tbox.meta:set_string('formspec', base_tdist.generate_formspec(tbox))

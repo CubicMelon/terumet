@@ -100,8 +100,8 @@ base_tbox.nodedef = base_mach.nodedef{
         name = 'Thermobox',
         timer = 1.0,
         drop_id = base_tbox.id,
-        on_external_heat = nil,
-        on_inventory_change = nil,
+        on_external_heat = terumet.NO_FUNCTION,
+        on_inventory_change = terumet.NO_FUNCTION,
         get_drop_contents = base_tbox.get_drop_contents,
         on_write_state = function(tbox)
             tbox.meta:set_string('formspec', base_tbox.generate_formspec(tbox))
