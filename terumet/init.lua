@@ -39,7 +39,7 @@ function terumet.pos_plus(pos, offset)
     }
 end
 
--- empty function useful for where a callback is necessary but saying nil would cause undesired behavior
+-- empty function useful for where a callback is necessary but using nil would cause undesired default behavior
 terumet.NO_FUNCTION = function() end
 
 function terumet.recipe_3x3(i)
