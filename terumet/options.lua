@@ -65,6 +65,13 @@ terumet.options.thermobox = {
     HEAT_TRANSFER_RATE = 250
 }
 
+terumet.options.thermdist = {
+    --
+    -- THERMAL DISTRIBUTOR SETTINGS
+    MAX_HEAT = 2000,
+    HEAT_TRANSFER_RATE = 250
+}
+
 terumet.options.smelter = {
     --
     -- ALLOY SMELTER SETTINGS

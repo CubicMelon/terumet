@@ -8,6 +8,7 @@
 -- By Terumoc [https://github.com/Terumoc]
 -- and with contributions from:
 --  > RSL-Redstonier [https://github.com/RSL-Redstonier]
+--  > Chem871 [https://github.com/Chemguy99] for many ideas and requests
 
 --[[ Copyright (C) 2017-2018 Terumoc (Scott Horvath)
 
@@ -150,6 +151,7 @@ terumet.do_lua_file('machine/asmelt')
 terumet.do_lua_file('machine/htfurnace')
 terumet.do_lua_file('machine/vulcan')
 terumet.do_lua_file('machine/thermobox')
+terumet.do_lua_file('machine/thermdist')
 terumet.do_lua_file('machine/heatray')
 
 if unified_inventory then 

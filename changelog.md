@@ -13,6 +13,7 @@ Newer versions listed first
 * The mystique of heat power and its measurement is now gone; the actual number of HU (heat units) in a machine are now shown on their GUIs, underneath the heat bar.
 * The front of Crystal Vulcanizers now has a different texture to differentiate it from its sides.
 * Last but not least, Thermoboxes finally function! They are a combination heat-storage device and also director of heat. Five of its six sides (blue marked ones) act as usual inputs from adjacent heaters, HEAT rays or even other thermoboxes, while its output (the orange-marked side) will send heat to an adjacent machine.
+* To accompany the Thermobox, its slightly cheaper and opposite cousin the Thermal Distributor has been added as well. It doesn't store nearly as much heat, but given a heat input on its blue side it will equally distribute heat to machines at its orange sides.
 
 ### Version 1.9
 * "Solar Glass" is now "Heat-transference Glass" to reflect its expanded use. Additionally, you now get 3 of them for one recipe.

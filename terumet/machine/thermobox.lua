@@ -19,8 +19,8 @@ function base_tbox.generate_formspec(box)
     --current status
     'label[0,0;Thermobox]'..
     'label[0,0.5;' .. box.status_text .. ']'..
-    base_mach.fs_heat_info(box,3,1.5)..
-    base_mach.fs_heat_mode(box,3,4)
+    base_mach.fs_heat_info(box,1,1.5)..
+    base_mach.fs_heat_mode(box,1,4)
     return fs
 end
 

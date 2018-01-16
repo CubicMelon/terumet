@@ -193,17 +193,20 @@ end
 
 -- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent positions 
 -- where there is a machine w/heat_xfer_mode of ACCEPT and heat_level < max_heat
-function base_mach.find_adjacent_need_heat(pos)
+-- if any sides are provided as keys in table in 2rd argument, those sides will be ignored
+function base_mach.find_adjacent_need_heat(pos, ignore_sides)
     local result = {}
     local count = 0
     for dir,offset in pairs(base_mach.ADJACENT_OFFSETS) do
-        local opos = terumet.pos_plus(pos, offset)
-        local ostate = base_mach.read_state(opos)
-        -- read_state returns nil if area unloaded or not a terumetal machine
-        if ostate then 
-            if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and ostate.heat_level < ostate.max_heat then
-                result[dir] = ostate
-                count = count + 1
+        if not (ignore_sides and ignore_sides[dir]) then
+            local opos = terumet.pos_plus(pos, offset)
+            local ostate = base_mach.read_state(opos)
+            -- read_state returns nil if area unloaded or not a terumetal machine
+            if ostate then 
+                if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and ostate.heat_level < ostate.max_heat then
+                    result[dir] = ostate
+                    count = count + 1
+                end
             end
         end
     end
@@ -240,9 +243,10 @@ end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
 -- amount may be modified by heat_xfer upgrades in src or target(s)
-function base_mach.push_heat_adjacent(machine, send_amount)
+-- if any sides are provided as keys in a table in 3rd argument, those sides will be ignored
+function base_mach.push_heat_adjacent(machine, send_amount, ignore_sides)
     if send_amount <= 0 then return end
-    local adjacent_needy = base_mach.find_adjacent_need_heat(machine.pos)
+    local adjacent_needy = base_mach.find_adjacent_need_heat(machine.pos, ignore_sides)
     if adjacent_needy.count > 0 then
         if base_mach.has_upgrade(machine, 'heat_xfer') then
             send_amount = send_amount * 2
@@ -409,12 +413,13 @@ function base_mach.process_fuel(machine)
     local fuel_item = machine.inv:get_stack('fuel',1)
     local heat_source = opts.BASIC_HEAT_SOURCES[fuel_item:get_name()]
     if heat_source and (machine.max_heat - machine.heat_level) >= heat_source.hus then
+        local out_inv, out_list = base_mach.get_output(machine)
         local return_item = heat_source.return_item
         if fuel_item:get_stack_max() > 1 then
-            if (not return_item) or machine.inv:room_for_item('out', return_item) then
-                machine.inv:add_item('out', return_item)
+            if (not return_item) or out_inv:room_for_item(out_list, return_item) then
+                out_inv:add_item(out_list, return_item)
             else
-                machine.status_text = 'Fuel: no space for ' .. minetest.registered_items[return_item].description
+                machine.status_text = 'Fuel: no output space for ' .. minetest.registered_items[return_item].description
                 return
             end
             machine.inv:remove_item('fuel', fuel_item:get_name())

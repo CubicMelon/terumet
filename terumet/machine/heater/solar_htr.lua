@@ -18,8 +18,8 @@ function sol_htr.generate_formspec(heater)
     --current status
     'label[0,0;Solar Heater]'..
     'label[0,0.5;' .. heater.status_text .. ']'..
-    base_mach.fs_heat_info(heater,3,1.5)..
-    base_mach.fs_heat_mode(heater,3,4)..
+    base_mach.fs_heat_info(heater,1,1.5)..
+    base_mach.fs_heat_mode(heater,1,4)..
     base_mach.fs_upgrades(heater,6.75,1)
     return fs
 end
