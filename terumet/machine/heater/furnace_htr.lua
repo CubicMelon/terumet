@@ -154,9 +154,9 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
     -- node properties
     description = "Furnace Heater",
     tiles = {
-        terumet.tex('raw_mach_top'), terumet.tex('raw_mach_bot'),
-        terumet.tex('raw_sides_unlit'), terumet.tex('raw_sides_unlit'),
-        terumet.tex('raw_sides_unlit'), terumet.tex('htr_furnace_front_unlit')
+        terumet.tex('raw_heater_sides'), terumet.tex('raw_heater_sides'),
+        terumet.tex('raw_heater_sides'), terumet.tex('raw_heater_sides'),
+        terumet.tex('raw_heater_sides'), terumet.tex('htr_furnace_front_unlit')
     },
     -- callbacks
     on_construct = furn_htr.init,
@@ -183,9 +183,9 @@ furn_htr.lit_nodedef = {}
 for k,v in pairs(furn_htr.unlit_nodedef) do furn_htr.lit_nodedef[k] = v end
 furn_htr.lit_nodedef.on_construct = nil -- lit node shouldn't be constructed by player
 furn_htr.lit_nodedef.tiles = {
-    terumet.tex('raw_mach_top'), terumet.tex('raw_mach_bot'),
-    terumet.tex('raw_sides_lit'), terumet.tex('raw_sides_lit'),
-    terumet.tex('raw_sides_lit'), terumet.tex('htr_furnace_front_lit')
+    terumet.tex('raw_heater_sides'), terumet.tex('raw_heater_sides'),
+    terumet.tex('raw_heater_sides'), terumet.tex('raw_heater_sides'),
+    terumet.tex('raw_heater_sides'), terumet.tex('htr_furnace_front_lit')
 }
 furn_htr.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
 furn_htr.lit_nodedef.light_source = 10
@@ -196,6 +196,6 @@ minetest.register_node(furn_htr.lit_id, furn_htr.lit_nodedef)
 
 minetest.register_craft{ output = furn_htr.unlit_id, recipe = {
     {terumet.id('item_coil_tcop'), 'default:furnace', terumet.id('item_coil_tcop')},
-    {terumet.id('item_coil_tcop'), terumet.id('frame_raw'), terumet.id('item_coil_tcop')},
+    {terumet.id('item_ceramic'), terumet.id('frame_raw'), terumet.id('item_ceramic')},
     {terumet.id('item_coil_tcop'), 'default:copperblock', terumet.id('item_coil_tcop')}
 }}

@@ -103,9 +103,9 @@ sol_htr.nodedef = base_mach.nodedef{
     -- node properties
     description = "Solar Heater",
     tiles = {
-        terumet.tex('htr_solar_top'), terumet.tex('frame_tste'),
-        terumet.tex('frame_tste'), terumet.tex('frame_tste'),
-        terumet.tex('frame_tste'), terumet.tex('frame_tste')
+        terumet.tex('htr_solar_top'), terumet.tex('tste_heater_sides'),
+        terumet.tex('tste_heater_sides'), terumet.tex('tste_heater_sides'),
+        terumet.tex('tste_heater_sides'), terumet.tex('tste_heater_sides')
     },
     paramtype2 = 'none',
     -- callbacks
