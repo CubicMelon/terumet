@@ -3,7 +3,9 @@ function add_terumet_recipes()
     for _, recipe in pairs(terumet.options.smelter.recipes) do
         local listed = {}
         for i=1,#recipe.input do listed[#listed+1] = recipe.input[i] end
-        listed[#listed+1] = terumet.id('uninv_flux_req', recipe.flux)
+        if recipe.flux > 0 then
+            listed[#listed+1] = terumet.id('uninv_flux_req', recipe.flux)
+        end
         listed[#listed+1] = terumet.id('uninv_time_req', math.ceil(recipe.time))
         unified_inventory.register_craft{
             type = 'terumet_alloy',
@@ -54,7 +56,7 @@ minetest.register_craftitem( terumet.id('uninv_time_req'), {
     groups={not_in_creative_inventory=1}
 })
 
--- register alloying with UnInv
+-- register terumetal alloying with UnInv
 unified_inventory.register_craft_type( 'terumet_alloy', {
     description = 'Terumetal Alloy Smelting',
     icon = 'terumet_asmelt_front_lit.png',

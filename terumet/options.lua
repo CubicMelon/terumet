@@ -74,7 +74,7 @@ terumet.options.thermdist = {
 
 terumet.options.smelter = {
     --
-    -- ALLOY SMELTER SETTINGS
+    -- TERUMETAL ALLOY SMELTER SETTINGS
     --
     -- Maximum HUs smelter can contain
     MAX_HEAT = 2000,
@@ -87,36 +87,44 @@ terumet.options.smelter = {
     COST_FLUX_ALLOYING_HU = 1,
     -- Default items usable as flux
     FLUX_ITEMS = {
-        ['terumet:ingot_raw']={time=2.0},
         ['terumet:lump_raw']={time=3.0},
+        ['terumet:ingot_raw']={time=2.0},
         ['terumet:item_cryst_raw']={time=1.0},
     },
     -- Default alloy-making recipes
     recipes = {
+    -- Standard Bronze
+        {result='default:bronze_ingot 9', flux=0, time=8.0, input={'default:copper_lump 8', 'default:tin_lump'}},
+        {result='default:bronze_ingot 9', flux=0, time=6.0, input={'default:copper_ingot 8', 'default:tin_ingot'}},
+        {result='default:bronzeblock 9', flux=0, time=40.5, input={'default:copperblock 8', 'default:tinblock'}},
+        {result='default:bronze_ingot 9', flux=0, time=2.0, input={'terumet:item_cryst_copper 8', 'terumet:item_cryst_tin'}},
     -- Terucopper
         {result='terumet:ingot_tcop', flux=1, time=3.0, input={'default:copper_lump'}},
-        {result='terumet:block_tcop', flux=7, time=35.0, input={'default:copperblock'}},
+        {result='terumet:ingot_tcop', flux=1, time=2.5, input={'default:copper_ingot'}},
+        {result='terumet:block_tcop', flux=8, time=22.5, input={'default:copperblock'}},
         {result='terumet:ingot_tcop', flux=1, time=1.0, input={'terumet:item_cryst_copper'}},
     -- Terusteel
-        {result='terumet:ingot_tste', flux=2, time=4.0, input={'default:iron_lump'}},
-        {result='terumet:block_tste', flux=15, time=45.0, input={'default:steelblock'}},
-        {result='terumet:ingot_tste', flux=2, time=1.5, input={'terumet:item_cryst_iron'}},
+        {result='terumet:ingot_tste', flux=2, time=4.5, input={'default:iron_lump'}},
+        {result='terumet:ingot_tste', flux=2, time=3.5, input={'default:iron_ingot'}},
+        {result='terumet:block_tste', flux=16, time=31.5, input={'default:steelblock'}},
+        {result='terumet:ingot_tste', flux=2, time=2.0, input={'terumet:item_cryst_iron'}},
     -- Terugold
-        {result='terumet:ingot_tgol', flux=3, time=4.0, input={'default:gold_lump'}},
-        {result='terumet:block_tgol', flux=24, time=60.0, input={'default:goldblock'}},
-        {result='terumet:ingot_tgol', flux=3, time=2.0, input={'terumet:item_cryst_gold'}},
+        {result='terumet:ingot_tgol', flux=3, time=5.0, input={'default:gold_lump'}},
+        {result='terumet:ingot_tgol', flux=3, time=4.0, input={'default:gold_ingot'}},
+        {result='terumet:block_tgol', flux=25, time=36.0, input={'default:goldblock'}},
+        {result='terumet:ingot_tgol', flux=3, time=2.5, input={'terumet:item_cryst_gold'}},
     -- Teruchalchum
-        {result='terumet:ingot_tcha', flux=3, time=4.5, input={'default:bronze_ingot', 'default:tin_lump 2'}},
-        {result='terumet:block_tcha', flux=26, time=80.0, input={'default:bronzeblock', 'default:tinblock 2'}},
-        {result='terumet:ingot_tcha', flux=3, time=2.5, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
+        {result='terumet:ingot_tcha 3', flux=3, time=6.0, input={'default:bronze_ingot', 'default:tin_lump 2'}},
+        {result='terumet:block_tcha 3', flux=27, time=54.0, input={'default:bronzeblock', 'default:tinblock 2'}},
+        {result='terumet:ingot_tcha 3', flux=3, time=3.0, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
     -- Coreglass
         {result='terumet:ingot_cgls', flux=5, time=10.0, input={'default:diamond', 'default:obsidian_shard'}},
-        {result='terumet:block_cgls', flux=30, time=180.0, input={'default:diamondblock', 'default:obsidian'}},
-        {result='terumet:ingot_cgls', flux=5, time=3.5, input={'terumet:item_cryst_dia', 'terumet:item_cryst_ob'}},
+        {result='terumet:block_cgls', flux=30, time=90.0, input={'default:diamondblock', 'default:obsidian'}},
+        {result='terumet:ingot_cgls', flux=5, time=5.0, input={'terumet:item_cryst_dia', 'terumet:item_cryst_ob'}},
     -- Teruceramic
-        {result='terumet:item_ceramic', flux=2, time=2.0, input={'default:clay_lump'}},
+        {result='terumet:item_ceramic', flux=2, time=3.0, input={'default:clay_lump'}},
     -- Thermese
-        {result='terumet:item_thermese', flux=4, time=10.0, input={'default:mese_crystal'}},
+        {result='terumet:item_thermese', flux=4, time=8.0, input={'default:mese_crystal'}},
     },
 }
 

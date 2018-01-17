@@ -1,6 +1,11 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+### Version 1.11
+* All Terumetal Alloy Smelter recipies have been rebalanced and now ingots of base metals can be used (i.e. Gold Ingot can be inserted to alloy Terugold) -- ingot recipes are basically equivalent, just a bit faster to alloy.
+* Since it is an alloy, basic Minetest Bronze can now be alloyed in the Alloy Smelter from 8 copper + 1 tin (just like the hand recipe). This recipe does not use any Terumetal flux.
+    * To help avoid confusing or unintentional alloying of what you don't want now that there are two recipes that use copper, the Alloy Smelter now has a UI button that enables/disables zero-flux recipies. If you don't want to accidentally create bronze because there's no flux in the tank, deactivate zero-flux recipes.
+
 ### Version 1.10
 * Upgrade system for machines implemented! Machines that support upgrades have slots for them on the right side of their GUI vertically. Only a single upgrade of a particular type has any effect, so adding mutiple of the same type or trying to force in a stack bigger than 1 accomplishes nothing. The following upgrades are implemented:
     * External Input Upgrade: Removes the input slots from the machine's GUI and instead pulls items from the node to the left of the machine (when viewed from the front). This includes chests and any other node that has a "main" inventory.

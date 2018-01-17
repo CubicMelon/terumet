@@ -15,7 +15,7 @@ minetest.is_protected = function(pos, name)
         local nodedef = minetest.registered_nodes[node.name]
         if nodedef and nodedef._terumach_class then
             local owner = minetest.get_meta(pos):get_string('owner')
-            if (owner == '') or (owner == '*') or (owner == name) then
+            if base_mach.has_auth({owner=owner}, name) then
                 return false
             else
                 minetest.record_protection_violation(pos, name)
@@ -416,6 +416,12 @@ function base_mach.set_low_heat_msg(machine, process)
     end
 end
 
+-- return true if given player has authorization to use machine
+-- (at minimum machine should just have owner attribute)
+function base_mach.has_auth(machine, player)
+    return (machine.owner == '') or (machine.owner == '*') or (machine.owner == player)
+end
+
 -- handle basic fuel heating
 function base_mach.process_fuel(machine)
     local fuel_item = machine.inv:get_stack('fuel',1)
@@ -514,6 +520,14 @@ function base_mach.nodedef(additions)
         on_metadata_inventory_put = base_mach.simple_inventory_event,-- base_mach.on_inventory_put, for event_data
         on_metadata_inventory_take = base_mach.simple_inventory_event,-- base_mach.on_inventory_take, for event_data
         on_rotate = screwdriver.rotate_simple, -- most machines always remain upright
+        on_receive_fields = function(pos, formname, fields, sender)
+            if not sender:is_player() then return end
+            local player_name = sender:get_player_name()
+            local machine = base_mach.read_state(pos)
+            if machine and base_mach.has_auth(machine, player_name) then
+                machine.class.on_form_action(machine, fields, player_name)
+            end
+        end,    
         -- callbacks for saving/loading heat level
         after_dig_node = base_mach.after_dig_machine,
         after_place_node = base_mach.after_place_machine,
@@ -550,6 +564,11 @@ function base_mach.nodedef(additions)
             -- by default just resets node timer
             on_external_heat = function(machine)
                 base_mach.set_timer(machine)
+            end,
+            -- on_form_action: fn(machine, fields, player) -> nil
+            -- called when authorized player sends fields from a machine's formspec
+            on_form_action = function(machine, fields, player)
+                minetest.chat_send_player(player, 'You took action on the GUI for ' .. machine.class.name .. ', but it has no on_form_action callback. Oops!')
             end
         }
     }
