@@ -10,6 +10,7 @@ end
 -- implement machine owner protection
 local old_is_protected = minetest.is_protected
 minetest.is_protected = function(pos, name)
+    if (not name) or name == '' then return true end
     local node = minetest.get_node_or_nil(pos)
     if node then
         local nodedef = minetest.registered_nodes[node.name]
@@ -18,6 +19,7 @@ minetest.is_protected = function(pos, name)
             if base_mach.has_auth({owner=owner}, name) then
                 return false
             else
+                minetest.chat_send_player(name, 'You do not have permission to do that.')
                 minetest.record_protection_violation(pos, name)
                 return true
             end
@@ -193,7 +195,6 @@ end
 
 -- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent positions 
 -- where there is a machine w/heat_xfer_mode of ACCEPT and heat_level < max_heat
--- if any sides are provided as keys in table in 2rd argument, those sides will be ignored
 function base_mach.find_adjacent_need_heat(pos)
     local result = {}
     local count = 0
@@ -417,7 +418,7 @@ function base_mach.set_low_heat_msg(machine, process)
 end
 
 -- return true if given player has authorization to use machine
--- (at minimum machine should just have owner attribute)
+-- (at minimum machine just has owner attribute)
 function base_mach.has_auth(machine, player)
     return (machine.owner == '') or (machine.owner == '*') or (machine.owner == player)
 end
@@ -528,6 +529,7 @@ function base_mach.nodedef(additions)
                 if base_mach.has_auth(machine, player_name) then
                     machine.class.on_form_action(machine, fields, player_name)
                 else
+                    minetest.chat_send_player(player_name, 'You do not have permission to do that.')
                     minetest.record_protection_violation(pos, player_name)
                 end
             end

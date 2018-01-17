@@ -40,11 +40,11 @@ function base_asm.generate_formspec(smelter)
     end
     --option buttons
     if smelter.zero_flux_recipes then
-        fs=fs..'image_button[8.75,8;1,1;default_bronze_ingot.png;zfr_button; ]'..
-        'tooltip[zfr_button;Using zero flux recipies]'
+        fs=fs..'image_button[8.75,8;1,1;default_bronze_ingot.png;zfr_toggle; ]'..
+        'tooltip[zfr_toggle;Using zero flux recipies]'
     else
-        fs=fs..'image_button[8.75,8;1,1;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_button; ]'..
-        'tooltip[zfr_button;Ignoring zero flux recipies]'
+        fs=fs..'image_button[8.75,8;1,1;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]'..
+        'tooltip[zfr_toggle;Ignoring zero flux recipies]'
     end
     --list rings
     fs=fs.."listring[current_player;main]"..
@@ -206,6 +206,7 @@ function base_asm.tick(pos, dt)
     -- read state from meta
     local smelter = base_mach.read_state(pos)
     local venting
+    local reset_timer = false
     if base_mach.check_overheat(smelter, opts.MAX_HEAT) then
         -- venting heat
         venting = true
@@ -218,7 +219,7 @@ function base_asm.tick(pos, dt)
 
     if smelter.state ~= base_asm.STATE.IDLE and (not smelter.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
-        base_mach.set_timer(smelter)
+        reset_timer = true
         base_mach.set_node(pos, base_asm.lit_id)
         base_mach.generate_particle(pos)
     else
@@ -226,10 +227,14 @@ function base_asm.tick(pos, dt)
     end
 
     if venting or base_mach.has_upgrade(smelter, 'ext_input') then
-        base_mach.set_timer(smelter)
+        reset_timer = true
     end
     -- write status back to meta
     base_mach.write_state(pos, smelter)
+
+    -- TODAY I LEARNED
+    -- if you return true from an on_timer callback, it automatically resets timer to last timeout
+    return reset_timer
 end
 
 base_asm.unlit_nodedef = base_mach.nodedef{
@@ -250,9 +255,10 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         drop_id = base_asm.unlit_id,
         get_drop_contents = base_asm.get_drop_contents,
         on_form_action = function(asmelt, fields, player)
-            if fields.zfr_button then
-                terumet.toggle_option(asmelt.meta, 'opt_zfr')
-                asmelt.meta:set_string('formspec', base_asm.generate_formspec(asmelt))
+            if fields.zfr_toggle then
+                asmelt.zero_flux_recipes = not asmelt.zero_flux_recipes
+                 -- only need to write 'extra' data which includes options/formspec
+                asmelt.class.on_write_state(asmelt)
                 base_mach.set_timer(asmelt)
             end
         end,

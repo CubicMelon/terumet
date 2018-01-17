@@ -62,15 +62,6 @@ function terumet.do_lua_file(name)
     dofile(minetest.get_modpath(terumet.mod_name) .. '/' .. name .. '.lua')
 end
 
-function terumet.toggle_option(meta, opt_name)
-    local old_val = meta:get_int(opt_name)
-    if (not old_val) or (old_val == 0) then
-        meta:set_int(opt_name, 1)
-    else
-        meta:set_int(opt_name, 0)
-    end
-end
-
 function terumet.itemstack_desc(stack)
     local stack_desc = stack:get_definition().description
     if stack:get_count() > 1 then 
