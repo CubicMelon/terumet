@@ -524,8 +524,12 @@ function base_mach.nodedef(additions)
             if not sender:is_player() then return end
             local player_name = sender:get_player_name()
             local machine = base_mach.read_state(pos)
-            if machine and base_mach.has_auth(machine, player_name) then
-                machine.class.on_form_action(machine, fields, player_name)
+            if machine then 
+                if base_mach.has_auth(machine, player_name) then
+                    machine.class.on_form_action(machine, fields, player_name)
+                else
+                    minetest.record_protection_violation(pos, player_name)
+                end
             end
         end,    
         -- callbacks for saving/loading heat level
@@ -568,7 +572,8 @@ function base_mach.nodedef(additions)
             -- on_form_action: fn(machine, fields, player) -> nil
             -- called when authorized player sends fields from a machine's formspec
             on_form_action = function(machine, fields, player)
-                minetest.chat_send_player(player, 'You took action on the GUI for ' .. machine.class.name .. ', but it has no on_form_action callback. Oops!')
+                --minetest.chat_send_player(player, 'You took action on the GUI for ' .. machine.class.name .. ', but it has no on_form_action callback. Oops!')
+                --minetest.chat_send_player(player, 'fields='..dump(fields))
             end
         }
     }
