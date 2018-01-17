@@ -396,6 +396,7 @@ function base_mach.check_overheat(machine, base_max_heat)
 
     if machine.heat_level > machine.max_heat then
         if opts.PARTICLES then base_mach.generate_particle(machine.pos) end
+        -- TODO make sound or something
         machine.heat_level = machine.heat_level - 50
         machine.status_text = 'Venting excess heat'
         return true
@@ -403,10 +404,9 @@ function base_mach.check_overheat(machine, base_max_heat)
     return false
 end
 
-function base_mach.set_timer(machine, specific_time)
-    specific_time = specific_time or machine.class.timer
+function base_mach.set_timer(machine)
     local timer = minetest.get_node_timer(machine.pos)
-    if not timer:is_started() then timer:start(specific_time) end
+    if not timer:is_started() then timer:start(machine.class.timer) end
 end
 
 function base_mach.set_low_heat_msg(machine, process)
