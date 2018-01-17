@@ -5,6 +5,8 @@ Newer versions listed first
 * All Terumetal Alloy Smelter recipies have been rebalanced and now ingots of base metals can be used (i.e. Gold Ingot can be inserted to alloy Terugold) -- ingot recipes are basically equivalent, just a bit faster to alloy.
 * Since it is an alloy, basic Minetest Bronze can now be alloyed in the Alloy Smelter from 8 copper + 1 tin (just like the hand recipe). This recipe does not use any Terumetal flux.
     * To help avoid confusing or unintentional alloying of what you don't want now that there are two recipes that use copper, the Alloy Smelter now has a UI button that enables/disables zero-flux recipies. If you don't want to accidentally create bronze because there's no flux in the tank, deactivate zero-flux recipes.
+* The new recipes made possible due to the fact the Smelter now can handle recipies with an output with stack sizes > 1.
+    * For example, when alloying Teruchalcum you no longer get a bad deal out of it. Three ingots worth of stuff goes in and three ingots now come out.
 
 ### Version 1.10
 * Upgrade system for machines implemented! Machines that support upgrades have slots for them on the right side of their GUI vertically. Only a single upgrade of a particular type has any effect, so adding mutiple of the same type or trying to force in a stack bigger than 1 accomplishes nothing. The following upgrades are implemented:
