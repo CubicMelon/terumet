@@ -46,11 +46,6 @@ function base_asm.generate_formspec(smelter)
         fs=fs..'image_button[8.75,8;1,1;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]'..
         'tooltip[zfr_toggle;Ignoring zero flux recipies]'
     end
-    --list rings
-    fs=fs.."listring[current_player;main]"..
-	"listring[context;in]"..
-    "listring[current_player;main]"..
-    "listring[context;out]"
     return fs
 end
 

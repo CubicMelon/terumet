@@ -126,15 +126,53 @@ local SPECIAL_OWNERS = {
     [''] = '<None>',
     ['*'] = '<Everyone>'
 }
--- machine owner info formspec
-function base_mach.fs_owner(machine, fsx, fsy)
-    local own = SPECIAL_OWNERS[machine.owner] or machine.owner
-    return string.format('label[%f,%f;Owner: \n%s]', fsx, fsy, own)
-end
 
--- fuel slot formspec
-function base_mach.fs_fuel_slot(machine, fsx, fsy)
-    return 'list[context;fuel;'..fsx..','..fsy..';1,1;]label['..fsx..','..fsy+1 ..';Fuel Slot]'
+local base_mach.fs_builder(machine, sections)
+    local fs
+    -- start/misc section
+    fs = fs .. (sections.size or 'size[10,9]')
+    fs = fs .. base_mach.fs_start
+    if sections.misc then
+        fs = sections.misc(machine, fs)
+    end
+    -- control container
+    fs = fs..'container[0,0]'
+    fs = fs..string.format('label[0,0;%s]', machine.class.name)
+    fs = fs..string.format('label[0,7;Heat: %s]', opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
+    fs = fs..string.format('label[0,8.5;Owner: \n%s]', SPECIAL_OWNERS[machine.owner] or machine.owner)
+    if sections.control then
+        fs = sections.control(machine, fs)
+    end
+    -- machine container
+    fs = fs..'container_end[]container[4,0]'
+    fs = fs..string.format('label[2,0;%s]', machine.status_text)
+    if sections.machine then
+        fs = fs..sections.machine(machine, fs)
+    end
+    -- machine: input
+    if sections.input then
+    end
+    -- machine: output
+    if sections.output then
+    end
+    -- machine: fuel_slot
+    if sections.fuel_slot then
+        local fsx = sections.fuel_slot.x or 10
+        local fsy = sections.fuel_slot.y or 1
+        fs = fs..string.format('list[context;fuel;%f,%f;1,1;]label[%f,%f;Fuel]', fsx, fsy, fsx, fsy+1)
+    end
+    fs = fs..'container_end[]'
+    -- player inventory
+    local pix = (sections.player_inv and sections.player_inv.x) or 3
+    local piy = (sections.player_inv and sections.player_inv.y) or 4.75
+    fs = fs..string.format('list[current_player;main;%f,%f;8,1;]list[current_player;main;%f,%f;8,3;8', pix, piy, pix, piy+1.25)
+    -- list rings
+    if sections.list_rings then
+        fs = fs..sections.list_rings
+    else
+        fs = fs..'listring[current_player;main]listring[context;in]listring[current_player;main]listring[context;out]'
+    end
+    return fs
 end
 
 -- heat display formspec
@@ -155,15 +193,6 @@ function base_mach.fs_flux_info(machine, fsx, fsy, percent)
     percent..':terumet_gui_flux_fg.png]label['..fsx..','..fsy+2 ..';Molten Flux]'
 end
 
--- heat transfer mode display formspec
-function base_mach.fs_heat_mode(machine, fsx, fsy)
-    return 'label['..fsx..','..fsy..';'..string.format('Heat Transfer: %s]', opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
-end
-
--- player inventory formspec
-function base_mach.fs_player_inv(fsx, fsy)
-    return 'list[current_player;main;'..fsx..','..fsy..';8,1;]list[current_player;main;'..fsx..','..fsy+1.25 ..';8,3;8]'
-end
 
 -- input formspec
 function base_mach.fs_input(machine, fsx, fsy, width, height)
