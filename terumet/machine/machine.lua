@@ -120,57 +120,77 @@ base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame\nFoundation of h
 --
 
 -- general preamble setting background, colors
-base_mach.fs_start = 'background[0,0;8,9;terumet_raw_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
+base_mach.fs_setup = 'background[0,0;8,9;terumet_raw_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
 
 local SPECIAL_OWNERS = {
     [''] = '<None>',
     ['*'] = '<Everyone>'
 }
 
-local base_mach.fs_builder(machine, sections)
+-- build a machine formspec given a machine
+-- takes fsdef table from machine class definition to define what is shown and where
+-- _terumach_class.fsdef guidelines: is a table with definitions for sections or elements. Nearly all info is optional and will be given standard defaults (or omitted) if not provided
+--      .size  -> must be a table with {x=width, y=height} (in item slots, like normal formspec dimensions), size defaults to 10x9 if not given
+--      .setup -> string that provides background, listcolors
+--      .before  -> fn(machine) that returns formspec string to insert after preamble
+--      .control -> fn(machine) that returns formspec string to insert inside machine controls container
+--      .machine -> fn(machine) that returns formspec string to insert inside main machine container
+--      .input -> true or {x,y,w,h} that input slots/info should be shown (2x2 slots if no width/height provided)
+--      .output -> true or {x,y,w,h} that output slots/info should be shown (2x2 slots if no width/height provided)
+--      .fuel_slot -> true or {x,y} that fuel slot should be shown
+--      .player_inv -> {x,y} that repositions player inventory
+--      .list_rings -> formspec string that defines list rings, otherwise: player;main -> machine;in -> player;main -> machine;out ->
+--      .after -> fn(machine) that returns formspec string to insert after all other formspec content
+local base_mach.build_fs(machine)
+    local fsdef = machine.class.fsdef
     local fs
     -- start/misc section
-    fs = fs .. (sections.size or 'size[10,9]')
-    fs = fs .. base_mach.fs_start
-    if sections.misc then
-        fs = sections.misc(machine, fs)
+    local fs_width = (fsdef.size and fsdef.size.x) or 10
+    local fs_height = (fsdef.size and fsdef.size.y) or 9
+    fs = fs .. string.format('size[%f,%f]', fs_width, fs_height)
+    fs = fs .. fsdef.setup or base_mach.fs_start
+    if fsdef.before then
+        fs = fs .. fsdef.before(machine)
     end
     -- control container
     fs = fs..'container[0,0]'
     fs = fs..string.format('label[0,0;%s]', machine.class.name)
-    fs = fs..string.format('label[0,7;Heat: %s]', opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
-    fs = fs..string.format('label[0,8.5;Owner: \n%s]', SPECIAL_OWNERS[machine.owner] or machine.owner)
-    if sections.control then
-        fs = sections.control(machine, fs)
+    fs = fs..string.format('label[0,%f;HU Xfer: %s]', fs_height - 2, opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
+    fs = fs..string.format('label[0,%f;Owner: \n%s]', fs_height - 1.5, SPECIAL_OWNERS[machine.owner] or machine.owner)
+    if fsdef.control then
+        fs = fs .. fsdef.control(machine)
     end
     -- machine container
-    fs = fs..'container_end[]container[4,0]'
+    fs = fs..'container_end[]container[3,0]'
     fs = fs..string.format('label[2,0;%s]', machine.status_text)
-    if sections.machine then
-        fs = fs..sections.machine(machine, fs)
+    if fsdef.machine then
+        fs = fs .. fsdef.machine(machine)
     end
     -- machine: input
-    if sections.input then
+    if fsdef.input then
     end
     -- machine: output
-    if sections.output then
+    if fsdef.output then
     end
     -- machine: fuel_slot
-    if sections.fuel_slot then
-        local fsx = sections.fuel_slot.x or 10
-        local fsy = sections.fuel_slot.y or 1
+    if fsdef.fuel_slot then
+        local fsx = fsdef.fuel_slot.x or fs_width
+        local fsy = fsdef.fuel_slot.y or 1
         fs = fs..string.format('list[context;fuel;%f,%f;1,1;]label[%f,%f;Fuel]', fsx, fsy, fsx, fsy+1)
     end
     fs = fs..'container_end[]'
     -- player inventory
-    local pix = (sections.player_inv and sections.player_inv.x) or 3
-    local piy = (sections.player_inv and sections.player_inv.y) or 4.75
+    local pix = (fsdef.player_inv and fsdef.player_inv.x) or 3
+    local piy = (fsdef.player_inv and fsdef.player_inv.y) or fs_height - 4.25
     fs = fs..string.format('list[current_player;main;%f,%f;8,1;]list[current_player;main;%f,%f;8,3;8', pix, piy, pix, piy+1.25)
     -- list rings
-    if sections.list_rings then
-        fs = fs..sections.list_rings
+    if fsdef.list_rings then
+        fs = fs..fsdef.list_rings
     else
         fs = fs..'listring[current_player;main]listring[context;in]listring[current_player;main]listring[context;out]'
+    end
+    if fsdef.after then
+        fs = fs .. fsdef.after(machine)
     end
     return fs
 end
