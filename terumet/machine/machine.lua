@@ -127,7 +127,7 @@ local SPECIAL_OWNERS = {
     ['*'] = '<Everyone>'
 }
 
--- build a machine formspec given a machine
+-- build and return a formspec given a machine state
 -- takes fsdef table from machine class definition to define what is shown and where
 -- _terumach_class.fsdef guidelines: is a table with definitions for sections or elements. Nearly all info is optional and will be given standard defaults (or omitted) if not provided
 --      .size  -> must be a table with {x=width, y=height} (in item slots, like normal formspec dimensions), size defaults to 10x9 if not given
@@ -155,6 +155,12 @@ local base_mach.build_fs(machine)
     -- control container
     fs = fs..'container[0,0]'
     fs = fs..string.format('label[0,0;%s]', machine.class.name)
+    local upg_ct = machine.inv:get_size('upgrade')
+    if upg_ct and upg_ct > 0 then
+        local upx = 0
+        local upy = 4
+        fs = fs..string.format('vertlabel[%f,%f;Upgrades]list[context;upgrade;%f,%f;3,%d]', upx+1, upy, upx, upy, math.ceil(upg_ct/3))
+    end
     fs = fs..string.format('label[0,%f;HU Xfer: %s]', fs_height - 2, opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
     fs = fs..string.format('label[0,%f;Owner: \n%s]', fs_height - 1.5, SPECIAL_OWNERS[machine.owner] or machine.owner)
     if fsdef.control then
@@ -168,9 +174,29 @@ local base_mach.build_fs(machine)
     end
     -- machine: input
     if fsdef.input then
+        local inpx = fsdef.input.x or 0
+        local inpy = fsdef.input.y or 0
+        local inpw = fsdef.input.w or 2
+        local inph = fsdef.input.h or 2
+        if base_mach.has_upgrade(machine, 'ext_input') then
+            local input_node = minetest.get_node(base_mach.get_leftside_pos(machine.rot, machine.pos))
+            return string.format('label[%f,%f;Input From]item_image[%f,%f;%d,%d;%s]', inpx+0.5, inpy+2, inpx+0.5, inpy+0.5, inpw, inph, input_node.name)
+        else
+            return string.format('list[context;in;%f,%f;%d,%d;]label[%f,%f;Input Slots]', inpx, inpy, inpw, inph, inpx+0.5, inpy+2)
+        end
     end
     -- machine: output
     if fsdef.output then
+        local outx = fsdef.output.x or 4
+        local outy = fsdef.output.y or 0
+        local outw = fsdef.output.w or 2
+        local outh = fsdef.output.h or 2
+        if base_mach.has_upgrade(machine, 'ext_output') then
+            local output_node = minetest.get_node(base_mach.get_rightside_pos(machine.rot, machine.pos))
+            return string.format('label[%f,%f;Output To]item_image[%f,%f;%d,%d;%s]', outx+0.5, outy+2, outx+0.5, outy+0.5, outw, outh, output_node.name)
+        else
+            return string.format('list[context;out;%f,%f;%d,%d;]label[%f,%f;Output Slots]', outx, outy, outw, outh, outx+0.5, outy+2)
+        end
     end
     -- machine: fuel_slot
     if fsdef.fuel_slot then
@@ -213,31 +239,6 @@ function base_mach.fs_flux_info(machine, fsx, fsy, percent)
     percent..':terumet_gui_flux_fg.png]label['..fsx..','..fsy+2 ..';Molten Flux]'
 end
 
-
--- input formspec
-function base_mach.fs_input(machine, fsx, fsy, width, height)
-    if base_mach.has_upgrade(machine, 'ext_input') then
-        local input_node = minetest.get_node(base_mach.get_leftside_pos(machine.rot, machine.pos))
-        return string.format('label[%f,%f;Input From]item_image[%f,%f;1,1;%s]', fsx+0.5, fsy+2, fsx+0.5, fsy+0.5, input_node.name)
-    else
-        return string.format('list[context;in;%f,%f;%d,%d;]label[%f,%f;Input Slots]', fsx, fsy, width, height, fsx+0.5, fsy+2)
-    end
-end
-
--- output formspec
-function base_mach.fs_output(machine, fsx, fsy, width, height)
-    if base_mach.has_upgrade(machine, 'ext_output') then
-        local output_node = minetest.get_node(base_mach.get_rightside_pos(machine.rot, machine.pos))
-        return string.format('label[%f,%f;Output To]item_image[%f,%f;1,1;%s]', fsx+0.5, fsy+2, fsx+0.5, fsy+0.5, output_node.name)
-    else
-        return string.format('list[context;out;%f,%f;%d,%d;]label[%f,%f;Output Slots]', fsx, fsy, width, height, fsx+0.5, fsy+2)
-    end
-end
-
--- upgrade slots formspec
-function base_mach.fs_upgrades(machine, fsx, fsy)
-    return string.format('vertlabel[%f,%f;Upgrades]list[context;upgrade;%f,%f;1,6]', fsx+1.0, fsy, fsx, fsy)
-end
 --
 -- GENERIC META
 --
