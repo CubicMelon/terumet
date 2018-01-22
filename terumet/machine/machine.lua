@@ -165,7 +165,7 @@ function base_mach.build_fs(machine)
     local fs_width = (fsdef.size and fsdef.size.x) or 11
     local fs_height = (fsdef.size and fsdef.size.y) or 9
     local fs = string.format('size[%f,%f]', fs_width, fs_height)
-    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#432d31;#68434b;#3f252b;#114f51;#d2fdff]', fs_width, fs_height))
+    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#432d31;#d57788;#3f252b;#114f51;#d2fdff]', fs_width, fs_height))
     if fsdef.before then
         fs = fs .. fsdef.before(machine)
     end
@@ -251,7 +251,7 @@ function base_mach.build_fs(machine)
             local output_node = minetest.get_node(base_mach.get_rightside_pos(machine.rot, machine.pos))
             fs = fs .. string.format('label[%f,%f;External Output]item_image[%f,%f;%d,%d;%s]', outx, outy, outx, outy+0.5, outw, outh, output_node.name)
         else
-            fs = fs .. string.format('label[%f,%f;Output Slots]list[context;out;%f,%f;%d,%d;]', outx, outy, outx, outy+0.5, outw, outh)
+            fs = fs .. string.format('label[%f,%f;Output]list[context;out;%f,%f;%d,%d;]', outx, outy, outx, outy+0.5, outw, outh)
         end
     end
     fs = fs..'container_end[]'
