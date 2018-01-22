@@ -16,22 +16,22 @@ base_asm.STATE.VENTING = 3
 
 local FSDEF = {
     control = function(machine)
-        local fs = base_mach.fs_meter(0,1.5, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d units', machine.flux_tank))
+        return base_mach.fs_meter(0,1.5, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d units', machine.flux_tank))
+    end,
+    control_buttons = function(machine)
         if machine.zero_flux_recipes then
-            fs = fs..'image_button[0,3;0.75,0.75;default_bronze_ingot.png;zfr_toggle; ]tooltip[zfr_toggle;Using zero flux recipies]'
+            return 'image_button[0,0;0.75,0.75;default_bronze_ingot.png;zfr_toggle; ]tooltip[zfr_toggle;Using zero flux recipies]'
         else
-            fs=fs..'image_button[0,3;0.75,0.75;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]tooltip[zfr_toggle;Ignoring zero flux recipies]'
+            return 'image_button[0,0;0.75,0.75;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]tooltip[zfr_toggle;Ignoring zero flux recipies]'
         end
-        return fs
     end,
     machine = function(machine)
-        local fs = ''
         if machine.state == base_asm.STATE.FLUX_MELT then
-            fs = 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('item_cryst_raw')..']'
+            return 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.5;1,1;'..terumet.id('item_cryst_raw')..']'
         elseif machine.state == base_asm.STATE.ALLOYING then
-            fs = 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
+            return 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.5;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
         end
-        return fs
+        return ''
     end,
     input = {true},
     output = {true},
@@ -59,7 +59,6 @@ function base_asm.init(pos)
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
-        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta,
@@ -235,9 +234,12 @@ base_asm.unlit_nodedef = base_mach.nodedef{
     -- machine class data
     _terumach_class = {
         name = 'Terumetal Alloy Smelter',
+        timer = 0.5,
+        -- NEW
         fsdef = FSDEF,
         infodef = INFODEF,
-        timer = 0.5,
+        default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
+        -- end new
         drop_id = base_asm.unlit_id,
         get_drop_contents = base_asm.get_drop_contents,
         on_form_action = function(asmelt, fields, player)

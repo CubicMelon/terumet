@@ -124,6 +124,10 @@ local SPECIAL_OWNERS = {
     ['*'] = '<Everyone>'
 }
 
+local fs_container = function(fsx,fsy,machine,content_func)
+    return string.format('container[%f,%f]%scontainer_end[]', fsx, fsy, func(machine))
+end
+
 -- build and return a formspec given a machine state
 -- takes fsdef table from machine's class definition to define what is shown and where
 -- _terumach_class.fsdef guidelines: is a table with definitions for sections or elements. Nearly all info is optional and will be given standard defaults (or omitted) if not provided
@@ -131,10 +135,11 @@ local SPECIAL_OWNERS = {
 --      .theme -> string that provides background, listcolors
 --      .before  -> fn(machine) that returns formspec string to insert after preamble
 --      .control -> fn(machine) that returns formspec string to insert inside machine controls container
+--      .control_buttons -> fn(machine) that returns formspec string to insert inside machine control buttons container
 --      .machine -> fn(machine) that returns formspec string to insert inside main machine container
 --      .input -> true or {x,y,w,h} that input slots/info should be shown (2x2 slots if no width/height provided)
 --      .output -> true or {x,y,w,h} that output slots/info should be shown (2x2 slots if no width/height provided)
---      .fuel_slot -> true or {x,y} that fuel slot should be shown
+--      .fuel_slot -> true or {x,y} that fuel slot should be shown in control section
 --      .player_inv -> {x,y} that repositions player inventory
 --      .list_rings -> formspec string that defines list rings, otherwise: player;main -> machine;in -> player;main -> machine;out ->
 --      .after -> fn(machine) that returns formspec string to insert after all other formspec content
@@ -152,23 +157,35 @@ function base_mach.build_fs(machine)
     fs = fs..'container[0,0]'
     fs = fs..string.format('label[0,0;%s]', machine.class.name)
     if machine.heat_level > machine.max_heat then
-        fs = fs..'image[0,0.5;3.5,1.25;terumet_gui_overheat.png^[transformR270]label[2,1.75;Overheated]'
+        fs = fs..'image[0,0.5;3.5,1;terumet_gui_overheat.png^[transformR270]label[1.2,0.9;Overheated]'
     else
         fs = fs..base_mach.fs_meter(0,0.5, 'heat', base_mach.heat_pct(machine), string.format('%d HU', machine.heat_level))
     end
+    -- control: fuel_slot
+    if fsdef.fuel_slot then
+        local fsx = fsdef.fuel_slot.x or 2
+        local fsy = fsdef.fuel_slot.y or 3
+        fs = fs..string.format('label[%f,%f;Fuel]list[context;fuel;%f,%f;1,1;]', fsx, fsy, fsx, fsy+0.5)
+    end
+    -- control: upgrade slots
     local upg_ct = machine.inv:get_size('upgrade')
     if upg_ct and upg_ct > 0 then
         local upx = 0
-        local upy = 4
-        fs = fs..string.format('vertlabel[%f,%f;Upgrades]list[context;upgrade;%f,%f;3,%d]', upx+1, upy, upx, upy, math.ceil(upg_ct/3))
+        local upy = fs_height - 4
+        fs = fs..string.format('label[%f,%f;Upgrades]list[context;upgrade;%f,%f;3,%d]', upx, upy, upx, upy+0.5, math.ceil(upg_ct/3))
     end
-    fs = fs..string.format('label[0,%f;HU Xfer: %s]', fs_height - 2, opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
-    fs = fs..string.format('label[0,%f;Owner: \n%s]', fs_height - 1.5, SPECIAL_OWNERS[machine.owner] or machine.owner)
+    --fs = fs..string.format('label[0,%f;HU Xfer: %s]', fs_height - 1, opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
+    fs = fs..string.format('label[0,%f;Owner: \n%s]', fs_height - 1, SPECIAL_OWNERS[machine.owner] or machine.owner)
     if fsdef.control then
         fs = fs .. fsdef.control(machine)
     end
+    -- control: buttons container
+    fs = fs..'container[0,3]'
+    if fsdef.control_buttons then
+        fs = fs .. fsdef.control_buttons(machine)
+    end
     -- machine container
-    fs = fs..'container_end[]container[3,0]'
+    fs = fs..'container_end[]container_end[]container[3,0]'
     fs = fs..string.format('label[0,0;%s]', machine.status_text)
     if fsdef.machine then
         fs = fs .. fsdef.machine(machine)
@@ -181,9 +198,9 @@ function base_mach.build_fs(machine)
         local inph = fsdef.input.h or 2
         if base_mach.has_upgrade(machine, 'ext_input') then
             local input_node = minetest.get_node(base_mach.get_leftside_pos(machine.rot, machine.pos))
-            fs = fs .. string.format('label[%f,%f;Input From]item_image[%f,%f;%d,%d;%s]', inpx+0.5, inpy+2, inpx+0.5, inpy+0.5, inpw, inph, input_node.name)
+            fs = fs .. string.format('label[%f,%f;External Input]item_image[%f,%f;%d,%d;%s]', inpx, inpy, inpx, inpy+0.5, inpw, inph, input_node.name)
         else
-            fs = fs .. string.format('list[context;in;%f,%f;%d,%d;]label[%f,%f;Input Slots]', inpx, inpy, inpw, inph, inpx+0.5, inpy+2)
+            fs = fs .. string.format('label[%f,%f;Input]list[context;in;%f,%f;%d,%d;]', inpx, inpy, inpx, inpy+0.5, inpw, inph)
         end
     end
     -- machine: output
@@ -194,16 +211,10 @@ function base_mach.build_fs(machine)
         local outh = fsdef.output.h or 2
         if base_mach.has_upgrade(machine, 'ext_output') then
             local output_node = minetest.get_node(base_mach.get_rightside_pos(machine.rot, machine.pos))
-            fs = fs .. string.format('label[%f,%f;Output To]item_image[%f,%f;%d,%d;%s]', outx+0.5, outy+2, outx+0.5, outy+0.5, outw, outh, output_node.name)
+            fs = fs .. string.format('label[%f,%f;External Output]item_image[%f,%f;%d,%d;%s]', outx, outy, outx, outy+0.5, outw, outh, output_node.name)
         else
-            fs = fs .. string.format('list[context;out;%f,%f;%d,%d;]label[%f,%f;Output Slots]', outx, outy, outw, outh, outx+0.5, outy+2)
+            fs = fs .. string.format('label[%f,%f;Output Slots]list[context;out;%f,%f;%d,%d;]', outx, outy, outx, outy+0.5, outw, outh)
         end
-    end
-    -- machine: fuel_slot
-    if fsdef.fuel_slot then
-        local fsx = fsdef.fuel_slot.x or fs_width - 4
-        local fsy = fsdef.fuel_slot.y or 1.5
-        fs = fs..string.format('list[context;fuel;%f,%f;1,1;]label[%f,%f;Fuel]', fsx, fsy, fsx, fsy+1)
     end
     fs = fs..'container_end[]'
     -- player inventory
@@ -229,8 +240,8 @@ end
 
 -- meter display
 function base_mach.fs_meter(fsx, fsy, id, fill, text)
-    return string.format('image[%f,%f;3.5,1.25;(terumet_gui_bg_%s.png^[lowpart:%f:terumet_gui_fg_%s.png)^[transformR270]label[%f,%f;%s]',
-        fsx, fsy, id, fill, id, fsx+1,fsy+0.5,text)
+    return string.format('label[%f,%f;%s]image[%f,%f;3.5,1;(terumet_gui_bg_%s.png^[lowpart:%f:terumet_gui_fg_%s.png)^[transformR270]',
+        fsx+1.2,fsy+0.4,text, fsx, fsy, id, fill, id)
 end
 
 --
@@ -348,7 +359,7 @@ function base_mach.read_state(pos)
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
     machine.max_heat = meta:get_int('max_heat') or 0
-    machine.heat_xfer_mode = meta:get_int('heat_xfer_mode') or base_mach.HEAT_XFER_MODE.NO_XFER
+    machine.heat_xfer_mode = meta:get_int('heat_xfer_mode') or machine.class.default_heat_xfer
     machine.state = meta:get_int('state')
     machine.state_time = meta:get_float('state_time') or 0
     machine.status_text = meta:get_string('status_text') or 'No Status'
@@ -366,7 +377,7 @@ function base_mach.write_state(pos, machine)
     meta:set_string('status_text', machine.status_text)
     meta:set_int('heat_level', machine.heat_level or 0)
     meta:set_int('max_heat', machine.max_heat or 0)
-    meta:set_int('heat_xfer_mode', machine.heat_xfer_mode or base_mach.HEAT_XFER_MODE.NO_XFER)
+    meta:set_int('heat_xfer_mode', machine.heat_xfer_mode or machine.class.default_heat_xfer)
     meta:set_int('state', machine.state)
     meta:set_float('state_time', machine.state_time)
     meta:set_string('formspec', base_mach.build_fs(machine))
