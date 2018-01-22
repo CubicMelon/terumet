@@ -114,9 +114,10 @@ terumet.options.smelter = {
         {result='terumet:block_tgol', flux=25, time=36.0, input={'default:goldblock'}},
         {result='terumet:ingot_tgol', flux=3, time=2.5, input={'terumet:item_cryst_gold'}},
     -- Teruchalchum
-        {result='terumet:ingot_tcha 3', flux=3, time=6.0, input={'default:bronze_ingot', 'default:tin_lump 2'}},
-        {result='terumet:block_tcha 3', flux=27, time=54.0, input={'default:bronzeblock', 'default:tinblock 2'}},
-        {result='terumet:ingot_tcha 3', flux=3, time=3.0, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
+        {result='terumet:ingot_tcha 3', flux=9, time=6.0, input={'default:bronze_ingot', 'default:tin_lump 2'}},
+        {result='terumet:ingot_tcha 3', flux=9, time=4.0, input={'default:bronze_ingot', 'default:tin_ingot 2'}},
+        {result='terumet:block_tcha 3', flux=75, time=54.0, input={'default:bronzeblock', 'default:tinblock 2'}},
+        {result='terumet:ingot_tcha 3', flux=9, time=3.0, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
     -- Coreglass
         {result='terumet:ingot_cgls', flux=5, time=10.0, input={'default:diamond', 'default:obsidian_shard'}},
         {result='terumet:block_cgls', flux=30, time=90.0, input={'default:diamondblock', 'default:obsidian'}},

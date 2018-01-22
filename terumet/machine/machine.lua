@@ -119,9 +119,6 @@ base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame\nFoundation of h
 -- GENERIC FORMSPECS
 --
 
--- general preamble setting background, colors
-base_mach.fs_theme = 'background[0,0;8,9;terumet_raw_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
-
 local SPECIAL_OWNERS = {
     [''] = '<None>',
     ['*'] = '<Everyone>'
@@ -143,18 +140,22 @@ local SPECIAL_OWNERS = {
 --      .after -> fn(machine) that returns formspec string to insert after all other formspec content
 function base_mach.build_fs(machine)
     local fsdef = machine.class.fsdef
-    local fs
     -- start/misc section
-    local fs_width = (fsdef.size and fsdef.size.x) or 10
+    local fs_width = (fsdef.size and fsdef.size.x) or 11
     local fs_height = (fsdef.size and fsdef.size.y) or 9
-    fs = fs .. string.format('size[%f,%f]', fs_width, fs_height)
-    fs = fs .. fsdef.theme or base_mach.fs_theme
+    local fs = string.format('size[%f,%f]', fs_width, fs_height)
+    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]', fs_width, fs_height))
     if fsdef.before then
         fs = fs .. fsdef.before(machine)
     end
     -- control container
     fs = fs..'container[0,0]'
     fs = fs..string.format('label[0,0;%s]', machine.class.name)
+    if machine.heat_level > machine.max_heat then
+        fs = fs..'image[0,0.5;3.5,1.25;terumet_gui_overheat.png^[transformR270]label[2,1.75;Overheated]'
+    else
+        fs = fs..base_mach.fs_meter(0,0.5, 'heat', base_mach.heat_pct(machine), string.format('%d HU', machine.heat_level))
+    end
     local upg_ct = machine.inv:get_size('upgrade')
     if upg_ct and upg_ct > 0 then
         local upx = 0
@@ -168,47 +169,47 @@ function base_mach.build_fs(machine)
     end
     -- machine container
     fs = fs..'container_end[]container[3,0]'
-    fs = fs..string.format('label[2,0;%s]', machine.status_text)
+    fs = fs..string.format('label[0,0;%s]', machine.status_text)
     if fsdef.machine then
         fs = fs .. fsdef.machine(machine)
     end
     -- machine: input
     if fsdef.input then
-        local inpx = fsdef.input.x or 0
-        local inpy = fsdef.input.y or 0
+        local inpx = fsdef.input.x or 0.5
+        local inpy = fsdef.input.y or 1.5
         local inpw = fsdef.input.w or 2
         local inph = fsdef.input.h or 2
         if base_mach.has_upgrade(machine, 'ext_input') then
             local input_node = minetest.get_node(base_mach.get_leftside_pos(machine.rot, machine.pos))
-            return string.format('label[%f,%f;Input From]item_image[%f,%f;%d,%d;%s]', inpx+0.5, inpy+2, inpx+0.5, inpy+0.5, inpw, inph, input_node.name)
+            fs = fs .. string.format('label[%f,%f;Input From]item_image[%f,%f;%d,%d;%s]', inpx+0.5, inpy+2, inpx+0.5, inpy+0.5, inpw, inph, input_node.name)
         else
-            return string.format('list[context;in;%f,%f;%d,%d;]label[%f,%f;Input Slots]', inpx, inpy, inpw, inph, inpx+0.5, inpy+2)
+            fs = fs .. string.format('list[context;in;%f,%f;%d,%d;]label[%f,%f;Input Slots]', inpx, inpy, inpw, inph, inpx+0.5, inpy+2)
         end
     end
     -- machine: output
     if fsdef.output then
-        local outx = fsdef.output.x or 4
-        local outy = fsdef.output.y or 0
+        local outx = fsdef.output.x or 4.5
+        local outy = fsdef.output.y or 1.5
         local outw = fsdef.output.w or 2
         local outh = fsdef.output.h or 2
         if base_mach.has_upgrade(machine, 'ext_output') then
             local output_node = minetest.get_node(base_mach.get_rightside_pos(machine.rot, machine.pos))
-            return string.format('label[%f,%f;Output To]item_image[%f,%f;%d,%d;%s]', outx+0.5, outy+2, outx+0.5, outy+0.5, outw, outh, output_node.name)
+            fs = fs .. string.format('label[%f,%f;Output To]item_image[%f,%f;%d,%d;%s]', outx+0.5, outy+2, outx+0.5, outy+0.5, outw, outh, output_node.name)
         else
-            return string.format('list[context;out;%f,%f;%d,%d;]label[%f,%f;Output Slots]', outx, outy, outw, outh, outx+0.5, outy+2)
+            fs = fs .. string.format('list[context;out;%f,%f;%d,%d;]label[%f,%f;Output Slots]', outx, outy, outw, outh, outx+0.5, outy+2)
         end
     end
     -- machine: fuel_slot
     if fsdef.fuel_slot then
-        local fsx = fsdef.fuel_slot.x or fs_width
-        local fsy = fsdef.fuel_slot.y or 1
+        local fsx = fsdef.fuel_slot.x or fs_width - 4
+        local fsy = fsdef.fuel_slot.y or 1.5
         fs = fs..string.format('list[context;fuel;%f,%f;1,1;]label[%f,%f;Fuel]', fsx, fsy, fsx, fsy+1)
     end
     fs = fs..'container_end[]'
     -- player inventory
     local pix = (fsdef.player_inv and fsdef.player_inv.x) or 3
     local piy = (fsdef.player_inv and fsdef.player_inv.y) or fs_height - 4.25
-    fs = fs..string.format('list[current_player;main;%f,%f;8,1;]list[current_player;main;%f,%f;8,3;8', pix, piy, pix, piy+1.25)
+    fs = fs..string.format('list[current_player;main;%f,%f;8,1;]list[current_player;main;%f,%f;8,3;8]', pix, piy, pix, piy+1.25)
     -- list rings
     if fsdef.list_rings then
         fs = fs..fsdef.list_rings
@@ -218,6 +219,7 @@ function base_mach.build_fs(machine)
     if fsdef.after then
         fs = fs .. fsdef.after(machine)
     end
+    --minetest.log('warn', fs)
     return fs
 end
 
@@ -225,22 +227,10 @@ function base_mach.build_infotext(machine)
     return machine.class.infodef(machine)
 end
 
--- meter display (TODO)
-function base_mach.fs_meter(machine, fsx, fsy)
-    if machine.heat_level > machine.max_heat then
-        return string.format('image[%f,%f;2,2;terumet_gui_heat_over.png]label[%f,%f;Heat Overflow]', fsx, fsy, fsx, fsy+2)
-    else
-        return string.format('image[%f,%f;2,2;terumet_gui_heat_bg.png^[lowpart:%f:terumet_gui_heat_fg.png]label[%f,%f;%d HU]',
-            fsx, fsy, base_mach.heat_pct(machine), fsx, fsy+2, machine.heat_level )
-    end
-    -- return 'image['..fsx..','..fsy..';2,2;terumet_gui_heat_bg.png^[lowpart:'..
-    -- base_mach.heat_pct(machine)..':terumet_gui_heat_fg.png]label['..fsx..','..fsy+2 ..';Heat Level]'
-end
-
--- flux display formspec
-function base_mach.fs_flux_info(machine, fsx, fsy, percent)
-    return 'image['..fsx..','..fsy..';2,2;terumet_gui_flux_bg.png^[lowpart:'..
-    percent..':terumet_gui_flux_fg.png]label['..fsx..','..fsy+2 ..';Molten Flux]'
+-- meter display
+function base_mach.fs_meter(fsx, fsy, id, fill, text)
+    return string.format('image[%f,%f;3.5,1.25;(terumet_gui_bg_%s.png^[lowpart:%f:terumet_gui_fg_%s.png)^[transformR270]label[%f,%f;%s]',
+        fsx, fsy, id, fill, id, fsx+1,fsy+0.5,text)
 end
 
 --

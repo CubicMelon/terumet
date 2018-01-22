@@ -16,22 +16,26 @@ base_asm.STATE.VENTING = 3
 
 local FSDEF = {
     control = function(machine)
+        local fs = base_mach.fs_meter(0,1.5, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d units', machine.flux_tank))
         if machine.zero_flux_recipes then
-            return 'image_button[0,4;1,1;default_bronze_ingot.png;zfr_toggle; ]tooltip[zfr_toggle;Using zero flux recipies]'
+            fs = fs..'image_button[0,3;0.75,0.75;default_bronze_ingot.png;zfr_toggle; ]tooltip[zfr_toggle;Using zero flux recipies]'
         else
-            return 'image_button[0,4;1,1;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]tooltip[zfr_toggle;Ignoring zero flux recipies]'
+            fs=fs..'image_button[0,3;0.75,0.75;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]tooltip[zfr_toggle;Ignoring zero flux recipies]'
         end
+        return fs
     end,
     machine = function(machine)
+        local fs = ''
         if machine.state == base_asm.STATE.FLUX_MELT then
-            return 'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('item_cryst_raw')..']'
+            fs = 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('item_cryst_raw')..']'
         elseif machine.state == base_asm.STATE.ALLOYING then
-            return 'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
+            fs = 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
         end
+        return fs
     end,
-    input = true,
-    output = true,
-    fuel_slot = true,
+    input = {true},
+    output = {true},
+    fuel_slot = {true},
 }
 
 local INFODEF = function(machine)
@@ -239,8 +243,7 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         on_form_action = function(asmelt, fields, player)
             if fields.zfr_toggle then
                 asmelt.zero_flux_recipes = not asmelt.zero_flux_recipes
-                 -- only need to write 'extra' data which includes options/formspec
-                asmelt.class.on_write_state(asmelt)
+                base_mach.write_state(asmelt.pos, asmelt)
                 base_mach.set_timer(asmelt)
             end
         end,
