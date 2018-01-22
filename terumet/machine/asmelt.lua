@@ -15,32 +15,23 @@ base_asm.STATE.ALLOYING = 2
 base_asm.STATE.VENTING = 3
 
 local FSDEF = {
-    control = function(machine)
-        return base_mach.fs_meter(0,1.5, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d units', machine.flux_tank))
-    end,
-    control_buttons = function(machine)
-        if machine.zero_flux_recipes then
-            return 'image_button[0,0;0.75,0.75;default_bronze_ingot.png;zfr_toggle; ]tooltip[zfr_toggle;Using zero flux recipies]'
-        else
-            return 'image_button[0,0;0.75,0.75;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]tooltip[zfr_toggle;Ignoring zero flux recipies]'
-        end
-    end,
+    control_buttons = {
+        base_mach.buttondefs.HEAT_XFER_TOGGLE,
+        {flag='zero_flux_recipes', icon='default_bronze_ingot.png', name='zfr_toggle', on_text='Using zero flux recipes', off_text='Ingoring zero flux recipes'}
+    },
     machine = function(machine)
+        local fs = base_mach.fs_meter(2.5,1, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d flux', machine.flux_tank))
         if machine.state == base_asm.STATE.FLUX_MELT then
-            return 'image[3,2.5;1,1;terumet_gui_product_bg.png]item_image[3,2.5;1,1;'..terumet.id('item_cryst_raw')..']'
+            fs=fs..'image[3,2;2,2;terumet_gui_proc_flux.png]'
         elseif machine.state == base_asm.STATE.ALLOYING then
-            return 'image[3,2.5;1,1;terumet_gui_product_bg.png]item_image[3,2.5;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
+            fs=fs..'image[3,2;2,2;terumet_gui_proc_alloy.png]item_image[3.4,2.5;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
         end
-        return ''
+        return fs
     end,
     input = {true},
     output = {true},
     fuel_slot = {true},
 }
-
-local INFODEF = function(machine)
-    return string.format('Alloy Smelter (%.1f%% heat): %s', base_mach.heat_pct(machine), machine.status_text)
-end
 
 function base_asm.init(pos)
     local meta = minetest.get_meta(pos)
@@ -237,7 +228,6 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         timer = 0.5,
         -- NEW
         fsdef = FSDEF,
-        infodef = INFODEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         -- end new
         drop_id = base_asm.unlit_id,
@@ -245,8 +235,7 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         on_form_action = function(asmelt, fields, player)
             if fields.zfr_toggle then
                 asmelt.zero_flux_recipes = not asmelt.zero_flux_recipes
-                base_mach.write_state(asmelt.pos, asmelt)
-                base_mach.set_timer(asmelt)
+                return true -- return true to save new machine state
             end
         end,
         on_read_state = function(asmelt)

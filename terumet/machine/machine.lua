@@ -128,14 +128,30 @@ local fs_container = function(fsx,fsy,machine,content_func)
     return string.format('container[%f,%f]%scontainer_end[]', fsx, fsy, func(machine))
 end
 
+base_mach.buttondefs = {}
+-- standard control button to toggle on/off heat transfer
+base_mach.buttondefs.HEAT_XFER_TOGGLE = {
+    flag = function(machine)
+        return machine.heat_xfer_mode == machine.class.default_heat_xfer
+    end,
+    icon = 'terumet_gui_heatxfer.png',
+    name = 'hxfer_toggle',
+    on_text = 'Heat transfer on',
+    off_text = 'Heat transfer off'
+}
+
 -- build and return a formspec given a machine state
 -- takes fsdef table from machine's class definition to define what is shown and where
 -- _terumach_class.fsdef guidelines: is a table with definitions for sections or elements. Nearly all info is optional and will be given standard defaults (or omitted) if not provided
---      .size  -> must be a table with {x=width, y=height} (in item slots, like normal formspec dimensions), size defaults to 10x9 if not given
+--      .size  -> must be a table with {x=width, y=height} (in item slots, like normal formspec dimensions), size defaults to 11x9 if not given
 --      .theme -> string that provides background, listcolors
 --      .before  -> fn(machine) that returns formspec string to insert after preamble
 --      .control -> fn(machine) that returns formspec string to insert inside machine controls container
---      .control_buttons -> fn(machine) that returns formspec string to insert inside machine control buttons container
+--      .control_buttons -> table of machine buttondefs:
+--              .flag -> string of machine flag or function that returns whether control is on/off
+--              .icon -> image to use as base icon for button
+--              .name -> id to assign to button (returned as field to machine's on_form_action)
+--              .on_text + .off_text -> tooltips when on/off
 --      .machine -> fn(machine) that returns formspec string to insert inside main machine container
 --      .input -> {true} or {x,y,w,h} that input slots/info should be shown (2x2 slots if no width/height provided)
 --      .output -> {true} or {x,y,w,h} that output slots/info should be shown (2x2 slots if no width/height provided)
@@ -149,7 +165,7 @@ function base_mach.build_fs(machine)
     local fs_width = (fsdef.size and fsdef.size.x) or 11
     local fs_height = (fsdef.size and fsdef.size.y) or 9
     local fs = string.format('size[%f,%f]', fs_width, fs_height)
-    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]', fs_width, fs_height))
+    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#432d31;#68434b;#3f252b;#114f51;#d2fdff]', fs_width, fs_height))
     if fsdef.before then
         fs = fs .. fsdef.before(machine)
     end
@@ -163,15 +179,15 @@ function base_mach.build_fs(machine)
     end
     -- control: fuel_slot
     if fsdef.fuel_slot then
-        local fsx = fsdef.fuel_slot.x or 2
-        local fsy = fsdef.fuel_slot.y or 3
+        local fsx = fsdef.fuel_slot.x or 0
+        local fsy = fsdef.fuel_slot.y or 1.5
         fs = fs..string.format('label[%f,%f;Fuel]list[context;fuel;%f,%f;1,1;]', fsx, fsy, fsx, fsy+0.5)
     end
     -- control: upgrade slots
     local upg_ct = machine.inv:get_size('upgrade')
     if upg_ct and upg_ct > 0 then
         local upx = 0
-        local upy = fs_height - 4
+        local upy = fs_height - 3.75
         fs = fs..string.format('label[%f,%f;Upgrades]list[context;upgrade;%f,%f;3,%d]', upx, upy, upx, upy+0.5, math.ceil(upg_ct/3))
     end
     --fs = fs..string.format('label[0,%f;HU Xfer: %s]', fs_height - 1, opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
@@ -181,8 +197,30 @@ function base_mach.build_fs(machine)
     end
     -- control: buttons container
     fs = fs..'container[0,3]'
-    if fsdef.control_buttons then
-        fs = fs .. fsdef.control_buttons(machine)
+
+    local btx = 0
+    local bty = 0 
+    for _, buttondef in ipairs(fsdef.control_buttons) do
+        if buttondef.flag then
+            flag_on = false
+            if type(buttondef.flag) == 'string' then
+                flag_on = machine[buttondef.flag]
+            elseif type(buttondef.flag) == 'function' then
+                flag_on = buttondef.flag(machine)
+            end
+            if flag_on then
+                fs = fs .. string.format('image_button[%f,%f;0.75,0.75;%s;%s; ]tooltip[%s;%s]',
+                    btx, bty, buttondef.icon, buttondef.name, buttondef.name, buttondef.on_text)
+            else
+                fs = fs .. string.format('image_button[%f,%f;0.75,0.75;(%s^terumet_gui_disabled.png);%s; ]tooltip[%s;%s]',
+                    btx, bty, buttondef.icon, buttondef.name, buttondef.name, buttondef.off_text)
+            end
+            bty = bty + 0.75
+            if bty >= 4 then
+                bty = 0
+                btx = btx + 0.75
+            end
+        end
     end
     -- machine container
     fs = fs..'container_end[]container_end[]container[3,0]'
@@ -205,7 +243,7 @@ function base_mach.build_fs(machine)
     end
     -- machine: output
     if fsdef.output then
-        local outx = fsdef.output.x or 4.5
+        local outx = fsdef.output.x or 5.5
         local outy = fsdef.output.y or 1.5
         local outw = fsdef.output.w or 2
         local outh = fsdef.output.h or 2
@@ -235,7 +273,7 @@ function base_mach.build_fs(machine)
 end
 
 function base_mach.build_infotext(machine)
-    return machine.class.infodef(machine)
+    return string.format('%s (%.1f%% heat): %s', machine.class.name, base_mach.heat_pct(machine), machine.status_text)
 end
 
 -- meter display
@@ -589,7 +627,24 @@ function base_mach.nodedef(additions)
             local machine = base_mach.read_state(pos)
             if machine then 
                 if base_mach.has_auth(machine, player_name) then
-                    machine.class.on_form_action(machine, fields, player_name)
+                    --minetest.chat_send_player(player_name, dump(fields))
+                    local save = false
+                    -- handle default buttondefs
+                    if fields.hxfer_toggle then
+                        if machine.heat_xfer_mode == machine.class.default_heat_xfer then
+                            machine.heat_xfer_mode = base_mach.HEAT_XFER_MODE.NO_XFER
+                        else
+                            machine.heat_xfer_mode = machine.class.default_heat_xfer
+                        end
+                        save = true
+                    else
+                        -- handle machine custom buttondefs - returns true to auto save machine state
+                        save = machine.class.on_form_action(machine, fields, player_name)
+                    end
+                    if save then
+                        base_mach.write_state(machine.pos, machine)
+                        base_mach.set_timer(machine)
+                    end
                 else
                     minetest.chat_send_player(player_name, 'You do not have permission to do that.')
                     minetest.record_protection_violation(pos, player_name)
@@ -633,8 +688,9 @@ function base_mach.nodedef(additions)
             on_external_heat = function(machine)
                 base_mach.set_timer(machine)
             end,
-            -- on_form_action: fn(machine, fields, player) -> nil
+            -- on_form_action: fn(machine, fields, player) -> save_machine_state
             -- called when authorized player sends fields from a machine's formspec
+            -- return true to automatically re-save machine state after handling change(s)
             on_form_action = function(machine, fields, player)
                 --minetest.chat_send_player(player, 'You took action on the GUI for ' .. machine.class.name .. ', but it has no on_form_action callback. Oops!')
                 --minetest.chat_send_player(player, 'fields='..dump(fields))

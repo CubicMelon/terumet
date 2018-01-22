@@ -31,10 +31,6 @@ function base_ray.generate_formspec(ray)
     return fs
 end
 
-function base_ray.generate_infotext(ray)
-    return string.format('HEAT Ray Emitter (%.1f%% heat): %s', base_mach.heat_pct(ray), ray.status_text)
-end
-
 function base_ray.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
