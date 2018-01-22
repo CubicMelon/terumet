@@ -137,9 +137,9 @@ end
 --      .control -> fn(machine) that returns formspec string to insert inside machine controls container
 --      .control_buttons -> fn(machine) that returns formspec string to insert inside machine control buttons container
 --      .machine -> fn(machine) that returns formspec string to insert inside main machine container
---      .input -> true or {x,y,w,h} that input slots/info should be shown (2x2 slots if no width/height provided)
---      .output -> true or {x,y,w,h} that output slots/info should be shown (2x2 slots if no width/height provided)
---      .fuel_slot -> true or {x,y} that fuel slot should be shown in control section
+--      .input -> {true} or {x,y,w,h} that input slots/info should be shown (2x2 slots if no width/height provided)
+--      .output -> {true} or {x,y,w,h} that output slots/info should be shown (2x2 slots if no width/height provided)
+--      .fuel_slot -> {true} or {x,y} that fuel slot should be shown in control section
 --      .player_inv -> {x,y} that repositions player inventory
 --      .list_rings -> formspec string that defines list rings, otherwise: player;main -> machine;in -> player;main -> machine;out ->
 --      .after -> fn(machine) that returns formspec string to insert after all other formspec content
