@@ -484,7 +484,12 @@ end
 function base_mach.process_fuel(machine)
     local fuel_item = machine.inv:get_stack('fuel',1)
     local heat_source = opts.BASIC_HEAT_SOURCES[fuel_item:get_name()]
-    if heat_source and (machine.max_heat - machine.heat_level) >= heat_source.hus then
+    local hu_value = 0
+    if heat_source then
+        hu_value = heat_source.hus
+        if base_mach.has_upgrade(machine, 'gen_up') then hu_value = math.floor(hu_value * 1.3) end
+    end
+    if heat_source and (machine.max_heat - machine.heat_level) >= hu_value then
         local out_inv, out_list = base_mach.get_output(machine)
         local return_item = heat_source.return_item
         if fuel_item:get_stack_max() > 1 then
@@ -498,7 +503,7 @@ function base_mach.process_fuel(machine)
         else
             machine.inv:set_stack('fuel', 1, return_item)
         end
-        machine.heat_level = math.min(machine.max_heat, machine.heat_level + heat_source.hus)
+        machine.heat_level = math.min(machine.max_heat, machine.heat_level + hu_value)
         machine.need_heat = false
     end
 end

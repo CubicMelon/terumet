@@ -27,9 +27,9 @@ local FSDEF = {
     end,
     machine = function(machine)
         if machine.state == base_asm.STATE.FLUX_MELT then
-            return 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.5;1,1;'..terumet.id('item_cryst_raw')..']'
+            return 'image[3,2.5;1,1;terumet_gui_product_bg.png]item_image[3,2.5;1,1;'..terumet.id('item_cryst_raw')..']'
         elseif machine.state == base_asm.STATE.ALLOYING then
-            return 'image[3.5,1.5;1,1;terumet_gui_product_bg.png]item_image[3.5,1.5;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
+            return 'image[3,2.5;1,1;terumet_gui_product_bg.png]item_image[3,2.5;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
         end
         return ''
     end,

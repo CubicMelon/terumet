@@ -1,6 +1,12 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+## Version 2.0
+### (still in progress)
+* Major formspec design overhaul, both visually and under the hood.
+* Heat Generation Upgrades now have a function in general machines: 
+    * When in any machine that has a fuel slot, this upgrade increases the heat gained from direct fuel by 30% (lava bucket 2000 HU => 2600 HU)
+
 ### Version 1.11
 * All Terumetal Alloy Smelter recipies have been rebalanced and now ingots of base metals can be used (i.e. Gold Ingot can be inserted to alloy Terugold) -- ingot recipes are basically equivalent, just a bit faster to alloy.
 * Since it is an alloy, basic Minetest Bronze can now be alloyed in the Alloy Smelter from 8 copper + 1 tin (just like the hand recipe). This recipe does not use any Terumetal flux.
