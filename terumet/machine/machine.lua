@@ -120,7 +120,7 @@ base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame\nFoundation of h
 --
 
 -- general preamble setting background, colors
-base_mach.fs_setup = 'background[0,0;8,9;terumet_raw_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
+base_mach.fs_theme = 'background[0,0;8,9;terumet_raw_gui_bg.png;true]listcolors[#3a101b;#905564;#190309;#114f51;#d2fdff]'
 
 local SPECIAL_OWNERS = {
     [''] = '<None>',
@@ -128,10 +128,10 @@ local SPECIAL_OWNERS = {
 }
 
 -- build and return a formspec given a machine state
--- takes fsdef table from machine class definition to define what is shown and where
+-- takes fsdef table from machine's class definition to define what is shown and where
 -- _terumach_class.fsdef guidelines: is a table with definitions for sections or elements. Nearly all info is optional and will be given standard defaults (or omitted) if not provided
 --      .size  -> must be a table with {x=width, y=height} (in item slots, like normal formspec dimensions), size defaults to 10x9 if not given
---      .setup -> string that provides background, listcolors
+--      .theme -> string that provides background, listcolors
 --      .before  -> fn(machine) that returns formspec string to insert after preamble
 --      .control -> fn(machine) that returns formspec string to insert inside machine controls container
 --      .machine -> fn(machine) that returns formspec string to insert inside main machine container
@@ -141,14 +141,14 @@ local SPECIAL_OWNERS = {
 --      .player_inv -> {x,y} that repositions player inventory
 --      .list_rings -> formspec string that defines list rings, otherwise: player;main -> machine;in -> player;main -> machine;out ->
 --      .after -> fn(machine) that returns formspec string to insert after all other formspec content
-local base_mach.build_fs(machine)
+function base_mach.build_fs(machine)
     local fsdef = machine.class.fsdef
     local fs
     -- start/misc section
     local fs_width = (fsdef.size and fsdef.size.x) or 10
     local fs_height = (fsdef.size and fsdef.size.y) or 9
     fs = fs .. string.format('size[%f,%f]', fs_width, fs_height)
-    fs = fs .. fsdef.setup or base_mach.fs_start
+    fs = fs .. fsdef.theme or base_mach.fs_theme
     if fsdef.before then
         fs = fs .. fsdef.before(machine)
     end
@@ -221,8 +221,12 @@ local base_mach.build_fs(machine)
     return fs
 end
 
--- heat display formspec
-function base_mach.fs_heat_info(machine, fsx, fsy)
+function base_mach.build_infotext(machine)
+    return machine.class.infodef(machine)
+end
+
+-- meter display (TODO)
+function base_mach.fs_meter(machine, fsx, fsy)
     if machine.heat_level > machine.max_heat then
         return string.format('image[%f,%f;2,2;terumet_gui_heat_over.png]label[%f,%f;Heat Overflow]', fsx, fsy, fsx, fsy+2)
     else
@@ -375,6 +379,8 @@ function base_mach.write_state(pos, machine)
     meta:set_int('heat_xfer_mode', machine.heat_xfer_mode or base_mach.HEAT_XFER_MODE.NO_XFER)
     meta:set_int('state', machine.state)
     meta:set_float('state_time', machine.state_time)
+    meta:set_string('formspec', base_mach.build_fs(machine))
+    meta:set_string('infotext', base_mach.build_infotext(machine))
     -- call write callback on node def if exists
     if machine.class.on_write_state then machine.class.on_write_state(machine) end
 end

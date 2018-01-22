@@ -14,43 +14,28 @@ base_asm.STATE.FLUX_MELT = 1
 base_asm.STATE.ALLOYING = 2
 base_asm.STATE.VENTING = 3
 
-function base_asm.generate_formspec(smelter)
-    local fs = 'size[10,9]'..base_mach.fs_start..
-    --player inventory
-    base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(smelter,8,0)..
-    --input inventory
-    base_mach.fs_input(smelter,0,1.5,2,2)..
-    --output inventory
-    base_mach.fs_output(smelter,6,1.5,2,2)..
-    --fuel slot
-    base_mach.fs_fuel_slot(smelter,6.5,0)..
-    --upgrade slots
-    base_mach.fs_upgrades(smelter,8.75,1)..
-    --current status
-    'label[0,0;Terumetal Alloy Smelter]'..
-    'label[0,0.5;' .. smelter.status_text .. ']'..
-    base_mach.fs_flux_info(smelter,2,1.5,100.0 * smelter.flux_tank / opts.FLUX_MAXIMUM)..
-    base_mach.fs_heat_info(smelter,4.25,1.5)..
-    base_mach.fs_heat_mode(smelter,4.25,4)
-    if smelter.state == base_asm.STATE.FLUX_MELT then
-        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('item_cryst_raw')..']'
-    elseif smelter.state == base_asm.STATE.ALLOYING then
-        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
-    end
-    --option buttons
-    if smelter.zero_flux_recipes then
-        fs=fs..'image_button[8.75,8;1,1;default_bronze_ingot.png;zfr_toggle; ]'..
-        'tooltip[zfr_toggle;Using zero flux recipies]'
-    else
-        fs=fs..'image_button[8.75,8;1,1;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]'..
-        'tooltip[zfr_toggle;Ignoring zero flux recipies]'
-    end
-    return fs
-end
+local FSDEF = {
+    control = function(machine)
+        if machine.zero_flux_recipes then
+            return 'image_button[0,4;1,1;default_bronze_ingot.png;zfr_toggle; ]tooltip[zfr_toggle;Using zero flux recipies]'
+        else
+            return 'image_button[0,4;1,1;(default_bronze_ingot.png^terumet_gui_disabled.png);zfr_toggle; ]tooltip[zfr_toggle;Ignoring zero flux recipies]'
+        end
+    end,
+    machine = function(machine)
+        if machine.state == base_asm.STATE.FLUX_MELT then
+            return 'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..terumet.id('item_cryst_raw')..']'
+        elseif machine.state == base_asm.STATE.ALLOYING then
+            return 'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..smelter.inv:get_stack('result',1):get_name()..']'
+        end
+    end,
+    input = true,
+    output = true,
+    fuel_slot = true,
+}
 
-function base_asm.generate_infotext(smelter)
-    return string.format('Alloy Smelter (%.1f%% heat): %s', base_mach.heat_pct(smelter), smelter.status_text)
+local INFODEF = function(machine)
+    return string.format('Alloy Smelter (%.1f%% heat): %s', base_mach.heat_pct(machine), machine.status_text)
 end
 
 function base_asm.init(pos)
@@ -246,6 +231,8 @@ base_asm.unlit_nodedef = base_mach.nodedef{
     -- machine class data
     _terumach_class = {
         name = 'Terumetal Alloy Smelter',
+        fsdef = FSDEF,
+        infodef = INFODEF,
         timer = 0.5,
         drop_id = base_asm.unlit_id,
         get_drop_contents = base_asm.get_drop_contents,
@@ -264,8 +251,6 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         end,
         on_write_state = function(asmelt)
             asmelt.meta:set_int('flux_tank', asmelt.flux_tank)
-            asmelt.meta:set_string('formspec', base_asm.generate_formspec(asmelt))
-            asmelt.meta:set_string('infotext', base_asm.generate_infotext(asmelt))
             asmelt.meta:set_int('heatcost', asmelt.heat_cost or 0)
             asmelt.meta:set_int('opt_zfr', (asmelt.zero_flux_recipes and 1) or 0)
         end
