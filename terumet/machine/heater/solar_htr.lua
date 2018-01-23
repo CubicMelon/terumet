@@ -114,7 +114,7 @@ sol_htr.nodedef = base_mach.nodedef{
         timer = 1.0,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
-        on_external_heat = nil,
+        on_external_heat = terumet.NO_FUNCTION,
         get_drop_contents = sol_htr.get_drop_contents,
     }
 }

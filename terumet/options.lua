@@ -54,6 +54,13 @@ terumet.options.heater = {
         SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 6, 12 },
         -- Maximum HUs Solar Heater can transfer per tick
         HEAT_TRANSFER_RATE = 100,
+    },
+    entropy={
+        --
+        -- ENTROPIC HEATER SETTINGS
+        --
+        MAX_HEAT = 20000,
+        HEAT_TRANSFER_RATE = 500
     }
 }
 

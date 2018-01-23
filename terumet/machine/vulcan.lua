@@ -16,9 +16,9 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        fs = ''
+        local fs = ''
         if machine.state == base_vul.STATE.VULCANIZING then
-            fs=fs..base_mach.fs_proc(3,2,'gen',machine.inv:get_stack('result',1))
+            fs=base_mach.fs_proc(3,2,'gen',machine.inv:get_stack('result',1))
         end
         return fs
     end,
