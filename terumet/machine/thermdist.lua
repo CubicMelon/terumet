@@ -6,27 +6,12 @@ local base_mach = terumet.machine
 local base_tdist = {}
 base_tdist.id = terumet.id('mach_thermdist')
 
-function base_tdist.generate_formspec(box)
-    local fs = 'size[8,9]'..base_mach.fs_start..
-    --fuel slot
-    base_mach.fs_fuel_slot(box,3.5,0)..
-    --output slot
-    base_mach.fs_output(box,3.5,2,1,1)..
-    --player inventory
-    base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(box,5,0)..
-    base_mach.fs_upgrades(box,6.75,1)..
-    --current status
-    'label[0,0;Thermal Distributor]'..
-    'label[0,0.5;' .. box.status_text .. ']'..
-    base_mach.fs_heat_info(box,1,1.5)..
-    base_mach.fs_heat_mode(box,1,4)
-    return fs
-end
-
-function base_tdist.generate_infotext(box)
-    return string.format('Thermal Distributor (%.1f%% heat): %s', base_mach.heat_pct(box), box.status_text)
-end
+local FSDEF = {
+    control_buttons = {
+        base_mach.buttondefs.HEAT_XFER_TOGGLE,
+    },
+    fuel_slot = {true},
+}
 
 function base_tdist.init(pos)
     local meta = minetest.get_meta(pos)
@@ -40,7 +25,6 @@ function base_tdist.init(pos)
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
-        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta,
@@ -98,14 +82,12 @@ base_tdist.nodedef = base_mach.nodedef{
     _terumach_class = {
         name = 'Thermal Distributor',
         timer = 1.0,
+        fsdef = FSDEF,
+        default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         drop_id = base_tdist.id,
         on_external_heat = terumet.NO_FUNCTION,
         on_inventory_change = terumet.NO_FUNCTION,
         get_drop_contents = base_tdist.get_drop_contents,
-        on_write_state = function(tbox)
-            tbox.meta:set_string('formspec', base_tdist.generate_formspec(tbox))
-            tbox.meta:set_string('infotext', base_tdist.generate_infotext(tbox))
-        end
     }
 }
 

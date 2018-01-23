@@ -10,26 +10,14 @@ base_ray.reflector_id = terumet.id('block_rayref')
 base_ray.STATE = {}
 base_ray.STATE.WAITING = 0
 
-function base_ray.generate_formspec(ray)
-    local fs = 'size[8,9]'..base_mach.fs_start..
-    --player inventory
-    base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(ray,5,0)..
-    --current status
-    'label[0,0;HEAT Ray Emitter]'..
-    'label[0,0.5;' .. ray.status_text .. ']'..
-    string.format('label[0,1;Last result: %s]', ray.last_error)..
-    base_mach.fs_heat_info(ray,3,1.5)..
-    -- testing facing info
-    --string.format('label[0,1;I am facing %s]', base_mach.FACING_DIRECTION[ray.facing])..
-    --string.format('label[0,1.5;So forward is %s]', dump(base_mach.FACING_OFFSETS[ray.facing]))..
-    --list rings
-    'listring[current_player;main]'..
-	'listring[context;fuel]'..
-    'listring[current_player;main]'..
-    'listring[context;out]'
-    return fs
-end
+local FSDEF = {
+    control_buttons = {
+        base_mach.buttondefs.HEAT_XFER_TOGGLE
+    },
+    machine = function(machine)
+        return string.format('label[0,1;:Last result: %s]', machine.last_error)
+    end
+}
 
 function base_ray.init(pos)
     local meta = minetest.get_meta(pos)
@@ -41,7 +29,6 @@ function base_ray.init(pos)
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
-        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta,
@@ -244,6 +231,8 @@ base_ray.nodedef = base_mach.nodedef{
     _terumach_class = {
         name = 'HEAT Ray Emitter',
         timer = 0.2,
+        fsdef = FSDEF,
+        default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         drop_id = base_ray.id,
         on_external_heat = nil,
         on_inventory_change = nil,
@@ -251,8 +240,6 @@ base_ray.nodedef = base_mach.nodedef{
             ray.last_error = ray.meta:get_string('last_error')
         end,
         on_write_state = function(ray)
-            ray.meta:set_string('formspec', base_ray.generate_formspec(ray))
-            ray.meta:set_string('infotext', base_ray.generate_infotext(ray))
             ray.meta:set_string('last_error', ray.last_error or 'none')
         end
     }

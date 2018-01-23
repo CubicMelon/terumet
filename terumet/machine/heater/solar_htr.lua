@@ -10,23 +10,18 @@ sol_htr.id = terumet.id('mach_htr_solar')
 sol_htr.STATE = {}
 sol_htr.STATE.GENERATING = 0
 
-function sol_htr.generate_formspec(heater)
-    local fs = 'size[8,9]'..base_mach.fs_start..
-    --player inventory
-    base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(heater,5,0)..
-    --current status
-    'label[0,0;Solar Heater]'..
-    'label[0,0.5;' .. heater.status_text .. ']'..
-    base_mach.fs_heat_info(heater,1,1.5)..
-    base_mach.fs_heat_mode(heater,1,4)..
-    base_mach.fs_upgrades(heater,6.75,1)
-    return fs
-end
-
-function sol_htr.generate_infotext(heater)
-    return string.format('Solar Heater (%.1f%% heat): %s', base_mach.heat_pct(heater), heater.status_text)
-end
+local FSDEF = {
+    control_buttons = {
+        base_mach.buttondefs.HEAT_XFER_TOGGLE
+    },
+    machine = function(machine)
+        local fs = ''
+        if machine.last_sun and machine.last_interf then
+            fs = base_mach.fs_double_meter(2.5,1, 'sun', machine.last_sun, 'interf', machine.last_interf)
+        end
+        return fs
+    end
+}
 
 function sol_htr.init(pos)
     local meta = minetest.get_meta(pos)
@@ -39,7 +34,6 @@ function sol_htr.init(pos)
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
-        heat_xfer_mode = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
         status_text = 'New',
         inv = inv,
         meta = meta,
@@ -55,7 +49,7 @@ function sol_htr.get_drop_contents(machine)
     return drops
 end
 
-local LIGHT_LEEWAY = 4
+local LIGHT_LEEWAY = 3
 function sol_htr.do_processing(solar, dt)
     local above = {x=solar.pos.x, y=solar.pos.y+1, z=solar.pos.z}
     -- use light level at midnight to determine how much artificial light is affecting light level
@@ -68,20 +62,23 @@ function sol_htr.do_processing(solar, dt)
     local gain = opts.SOLAR_GAIN_RATES[effective_light+1]
 
     if base_mach.has_upgrade(solar, 'gen_up') then gain = gain * 2 end
+    local last_eff = 100.0*effective_light/15
+    local last_sun = 100.0*present_light/15
+    local last_interf = math.max(0, 100.0*(night_light-LIGHT_LEEWAY)/15)
     if gain == 0 then
-        solar.status_text = 'Waiting for sufficient sunlight'
+        solar.status_text = string.format('Waiting. Effective light: %.0f%%', last_eff)
     else
         local under_cap = solar.heat_level < (solar.max_heat - gain)
         if under_cap then
             base_mach.gain_heat(solar, gain)
-            solar.status_text = string.format('Sunlight: %.0f%% ', 100.0*effective_light/15)
+            solar.status_text = string.format('Heating. Effective light: %.0f%% ', last_eff)
         else
-            solar.status_text = 'Heat is maximum'
+            solar.status_text = 'Idle; maximum heat.'
         end
     end
-    if night_light > LIGHT_LEEWAY then
-        solar.status_text = solar.status_text .. string.format(', Interference: %.0f%%', 100.0*(night_light-LIGHT_LEEWAY)/15)
-    end
+    solar.last_sun = last_sun
+    solar.last_interf = last_interf
+    solar.last_eff = last_eff
 end
 
 function sol_htr.tick(pos, dt)
@@ -115,12 +112,10 @@ sol_htr.nodedef = base_mach.nodedef{
     _terumach_class = {
         name = 'Solar Heater',
         timer = 1.0,
+        fsdef = FSDEF,
+        default_heat_xfer = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
         on_external_heat = nil,
         get_drop_contents = sol_htr.get_drop_contents,
-        on_write_state = function(solar)
-            solar.meta:set_string('formspec', sol_htr.generate_formspec(solar))
-            solar.meta:set_string('infotext', sol_htr.generate_infotext(solar))
-        end
     }
 }
 

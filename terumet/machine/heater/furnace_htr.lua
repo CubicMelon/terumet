@@ -13,31 +13,19 @@ furn_htr.STATE.IDLE = 0
 furn_htr.STATE.BURNING = 1
 furn_htr.STATE.BURN_FULL = 2
 
-function furn_htr.generate_formspec(heater)
-    local fs = 'size[8,9]'..base_mach.fs_start..
-    --player inventory
-    base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(heater,5,0)..
-    --input inventory
-    base_mach.fs_input(heater,1,1.5,1,1)..
-    --current status
-    'label[0,0;Furnace Heater]'..
-    'label[0,0.5;' .. heater.status_text .. ']'..
-    base_mach.fs_heat_info(heater,3,1.5)..
-    base_mach.fs_heat_mode(heater,3,4)..
-    base_mach.fs_upgrades(heater,6.75,1)
-    if heater.state ~= furn_htr.STATE.IDLE then
-        fs=fs..'image[5,1.5;1,1;terumet_gui_product_bg.png]item_image[5,1.5;1,1;'..heater.inv:get_stack('burn',1):get_name()..']'
-    end
-    --list rings
-    fs=fs.."listring[current_player;main]"..
-	"listring[context;in]"
-    return fs
-end
-
-function furn_htr.generate_infotext(heater)
-    return string.format('Furnace Heater (%.1f%% heat): %s', base_mach.heat_pct(heater), heater.status_text)
-end
+local FSDEF = {
+    control_buttons = {
+        base_mach.buttondefs.HEAT_XFER_TOGGLE
+    },
+    machine = function(machine)
+        local fs = ''
+        if machine.state ~= furn_htr.STATE.IDLE then
+            fs=fs..base_mach.fs_proc(3.5, 1.5, 'heat', machine.inv:get_stack('burn', 1))
+        end
+        return fs
+    end,
+    input = {x=2.5, y=1.5}
+}
 
 function furn_htr.init(pos)
     local meta = minetest.get_meta(pos)
@@ -51,7 +39,6 @@ function furn_htr.init(pos)
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
-        heat_xfer_mode = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
         status_text = 'New',
         inv = inv,
         meta = meta
@@ -165,6 +152,8 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
     _terumach_class = {
         name = 'Furnace Heater',
         timer = 0.5,
+        fsdef = FSDEF,
+        default_heat_xfer = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
         drop_id = furn_htr.unlit_id,
         on_external_heat = nil,
         get_drop_contents = furn_htr.get_drop_contents,
@@ -172,8 +161,6 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
             fheater.gen_rate = fheater.meta:get_int('genrate') or 0
         end,
         on_write_state = function(fheater)
-            fheater.meta:set_string('formspec', furn_htr.generate_formspec(fheater))
-            fheater.meta:set_string('infotext', furn_htr.generate_infotext(fheater))
             fheater.meta:set_int('genrate', fheater.gen_rate or 0)
         end
     }

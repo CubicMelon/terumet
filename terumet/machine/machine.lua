@@ -34,7 +34,7 @@ end
 
 -- constants for interactive heat behavior of machines
 base_mach.HEAT_XFER_MODE= {
-    NO_XFER=0, -- default if not specified
+    NO_XFER=0,
     ACCEPT=1,
     PROVIDE_ONLY=2
 }
@@ -156,7 +156,7 @@ base_mach.buttondefs.HEAT_XFER_TOGGLE = {
 --      .input -> {true} or {x,y,w,h} that input slots/info should be shown (2x2 slots if no width/height provided)
 --      .output -> {true} or {x,y,w,h} that output slots/info should be shown (2x2 slots if no width/height provided)
 --      .fuel_slot -> {true} or {x,y} that fuel slot should be shown in control section
---      .player_inv -> {x,y} that repositions player inventory
+--      .player_inv -> {x,y} that repositions player inventory, or 'hide' to not show
 --      .list_rings -> formspec string that defines list rings, otherwise: player;main -> machine;in -> player;main -> machine;out ->
 --      .after -> fn(machine) that returns formspec string to insert after all other formspec content
 function base_mach.build_fs(machine)
@@ -165,7 +165,7 @@ function base_mach.build_fs(machine)
     local fs_width = (fsdef.size and fsdef.size.x) or 11
     local fs_height = (fsdef.size and fsdef.size.y) or 9
     local fs = string.format('size[%f,%f]', fs_width, fs_height)
-    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#432d31;#d57788;#3f252b;#114f51;#d2fdff]', fs_width, fs_height))
+    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#432d31;#91626b;#3f252b;#114f51;#d2fdff]', fs_width, fs_height))
     if fsdef.before then
         fs = fs .. fsdef.before(machine)
     end
@@ -202,7 +202,7 @@ function base_mach.build_fs(machine)
     local bty = 0 
     for _, buttondef in ipairs(fsdef.control_buttons) do
         if buttondef.flag then
-            flag_on = false
+            local flag_on = false
             if type(buttondef.flag) == 'string' then
                 flag_on = machine[buttondef.flag]
             elseif type(buttondef.flag) == 'function' then
@@ -256,9 +256,11 @@ function base_mach.build_fs(machine)
     end
     fs = fs..'container_end[]'
     -- player inventory
-    local pix = (fsdef.player_inv and fsdef.player_inv.x) or 3
-    local piy = (fsdef.player_inv and fsdef.player_inv.y) or fs_height - 4.25
-    fs = fs..string.format('list[current_player;main;%f,%f;8,1;]list[current_player;main;%f,%f;8,3;8]', pix, piy, pix, piy+1.25)
+    if 'hide' ~= fsdef.player_inv then
+        local pix = (fsdef.player_inv and fsdef.player_inv.x) or 3
+        local piy = (fsdef.player_inv and fsdef.player_inv.y) or fs_height - 4.25
+        fs = fs..string.format('list[current_player;main;%f,%f;8,1;]list[current_player;main;%f,%f;8,3;8]', pix, piy, pix, piy+1.25)
+    end
     -- list rings
     if fsdef.list_rings then
         fs = fs..fsdef.list_rings
@@ -276,12 +278,27 @@ function base_mach.build_infotext(machine)
     return string.format('%s (%.1f%% heat): %s', machine.class.name, base_mach.heat_pct(machine), machine.status_text)
 end
 
--- meter display
+-- basic process display
+function base_mach.fs_proc(fsx, fsy, proc, itemstack)
+    if itemstack and not itemstack:is_empty() then
+        return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]item_image[%f,%f;1,1;%s]', 
+            fsx, fsy, proc, fsx+0.4, fsy+0.4, itemstack:get_name())
+    else
+        return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]', fsx, fsy, proc)
+    end
+end
+
+-- basic meter display
 function base_mach.fs_meter(fsx, fsy, id, fill, text)
     return string.format('label[%f,%f;%s]image[%f,%f;3.5,1;(terumet_gui_bg_%s.png^[lowpart:%f:terumet_gui_fg_%s.png)^[transformR270]',
         fsx+1.2,fsy+0.4,text, fsx, fsy, id, fill, id)
 end
 
+-- double meter display (no text)
+function base_mach.fs_double_meter(fsx, fsy, mainid, mainfill, oppid, oppfill)
+    return string.format('image[%f,%f;3.5,1;(terumet_gui_bg_%s.png^[lowpart:%f:terumet_gui_fg_%s.png^[lowpart:%f:terumet_gui_fg_%s.png)^[transformR270]',
+        fsx, fsy, mainid, mainfill, mainid, oppfill, oppid)
+end
 --
 -- GENERIC META
 --
@@ -639,7 +656,9 @@ function base_mach.nodedef(additions)
                         save = true
                     else
                         -- handle machine custom buttondefs - returns true to auto save machine state
-                        save = machine.class.on_form_action(machine, fields, player_name)
+                        if machine.class.on_form_action then
+                            save = machine.class.on_form_action(machine, fields, player_name)
+                        end
                     end
                     if save then
                         base_mach.write_state(machine.pos, machine)

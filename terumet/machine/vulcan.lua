@@ -11,38 +11,21 @@ base_vul.STATE = {}
 base_vul.STATE.IDLE = 0
 base_vul.STATE.VULCANIZING = 1
 
-function base_vul.generate_formspec(vulcan)
-    local fs = 'size[10,9]'..base_mach.fs_start..
-    --player inventory
-    base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(vulcan,5,0)..
-    --input inventory
-    base_mach.fs_input(vulcan,0,1.5,2,2)..
-    --output inventory
-    base_mach.fs_output(vulcan,6,1.5,2,2)..
-    --fuel slot
-    base_mach.fs_fuel_slot(vulcan,6.5,0)..
-    --upgrade slots
-    base_mach.fs_upgrades(vulcan,8.75,1)..
-    --current status
-    'label[0,0;Crystal Vulcanizer]'..
-    'label[0,0.5;' .. vulcan.status_text .. ']'..
-    base_mach.fs_heat_info(vulcan,4.25,1.5)..
-    base_mach.fs_heat_mode(vulcan,4.25,4)
-    if vulcan.state == base_vul.STATE.VULCANIZING then
-        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..vulcan.inv:get_stack('result',1):get_name()..']'
-    end
-    --list rings
-    fs=fs.."listring[current_player;main]"..
-	"listring[context;in]"..
-    "listring[current_player;main]"..
-    "listring[context;out]"
-    return fs
-end
-
-function base_vul.generate_infotext(vulcan)
-    return string.format('Crystal Vulcanizer (%.1f%% heat): %s', base_mach.heat_pct(vulcan), vulcan.status_text)
-end
+local FSDEF = {
+    control_buttons = {
+        base_mach.buttondefs.HEAT_XFER_TOGGLE,
+    },
+    machine = function(machine)
+        fs = ''
+        if machine.state == base_vul.STATE.VULCANIZING then
+            fs=fs..base_mach.fs_proc(3,2,'gen',machine.inv:get_stack('result',1))
+        end
+        return fs
+    end,
+    input = {true},
+    output = {true},
+    fuel_slot = {true},
+}
 
 function base_vul.init(pos)
     local meta = minetest.get_meta(pos)
@@ -59,7 +42,6 @@ function base_vul.init(pos)
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
-        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta,
@@ -170,13 +152,13 @@ base_vul.nodedef = base_mach.nodedef{
     _terumach_class = {
         name = 'Crystal Vulcanizer',
         timer = 0.5,
+        fsdef = FSDEF,
+        default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         get_drop_contents = base_vul.get_drop_contents,
         on_read_state = function(vulcan)
             vulcan.heat_cost = vulcan.meta:get_int('heatcost') or 0
         end,
         on_write_state = function(vulcan)
-            vulcan.meta:set_string('formspec', base_vul.generate_formspec(vulcan))
-            vulcan.meta:set_string('infotext', base_vul.generate_infotext(vulcan))
             vulcan.meta:set_int('heatcost', vulcan.heat_cost or 0)
         end
     }

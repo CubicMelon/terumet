@@ -12,7 +12,6 @@ base_asm.STATE = {}
 base_asm.STATE.IDLE = 0
 base_asm.STATE.FLUX_MELT = 1
 base_asm.STATE.ALLOYING = 2
-base_asm.STATE.VENTING = 3
 
 local FSDEF = {
     control_buttons = {
@@ -22,9 +21,9 @@ local FSDEF = {
     machine = function(machine)
         local fs = base_mach.fs_meter(2.5,1, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d flux', machine.flux_tank))
         if machine.state == base_asm.STATE.FLUX_MELT then
-            fs=fs..'image[3,2;2,2;terumet_gui_proc_flux.png]'
+            fs=fs..base_mach.fs_proc(3,2,'flux')
         elseif machine.state == base_asm.STATE.ALLOYING then
-            fs=fs..'image[3,2;2,2;terumet_gui_proc_alloy.png]item_image[3.4,2.5;1,1;'..machine.inv:get_stack('result',1):get_name()..']'
+            fs=fs..base_mach.fs_proc(3,2,'alloy',machine.inv:get_stack('result',1))
         end
         return fs
     end,
@@ -32,6 +31,13 @@ local FSDEF = {
     output = {true},
     fuel_slot = {true},
 }
+
+local FORM_ACTION = function(asmelt, fields, player)
+    if fields.zfr_toggle then
+        asmelt.zero_flux_recipes = not asmelt.zero_flux_recipes
+        return true -- return true to save new machine state
+    end
+end
 
 function base_asm.init(pos)
     local meta = minetest.get_meta(pos)
@@ -232,12 +238,7 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         -- end new
         drop_id = base_asm.unlit_id,
         get_drop_contents = base_asm.get_drop_contents,
-        on_form_action = function(asmelt, fields, player)
-            if fields.zfr_toggle then
-                asmelt.zero_flux_recipes = not asmelt.zero_flux_recipes
-                return true -- return true to save new machine state
-            end
-        end,
+        on_form_action = FORM_ACTION,
         on_read_state = function(asmelt)
             asmelt.flux_tank = asmelt.meta:get_int('flux_tank')
             asmelt.heat_cost = asmelt.meta:get_int('heatcost') or 0

@@ -12,37 +12,22 @@ base_htf.STATE = {}
 base_htf.STATE.IDLE = 0
 base_htf.STATE.COOKING = 1
 
-function base_htf.generate_formspec(furnace)
-    local fs = 'size[10,9]'..base_mach.fs_start..
-    --player inventory
-    base_mach.fs_player_inv(0,4.75)..
-    base_mach.fs_owner(furnace,8,0)..
-    --input inventory
-    base_mach.fs_input(furnace,0,1.5,2,2)..
-    --output inventory
-    base_mach.fs_output(furnace,6,1.5,2,2)..
-    --fuel slot
-    base_mach.fs_fuel_slot(furnace,6.5,0)..
-    --current status
-    'label[0,0;High-Temperature Furnace]'..
-    'label[0,0.5;' .. furnace.status_text .. ']'..
-    base_mach.fs_heat_info(furnace,4.25,1.5)..
-    base_mach.fs_heat_mode(furnace,4.25,4)..
-    base_mach.fs_upgrades(furnace,8.75,1)
-    if furnace.state == base_htf.STATE.COOKING then
-        fs=fs..'image[3.5,1.75;1,1;terumet_gui_product_bg.png]item_image[3.5,1.75;1,1;'..furnace.inv:get_stack('result',1):get_name()..']'
-    end
-    --list rings
-    fs=fs.."listring[current_player;main]"..
-	"listring[context;in]"..
-    "listring[current_player;main]"..
-    "listring[context;out]"
-    return fs
-end
+local FSDEF = {
+    control_buttons = {
+        base_mach.buttondefs.HEAT_XFER_TOGGLE,
+    },
+    machine = function(machine)
+        local fs = ''
+        if machine.state == base_htf.STATE.COOKING then
+            fs=fs..base_mach.fs_proc(3,2,'gen', machine.inv:get_stack('result',1))
+        end
+        return fs
+    end,
+    input = {true},
+    output = {true},
+    fuel_slot = {true},
+}
 
-function base_htf.generate_infotext(furnace)
-    return string.format('High-Temp Furnace (%.1f%% heat): %s', base_mach.heat_pct(furnace), furnace.status_text)
-end
 
 function base_htf.init(pos)
     local meta = minetest.get_meta(pos)
@@ -58,7 +43,6 @@ function base_htf.init(pos)
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
-        heat_xfer_mode = base_mach.HEAT_XFER_MODE.ACCEPT,
         status_text = 'New',
         inv = inv,
         meta = meta,
@@ -182,14 +166,14 @@ base_htf.unlit_nodedef = base_mach.nodedef{
     _terumach_class = {
         name = 'High-Temperature Furnace',
         timer = 0.5,
+        fsdef = FSDEF,
+        default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         drop_id = base_htf.unlit_id,
         get_drop_contents = base_htf.get_drop_contents,
         on_read_state = function(htfurnace)
             htfurnace.heat_cost = htfurnace.meta:get_int('heatcost') or 0
         end,
         on_write_state = function(htfurnace)
-            htfurnace.meta:set_string('formspec', base_htf.generate_formspec(htfurnace))
-            htfurnace.meta:set_string('infotext', base_htf.generate_infotext(htfurnace))
             htfurnace.meta:set_int('heatcost', htfurnace.heat_cost or 0)
         end
     }
