@@ -97,6 +97,6 @@ minetest.register_node(ent_htr.id, ent_htr.nodedef)
 
 minetest.register_craft{ output = ent_htr.id, recipe = {
     {terumet.id('item_upg_gen_up'), terumet.id('item_htglass'), terumet.id('item_upg_gen_up')},
-    {terumet.id('item_thermese'), terumet.id('frame_cgls'), terumet.id('item_thermese')},
-    {terumet.id('block_ceramic'), terumet.id('item_upg_heat_xfer'), terumet.id('block_ceramic')}
+    {terumet.id('item_entropy'), terumet.id('frame_cgls'), terumet.id('item_entropy')},
+    {terumet.id('block_ceramic'), terumet.id('item_entropy'), terumet.id('block_ceramic')}
 }}
