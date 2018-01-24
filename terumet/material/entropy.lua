@@ -7,7 +7,7 @@ minetest.register_craftitem( ent_crystal_id, {
 })
 
 minetest.register_node( ent_matrix_id, {
-    description = 'Entropic Matrix\nPlace directly above Accelerated Entropy Heater',
+    description = 'Entropic Matrix\nPlace directly above EEE Heater',
     tiles = {terumet.tex(ent_matrix_id)},
     is_ground_content = false,
     groups={cracky=1, level=2},

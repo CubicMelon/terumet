@@ -13,6 +13,7 @@ ent_htr.STATE.DRAINING = 1
 ent_htr.STATE.DRAIN_FULL = 2
 
 local FSDEF = {
+    status_text={x=2,y=0},
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE
     },
@@ -51,6 +52,19 @@ function ent_htr.get_drop_contents(machine)
     return drops
 end
 
+local PARTICLE_DATA = {
+    expiration = 0.6,
+    glow = 1,
+    size = 2.0,
+    texture = 'terumet_part_entropy.png',
+    animation = {
+        type = "vertical_frames",
+        aspect_w = 16,
+        aspect_h = 16,
+        length = 0.8,
+    }
+}
+
 function ent_htr.do_processing(machine, dt)
     if machine.state == ent_htr.STATE.FINDING then
         if machine.search_pos then
@@ -75,7 +89,6 @@ function ent_htr.do_processing(machine, dt)
         if found_node then
             local effects = opts.EFFECTS[found_node.name]
             if effects then
-                --minetest.log('error', 'found deffects for '..found_node.name..' change = ' ..(effects.change or 'nothin*'))
                 machine.state = ent_htr.STATE.DRAINING
                 machine.inv:set_stack('drain', 1, found_node.name)
                 machine.state_time = effects.time or opts.DEFAULT_DRAIN_TIME
@@ -85,6 +98,7 @@ function ent_htr.do_processing(machine, dt)
                     minetest.set_node(machine.search_pos, found_node)
                 end
                 machine.status_text = 'Starting extraction of ' .. machine.inv:get_stack('drain',1):get_name() .. ' at ' .. minetest.pos_to_string(machine.search_pos) .. '...'
+                terumet.particle_stream(terumet.pos_plus(machine.pos, base_mach.ADJACENT_OFFSETS.up), machine.search_pos, 30, PARTICLE_DATA)
             else
                 local node_def = minetest.registered_nodes[found_node.name]
                 local node_name = (node_def and node_def.description) or 'Undefined node'
@@ -94,8 +108,8 @@ function ent_htr.do_processing(machine, dt)
             machine.status_text = minetest.pos_to_string(machine.search_pos) .. ' unloaded or invalid...'
         end
     else
-        local gain = math.floor(machine.heat_rate * dt)
-        if gain == 0 then return end
+        local gain = math.ceil(machine.heat_rate * dt)
+        --if gain == 0 then return end -- no longer necessary?
         local under_cap = machine.heat_level < (machine.max_heat - gain)
         if machine.state == ent_htr.STATE.DRAIN_FULL and under_cap then
             machine.state = ent_htr.STATE.DRAINING
@@ -110,6 +124,7 @@ function ent_htr.do_processing(machine, dt)
                     machine.state = ent_htr.STATE.FINDING
                 else
                     machine.status_text = 'Extracting (' .. terumet.format_time(machine.state_time) .. ')'
+                    base_mach.generate_particle(terumet.pos_plus(machine.pos, base_mach.ADJACENT_OFFSETS.up), PARTICLE_DATA)
                 end
             else
                 machine.state = ent_htr.STATE.DRAIN_FULL

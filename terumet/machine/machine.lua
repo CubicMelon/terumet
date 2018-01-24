@@ -153,6 +153,7 @@ base_mach.buttondefs.HEAT_XFER_TOGGLE = {
 --              .name -> id to assign to button (returned as field to machine's on_form_action)
 --              .on_text + .off_text -> tooltips when on/off
 --      .machine -> fn(machine) that returns formspec string to insert inside main machine container
+--      .status_text -> {x,y} to reposition status text or 'hide' to not show
 --      .input -> {true} or {x,y,w,h} that input slots/info should be shown (2x2 slots if no width/height provided)
 --      .output -> {true} or {x,y,w,h} that output slots/info should be shown (2x2 slots if no width/height provided)
 --      .fuel_slot -> {true} or {x,y} that fuel slot should be shown in control section
@@ -224,7 +225,11 @@ function base_mach.build_fs(machine)
     end
     -- machine container
     fs = fs..'container_end[]container_end[]container[3,0]'
-    fs = fs..string.format('label[0,0;%s]', machine.status_text)
+    if 'hide' ~= fsdef.status_text then
+        local sttx = (fsdef.status_text and fsdef.status_text.x) or 0
+        local stty = (fsdef.status_text and fsdef.status_text.y) or 0
+        fs = fs..string.format('label[%f,%f;%s]', sttx, stty, machine.status_text)
+    end
     if fsdef.machine then
         fs = fs .. fsdef.machine(machine)
     end
@@ -580,22 +585,22 @@ function base_mach.gain_heat(machine, value)
     machine.heat_level = math.min(machine.max_heat, machine.heat_level + value)
 end
 
-base_mach.RAND = PcgRandom(os.time())
-
-function base_mach.generate_particle(pos, particle_tex)
+function base_mach.generate_particle(pos, particle_data)
     if not opts.PARTICLES then return end
-    local xoff = base_mach.RAND:next(-5,5) / 10
-    local zoff = base_mach.RAND:next(-5,5) / 10
-    local sz = base_mach.RAND:next(50,400) / 100
-    local vel = base_mach.RAND:next(2,5) / 10
+    particle_data = particle_data or terumet.EMPTY
+    local xoff = terumet.RAND:next(-5,5) / 10
+    local zoff = terumet.RAND:next(-5,5) / 10
+    local sz = terumet.RAND:next(50,400) / 100
+    local vel = terumet.RAND:next(2,5) / 10
     minetest.add_particle{
         pos={x=pos.x+xoff, y=pos.y+0.5, z=pos.z+zoff},
         velocity={x=0, y=vel, z=0},
         acceleration={x=0, y=0.6, z=0},
-        expirationtime=1.5,
+        expirationtime=(1.5 or particle_data.expiration),
         size=sz,
         collisiondetection=false,
-        texture=(particle_tex or 'default_item_smoke.png')
+        texture=(particle_data.texture or 'default_item_smoke.png'),
+        animation=particle_data.animation
     }
 end
 

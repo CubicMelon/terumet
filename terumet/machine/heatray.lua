@@ -134,12 +134,9 @@ function base_ray.fire(ray, target)
     -- if we hit the expected target, create the particles and send the heat!
     if trace and trace.hit and vector.equals(target.pos, trace.pos) then
         for _,ppos in pairs(ray_path) do
-            local xv = base_mach.RAND:next(-5,5) / 10
-            local yv = base_mach.RAND:next(-5,5) / 10
-            local zv = base_mach.RAND:next(-5,5) / 10
             minetest.add_particle{
                 pos=ppos,
-                velocity={x=xv, y=yv+0.25, z=zv},
+                velocity=terumet.random_velocity(5),
                 expirationtime=1,
                 size=1,
                 texture='terumet_part_ray.png',

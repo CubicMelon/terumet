@@ -31,6 +31,8 @@ local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
 
+terumet.RAND = PcgRandom(os.time())
+
 function terumet.pos_plus(pos, offset)
     return {
         x=pos.x + offset.x,
@@ -41,6 +43,7 @@ end
 
 -- empty function useful for where a callback is necessary but using nil would cause undesired default behavior
 terumet.NO_FUNCTION = function() end
+terumet.EMPTY = {}
 
 function terumet.recipe_3x3(i)
     return { 
@@ -52,6 +55,33 @@ function terumet.recipe_box(outer, inner)
     return {
         {outer, outer, outer}, {outer, inner, outer}, {outer, outer, outer}
     }
+end
+
+function terumet.random_velocity(max_tenths)
+    return {
+        x = terumet.RAND:next(-max_tenths,max_tenths) / 10,
+        y = terumet.RAND:next(-max_tenths,max_tenths) / 10,
+        z = terumet.RAND:next(-max_tenths,max_tenths) / 10
+    }
+end
+
+function terumet.particle_stream(pointA, pointB, density, particle_data, player)
+    local dist = {x=(pointB.x-pointA.x), y=(pointB.y-pointA.y), z=(pointB.z-pointA.z)}
+    local step = {x=(dist.x/density), y=(dist.y/density), z=(dist.z/density)}
+    local ppos = vector.new(pointA)
+    for pnum = 1,density do
+        ppos = terumet.pos_plus(ppos, step)
+        minetest.add_particle{
+            pos = vector.new(ppos),
+            velocity=terumet.random_velocity(5),
+            expirationtime=(particle_data.expiration or 1),
+            size=(particle_data.size or 1),
+            glow=(particle_data.glow or 1),
+            playername=player,
+            texture=particle_data.texture,
+            animation=particle_data.animation
+        }
+    end
 end
 
 function terumet.format_time(t)
