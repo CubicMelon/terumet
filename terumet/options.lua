@@ -34,6 +34,8 @@ terumet.options.machine = {
     },
 }
 
+local ENTROPY_EFFECT_ANYLEAF = {change='air', hu=150}
+
 terumet.options.heater = {
     furnace={
         --
@@ -60,9 +62,32 @@ terumet.options.heater = {
         -- ENTROPIC HEATER SETTINGS
         --
         MAX_HEAT = 20000,
-        HEAT_TRANSFER_RATE = 500
+        HEAT_TRANSFER_RATE = 500,
+        MAX_RANGE = {x=6, y=3, z=6},
+        DEFAULT_DRAIN_TIME = 1.0,
+        EFFECTS = {
+            ['default:water_source']={change='default:ice', hu=500, time=5.0},
+            ['default:water_flowing']={change='default:ice', hu=250, time=4.0},
+            ['default:lava_source']={change='default:obsidian', hu=2000, time=10.0},
+            ['default:lava_flowing']={change='default:obsidian', hu=1000, time=8.0},
+            ['default:dirt_with_grass']={change='default:dirt', hu=100},
+            ['default:sandstone']={change='default:sand', hu=300},
+            ['default:silver_sandstone']={change='default:silver_sand', 300},
+            ['default:stone']={change='default:cobble', hu=200},
+            ['default:cobble']={change='default:gravel', hu=100},
+            ['default:gravel']={change='default:silver_sand', hu=50},
+            ['default:leaves']=ENTROPY_EFFECT_ANYLEAF,
+            ['default:jungleleaves']=ENTROPY_EFFECT_ANYLEAF,
+            ['default:pine_needles']=ENTROPY_EFFECT_ANYLEAF,
+            ['default:acacia_leaves']=ENTROPY_EFFECT_ANYLEAF,
+            ['default:aspen_leaves']=ENTROPY_EFFECT_ANYLEAF,
+            ['default:coalblock']={change='default:stone_with_coal', hu=9000, time=30.0},
+            ['default:stone_with_coal']={change='default:stone', hu=1000, time=10.0},
+            ['air']={hu=10}
+        }
     }
 }
+
 
 terumet.options.thermobox = {
     --
