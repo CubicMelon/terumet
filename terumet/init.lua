@@ -69,6 +69,7 @@ function terumet.particle_stream(pointA, pointB, density, particle_data, player)
     local dist_vector = {x=(pointB.x-pointA.x), y=(pointB.y-pointA.y), z=(pointB.z-pointA.z)}
     local dist = vector.length(dist_vector)
     local pcount = dist * density
+    if pcount < 1 then return end -- guard against div/0
     local step = {x=(dist_vector.x/pcount), y=(dist_vector.y/pcount), z=(dist_vector.z/pcount)}
     local ppos = vector.new(pointA)
     for pnum = 1,pcount do
