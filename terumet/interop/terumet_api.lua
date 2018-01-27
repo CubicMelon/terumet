@@ -86,7 +86,7 @@ end
 
 local MACHINE_REQUIRED = {
     name='[string] Name of machine',
-    node_tiles='[minetest tiles definition] Tiles for machine node'
+    node_tiles='[minetest tiles definition] Tiles for machine node',
     heat_max='[integer] Base maximum heat units that can be stored by machine',
     heat_provider='[boolean] true if machine provides heat, false if it accepts heat',
     heat_transfer='[integer] Maximum amount of heat transfer machine can do in 1 tick',
