@@ -66,10 +66,12 @@ function terumet.random_velocity(max_tenths)
 end
 
 function terumet.particle_stream(pointA, pointB, density, particle_data, player)
-    local dist = {x=(pointB.x-pointA.x), y=(pointB.y-pointA.y), z=(pointB.z-pointA.z)}
-    local step = {x=(dist.x/density), y=(dist.y/density), z=(dist.z/density)}
+    local dist_vector = {x=(pointB.x-pointA.x), y=(pointB.y-pointA.y), z=(pointB.z-pointA.z)}
+    local dist = vector.length(dist_vector)
+    local pcount = dist * density
+    local step = {x=(dist_vector.x/pcount), y=(dist_vector.y/pcount), z=(dist_vector.z/pcount)}
     local ppos = vector.new(pointA)
-    for pnum = 1,density do
+    for pnum = 1,pcount do
         ppos = terumet.pos_plus(ppos, step)
         minetest.add_particle{
             pos = vector.new(ppos),

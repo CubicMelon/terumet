@@ -34,7 +34,7 @@ terumet.options.machine = {
     },
 }
 
-local ENTROPY_EFFECT_ANYLEAF = {change='air', hu=150}
+local ENTROPY_EFFECT_ANYLEAF = {change='air', time=4.0, hups=20}
 
 terumet.options.heater = {
     furnace={
@@ -63,27 +63,36 @@ terumet.options.heater = {
         --
         MAX_HEAT = 20000,
         HEAT_TRANSFER_RATE = 500,
-        MAX_RANGE = {x=6, y=3, z=6},
+        -- the maximum extent the heater "scans" from the main machine
+        MAX_RANGE = {x=5, y=5, z=5},
+        -- if a node time is not defined, use this time
         DEFAULT_DRAIN_TIME = 1.0,
         EFFECTS = {
-            ['default:water_source']={change='default:ice', hu=500, time=5.0},
-            ['default:water_flowing']={change='default:ice', hu=250, time=4.0},
-            ['default:lava_source']={change='default:obsidian', hu=2000, time=10.0},
-            ['default:lava_flowing']={change='default:obsidian', hu=1000, time=8.0},
-            ['default:dirt_with_grass']={change='default:dirt', hu=100},
-            ['default:sandstone']={change='default:sand', hu=300},
-            ['default:silver_sandstone']={change='default:silver_sand', 300},
-            ['default:stone']={change='default:cobble', hu=200},
-            ['default:cobble']={change='default:gravel', hu=100},
-            ['default:gravel']={change='default:silver_sand', hu=50},
-            ['default:leaves']=ENTROPY_EFFECT_ANYLEAF,
-            ['default:jungleleaves']=ENTROPY_EFFECT_ANYLEAF,
-            ['default:pine_needles']=ENTROPY_EFFECT_ANYLEAF,
-            ['default:acacia_leaves']=ENTROPY_EFFECT_ANYLEAF,
-            ['default:aspen_leaves']=ENTROPY_EFFECT_ANYLEAF,
-            ['default:coalblock']={change='default:stone_with_coal', hu=9000, time=30.0},
-            ['default:stone_with_coal']={change='default:stone', hu=1000, time=10.0},
-            ['air']={hu=10}
+            ['default:water_source']={change='default:ice', time=5.0, hups=100}, -- 500 HU total
+            ['default:water_flowing']={change='default:ice', time=2.5, hups=120}, -- 300 HU total
+            ['default:lava_source']={change='default:obsidian', time=2.0, hups=1000}, -- 2000 HU total
+            ['default:lava_flowing']={change='default:obsidian', time=1.0, hups=1000}, -- 1000 HU total
+            ['default:dirt_with_grass']={change='default:dirt', hups=100},
+            ['default:sandstone']={change='default:sand', hups=300},
+            ['default:silver_sandstone']={change='default:silver_sand', hups=300},
+            ['default:stone']={change='default:cobble', time=3.0, hups=100}, -- 300 HU total
+            ['default:cobble']={change='default:gravel', time=3.0, hups=80}, -- 240 HU total
+            ['default:gravel']={change='default:silver_sand', time=3.0, hups=50}, -- 150 HU total
+            ['default:coalblock']={change='default:stone_with_coal', time=60.0, hups=150}, -- 9000 HU total
+            ['default:stone_with_coal']={change='default:stone', time=10.0, hups=150}, -- 1500 HU total
+            ['default:mossycobble']={change='default:cobble', time=15.0, hups=50}, -- 750 HU total
+            ['default:clay']={change='default:dirt', time=5.0, hups=50}, -- 250 HU total
+            ['default:cactus']={change='air', time=10.0, hups=20}, -- 200 HU total
+            ['default:papyrus']={change='air', time=20.0, hups=20}, -- 400 HU total
+            ['group:flora']={change='default:dry_shrub', time=6.0, hups=15}, -- 90 hu total
+            ['default:dry_shrub']={change='air', time=3.0, hups=15}, -- 45 HUs total
+            ['fire:basic_flame']={change='air', time=0.5, hups=1000}, -- 500 HU total
+            ['fire:permanent_flame']={change='air', time=0.5, hups=1000}, -- 500 HU total
+            ['air']={time=1.0, hups=5}, -- 10 HU total
+            ['group:tree']={change='air', time=12.0, hups=30}, -- 360 HU total
+            ['group:sapling']={change='air', time=4.0, hups=40}, -- 160 HU total
+            ['group:wood']={change='air', time=9.0, hups=10}, --  90 HU total
+            ['group:leaves']={change='air', time=4.0, hups=20}, -- 80 HU total
         }
     }
 }

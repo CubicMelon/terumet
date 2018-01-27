@@ -88,17 +88,30 @@ function ent_htr.do_processing(machine, dt)
         local found_node = minetest.get_node_or_nil(machine.search_pos)
         if found_node then
             local effects = opts.EFFECTS[found_node.name]
+            if not effects then
+                -- check groups for definition
+                local def = minetest.registered_nodes[found_node.name]
+                if def then
+                    for group_name,_ in pairs(def.groups) do
+                        local grp_key = 'group:'..group_name
+                        if opts.EFFECTS[grp_key] then
+                            effects = opts.EFFECTS[grp_key]
+                            break
+                        end
+                    end
+                end
+            end
             if effects then
                 machine.state = ent_htr.STATE.DRAINING
                 machine.inv:set_stack('drain', 1, found_node.name)
                 machine.state_time = effects.time or opts.DEFAULT_DRAIN_TIME
-                machine.heat_rate = effects.hu / machine.state_time
+                machine.heat_rate = effects.hups
                 if effects.change then
                     found_node.name = effects.change
                     minetest.set_node(machine.search_pos, found_node)
                 end
                 machine.status_text = 'Starting extraction of ' .. machine.inv:get_stack('drain',1):get_name() .. ' at ' .. minetest.pos_to_string(machine.search_pos) .. '...'
-                terumet.particle_stream(terumet.pos_plus(machine.pos, base_mach.ADJACENT_OFFSETS.up), machine.search_pos, 30, PARTICLE_DATA)
+                terumet.particle_stream(terumet.pos_plus(machine.pos, base_mach.ADJACENT_OFFSETS.up), machine.search_pos, 5, PARTICLE_DATA)
             else
                 local node_def = minetest.registered_nodes[found_node.name]
                 local node_name = (node_def and node_def.description) or 'Undefined node'

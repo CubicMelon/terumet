@@ -43,6 +43,20 @@ function terumet.register_crystal(data)
     terumet.options.vulcan.recipes[data.source] = crys_id
 end
 
+-- register that a node can generate heat when extracted by the Environmental Entropy Extraction Heater (EEE Heater)
+-- node: the node ID to add. Also can be group:XXX to add node group (of any value)
+-- hu_per_s: number of heat units extracted per second of extraction
+-- extract_time: total number of seconds extraction lasts (best as a multiple of 0.5)
+--   thus, total HU from node will equal hu_per_s x extract_time
+-- change_to: what node this node will change into after extraction - if nil, the node will not change and thus can be extracted over and over (like air by default)
+function terumet.register_entropic_node(node, hu_per_s, extract_time, change_to)
+    terumet.options.heater.entropy.EFFECTS[node] = {
+        change=change_to,
+        hups=(hu_per_s or 1),
+        time=(extract_time or 1.0),
+    }
+end
+
 local required_cust_data = {
     name='Name of machine (only)',
     max_heat_base='Base maximum heat units that can be stored by machine',

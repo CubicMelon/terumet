@@ -596,7 +596,7 @@ function base_mach.generate_particle(pos, particle_data)
         pos={x=pos.x+xoff, y=pos.y+0.5, z=pos.z+zoff},
         velocity={x=0, y=vel, z=0},
         acceleration={x=0, y=0.6, z=0},
-        expirationtime=(1.5 or particle_data.expiration),
+        expirationtime=(particle_data.expiration or 1.5),
         size=sz,
         collisiondetection=false,
         texture=(particle_data.texture or 'default_item_smoke.png'),
