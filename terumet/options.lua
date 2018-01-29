@@ -34,8 +34,6 @@ terumet.options.machine = {
     },
 }
 
-local ENTROPY_EFFECT_ANYLEAF = {change='air', time=4.0, hups=20}
-
 terumet.options.heater = {
     furnace={
         --
