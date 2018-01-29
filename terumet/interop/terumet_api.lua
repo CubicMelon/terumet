@@ -83,13 +83,12 @@ function terumet.register_entropic_node(data)
 end
 
 
-
+local STANDARD_INV_LISTS = {'in', 'out', 'fuel', 'upgrade'}
+local EXTERNAL_MACHINES = {}
 local MACHINE_REQUIRED = {
     name='[string] Name of machine',
     node_tiles='[minetest tiles definition] Tiles for machine node',
     heat_max='[integer] Base maximum heat units that can be stored by machine',
-    heat_provider='[boolean] true if machine provides heat, false if it accepts heat',
-    heat_transfer='[integer] Maximum amount of heat transfer machine can do in 1 tick',
     input_slots='[integer, 0-4 expected] Size of input inventory',
     output_slots='[integer, 0-4 expected] Size of output inventory',
     has_fuel_slot='[boolean] Whether machine has direct fuel slot',
@@ -98,6 +97,8 @@ local MACHINE_REQUIRED = {
     tick_function='[fn(machine_state, dt) -> boolean] Function called when machine ticks. Return true to tick again in tick_time seconds.'
 }
 -- optional keys:
+-- heat_provider: [boolean] true if machine generates/provides heat to adjacent machines
+-- heat_transfer: [integer] Maximum amount of heat machine can send in 1 tick
 -- node_name: [string] name to give machine's node. if not provided, uses same as 'name'
 -- node_param2: [string] param2 to give machine's node (same as minetest's nodedef param2 setting: facedir/none/etc. )
 -- custom_init: [fn(pos, meta, inv) -> nil] custom initialization for setting inventories or other metadata of a new machine
@@ -121,6 +122,29 @@ function terumet.register_heat_machine( id, data )
         end
     end
 
+    local machine_tm_class = {
+        name = data.name,
+        timer = data.tick_time,
+        fsdef = data.custom_fsdef or {
+            control_buttons = {
+                terumet.machine.buttondefs.HEAT_XFER_TOGGLE,
+            },
+            machine = data.machinefs_func or terumet.NO_FUNCTION,
+            input = {data.input_slots > 0},
+            output = {data.output_slots > 0},
+            fuel_slot = {data.fuel_slot},
+            theme = data.machinefs_theme,
+        },
+        default_heat_xfer = (data.heat_provider and terumet.machine.HEAT_XFER_MODE.PROVIDE_ONLY) or terumet.machine.HEAT_XFER_MODE.ACCEPT,
+        get_drop_contents = function(machine)
+            local drops = {}
+            for _,std_list in ipairs(STANDARD_INV_LISTS) do
+                default.get_inventory_drops(machine.pos, std_list, drops)
+            end
+            return drops
+        end
+    }
+
     local node_def = terumet.machine.nodedef{
         description = data.node_name or data.name,
         tiles = data.node_tiles,
@@ -134,7 +158,7 @@ function terumet.register_heat_machine( id, data )
             if data.has_fuel_slot then inv:set_size('fuel', 1) end
             if data.custom_init then data.custom_init(pos, meta, inv) end
             local init = {
-                class = node_def._terumach_class,
+                class = machine_tm_class,
                 state = 0,
                 state_time = 0,
                 heat_level = 0,
@@ -150,53 +174,25 @@ function terumet.register_heat_machine( id, data )
         on_timer = function(pos, dt)
             local machine = terumet.machine.read_state(pos)
             local re_tick = false
-            if not base_mach.check_overheat(machine, data.heat_max) then
+            if not terumet.machine.check_overheat(machine, data.heat_max) then
                 re_tick = data.tick_function(machine, dt)
                 if machine.heat_xfer_mode == terumet.machine.HEAT_XFER_MODE.PROVIDE_ONLY then
-                    terumet.machine.push_heat_adjacent(machine, data.heat_transfer)
+                    terumet.machine.push_heat_adjacent(machine, data.heat_transfer or 50)
+                end
+
+                if data.has_fuel_slot then
+                    terumet.machine.process_fuel(machine)
+                    re_tick = not machine.need_heat
                 end
             end
             -- write status back to meta
             terumet.machine.write_state(pos, machine)
             return re_tick
         end,
-        _terumach_class = {
-            name = data.name,
-            timer = data.tick_time,
-            fsdef = data.custom_fsdef or {
-                control_buttons = {
-                    terumet.machine.buttondefs.HEAT_XFER_TOGGLE,
-                },
-                machine = data.machinefs_func or terumet.NO_FUNCTION,
-                input = {data.input_slots > 0},
-                output = {data.output_slots > 0},
-                fuel_slot = {data.fuel_slot},
-                theme = data.machinefs_theme,
-            },
-            default_heat_xfer = (data.heat_provider and terumet.machine.HEAT_XFER_MODE.PROVIDE_ONLY) or terumet.machine.HEAT_XFER_MODE.ACCEPT,
-            on_external_heat = EVENT_FUNC,
-            on_inventory_change = EVENT_FUNC,
-            get_drop_contents = function(pos)
-                local drops = {}
-                for _,std_list in ipairs(STANDARD_INV_LISTS) do
-                    default.get_inventory_drops(machine.pos, std_list, drops)
-                end
-                return drops
-            end
-        }
+        _terumach_class = machine_tm_class
     }
 
     minetest.register_node( id, node_def )
 
     EXTERNAL_MACHINES[id] = data
 end
-
-local EVENT_FUNC = function(machine)
-    if not data.heat_provider then
-        terumet.machine.set_timer(machine)
-    end
-end
-
-local STANDARD_INV_LISTS = {'in', 'out', 'fuel', 'upgrade'}
-
-local EXTERNAL_MACHINES = {}
