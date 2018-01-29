@@ -2,8 +2,13 @@
 Newer versions listed first
 
 ## Version 2.0
-### (still in progress)
-* Major formspec design overhaul, both visually and under the hood.
+### (full documentation still in progress)
+* **Breaking change** API for creating 'custom' heat machines has completely changed. Custom machines for versions prior to 2.0 will _not_ work in 2.0. See tmapisample/init.lua for a complete example of how the newer, much more flexible API works -- any type of machine is now possible to create. More info will be coming soon.
+* The highest-tier heater has been added: the **Environmental Entropy Extraction Heater**! This powerful machine extracts latent entropy from the environment around it and creates Heat energy. To be more blunt, it will degrade and/or cool nodes in an area around it to create large amounts of heat for other machines.
+    * For example: after being extracted, stone becomes cobblestone which will then become gravel then silver sand. Each step after a pass of the Extraction Heater will generate heat from the transformation. There are many possible transformations depending on the environment around the heater, and also Air nodes will provide a limitless supply of heat, though quite slowly.
+    * By default, the machine operates in a 5x5x5 cube around itself. (see options.lua to change this)
+    * This presently is the most expensive item to create in the mod, and for good reason as it can provide essentially limitless heat for machines.
+* Major formspec design overhaul, both visually and under the hood. This was the bulk of the change in 2.0.
 * Heat Generation Upgrades now have a function in general machines: 
     * When in any machine that has a fuel slot, this upgrade increases the heat gained from direct fuel by 30% (ex: lava bucket 2000 HU --> 2600 HU)
 
