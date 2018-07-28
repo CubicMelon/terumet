@@ -211,6 +211,21 @@ terumet.options.heat_ray = {
     SEEKING_VISIBLE = false
 }
 
+terumet.options.lavam = {
+    --
+    -- LAVA MELTER SETTINGS
+    --
+    -- Maximum HUs melter can contain
+    MAX_HEAT = 3000,
+    -- Nodes that can be melted to lava
+    VALID_STONES = {'default:stone', 'default:cobble', 'default:desert_stone', 'default:desert_cobble'},
+
+    -- total heat required (should really equal terumet.options.machine.BASIC_HEAT_SOURCES[lava bucket].hus)
+    HEAT_COST = 2000,
+    -- total time for 1 item required in seconds (best if HEAT_COST/BASE_TIME is a whole number)
+    MELT_TIME = 100.0
+}
+
 terumet.options.ore_saw = {
     --
     -- ORE SAW SETTINGS
