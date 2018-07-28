@@ -81,7 +81,7 @@ Once up and running, you have many further options for how to heat machinery. Th
 More high-powered and speedy methods are through dedicated Heater machines-- the Furnace Heater or Solar Heater-- which build heat through burning fuel or from sunlight then can provide heat to adjacent machines. Presently these ONLY work with adjacent machinery, but there is always the option of moving the machine since like all other machines, they retain their stored heat when broken.
 
 ### Flux Metal
-The Terumetal Alloy Smelter is a specialized smelter only for making alloys from combining Terumetal and other materials, therefore it has an internal tank especially for molten Terumetal. This tank is the meter in the center of the screen to the left. It can be filled by inserting raw lumps of Terumetal into the input slot (*not* ingots) then waiting a few seconds for each lump to melt. Naturally, this process requires heat and some will be spent by how much flux is melted.
+The Terumetal Alloy Smelter is a specialized smelter only for making alloys, all but one of which require terumetal. Therefore it has an internal tank especially for molten Terumetal. This tank is the meter in the center indicated by a pink ore symbol. It can be filled by inserting raw terumetal in any form then waiting a few seconds for each item to melt. Naturally, this process requires heat and some will be spent by how much flux is melted.
 
 ![Alloy Smelter Melting Flux](tutorial/smelter_melting_flux.png)
 
