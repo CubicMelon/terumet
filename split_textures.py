@@ -2,23 +2,23 @@ from wand.image import Image
 
 SOURCE_FILE = 'texsource.png'
 MOD_NAME = 'terumet'
-DEST = 'split_textures/'
+DEST = 'terumet/textures/'
 
 def MT(basename):
     return MOD_NAME + '_' + basename + '.png'
 
 TEXTURE_FILES = [
-    [MT('ore_raw'), MT('htr_furnace_front_unlit'), MT('raw_sides_unlit'), MT('htr_furnace_front_lit'), MT('raw_sides_lit'), MT('raw_mach_bot'), MT('raw_mach_top'), MT('asmelt_front_unlit'), MT('asmelt_front_lit')],
-    [MT('lump_raw'), MT('ingot_raw'), MT('block_raw'), MT('tool_pick_raw'), MT('tool_shovel_raw'), MT('tool_axe_raw'), MT('tool_sword_raw'), MT('item_coil_raw'), MT('upg_base')],
-    [MT('item_cryst'), MT('ingot_tcop'), MT('block_tcop'), MT('tool_pick_tcop'), MT('tool_shovel_tcop'), MT('tool_axe_tcop'), MT('tool_sword_tcop'), MT('item_coil_tcop'), MT('upg_ext_input')],
-    [MT('item_cryst_bg'), MT('ingot_tste'), MT('block_tste'), MT('tool_pick_tste'), MT('tool_shovel_tste'), MT('tool_axe_tste'), MT('tool_sword_tste'), MT('upg_ext_output'), MT('upg_max_heat')],
-    [MT('item_ceramic'), MT('ingot_tgol'), MT('block_tgol'), MT('tool_pick_tgol'), MT('tool_shovel_tgol'), MT('tool_axe_tgol'), MT('tool_sword_tgol'), MT('item_coil_tgol'), MT('upg_heat_xfer')],
-    [MT('block_ceramic'), MT('ingot_cgls'), MT('block_cgls'), MT('tool_pick_cgls'), MT('tool_shovel_cgls'), MT('tool_axe_cgls'), MT('tool_sword_cgls'), MT('upg_gen_up'), MT('upg_speed_up')],
-    [MT('item_entropy'), MT('item_thermese'), MT('block_thermese'), MT('frame_tste'), MT('frame_cgls'), MT('frame_raw'), MT('block_thermese_hot'), MT('item_htg'), MT('upg_cryst')],
-    [MT('htfurn_front'), MT('htfurn_top_unlit'), MT('htfurn_sides'), MT('htfurn_top_lit'), MT('vulcan_sides'), MT('vulcan_top'), MT('htr_solar_top'), MT('vulcan_front')],
-    [MT('item_heatunit'), MT('ingot_tcha'), MT('block_tcha'), MT('tool_pick_tcha'), MT('tool_shovel_tcha'), MT('tool_axe_tcha'), MT('tool_sword_tcha'), MT('tool_ore_saw'), MT('block_entropy')],
-    [MT('hray_sides'), MT('hray_front'), MT('hray_back'), MT('rayref_sides'), MT('rayref_front'), MT('rayref_back'), MT('tbox_sides'), MT('tbox_front'), MT('tbox_back')],
-    [MT('tdis_sides'), MT('tdis_front'), MT('tdis_back'), MT('raw_heater_sides'), MT('tste_heater_sides'), MT('cgls_heater_sides'), MT('htr_entropy_top')]
+    ['ore_raw', 'htr_furnace_front_unlit', 'raw_sides_unlit', 'htr_furnace_front_lit', 'raw_sides_lit', 'raw_mach_bot', 'raw_mach_top', 'asmelt_front_unlit', 'asmelt_front_lit', 'raw_lavam_top'],
+    ['lump_raw', 'ingot_raw', 'block_raw', 'tool_pick_raw', 'tool_shovel_raw', 'tool_axe_raw', 'tool_sword_raw', 'item_coil_raw', 'upg_base'],
+    ['item_cryst', 'ingot_tcop', 'block_tcop', 'tool_pick_tcop', 'tool_shovel_tcop', 'tool_axe_tcop', 'tool_sword_tcop', 'item_coil_tcop', 'upg_ext_input'],
+    ['item_cryst_bg', 'ingot_tste', 'block_tste', 'tool_pick_tste', 'tool_shovel_tste', 'tool_axe_tste', 'tool_sword_tste', 'upg_ext_output', 'upg_max_heat'],
+    ['item_ceramic', 'ingot_tgol', 'block_tgol', 'tool_pick_tgol', 'tool_shovel_tgol', 'tool_axe_tgol', 'tool_sword_tgol', 'item_coil_tgol', 'upg_heat_xfer'],
+    ['block_ceramic', 'ingot_cgls', 'block_cgls', 'tool_pick_cgls', 'tool_shovel_cgls', 'tool_axe_cgls', 'tool_sword_cgls', 'upg_gen_up', 'upg_speed_up'],
+    ['item_entropy', 'item_thermese', 'block_thermese', 'frame_tste', 'frame_cgls', 'frame_raw', 'block_thermese_hot', 'item_htg', 'upg_cryst'],
+    ['htfurn_front', 'htfurn_top_unlit', 'htfurn_sides', 'htfurn_top_lit', 'vulcan_sides', 'vulcan_top', 'htr_solar_top', 'vulcan_front'],
+    ['item_heatunit', 'ingot_tcha', 'block_tcha', 'tool_pick_tcha', 'tool_shovel_tcha', 'tool_axe_tcha', 'tool_sword_tcha', 'tool_ore_saw', 'block_entropy'],
+    ['hray_sides', 'hray_front', 'hray_back', 'rayref_sides', 'rayref_front', 'rayref_back', 'tbox_sides', 'tbox_front', 'tbox_back'],
+    ['tdis_sides', 'tdis_front', 'tdis_back', 'raw_heater_sides', 'tste_heater_sides', 'cgls_heater_sides', 'htr_entropy_top']
 ]
 
 with Image(filename=SOURCE_FILE) as source:
@@ -27,4 +27,4 @@ with Image(filename=SOURCE_FILE) as source:
             if TEXTURE_FILES[row][col] != None:
                 clone = source.clone()
                 clone.crop(left=col*16, top=row*16, width=16, height=16)
-                clone.save(filename=DEST + TEXTURE_FILES[row][col])
+                clone.save(filename=DEST + MT(TEXTURE_FILES[row][col]))
