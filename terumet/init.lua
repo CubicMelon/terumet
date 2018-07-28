@@ -1,7 +1,7 @@
--- Terumet v2.0
+-- Terumet v2.1
 
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
--- Written for Minetest version 0.4.16
+-- Written for Minetest IN-DEV version 5.0.0
 -- Creates a new ore in the world which can be used to make useful alloys
 -- and heat-powered machines.
 
@@ -26,7 +26,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=2, minor=0, patch=0}
+terumet.version = {major=2, minor=1, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"

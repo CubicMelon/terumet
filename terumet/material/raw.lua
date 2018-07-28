@@ -1,6 +1,8 @@
 local id = terumet.id
 local tex = terumet.tex
 
+print("RAW WAS CALLED OK")
+
 -- standard stone
 minetest.register_node( id('ore_raw'), {
     description = 'Terumetal Ore',

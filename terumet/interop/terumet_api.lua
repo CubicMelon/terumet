@@ -79,7 +79,7 @@ function terumet.register_entropic_node(data)
             error(string.format('terumet.register_entropic_node: data is missing required key %s: %s', req_key, desc))
         end
     end
-    terumet.options.heater.entropy.EFFECTS[data.node] = {hups=data.hu_per_s, time=data.extract_time, change=data.change_to}
+    terumet.options.heater.entropy.EFFECTS[data.node] = {hu_per_s=data.hu_per_s, extract_time=data.extract_time, change_to=data.change_to}
 end
 
 

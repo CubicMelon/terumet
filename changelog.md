@@ -1,8 +1,12 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+## Version 2.1
+* **Breaking Change!!** Began moving the mod as a whole to the in-development Minetest 5.0.0. **It is no longer guaranteed to work in older versions like 0.4.16 or 0.4.17.x!**
+* Changed the Ore-cutting Saw use sound to be way less annoying.
+* *updated version still in development*
+
 ## Version 2.0
-### (full documentation still in progress)
 * **Breaking change** API for creating 'custom' heat machines has completely changed. Custom machines for versions prior to 2.0 will _not_ work in 2.0. See tmapisample/init.lua for a complete example of how the newer, much more flexible API works -- any type of machine is now possible to create. More info will be coming soon.
 * The highest-tier heater has been added: the **Environmental Entropy Extraction Heater**! This powerful machine extracts latent entropy from the environment around it and creates Heat energy. To be more blunt, it will degrade and/or cool nodes in an area around it to create large amounts of heat for other machines.
     * For example: after being extracted, stone becomes cobblestone which will then become gravel then silver sand. Each step after a pass of the Extraction Heater will generate heat from the transformation. There are many possible transformations depending on the environment around the heater, and also Air nodes will provide a limitless supply of heat, though quite slowly.

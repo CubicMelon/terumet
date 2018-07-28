@@ -34,6 +34,8 @@ terumet.options.machine = {
     },
 }
 
+local ENTROPY_EFFECT_ANYLEAF = {change='air', time=4.0, hups=20}
+
 terumet.options.heater = {
     furnace={
         --
@@ -144,7 +146,7 @@ terumet.options.smelter = {
         {result='terumet:ingot_tcop', flux=1, time=1.0, input={'terumet:item_cryst_copper'}},
     -- Terusteel
         {result='terumet:ingot_tste', flux=2, time=4.5, input={'default:iron_lump'}},
-        {result='terumet:ingot_tste', flux=2, time=3.5, input={'default:iron_ingot'}},
+        {result='terumet:ingot_tste', flux=2, time=3.5, input={'default:steel_ingot'}},
         {result='terumet:block_tste', flux=16, time=31.5, input={'default:steelblock'}},
         {result='terumet:ingot_tste', flux=2, time=2.0, input={'terumet:item_cryst_iron'}},
     -- Terugold
