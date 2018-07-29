@@ -205,11 +205,12 @@ function base_mach.build_fs(machine)
         local inpy = fsdef.input.y or 1.5
         local inpw = fsdef.input.w or 2
         local inph = fsdef.input.h or 2
+        local inname = fsdef.input.label or "Input"
         if base_mach.has_upgrade(machine, 'ext_input') then
             local input_node = minetest.get_node(util3d.get_leftside_pos(machine.rot, machine.pos))
-            fs = fs .. string.format('label[%f,%f;External Input]item_image[%f,%f;%d,%d;%s]', inpx, inpy, inpx, inpy+0.5, inpw, inph, input_node.name)
+            fs = fs .. string.format('label[%f,%f;External %s]item_image[%f,%f;%d,%d;%s]', inpx, inpy, inname, inpx, inpy+0.5, inpw, inph, input_node.name)
         else
-            fs = fs .. string.format('label[%f,%f;Input]list[context;in;%f,%f;%d,%d;]', inpx, inpy, inpx, inpy+0.5, inpw, inph)
+            fs = fs .. string.format('label[%f,%f;%s]list[context;in;%f,%f;%d,%d;]', inpx, inpy, inname, inpx, inpy+0.5, inpw, inph)
         end
     end
     -- machine: output
@@ -218,11 +219,12 @@ function base_mach.build_fs(machine)
         local outy = fsdef.output.y or 1.5
         local outw = fsdef.output.w or 2
         local outh = fsdef.output.h or 2
+        local outname = fsdef.output.label or "Output"
         if base_mach.has_upgrade(machine, 'ext_output') then
             local output_node = minetest.get_node(util3d.get_rightside_pos(machine.rot, machine.pos))
-            fs = fs .. string.format('label[%f,%f;External Output]item_image[%f,%f;%d,%d;%s]', outx, outy, outx, outy+0.5, outw, outh, output_node.name)
+            fs = fs .. string.format('label[%f,%f;External %s]item_image[%f,%f;%d,%d;%s]', outx, outy, outname, outx, outy+0.5, outw, outh, output_node.name)
         else
-            fs = fs .. string.format('label[%f,%f;Output]list[context;out;%f,%f;%d,%d;]', outx, outy, outx, outy+0.5, outw, outh)
+            fs = fs .. string.format('label[%f,%f;%s]list[context;out;%f,%f;%d,%d;]', outx, outy, outname, outx, outy+0.5, outw, outh)
         end
     end
     fs = fs..'container_end[]'

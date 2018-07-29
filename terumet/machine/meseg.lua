@@ -13,7 +13,7 @@ base_msg.STATE.GROWING = 1
 base_msg.STATE.OUTPUT = 2
 
 -- itemstack gained by successful growth
-base_msg.RESULT_ITEMSTACK = ItemStack('default:mese_crystal_fragment')
+base_msg.RESULT_ITEMSTACK = ItemStack(opts.PRODUCE_ITEM)
 
 local FSDEF = {
     control_buttons = {
@@ -23,8 +23,8 @@ local FSDEF = {
         -- TODO efficiency and progress bars
         return ''
     end,
-    input = {true},
-    output = {true}
+    input = {label='Seed Crystals'},
+    output = {label='Grown Shards'}
 }
 
 
@@ -55,11 +55,32 @@ function base_msg.get_drop_contents(machine)
 end
 
 function base_msg.do_output(meseg)
-    if meseg.state ~= base_msg.state.OUTPUT then return end
+    if meseg.state ~= base_msg.STATE.OUTPUT then return end
     local out_inv, out_list = base_mach.get_output(meseg)
     if out_inv and out_inv:room_for_item(out_list, base_msg.RESULT_ITEMSTACK) then
-        out_inv:add_item(out_list, base_msg.RESULT_ITEMSTACK)
-        meseg.state = base_msg.state.GROWING
+        local in_inv, in_list = base_mach.get_input(meseg)
+        local failure = false
+        if in_inv then
+            local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
+            if input_stack and input_stack:get_name() == opts.SEED_ITEM then
+                out_inv:add_item(out_list, base_msg.RESULT_ITEMSTACK)
+                if opts.SEED_LOSS_CHANCE and terumet.RAND:next(1,opts.SEED_LOSS_CHANCE) == 1 then
+                    in_inv:remove_item(in_list, opts.SEED_ITEM)
+                    meseg.status_text = "New shard complete! (seed crystal lost)"
+                else
+                    meseg.status_text = "New shard complete!"
+                end
+            else
+                failure = true
+            end
+        else
+            failure = true
+        end
+        if failure then
+            meseg.status_text = "Seed crystals lost, growth failure."
+            meseg.progress = 0
+        end
+        meseg.state = base_msg.STATE.GROWING
     else
         meseg.status_text = "Waiting for output space..."
     end
@@ -67,34 +88,34 @@ end
 
 function base_msg.do_growing(meseg, dt)
     -- if still waiting to output, skip growing until output complete
-    if meseg.state == base_msg.state.OUTPUT then return end
+    if meseg.state == base_msg.STATE.OUTPUT then return end
 
     local in_inv, in_list = base_mach.get_input(meseg)
     local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
-    local has_mese = (input_stack and input_stack:get_name() == 'default:mese_crystal')
+    local has_seed = (input_stack and input_stack:get_name() == opts.SEED_ITEM)
     local has_heat = base_mach.expend_heat(meseg, opts.GROW_HEAT, 'Growing mese')
-    if has_mese and has_heat then
+    if has_seed and has_heat then
         if meseg.effic < opts.MAX_EFFIC then 
             meseg.effic = math.min(meseg.effic + opts.EFFIC_GAIN, opts.MAX_EFFIC)
         end
         local seed_count = input_stack:get_count()
         meseg.progress = meseg.progress + math.floor(seed_count * meseg.effic / opts.MAX_EFFIC)
         if meseg.progress >= 100 then
-            meseg.state = base_msg.state.OUTPUT
-            meseg.progress = 0
-            meseg.status_text = 'Growth complete! Outputting new shard...'
+            meseg.state = base_msg.STATE.OUTPUT
+            meseg.progress = meseg.progress - 100
+            meseg.status_text = 'Growth complete!'
         else
             meseg.status_text = string.format('Growing... (Progress %d%%, Efficiency %.1f%%)', meseg.progress, meseg.effic / opts.MAX_EFFIC * 100)
         end        
     else
         meseg.effic = math.floor(meseg.effic * opts.EFFIC_LOSS_RATE)
         if meseg.effic > 0 then
-            meseg.status_text = 'Efficiency dropping - '
-            if not has_mese then meseg.status_text = meseg.status_text .. 'No seed crystals ' end
+            meseg.status_text = string.format('Efficiency (%.1f%%) dropping - ', meseg.effic/opts.MAX_EFFIC*100)
+            if not has_seed then meseg.status_text = meseg.status_text .. 'No seed crystals ' end
             if not has_heat then meseg.status_text = meseg.status_text .. 'No heat' end
         else
             meseg.status_text = 'Efficiency zero. Stopping.'
-            meseg.state = base_msg.state.WAITING
+            meseg.state = base_msg.STATE.WAITING
         end
     end
 end
@@ -104,10 +125,10 @@ function base_msg.check_start(meseg)
     local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
     if input_stack and input_stack:get_name() == 'default:mese_crystal' and base_mach.expend_heat(meseg, opts.START_HEAT, 'Starting') then
         meseg.effic = math.floor(opts.MAX_EFFIC / 100)
-        meseg.state = base_msg.state.GROWING
+        meseg.state = base_msg.STATE.GROWING
         meseg.status_text = "Starting..."
     else
-        meseg.status_text = "Waiting for Mese Crystals and heat..."
+        meseg.status_text = "Waiting for seed crystals and heat..."
     end
 end
 
@@ -127,17 +148,19 @@ function base_msg.tick(pos, dt)
         end
     end
 
-    if meseg.state == base_msg.STATE.GROWING then
+    if venting or meseg.state == base_msg.STATE.GROWING then
         base_mach.generate_particle(pos)
     end
 
-    if venting or meseg.state ~= base_msg.state.WAITING then base_mach.set_timer(meseg) end
+    if venting or meseg.state ~= base_msg.STATE.WAITING then 
+        base_mach.set_timer(meseg) 
+    end
     -- write status back to meta
     base_mach.write_state(pos, meseg)
 
 end
 
-base_msg.unlit_nodedef = base_mach.nodedef{
+base_msg.nodedef = base_mach.nodedef{
     -- node properties
     description = "Mese Garden",
     tiles = {
@@ -167,10 +190,10 @@ base_msg.unlit_nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(base_msg.id, base_msg.unlit_nodedef)
+minetest.register_node(base_msg.id, base_msg.nodedef)
 
 minetest.register_craft{ output = base_msg.id, recipe = {
-    {terumet.id('item_coil_tcop'), terumet.id('item_coil_tcop'), terumet.id('item_coil_tcop')},
+    {terumet.id('item_thermese'), terumet.id('item_coil_tcop'), terumet.id('item_thermese')},
     {terumet.id('item_ceramic'), terumet.id('frame_tste'), terumet.id('item_ceramic')},
-    {terumet.id('item_ceramic'), terumet.id('item_ceramic'), terumet.id('item_ceramic')}
+    {terumet.id('item_ceramic'), 'default:stone', terumet.id('item_ceramic')}
 }}

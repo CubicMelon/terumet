@@ -7,8 +7,8 @@ Newer versions listed first
 * Visibility of seeking particles of Heat Ray Emitter is now a per-machine option via a button on the interface, rather than an option of the mod overall. Time to put that control button section to good use!
 * Internal refactoring of useful 3D-relation node functions into its own "module" util3d.lua to help (*very* slightly) cut down on the size of machine.lua
 * The Solar Heater generates more heat (it is Tier 2 after all).
-* Added **Lava Melter**, a simple but useful machine for creating lava in more convenient places. Provided a stone or cobblestone and a large amount of heat, the Lava Melter will melt that stone to create a lava source block in front of it (as shown by the round dispenser-looking side with orange output arrows)
-* *still more to come*
+* Added **Lava Melter**, a simple but useful Tier 1 machine for creating lava in more convenient places. Provided a stone or cobblestone and a large amount of heat, the Lava Melter will melt that stone to create a lava source block in front of it (as shown by the round dispenser-looking side with orange output arrows)
+* Added **Mese Garden**, a Tier 2 machine that grows new Mese Crystal Shards when seeded with Mese Crystals. The garden gains efficiency at growing new shards as long as it has heat to continue working and seed crystals, but rapidly declines when missing one of those needs. When a shard is created, there is a very small chance to lose a seed crystal.
 
 ## Version 2.0
 * **Breaking change** API for creating 'custom' heat machines has completely changed. Custom machines for versions prior to 2.0 will _not_ work in 2.0. See tmapisample/init.lua for a complete example of how the newer, much more flexible API works -- any type of machine is now possible to create. More info will be coming soon.

@@ -234,13 +234,19 @@ terumet.options.meseg = {
     -- HUs required to begin growing
     START_HEAT = 1000,
     -- HUs required per second when growing
-    GROW_HEAT = 10,
+    GROW_HEAT = 35,
     -- Multiplier applied to efficiency every second not heated or seeded
-    EFFIC_LOSS_RATE = 0.90,
+    EFFIC_LOSS_RATE = 0.75,
     -- Maximum efficiency rating (at this rating, progress is 100% of possible rate)
     MAX_EFFIC = 1000,
     -- Efficiency gained every second heated and seeded
     EFFIC_GAIN = 5,
+    
+    SEED_ITEM = 'default:mese_crystal',
+    PRODUCE_ITEM = 'default:mese_crystal_fragment',
+    -- Implement a 1/SEED_LOSS_CHANCE chance to lose one seed crystal with a successful shard production. 
+    -- Set to false or nil to disable.
+    SEED_LOSS_CHANCE = 30
 }
 
 terumet.options.ore_saw = {
