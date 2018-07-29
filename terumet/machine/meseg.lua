@@ -20,11 +20,11 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        -- TODO efficiency and progress bars
-        return ''
+        return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') ..
+            base_mach.fs_meter(2,2.5,'mese', machine.progress, 'Growth')
     end,
-    input = {label='Seed Crystals'},
-    output = {label='Grown Shards'}
+    input = {label='Seeds'},
+    output = {label='Grown'}
 }
 
 
@@ -66,6 +66,13 @@ function base_msg.do_output(meseg)
                 out_inv:add_item(out_list, base_msg.RESULT_ITEMSTACK)
                 if opts.SEED_LOSS_CHANCE and terumet.RAND:next(1,opts.SEED_LOSS_CHANCE) == 1 then
                     in_inv:remove_item(in_list, opts.SEED_ITEM)
+                    if opts.SEED_LOSS_SOUND then
+                        minetest.sound_play( opts.SEED_LOSS_SOUND, {
+                            pos = meseg.pos,
+                            gain = 0.3,
+                            max_hear_distance = 16
+                        })
+                    end
                     meseg.status_text = "New shard complete! (seed crystal lost)"
                 else
                     meseg.status_text = "New shard complete!"
@@ -122,7 +129,7 @@ end
 function base_msg.check_start(meseg)
     local in_inv, in_list = base_mach.get_input(meseg)
     local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
-    if input_stack and input_stack:get_name() == 'default:mese_crystal' and base_mach.expend_heat(meseg, opts.START_HEAT, 'Starting') then
+    if input_stack and input_stack:get_name() == opts.SEED_ITEM and base_mach.expend_heat(meseg, opts.START_HEAT, 'Starting') then
         meseg.effic = math.floor(opts.MAX_EFFIC / 100)
         meseg.state = base_msg.STATE.GROWING
         meseg.status_text = "Starting..."

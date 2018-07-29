@@ -264,7 +264,7 @@ end
 -- basic meter display
 function base_mach.fs_meter(fsx, fsy, id, fill, text)
     return string.format('label[%f,%f;%s]image[%f,%f;3.5,1;(terumet_gui_bg_%s.png^[lowpart:%f:terumet_gui_fg_%s.png)^[transformR270]',
-        fsx+1.2,fsy+0.4,text, fsx, fsy, id, fill, id)
+        fsx+0.7,fsy+0.4,text, fsx, fsy, id, fill, id)
 end
 
 -- double meter display (no text)

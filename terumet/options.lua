@@ -246,7 +246,9 @@ terumet.options.meseg = {
     PRODUCE_ITEM = 'default:mese_crystal_fragment',
     -- Implement a 1/SEED_LOSS_CHANCE chance to lose one seed crystal with a successful shard production. 
     -- Set to false or nil to disable.
-    SEED_LOSS_CHANCE = 30
+    SEED_LOSS_CHANCE = 30,
+    -- sound to play at Garden node when a seed is lost (nil for none)
+    SEED_LOSS_SOUND = 'default_break_glass'
 }
 
 terumet.options.ore_saw = {
