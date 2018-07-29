@@ -110,11 +110,10 @@ function base_msg.do_growing(meseg, dt)
     else
         meseg.effic = math.floor(meseg.effic * opts.EFFIC_LOSS_RATE)
         if meseg.effic > 0 then
-            meseg.status_text = string.format('Efficiency (%.1f%%) dropping - ', meseg.effic/opts.MAX_EFFIC*100)
+            meseg.status_text = string.format('Efficiency dropping (%.1f%%) - ', meseg.effic/opts.MAX_EFFIC*100)
             if not has_seed then meseg.status_text = meseg.status_text .. 'No seed crystals ' end
             if not has_heat then meseg.status_text = meseg.status_text .. 'No heat' end
         else
-            meseg.status_text = 'Efficiency zero. Stopping.'
             meseg.state = base_msg.STATE.WAITING
         end
     end
@@ -128,7 +127,7 @@ function base_msg.check_start(meseg)
         meseg.state = base_msg.STATE.GROWING
         meseg.status_text = "Starting..."
     else
-        meseg.status_text = "Waiting for seed crystals and heat..."
+        meseg.status_text = "Stopped. Waiting for seed crystals and heat."
     end
 end
 
@@ -143,7 +142,8 @@ function base_msg.tick(pos, dt)
         if meseg.effic > 0 then
             base_msg.do_growing(meseg, dt)
             base_msg.do_output(meseg)
-        else
+        end
+        if meseg.effic <= 0 then
             base_msg.check_start(meseg)
         end
     end
@@ -195,5 +195,5 @@ minetest.register_node(base_msg.id, base_msg.nodedef)
 minetest.register_craft{ output = base_msg.id, recipe = {
     {terumet.id('item_thermese'), terumet.id('item_coil_tcop'), terumet.id('item_thermese')},
     {terumet.id('item_ceramic'), terumet.id('frame_tste'), terumet.id('item_ceramic')},
-    {terumet.id('item_ceramic'), 'default:stone', terumet.id('item_ceramic')}
+    {terumet.id('item_ceramic'), 'bucket:bucket_water', terumet.id('item_ceramic')}
 }}
