@@ -16,7 +16,7 @@ base_asm.STATE.ALLOYING = 2
 local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
-        {flag='zero_flux_recipes', icon='default_bronze_ingot.png', name='zfr_toggle', on_text='Using zero flux recipes', off_text='Ingoring zero flux recipes'}
+        {flag='', icon='default_bronze_ingot.png', name='zfr_toggle', on_text='Using zero flux recipes', off_text='Ingoring zero flux recipes'}
     },
     machine = function(machine)
         local fs = base_mach.fs_meter(2.5,1, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d flux', machine.flux_tank))

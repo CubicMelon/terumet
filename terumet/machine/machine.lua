@@ -39,40 +39,6 @@ base_mach.HEAT_XFER_MODE= {
     PROVIDE_ONLY=2
 }
 
--- constants for absolute direction = pos offset
-base_mach.ADJACENT_OFFSETS = {
-    east={x=1,y=0,z=0}, west={x=-1,y=0,z=0},
-    up={x=0,y=1,z=0}, down={x=0,y=-1,z=0},
-    north={x=0,y=0,z=1}, south={x=0,y=0,z=-1}
-}
-
--- constants for facing direction, FACING_DIRECTION[node.param2 / 4] = front absolute direction
-base_mach.FACING_DIRECTION = {
-    [0]='up', [1]='north', [2]='south', [3]='east', [4]='west', [5]='down'
-}
-
--- auto-generated constants for pos offset in facing direction given index [node.param2 / 4]
--- ex: FACING_OFFSETS[1]: 1 = facing north so returns offset of {x=0,y=0,z=1} (+1 node north)
-base_mach.FACING_OFFSETS = {}
-for facing,dir in pairs(base_mach.FACING_DIRECTION) do
-    base_mach.FACING_OFFSETS[facing] = base_mach.ADJACENT_OFFSETS[dir]
-end
-
--- index = rotation
-base_mach.SIDE_OFFSETS = {
-    [0]={left={x=-1,y=0,z=0}, right={x=1,y=0,z=0}},
-    [1]={left={x=0,y=0,z=1}, right={x=0,y=0,z=-1}},
-    [2]={left={x=1,y=0,z=0}, right={x=-1,y=0,z=0}},
-    [3]={left={x=0,y=0,z=-1}, right={x=0,y=0,z=1}},
-}
-
-function base_mach.get_leftside_pos(rot, pos)
-    return terumet.pos_plus(pos, base_mach.SIDE_OFFSETS[rot].left)
-end
-function base_mach.get_rightside_pos(rot, pos)
-    return terumet.pos_plus(pos, base_mach.SIDE_OFFSETS[rot].right)
-end
-
 -- 
 -- CRAFTING MATERIALS
 --
@@ -240,7 +206,7 @@ function base_mach.build_fs(machine)
         local inpw = fsdef.input.w or 2
         local inph = fsdef.input.h or 2
         if base_mach.has_upgrade(machine, 'ext_input') then
-            local input_node = minetest.get_node(base_mach.get_leftside_pos(machine.rot, machine.pos))
+            local input_node = minetest.get_node(util3d.get_leftside_pos(machine.rot, machine.pos))
             fs = fs .. string.format('label[%f,%f;External Input]item_image[%f,%f;%d,%d;%s]', inpx, inpy, inpx, inpy+0.5, inpw, inph, input_node.name)
         else
             fs = fs .. string.format('label[%f,%f;Input]list[context;in;%f,%f;%d,%d;]', inpx, inpy, inpx, inpy+0.5, inpw, inph)
@@ -253,7 +219,7 @@ function base_mach.build_fs(machine)
         local outw = fsdef.output.w or 2
         local outh = fsdef.output.h or 2
         if base_mach.has_upgrade(machine, 'ext_output') then
-            local output_node = minetest.get_node(base_mach.get_rightside_pos(machine.rot, machine.pos))
+            local output_node = minetest.get_node(util3d.get_rightside_pos(machine.rot, machine.pos))
             fs = fs .. string.format('label[%f,%f;External Output]item_image[%f,%f;%d,%d;%s]', outx, outy, outx, outy+0.5, outw, outh, output_node.name)
         else
             fs = fs .. string.format('label[%f,%f;Output]list[context;out;%f,%f;%d,%d;]', outx, outy, outx, outy+0.5, outw, outh)
@@ -313,8 +279,8 @@ end
 function base_mach.find_adjacent_need_heat(pos)
     local result = {}
     local count = 0
-    for dir,offset in pairs(base_mach.ADJACENT_OFFSETS) do
-        local opos = terumet.pos_plus(pos, offset)
+    for dir,offset in pairs(util3d.ADJACENT_OFFSETS) do
+        local opos = util3d.pos_plus(pos, offset)
         local ostate = base_mach.read_state(opos)
         -- read_state returns nil if area unloaded or not a terumetal machine
         if ostate then 
@@ -414,8 +380,8 @@ function base_mach.read_state(pos)
     machine.pos = pos
     machine.meta = meta
     machine.owner = meta:get_string('owner')
-    machine.facing = math.floor(node_info.param2 / 4)
-    machine.rot = node_info.param2 % 4
+    machine.facing = util3d.param2_to_facing(node_info.param2)
+    machine.rot = util3d.param2_to_rotation(node_info.param2)
     machine.inv = meta:get_inventory()
     machine.heat_level = meta:get_int('heat_level') or 0
     machine.max_heat = meta:get_int('max_heat') or 0
@@ -460,7 +426,7 @@ end
 -- return inventory, list of where to acquire input
 function base_mach.get_input(machine)
     if base_mach.has_upgrade(machine, 'ext_input') then
-        local lpos = base_mach.get_leftside_pos(machine.rot, machine.pos)
+        local lpos = util3d.get_leftside_pos(machine.rot, machine.pos)
         local lmeta = minetest.get_meta(lpos)
         if lmeta then return lmeta:get_inventory(), 'main' end
         return nil, nil
@@ -472,7 +438,7 @@ end
 -- return inventory, list of where to put output
 function base_mach.get_output(machine)
     if base_mach.has_upgrade(machine, 'ext_output') then
-        local rpos = base_mach.get_rightside_pos(machine.rot, machine.pos)
+        local rpos = util3d.get_rightside_pos(machine.rot, machine.pos)
         local rmeta = minetest.get_meta(rpos)
         if rmeta then return rmeta:get_inventory(), 'main' end
         return nil, nil

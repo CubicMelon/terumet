@@ -121,6 +121,7 @@ function furn_htr.tick(pos, dt)
     if (not venting) and heater.heat_xfer_mode == base_mach.HEAT_XFER_MODE.PROVIDE_ONLY then
         base_mach.push_heat_adjacent(heater, opts.HEAT_TRANSFER_RATE)
     end
+
     -- remain active if currently burning something or have any heat (for distribution)
     if heater.state == furn_htr.STATE.BURNING then
         base_mach.set_timer(heater)

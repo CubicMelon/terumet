@@ -12,12 +12,20 @@ base_ray.STATE.WAITING = 0
 
 local FSDEF = {
     control_buttons = {
-        base_mach.buttondefs.HEAT_XFER_TOGGLE
+        base_mach.buttondefs.HEAT_XFER_TOGGLE,
+        {flag='show_seeking', icon='terumet_part_seek.png', name='seek_toggle', on_text='Seeking visible', off_text='Seeking not visible'}
     },
     machine = function(machine)
         return string.format('label[0,1;:Last result: %s]', machine.last_error)
     end
 }
+
+local FORM_ACTION = function(ray, fields, player)
+    if fields.seek_toggle then
+        ray.show_seeking = not ray.show_seeking
+        return true -- return true to save new machine state
+    end
+end
 
 function base_ray.init(pos)
     local meta = minetest.get_meta(pos)
@@ -26,6 +34,7 @@ function base_ray.init(pos)
     local init_ray = {
         class = base_ray.nodedef._terumach_class,
         state = base_ray.STATE.WAITING,
+        show_seeking = false,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
@@ -69,7 +78,7 @@ function base_ray.set_search_result(ray, msg)
 end
 
 function base_ray.goto_next_node(ray, search)
-    local npos = terumet.pos_plus(search.pos, base_mach.FACING_OFFSETS[search.dir])
+    local npos = util3d.pos_plus(search.pos, util3d.FACING_OFFSETS[search.dir])
     local npos_node = minetest.get_node_or_nil(npos)
     if not npos_node then
         base_ray.set_search_result(ray, 'Unloaded area at ' .. minetest.pos_to_string(npos))
@@ -182,7 +191,7 @@ function base_ray.tick(pos, dt)
                     end
                     search = nil
                 else
-                    if opts.SEEKING_VISIBLE then
+                    if ray.show_seeking then
                         minetest.add_particle{
                             pos=search.pos,
                             velocity={x=0, y=0, z=0},
@@ -230,14 +239,17 @@ base_ray.nodedef = base_mach.nodedef{
         timer = 0.2,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
+        on_form_action = FORM_ACTION,
         drop_id = base_ray.id,
         on_external_heat = nil,
         on_inventory_change = nil,
         on_read_state = function(ray)
             ray.last_error = ray.meta:get_string('last_error')
+            ray.show_seeking = (ray.meta:get_int('opt_seek') or 0) == 1
         end,
         on_write_state = function(ray)
             ray.meta:set_string('last_error', ray.last_error or 'none')
+            ray.meta:set_int('opt_seek', (ray.show_seeking and 1) or 0)
         end
     }
 }

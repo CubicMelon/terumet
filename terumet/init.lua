@@ -33,14 +33,6 @@ terumet.mod_name = "terumet"
 
 terumet.RAND = PcgRandom(os.time())
 
-function terumet.pos_plus(pos, offset)
-    return {
-        x=pos.x + offset.x,
-        y=pos.y + offset.y,
-        z=pos.z + offset.z,
-    }
-end
-
 -- empty function useful for where a callback is necessary but using nil would cause undesired default behavior
 terumet.NO_FUNCTION = function() end
 terumet.EMPTY = {}
@@ -73,7 +65,7 @@ function terumet.particle_stream(pointA, pointB, density, particle_data, player)
     local step = {x=(dist_vector.x/pcount), y=(dist_vector.y/pcount), z=(dist_vector.z/pcount)}
     local ppos = vector.new(pointA)
     for pnum = 1,pcount do
-        ppos = terumet.pos_plus(ppos, step)
+        ppos = util3d.pos_plus(ppos, step)
         minetest.add_particle{
             pos = vector.new(ppos),
             velocity=terumet.random_velocity(5),
@@ -134,6 +126,8 @@ end
 function terumet.tex_comp(base_tex, overlay_id)
     return base_tex .. '^' .. terumet.tex(overlay_id)
 end
+
+terumet.do_lua_file('util3d')
 
 terumet.do_lua_file('interop/terumet_api')
 terumet.do_lua_file('options')
@@ -200,6 +194,7 @@ terumet.do_lua_file('machine/vulcan')
 terumet.do_lua_file('machine/thermobox')
 terumet.do_lua_file('machine/thermdist')
 terumet.do_lua_file('machine/heatray')
+terumet.do_lua_file('machine/lavam')
 
 if unified_inventory then 
     terumet.do_lua_file('interop/unified_inventory')

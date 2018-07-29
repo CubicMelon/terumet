@@ -34,8 +34,6 @@ terumet.options.machine = {
     },
 }
 
-local ENTROPY_EFFECT_ANYLEAF = {change='air', time=4.0, hups=20}
-
 terumet.options.heater = {
     furnace={
         --
@@ -53,7 +51,7 @@ terumet.options.heater = {
         -- Maximum HUs Solar Heater can store
         MAX_HEAT = 4000,
         -- HUs Solar Heater generates per tick based on sunlight level
-        SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 6, 12 },
+        SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 6, 12, 24 },
         -- Maximum HUs Solar Heater can transfer per tick
         HEAT_TRANSFER_RATE = 100,
     },
@@ -71,7 +69,7 @@ terumet.options.heater = {
             ['default:water_source']={change='default:ice', time=5.0, hups=100}, -- 500 HU total
             ['default:water_flowing']={change='default:ice', time=2.5, hups=120}, -- 300 HU total
             ['default:lava_source']={change='default:obsidian', time=2.0, hups=1000}, -- 2000 HU total
-            ['default:lava_flowing']={change='default:obsidian', time=1.0, hups=1000}, -- 1000 HU total
+            ['default:lava_flowing']={change='default:obsidian', time=1.0, hups=500}, -- 500 HU total
             ['default:dirt_with_grass']={change='default:dirt', hups=100},
             ['default:sandstone']={change='default:sand', hups=300},
             ['default:silver_sandstone']={change='default:silver_sand', hups=300},
@@ -206,9 +204,7 @@ terumet.options.heat_ray = {
     -- maximum number of nodes emitter will seek before giving up
     MAX_DISTANCE = 100,
     -- set to zero to disable particle display of ray
-    RAY_PARTICLES_PER_NODE = 4,
-    -- show crosshair of ray target-seeking
-    SEEKING_VISIBLE = false
+    RAY_PARTICLES_PER_NODE = 6
 }
 
 terumet.options.lavam = {
@@ -218,12 +214,15 @@ terumet.options.lavam = {
     -- Maximum HUs melter can contain
     MAX_HEAT = 3000,
     -- Nodes that can be melted to lava
-    VALID_STONES = {'default:stone', 'default:cobble', 'default:desert_stone', 'default:desert_cobble'},
-
-    -- total heat required (should really equal terumet.options.machine.BASIC_HEAT_SOURCES[lava bucket].hus)
-    HEAT_COST = 2000,
-    -- total time for 1 item required in seconds (best if HEAT_COST/BASE_TIME is a whole number)
-    MELT_TIME = 100.0
+    -- related number is required heat to melt
+    VALID_STONES = {
+        ['default:stone']=1500, 
+        ['default:cobble']=2000, 
+        ['default:desert_stone']=1400, 
+        ['default:desert_cobble']=1800
+    },
+    -- total time for 1 item required in seconds (best if required heat/MELT_TIME is a whole number)
+    MELT_TIME = 200
 }
 
 terumet.options.ore_saw = {

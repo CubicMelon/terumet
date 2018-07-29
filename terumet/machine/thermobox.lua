@@ -46,7 +46,7 @@ function base_tbox.do_processing(tbox, dt)
         tbox.status_text = "Waiting for heat..."
         return
     end
-    local out_pos = terumet.pos_plus(tbox.pos, base_mach.FACING_OFFSETS[tbox.facing])
+    local out_pos = util3d.pos_plus(tbox.pos, util3d.FACING_OFFSETS[tbox.facing])
     local out_mach = base_mach.read_state(out_pos)
 
     if out_mach then

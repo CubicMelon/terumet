@@ -4,7 +4,11 @@ Newer versions listed first
 ## Version 2.1
 * **Breaking Change!!** Began moving the mod as a whole to the in-development Minetest 5.0.0. **It is no longer guaranteed to work in older versions like 0.4.16 or 0.4.17.x!**
 * Changed the Ore-cutting Saw use sound to be way less annoying.
-* *updated version still in development*
+* Visibility of seeking particles of Heat Ray Emitter is now a per-machine option via a button on the interface, rather than an option of the mod overall. Time to put that control button section to good use!
+* Internal refactoring of useful 3D-relation node functions into its own "module" util3d.lua to help (*very* slightly) cut down on the size of machine.lua
+* The Solar Heater generates more heat (it is Tier 2 after all).
+* Added **Lava Melter**, a simple but useful machine for creating lava in more convenient places. Provided a stone or cobblestone and a large amount of heat, the Lava Melter will melt that stone to create a lava source block in front of it (as shown by the round dispenser-looking side with orange output arrows)
+* *still more to come*
 
 ## Version 2.0
 * **Breaking change** API for creating 'custom' heat machines has completely changed. Custom machines for versions prior to 2.0 will _not_ work in 2.0. See tmapisample/init.lua for a complete example of how the newer, much more flexible API works -- any type of machine is now possible to create. More info will be coming soon.

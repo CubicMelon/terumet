@@ -83,7 +83,7 @@ function ent_htr.do_processing(machine, dt)
         end
         if not machine.search_pos then
             -- reset
-            machine.search_pos = terumet.pos_plus(machine.pos, opts.MAX_RANGE)
+            machine.search_pos = util3d.pos_plus(machine.pos, opts.MAX_RANGE)
         end
         local found_node = minetest.get_node_or_nil(machine.search_pos)
         if found_node then
@@ -111,7 +111,7 @@ function ent_htr.do_processing(machine, dt)
                     minetest.set_node(machine.search_pos, found_node)
                 end
                 machine.status_text = 'Starting extraction of ' .. machine.inv:get_stack('drain',1):get_name() .. ' at ' .. minetest.pos_to_string(machine.search_pos) .. '...'
-                terumet.particle_stream(terumet.pos_plus(machine.pos, base_mach.ADJACENT_OFFSETS.up), machine.search_pos, 5, PARTICLE_DATA)
+                terumet.particle_stream(util3d.pos_plus(machine.pos, util3d.ADJACENT_OFFSETS.up), machine.search_pos, 5, PARTICLE_DATA)
             else
                 local node_def = minetest.registered_nodes[found_node.name]
                 local node_name = (node_def and node_def.description) or 'Undefined node'
@@ -137,7 +137,7 @@ function ent_htr.do_processing(machine, dt)
                     machine.state = ent_htr.STATE.FINDING
                 else
                     machine.status_text = 'Extracting (' .. terumet.format_time(machine.state_time) .. ')'
-                    base_mach.generate_particle(terumet.pos_plus(machine.pos, base_mach.ADJACENT_OFFSETS.up), PARTICLE_DATA)
+                    base_mach.generate_particle(util3d.pos_plus(machine.pos, util3d.ADJACENT_OFFSETS.up), PARTICLE_DATA)
                 end
             else
                 machine.state = ent_htr.STATE.DRAIN_FULL
@@ -151,7 +151,7 @@ function ent_htr.tick(pos, dt)
     -- read state from meta
     local machine = base_mach.read_state(pos)
     if not base_mach.check_overheat(machine, opts.MAX_HEAT) then
-        local pos_above = terumet.pos_plus(pos, base_mach.ADJACENT_OFFSETS.up)
+        local pos_above = util3d.pos_plus(pos, util3d.ADJACENT_OFFSETS.up)
         local node_above = minetest.get_node_or_nil(pos_above)
         if node_above and node_above.name == terumet.id('block_entropy') then
             ent_htr.do_processing(machine, dt)

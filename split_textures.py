@@ -8,9 +8,9 @@ def MT(basename):
     return MOD_NAME + '_' + basename + '.png'
 
 TEXTURE_FILES = [
-    ['ore_raw', 'htr_furnace_front_unlit', 'raw_sides_unlit', 'htr_furnace_front_lit', 'raw_sides_lit', 'raw_mach_bot', 'raw_mach_top', 'asmelt_front_unlit', 'asmelt_front_lit', 'raw_lavam_top'],
-    ['lump_raw', 'ingot_raw', 'block_raw', 'tool_pick_raw', 'tool_shovel_raw', 'tool_axe_raw', 'tool_sword_raw', 'item_coil_raw', 'upg_base'],
-    ['item_cryst', 'ingot_tcop', 'block_tcop', 'tool_pick_tcop', 'tool_shovel_tcop', 'tool_axe_tcop', 'tool_sword_tcop', 'item_coil_tcop', 'upg_ext_input'],
+    ['ore_raw', 'htr_furnace_front_unlit', 'raw_sides_unlit', 'htr_furnace_front_lit', 'raw_sides_lit', 'raw_mach_bot', 'raw_mach_top', 'asmelt_front_unlit', 'asmelt_front_lit', 'lavam_top'],
+    ['lump_raw', 'ingot_raw', 'block_raw', 'tool_pick_raw', 'tool_shovel_raw', 'tool_axe_raw', 'tool_sword_raw', 'item_coil_raw', 'upg_base', 'lavam_front_unlit'],
+    ['item_cryst', 'ingot_tcop', 'block_tcop', 'tool_pick_tcop', 'tool_shovel_tcop', 'tool_axe_tcop', 'tool_sword_tcop', 'item_coil_tcop', 'upg_ext_input', 'lavam_front_lit'],
     ['item_cryst_bg', 'ingot_tste', 'block_tste', 'tool_pick_tste', 'tool_shovel_tste', 'tool_axe_tste', 'tool_sword_tste', 'upg_ext_output', 'upg_max_heat'],
     ['item_ceramic', 'ingot_tgol', 'block_tgol', 'tool_pick_tgol', 'tool_shovel_tgol', 'tool_axe_tgol', 'tool_sword_tgol', 'item_coil_tgol', 'upg_heat_xfer'],
     ['block_ceramic', 'ingot_cgls', 'block_cgls', 'tool_pick_cgls', 'tool_shovel_cgls', 'tool_axe_cgls', 'tool_sword_cgls', 'upg_gen_up', 'upg_speed_up'],
