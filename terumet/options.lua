@@ -214,7 +214,7 @@ terumet.options.lavam = {
     -- Maximum HUs melter can contain
     MAX_HEAT = 3000,
     -- Nodes that can be melted to lava
-    -- related number is required heat to melt
+    -- related number is total required heat to melt
     VALID_STONES = {
         ['default:stone']=1500, 
         ['default:cobble']=2000, 
@@ -223,6 +223,24 @@ terumet.options.lavam = {
     },
     -- total time for 1 item required in seconds (best if required heat/MELT_TIME is a whole number)
     MELT_TIME = 200
+}
+
+terumet.options.meseg = {
+    --
+    -- MESE GARDEN SETTINGS
+    --
+    -- Maximum HUs garden can contain
+    MAX_HEAT = 5000,
+    -- HUs required to begin growing
+    START_HEAT = 1000,
+    -- HUs required per second when growing
+    GROW_HEAT = 10,
+    -- Multiplier applied to efficiency every second not heated or seeded
+    EFFIC_LOSS_RATE = 0.90,
+    -- Maximum efficiency rating (at this rating, progress is 100% of possible rate)
+    MAX_EFFIC = 1000,
+    -- Efficiency gained every second heated and seeded
+    EFFIC_GAIN = 5,
 }
 
 terumet.options.ore_saw = {
