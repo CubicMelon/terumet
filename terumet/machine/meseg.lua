@@ -84,7 +84,7 @@ function base_msg.do_output(meseg)
             failure = true
         end
         if failure then
-            meseg.status_text = "Seed crystals lost, growth failure."
+            meseg.status_text = "Seed crystals lost, growth failure"
             meseg.progress = 0
         end
         meseg.state = base_msg.STATE.GROWING
