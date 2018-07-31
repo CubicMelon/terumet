@@ -32,6 +32,8 @@ terumet.options.machine = {
         [1]='Accept',
         [2]='Provide',
     },
+    -- Set to nil to disable sound of overheated machines
+    OVERHEAT_SOUND = 'terumet_venting'
 }
 
 terumet.options.heater = {

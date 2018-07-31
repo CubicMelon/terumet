@@ -488,7 +488,13 @@ function base_mach.check_overheat(machine, base_max_heat)
 
     if machine.heat_level > machine.max_heat then
         base_mach.generate_smoke(machine.pos, 8)
-        -- TODO make sound or something
+        if opts.OVERHEAT_SOUND then
+            minetest.sound_play( opts.OVERHEAT_SOUND, {
+                pos = machine.pos,
+                gain = 0.7,
+                max_hear_distance = 16
+            })
+        end
         machine.heat_level = machine.heat_level - 50
         machine.status_text = 'Venting excess heat'
         return true
