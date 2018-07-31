@@ -120,7 +120,7 @@ function base_lavam.tick(pos, dt)
         base_mach.process_fuel(lavam)
     end
 
-    if lavam.state == base_lavam.STATE.MELT and (not lavam.need_heat) then
+    if lavam.state ~= base_lavam.STATE.IDLE and (not lavam.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
         reset_timer = true
         base_mach.set_node(pos, base_lavam.lit_id)
@@ -130,7 +130,7 @@ function base_lavam.tick(pos, dt)
     end
 
     -- other states to automatically reset timer, but not appear lit
-    if lavam.state == base_lavam.STATE.DISPENSE or venting or base_mach.has_upgrade(lavam, 'ext_input') then
+    if base_mach.has_upgrade(lavam, 'ext_input') then
         reset_timer = true
     end
     -- write status back to meta

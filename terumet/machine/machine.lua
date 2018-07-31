@@ -486,6 +486,10 @@ function base_mach.check_overheat(machine, base_max_heat)
         machine.max_heat = base_max_heat
     end
 
+    if base_mach.has_upgrade(machine, 'cheat') then
+        machine.heat_level = machine.max_heat
+        return false
+    end
     if machine.heat_level > machine.max_heat then
         base_mach.generate_smoke(machine.pos, 8)
         if opts.OVERHEAT_SOUND then
@@ -553,6 +557,7 @@ end
 -- returns true if successful, false if not enough heat
 -- automatically sets need_heat and "low heat message" if fails
 function base_mach.expend_heat(machine, value, process)
+    if base_mach.has_upgrade(machine, 'cheat') then return true end
     if machine.heat_level < value then
         base_mach.set_low_heat_msg(machine, process)
         machine.need_heat = true
@@ -620,7 +625,7 @@ function base_mach.generate_smoke(pos, count)
             expirationtime=1.41,
             size=sz,
             collisiondetection=false,
-            texture='terumet_part_smoke.png',
+            texture=string.format('terumet_part_smoke%d.png', terumet.RAND:next(1,3)),
             animation=SMOKE_ANIMATION
         }
     end

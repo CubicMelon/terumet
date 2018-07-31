@@ -21,6 +21,9 @@ function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src
         inventory_image = tex('upg_'..upgrade_id),
         _terumach_upgrade_id = upgrade_id
     })
+    
+    -- uncraftable upgrade (creative)
+    if not (source or source2 or src_pattern) then return end
 
     if not src_pattern then src_pattern = 'default' end
     local rec
@@ -53,3 +56,5 @@ terumet.register_machine_upgrade('heat_xfer', 'Heat Transfer Upgrade', id('item_
 terumet.register_machine_upgrade('gen_up', 'Heat Generation Upgrade', id('item_coil_tgol'), id('item_cryst_mese'))
 terumet.register_machine_upgrade('speed_up', 'Speed Upgrade', id('ingot_cgls'), id('item_cryst_dia'))
 terumet.register_machine_upgrade('cryst', 'Crystallization Upgrade', id('item_cryst_dia'), id('item_cryst_mese'))
+
+terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade\nCreative mode only')
