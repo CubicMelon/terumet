@@ -187,6 +187,17 @@ terumet.reg_tools('Teruchalcum', 'tcha',
     {1.8, 0.7, 0.45}, 90, 2, sword_opts.BRONZE_ALLOY, 60
 )
 
+-- register default tools as repairable
+-- default metal values of 1 ingot:
+local dmv_values = {steel=10, bronze = 30, mese = 90, diamond = 100}
+-- each type of tool based on ingots used to make
+for dmat, value in pairs(dmv_values) do
+    terumet.register_repairable_item("default:pick_"..dmat, value*3)
+    terumet.register_repairable_item("default:axe_"..dmat, value*3)
+    terumet.register_repairable_item("default:shovel_"..dmat, value)
+    terumet.register_repairable_item("default:sword_"..dmat, value*2)
+end
+
 terumet.do_lua_file('tool/ore_saw')
 
 terumet.do_lua_file('machine/heater/furnace_htr')

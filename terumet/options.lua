@@ -262,7 +262,7 @@ terumet.options.reformer = {
     -- populated through registration, see interop/terumet_api.lua
     repair_mats = {}, -- DO NOT CHANGE
 
-    -- all items that can be made into patterns and repaired and how much "repair-material" is required to remove a full wear bar
+    -- all items that can be repaired and how much "repair-material" is required to remove a full wear bar
     -- (TODO) mods can add addtional ones through the API terumet.register_repairable_item -- see interop/terumet_api.lua
     repairable = {} -- DO NOT CHANGE
 }
