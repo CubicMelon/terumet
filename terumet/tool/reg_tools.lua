@@ -1,7 +1,7 @@
 local id = terumet.id
 local tex = terumet.tex
 
-function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_count, max_level, sword_damage)
+function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_count, max_level, sword_damage, ingot_repair_value)
     local stick = 'default:stick'
     local pick_id = id('tool_pick_'..mat_id)
     local shovel_id = id('tool_shovel_'..mat_id)
@@ -27,7 +27,8 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
             {'', stick, ''},
             {'', stick, ''}
     }}
-    
+    terumet.register_repairable_item(pick_id, ingot_repair_value*3)
+
     minetest.register_tool( shovel_id, {
         description = mat_name .. ' Shovel',
         inventory_image = tex(shovel_id),
@@ -47,6 +48,7 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
             {stick},
             {stick}
     }}
+    terumet.register_repairable_item(shovel_id, ingot_repair_value)
 
     minetest.register_tool( axe_id, {
         description = mat_name .. ' Axe',
@@ -73,6 +75,7 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
         {stick, craft_item_id},
         {stick, ''}
     }}
+    terumet.register_repairable_item(axe_id, ingot_repair_value*3)
 
     minetest.register_tool( sword_id, {
         description = mat_name .. ' Sword',
@@ -93,4 +96,5 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
             {craft_item_id},
             {stick}
     }}
+    terumet.register_repairable_item(sword_id, ingot_repair_value*2)
 end

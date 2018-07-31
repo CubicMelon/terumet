@@ -184,7 +184,8 @@ terumet.options.vulcan = {
     --
     -- CRYSTAL VULCANIZER SETTINGS
     --
-    recipes = {}, -- populated when crystals are registered, don't change
+    -- populated through registration, see interop/terumet_api.lua
+    recipes = {}, -- DO NOT CHANGE
     -- Maximum HUs vulcanizer can contain
     MAX_HEAT = 6000,
     -- Heat cost per tick of vulcanizing
@@ -249,6 +250,21 @@ terumet.options.meseg = {
     SEED_LOSS_CHANCE = 35,
     -- sound to play at Garden node when a seed is lost (nil for none)
     SEED_LOSS_SOUND = 'default_break_glass'
+}
+
+terumet.options.reformer = {
+    --
+    -- EQUIPMENT REFORMER SETTINGS
+    --
+    MAX_HEAT = 5000,
+
+    -- items that can be turned into "repair-material" and how much
+    -- populated through registration, see interop/terumet_api.lua
+    repair_mats = {}, -- DO NOT CHANGE
+
+    -- all items that can be made into patterns and repaired and how much "repair-material" is required to remove a full wear bar
+    -- (TODO) mods can add addtional ones through the API terumet.register_repairable_item -- see interop/terumet_api.lua
+    repairable = {} -- DO NOT CHANGE
 }
 
 terumet.options.ore_saw = {

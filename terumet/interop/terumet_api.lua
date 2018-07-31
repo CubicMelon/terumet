@@ -1,5 +1,17 @@
 -- API for other mods to interface with this mod
 
+-- value = repair material value provided by 1 item
+function terumet.register_repair_material(id, value)
+    -- TODO error checking
+    terumet.options.reformer.repair_mats[id] = value
+end
+
+-- needed_mat = amount of repair material value to repair fully worn tool
+function terumet.register_repairable_item(id, needed_mat)
+    -- TODO error checking
+    terumet.options.reformer.repairable[id] = needed_mat
+end
+
 -- register a new alloy smelter recipe
 -- required data keys and descriptions:
 local ALLOY_REQUIRED = {
@@ -18,7 +30,7 @@ function terumet.register_alloy_recipe(data)
         end
     end
     if type(inputs) ~= 'table' or #inputs < 1 or #inputs > 4 then
-        error('teruemt.register_alloy_recipe: invalid inputs; must be a table of 1-4 itemstack strings (inclusive)')
+        error('terumet.register_alloy_recipe: invalid inputs; must be a table of 1-4 itemstack strings (inclusive)')
     end
     local list = terumet.options.smelter.recipes
     list[#list+1] = data

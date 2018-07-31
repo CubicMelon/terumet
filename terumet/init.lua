@@ -138,11 +138,12 @@ terumet.do_lua_file('material/reg_alloy')
 terumet.do_lua_file('material/upgrade')
 terumet.do_lua_file('material/entropy')
 
-terumet.reg_alloy('Terucopper', 'tcop', 1)
-terumet.reg_alloy('Terusteel', 'tste', 2)
-terumet.reg_alloy('Terugold', 'tgol', 3)
-terumet.reg_alloy('Coreglass', 'cgls', 4)
-terumet.reg_alloy('Teruchalcum', 'tcha', 2)
+-- reg_alloy(name, id, block hardness level, repair material value)
+terumet.reg_alloy('Terucopper', 'tcop', 1, 20)
+terumet.reg_alloy('Terusteel', 'tste', 2, 40)
+terumet.reg_alloy('Terugold', 'tgol', 3, 80)
+terumet.reg_alloy('Coreglass', 'cgls', 4, 120)
+terumet.reg_alloy('Teruchalcum', 'tcha', 2, 60)
 
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
@@ -154,33 +155,36 @@ terumet.do_lua_file('material/crystallized')
 local id = terumet.id
 local tex = terumet.tex
 
+-- register raw terumetal ingot as weak repair-material
+terumet.register_repair_material(id('ingot_raw'), 10)
+
 terumet.do_lua_file('tool/reg_tools')
 
 local sword_opts = terumet.options.tools.sword_damage
 
 terumet.reg_tools('Pure Terumetal', 'raw',
     id('ingot_raw'),
-    {2.0}, 10, 2, sword_opts.TERUMETAL
+    {2.0}, 10, 2, sword_opts.TERUMETAL, 10
 )
 terumet.reg_tools('Terucopper', 'tcop', 
     id('ingot_tcop'),
-    {3.2, 1.4, 0.8}, 40, 1, sword_opts.COPPER_ALLOY
+    {3.2, 1.4, 0.8}, 40, 1, sword_opts.COPPER_ALLOY, 20
 )
 terumet.reg_tools('Terusteel', 'tste', 
     id('ingot_tste'),
-    {2.9, 1.3, 0.7}, 50, 2, sword_opts.IRON_ALLOY
+    {2.9, 1.3, 0.7}, 50, 2, sword_opts.IRON_ALLOY, 40
 )
 terumet.reg_tools('Terugold', 'tgol', 
     id('ingot_tgol'),
-    {2.7, 1.2, 0.63}, 60, 3, sword_opts.GOLD_ALLOY
+    {2.7, 1.2, 0.63}, 60, 3, sword_opts.GOLD_ALLOY, 80
 )
 terumet.reg_tools('Coreglass', 'cgls',
     id('ingot_cgls'),
-    {2.5, 1.2, 0.7}, 75, 4, sword_opts.COREGLASS
+    {2.5, 1.2, 0.7}, 75, 4, sword_opts.COREGLASS, 120
 )
 terumet.reg_tools('Teruchalcum', 'tcha',
     id('ingot_tcha'),
-    {1.8, 0.7, 0.45}, 90, 2, sword_opts.BRONZE_ALLOY
+    {1.8, 0.7, 0.45}, 90, 2, sword_opts.BRONZE_ALLOY, 60
 )
 
 terumet.do_lua_file('tool/ore_saw')
@@ -200,3 +204,15 @@ terumet.do_lua_file('machine/meseg')
 if unified_inventory then 
     terumet.do_lua_file('interop/unified_inventory')
 end
+
+-- debug message TODO remove
+minetest.after(0.1, function ()
+    minetest.log('Registered Repair Materials:')
+    for id,val in pairs(terumet.options.reformer.repair_mats) do
+        minetest.log(string.format(' RMAT %s => %d value', id, val))
+    end
+    minetest.log('Registered Repairable Tools:')
+    for id,cost in pairs(terumet.options.reformer.repairable) do
+        minetest.log(string.format(' RPRBL %s => %s RMV', id, cost))
+    end
+end)
