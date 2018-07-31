@@ -238,18 +238,26 @@ terumet.options.meseg = {
     GROW_HEAT = 35,
     -- Multiplier applied to efficiency every second not heated or seeded
     EFFIC_LOSS_RATE = 0.75,
-    -- Maximum efficiency rating (at this rating, progress is 100% of possible rate)
-    MAX_EFFIC = 1000,
-    -- Efficiency gained every second heated and seeded
-    EFFIC_GAIN = 5,
-    
+    -- Maximum efficiency "points" (at this level, progress is 100% of possible rate)
+    -- Efficiency points increase by number of seed crystals each second until max
+    MAX_EFFIC = 2000,
+    -- Progress "points" needed to grow a new shard
+    -- points gained each second = number of seed crystals x efficiency
+    PROGRESS_NEED = 300,
+    -- item id of seed crystal
     SEED_ITEM = 'default:mese_crystal',
+    -- item id of produced item
     PRODUCE_ITEM = 'default:mese_crystal_fragment',
-    -- Implement a 1/SEED_LOSS_CHANCE chance to lose one seed crystal with a successful shard production. 
-    -- Set to false or nil to disable.
-    SEED_LOSS_CHANCE = 35,
+    -- Chance to lose a seed crystal each growth is 1/(SEED_LOSS_CHANCE-seed crystal count)
+    -- so SEED_LOSS_CHANCE = 101 means:
+    --  1 seed crystal = 1/100 chance (very low)
+    --  99 seed crystals = 1/2 chance (coin flip)
+    -- You can set to false or nil to disable losing seeds, even if it's overpowered.
+    SEED_LOSS_CHANCE = 101,
     -- sound to play at Garden node when a seed is lost (nil for none)
-    SEED_LOSS_SOUND = 'default_break_glass'
+    SEED_LOSS_SOUND = 'terumet_break',
+    -- true if particle effects occur when a seed is lost (default machine PARTICLES option false will also disable)
+    SEED_LOSS_PARTICLES = true
 }
 
 terumet.options.reformer = {

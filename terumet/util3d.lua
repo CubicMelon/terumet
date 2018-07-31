@@ -10,9 +10,7 @@
 
 local THIS_VERSION = 1
 -- don't overwrite a later version if its already loaded
-if util3d then
-    if util3d.version >= THIS_VERSION then return end
-end
+if minetest.global_exists('util3d') and util3d.version >= THIS_VERSION then return end
 
 util3d = {}
 util3d.version = THIS_VERSION

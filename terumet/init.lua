@@ -36,6 +36,7 @@ terumet.RAND = PcgRandom(os.time())
 -- empty function useful for where a callback is necessary but using nil would cause undesired default behavior
 terumet.NO_FUNCTION = function() end
 terumet.EMPTY = {}
+terumet.ZERO_XYZ = {x=0,y=0,z=0}
 
 function terumet.recipe_3x3(i)
     return { 
@@ -212,7 +213,7 @@ terumet.do_lua_file('machine/heatray')
 terumet.do_lua_file('machine/lavam')
 terumet.do_lua_file('machine/meseg')
 
-if unified_inventory then 
+if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')
 end
 

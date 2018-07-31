@@ -132,7 +132,7 @@ function base_cust.tick(pos, dt)
     if machine.state ~= base_cust.STATE.IDLE and (not machine.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
         base_mach.set_timer(machine)
-        base_mach.generate_particle(pos)
+        base_mach.generate_smoke(pos)
     end
 
     -- write status back to meta

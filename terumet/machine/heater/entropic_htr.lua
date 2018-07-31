@@ -137,7 +137,7 @@ function ent_htr.do_processing(machine, dt)
                     machine.state = ent_htr.STATE.FINDING
                 else
                     machine.status_text = 'Extracting (' .. terumet.format_time(machine.state_time) .. ')'
-                    base_mach.generate_particle(util3d.pos_plus(machine.pos, util3d.ADJACENT_OFFSETS.up), PARTICLE_DATA)
+                    base_mach.generate_particle(util3d.pos_plus(machine.pos, util3d.ADJACENT_OFFSETS.up), PARTICLE_DATA, 3)
                 end
             else
                 machine.state = ent_htr.STATE.DRAIN_FULL

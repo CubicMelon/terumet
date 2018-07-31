@@ -13,7 +13,18 @@ base_msg.STATE.GROWING = 1
 base_msg.STATE.OUTPUT = 2
 
 -- itemstack gained by successful growth
-base_msg.RESULT_ITEMSTACK = ItemStack(opts.PRODUCE_ITEM)
+local RESULT_ITEMSTACK = ItemStack(opts.PRODUCE_ITEM)
+
+-- definition for particles when seed breaks
+local LOSS_PARTICLE_DATA = {
+    texture='terumet_part_seedbreak.png',
+    velocity={x=0,y=2.9,z=0},
+    size=0.8,
+    randvel_xz=5,
+    randvel_y=10,
+    acceleration={x=0,y=-6.0,z=0},
+    expiration=1.2,
+}
 
 local FSDEF = {
     control_buttons = {
@@ -21,7 +32,7 @@ local FSDEF = {
     },
     machine = function(machine)
         return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') ..
-            base_mach.fs_meter(2,2.5,'mese', machine.progress, 'Growth')
+            base_mach.fs_meter(2,2.5,'mese', 100*machine.progress/opts.PROGRESS_NEED, 'Growth')
     end,
     input = {label='Seeds'},
     output = {label='Grown'}
@@ -57,23 +68,30 @@ end
 function base_msg.do_output(meseg)
     if meseg.state ~= base_msg.STATE.OUTPUT then return end
     local out_inv, out_list = base_mach.get_output(meseg)
-    if out_inv and out_inv:room_for_item(out_list, base_msg.RESULT_ITEMSTACK) then
+    if out_inv and out_inv:room_for_item(out_list, RESULT_ITEMSTACK) then
         local in_inv, in_list = base_mach.get_input(meseg)
         local failure = false
         if in_inv then
             local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
             if input_stack and input_stack:get_name() == opts.SEED_ITEM then
-                out_inv:add_item(out_list, base_msg.RESULT_ITEMSTACK)
-                if opts.SEED_LOSS_CHANCE and terumet.RAND:next(1,opts.SEED_LOSS_CHANCE) == 1 then
-                    in_inv:remove_item(in_list, opts.SEED_ITEM)
-                    if opts.SEED_LOSS_SOUND then
-                        minetest.sound_play( opts.SEED_LOSS_SOUND, {
-                            pos = meseg.pos,
-                            gain = 0.3,
-                            max_hear_distance = 16
-                        })
+                out_inv:add_item(out_list, RESULT_ITEMSTACK)
+                if opts.SEED_LOSS_CHANCE then
+                    local seed_count = input_stack:get_count()
+                    local chance = math.max(1, opts.SEED_LOSS_CHANCE - seed_count)
+                    if terumet.RAND:next(1,chance) == 1 then
+                        in_inv:remove_item(in_list, opts.SEED_ITEM)
+                        if opts.SEED_LOSS_SOUND then
+                            minetest.sound_play( opts.SEED_LOSS_SOUND, {
+                                pos = meseg.pos,
+                                gain = 0.3,
+                                max_hear_distance = 16
+                            })
+                        end
+                        if opts.SEED_LOSS_PARTICLES then base_mach.generate_particle(meseg.pos, LOSS_PARTICLE_DATA, 6) end
+                        meseg.status_text = "New shard complete! (seed crystal lost)"
+                    else
+                        meseg.status_text = "New shard complete!"
                     end
-                    meseg.status_text = "New shard complete! (seed crystal lost)"
                 else
                     meseg.status_text = "New shard complete!"
                 end
@@ -100,24 +118,24 @@ function base_msg.do_growing(meseg, dt)
     local in_inv, in_list = base_mach.get_input(meseg)
     local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
     local has_seed = (input_stack and input_stack:get_name() == opts.SEED_ITEM)
-    local has_heat = base_mach.expend_heat(meseg, opts.GROW_HEAT, 'Growing mese')
+    local has_heat = base_mach.expend_heat(meseg, opts.GROW_HEAT, 'Heating garden')
     if has_seed and has_heat then
-        if meseg.effic < opts.MAX_EFFIC then 
-            meseg.effic = math.min(meseg.effic + opts.EFFIC_GAIN, opts.MAX_EFFIC)
-        end
         local seed_count = input_stack:get_count()
+        if meseg.effic < opts.MAX_EFFIC then 
+            meseg.effic = math.min(meseg.effic + seed_count, opts.MAX_EFFIC)
+        end
         meseg.progress = meseg.progress + math.floor(seed_count * meseg.effic / opts.MAX_EFFIC)
-        if meseg.progress >= 100 then
+        if meseg.progress >= opts.PROGRESS_NEED then
             meseg.state = base_msg.STATE.OUTPUT
-            meseg.progress = meseg.progress - 100
+            meseg.progress = 0
             meseg.status_text = 'Growth complete!'
         else
-            meseg.status_text = string.format('Growing... (Progress %d%%, Efficiency %.1f%%)', meseg.progress, meseg.effic / opts.MAX_EFFIC * 100)
+            meseg.status_text = 'Growing...'
         end        
     else
         meseg.effic = math.floor(meseg.effic * opts.EFFIC_LOSS_RATE)
         if meseg.effic > 0 then
-            meseg.status_text = string.format('Efficiency dropping (%.1f%%) - ', meseg.effic/opts.MAX_EFFIC*100)
+            meseg.status_text = 'Efficiency dropping - '
             if not has_seed then meseg.status_text = meseg.status_text .. 'No seed crystals ' end
             if not has_heat then meseg.status_text = meseg.status_text .. 'No heat' end
         else
@@ -129,7 +147,7 @@ end
 function base_msg.check_start(meseg)
     local in_inv, in_list = base_mach.get_input(meseg)
     local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
-    if input_stack and input_stack:get_name() == opts.SEED_ITEM and base_mach.expend_heat(meseg, opts.START_HEAT, 'Starting') then
+    if input_stack and input_stack:get_name() == opts.SEED_ITEM and base_mach.expend_heat(meseg, opts.START_HEAT, 'Starting garden') then
         meseg.effic = math.floor(opts.MAX_EFFIC / 100)
         meseg.state = base_msg.STATE.GROWING
         meseg.status_text = "Starting..."
@@ -156,7 +174,7 @@ function base_msg.tick(pos, dt)
     end
 
     if venting or meseg.state == base_msg.STATE.GROWING then
-        base_mach.generate_particle(pos)
+        base_mach.generate_smoke(pos)
     end
 
     if venting or meseg.state ~= base_msg.STATE.WAITING then 

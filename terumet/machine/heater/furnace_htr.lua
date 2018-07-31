@@ -126,7 +126,7 @@ function furn_htr.tick(pos, dt)
     if heater.state == furn_htr.STATE.BURNING then
         base_mach.set_timer(heater)
         base_mach.set_node(pos, furn_htr.lit_id)
-        base_mach.generate_particle(pos)
+        base_mach.generate_smoke(pos)
     else
         base_mach.set_node(pos, furn_htr.unlit_id)
         if heater.heat_level > 0 then base_mach.set_timer(heater) end

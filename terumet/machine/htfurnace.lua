@@ -140,7 +140,7 @@ function base_htf.tick(pos, dt)
         -- if still processing and not waiting for heat, reset timer to continue processing
         base_mach.set_timer(furnace)
         base_mach.set_node(pos, base_htf.lit_id)
-        base_mach.generate_particle(pos)
+        base_mach.generate_smoke(pos)
     else
         base_mach.set_node(pos, base_htf.unlit_id)
     end

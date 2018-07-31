@@ -39,6 +39,13 @@ base_mach.HEAT_XFER_MODE= {
     PROVIDE_ONLY=2
 }
 
+local SMOKE_ANIMATION = {
+    type='vertical_frames',
+    aspect_w=32,
+    aspect_h=32,
+    length=1.5
+}
+
 -- 
 -- CRAFTING MATERIALS
 --
@@ -480,7 +487,7 @@ function base_mach.check_overheat(machine, base_max_heat)
     end
 
     if machine.heat_level > machine.max_heat then
-        if opts.PARTICLES then base_mach.generate_particle(machine.pos) end
+        base_mach.generate_smoke(machine.pos, 8)
         -- TODO make sound or something
         machine.heat_level = machine.heat_level - 50
         machine.status_text = 'Venting excess heat'
@@ -553,23 +560,64 @@ function base_mach.gain_heat(machine, value)
     machine.heat_level = math.min(machine.max_heat, machine.heat_level + value)
 end
 
-function base_mach.generate_particle(pos, particle_data)
+function base_mach.generate_particle(pos, data, count)
     if not opts.PARTICLES then return end
-    particle_data = particle_data or terumet.EMPTY
-    local xoff = terumet.RAND:next(-5,5) / 10
-    local zoff = terumet.RAND:next(-5,5) / 10
-    local sz = terumet.RAND:next(50,400) / 100
-    local vel = terumet.RAND:next(2,5) / 10
-    minetest.add_particle{
-        pos={x=pos.x+xoff, y=pos.y+0.5, z=pos.z+zoff},
-        velocity={x=0, y=vel, z=0},
-        acceleration={x=0, y=0.6, z=0},
-        expirationtime=(particle_data.expiration or 1.5),
-        size=sz,
-        collisiondetection=false,
-        texture=(particle_data.texture or 'default_item_smoke.png'),
-        animation=particle_data.animation
-    }
+    count = count or 1
+    data = data or terumet.EMPTY
+    for n = 1,count do
+        local px = pos.x + (terumet.RAND:next(-5,5) / 10)
+        local py = pos.y + 0.5 + (terumet.RAND:next(0,100) / 250)
+        local pz = pos.z + (terumet.RAND:next(-5,5) / 10)
+        local sz = data.size or (terumet.RAND:next(50,400) / 100)
+        local vel = {x=0,y=0,z=0}
+        if data.velocity then
+            vel.x = data.velocity.x or 0
+            vel.y = data.velocity.y or 0
+            vel.z = data.velocity.z or 0
+        end
+        if data.randvel_xz then
+            vel.x = vel.x + (terumet.RAND:next(-data.randvel_xz,data.randvel_xz) / 10)
+            vel.z = vel.z + (terumet.RAND:next(-data.randvel_xz,data.randvel_xz) / 10)
+        end
+        if data.randvel_y then
+            vel.y = vel.y + (terumet.RAND:next(-data.randvel_y,data.randvel_y) / 10)
+        end
+        minetest.add_particle{
+            pos={x=px, y=py, z=pz},
+            velocity=vel,
+            acceleration=data.acceleration or terumet.ZERO_XYZ,
+            expirationtime=data.expiration or 1.0,
+            size=sz,
+            collisiondetection = false,
+            texture = data.texture,
+            playername = data.playername,
+            animation = data.animation,
+            glow = data.glow
+        }
+    end
+end
+
+function base_mach.generate_smoke(pos, count)
+    if not opts.PARTICLES then return end
+    count = count or 1
+    for n = 1,count do
+        local px = pos.x + (terumet.RAND:next(-5,5) / 10)
+        local py = pos.y + 0.5 + (terumet.RAND:next(0,100) / 250)
+        local pz = pos.z + (terumet.RAND:next(-5,5) / 10)
+        local sz = terumet.RAND:next(100,400) / 100
+        local vel = terumet.RAND:next(2,5) / 10
+        local acc = terumet.RAND:next(4,10) / 10
+        minetest.add_particle{
+            pos={x=px, y=py, z=pz},
+            velocity={x=0, y=vel, z=0},
+            acceleration={x=0, y=acc, z=0},
+            expirationtime=1.41,
+            size=sz,
+            collisiondetection=false,
+            texture='terumet_part_smoke.png',
+            animation=SMOKE_ANIMATION
+        }
+    end
 end
 
 -- convert state of a machine to an itemstack

@@ -201,7 +201,7 @@ function base_asm.tick(pos, dt)
         -- if still processing and not waiting for heat, reset timer to continue processing
         reset_timer = true
         base_mach.set_node(pos, base_asm.lit_id)
-        base_mach.generate_particle(pos)
+        base_mach.generate_smoke(pos)
     else
         base_mach.set_node(pos, base_asm.unlit_id)
     end
