@@ -73,7 +73,7 @@ function sol_htr.do_processing(solar, dt)
             base_mach.gain_heat(solar, gain)
             solar.status_text = string.format('Heating. Effective light: %.0f%% ', last_eff)
         else
-            solar.status_text = 'Idle; maximum heat.'
+            solar.status_text = 'Idle - maximum heat.'
         end
     end
     solar.last_sun = last_sun

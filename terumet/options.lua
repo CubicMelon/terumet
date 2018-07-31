@@ -32,7 +32,7 @@ terumet.options.machine = {
         [1]='Accept',
         [2]='Provide',
     },
-    -- Set to nil to disable sound of overheated machines
+    -- Sound played by overheated machines, (nil to disable)
     OVERHEAT_SOUND = 'terumet_venting'
 }
 
@@ -177,7 +177,7 @@ terumet.options.furnace = {
     -- Maximum HUs ht-furnace can contain
     MAX_HEAT = 3000,
     -- Heat cost per tick of cooking
-    COST_COOKING_HU = 3,
+    COST_COOKING_HU = 5,
     -- Multiplier applied to normal cooking time
     TIME_MULT = 0.5,
 }
