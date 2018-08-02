@@ -262,12 +262,22 @@ terumet.options.meseg = {
     SEED_LOSS_PARTICLES = true
 }
 
-terumet.options.reformer = {
+terumet.options.repm = {
     --
     -- EQUIPMENT REFORMER SETTINGS
     --
     MAX_HEAT = 5000,
 
+    -- HUs/tick to melt repair material
+    MELTING_HEAT = 20,
+    -- HUs/tick to repair one item
+    REPAIRING_HEAT = 10,
+    -- maximum units of repair material that can be stored
+    RMAT_MAXIMUM = 1000,
+    -- maximum units of repair material that can be melted per tick
+    MAX_MELT = 100,
+    -- maximum units of repair material that can be used to repair each tick (split evenly to all candidates)
+    MAX_REPAIR = 20,
     -- items that can be turned into "repair-material" and how much
     -- populated through registration, see interop/terumet_api.lua
     repair_mats = {}, -- DO NOT CHANGE
