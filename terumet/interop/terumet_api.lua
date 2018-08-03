@@ -3,13 +3,13 @@
 -- value = repair material value provided by 1 item
 function terumet.register_repair_material(id, value)
     -- TODO error checking
-    terumet.options.reformer.repair_mats[id] = value
+    terumet.options.repm.repair_mats[id] = value
 end
 
 -- needed_mat = amount of repair material value to repair fully worn tool
 function terumet.register_repairable_item(id, needed_mat)
     -- TODO error checking
-    terumet.options.reformer.repairable[id] = needed_mat
+    terumet.options.repm.repairable[id] = needed_mat
 end
 
 -- register a new alloy smelter recipe

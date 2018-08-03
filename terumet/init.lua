@@ -212,6 +212,7 @@ terumet.do_lua_file('machine/thermdist')
 terumet.do_lua_file('machine/heatray')
 terumet.do_lua_file('machine/lavam')
 terumet.do_lua_file('machine/meseg')
+terumet.do_lua_file('machine/repm')
 
 if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')
@@ -220,11 +221,11 @@ end
 -- debug message TODO remove
 minetest.after(0.1, function ()
     minetest.log('Registered Repair Materials:')
-    for id,val in pairs(terumet.options.reformer.repair_mats) do
+    for id,val in pairs(terumet.options.repm.repair_mats) do
         minetest.log(string.format(' RMAT %s => %d value', id, val))
     end
     minetest.log('Registered Repairable Tools:')
-    for id,cost in pairs(terumet.options.reformer.repairable) do
+    for id,cost in pairs(terumet.options.repm.repairable) do
         minetest.log(string.format(' RPRBL %s => %s RMV', id, cost))
     end
 end)

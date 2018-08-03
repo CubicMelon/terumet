@@ -25,7 +25,6 @@ local FSDEF = {
     end,
     input = {true},
     output = {true},
-    fuel_slot = {true},
 }
 
 function base_repm.init(pos)
@@ -38,6 +37,7 @@ function base_repm.init(pos)
     local init_repm = {
         class = base_repm.unlit_nodedef._terumach_class,
         rmat_tank = 0,
+        rmat_melting = 0,
         state = base_repm.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
@@ -57,7 +57,7 @@ function base_repm.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
     local rmat_tank = machine.meta:get_int('rmat_tank') or 0
     if rmat_tank > 0 then
-        -- TODO drop some sort of raw rmat item
+        -- TODO drop some sort of raw rmat item?
         --drops[#drops+1] = terumet.id('item_cryst_raw', math.min(99, flux_tank))
     end
     return drops
@@ -71,6 +71,7 @@ function base_repm.process(repm, dt)
 
     -- check inputs and melt/repair them accordingly
     local in_inv, in_list = base_mach.get_input(repm)
+    local out_inv, out_list = base_mach.get_output(repm)
     if not in_inv then
         repm.status_text = "No input"
         repm.state = base_repm.STATE.IDLE
@@ -80,16 +81,20 @@ function base_repm.process(repm, dt)
     local repair_items = {}
     -- check each slot if it is a repmat item to melt or a repairable
     for slot = 1,in_inv:get_size(in_list) do
-        local in_stack = in_inv:get_stack(slot, in_list)
+        local in_stack = in_inv:get_stack(in_list, slot)
         if in_stack then
             local item_name = in_stack:get_name()
             if opts.repair_mats[item_name] then
                 -- is a repmat item -> consume one and add its value to the currently-melting value
-                in_stack:take_item()
+                in_stack:set_count(in_stack:get_count() - 1)
                 repm.rmat_melting = repm.rmat_melting + opts.repair_mats[item_name]
             elseif opts.repairable[item_name] and in_stack:get_wear() > 0 then
                 -- is a repairable item with wear -> put it into list of items to try to repair this tick
                 repair_items[#repair_items+1] = in_stack
+            elseif out_inv:room_for_item(out_list, in_stack) then
+                -- is not something we can process, move to output if there's space
+                in_inv:remove_item(in_list, in_stack)
+                out_inv:add_item(out_list, in_stack)
             end
         end
     end
@@ -107,8 +112,6 @@ function base_repm.process(repm, dt)
     end
     -- try to repair previously-found items that are eligible
     if #repair_items > 0 then
-        -- get output in case any full repairs complete
-        local out_inv, out_list = base_mach.get_output(repm)
         -- amount of maximum rmat that can be applied to each eligible item 
         local max_repair_each = math.floor(opts.MAX_REPAIR / #repair_items)
         -- keep track of how much rmat actually used and how many items repaired
@@ -137,7 +140,7 @@ function base_repm.process(repm, dt)
                 end
             else
                 -- cause error message
-                base_mach.expend_heat(repm, opts.REPAIRING_HEAT, 'Repairing '..rep_item:get_description()) then
+                base_mach.expend_heat(repm, opts.REPAIRING_HEAT, 'Repairing '..rep_item:get_description())
                 break
             end
         end
@@ -148,7 +151,7 @@ function base_repm.process(repm, dt)
         end
     end
 
-    if not did_something then repm.state = base_repm.STATE.IDLE end
+    if not continue_working then repm.state = base_repm.STATE.IDLE end
 end
 
 function base_repm.check_new_processing(repm)
@@ -166,9 +169,9 @@ function base_repm.check_new_processing(repm)
     -- check input for repmat items or repairables
     -- at this point only checking IF there is work to do
     for slot = 1,in_inv:get_size(in_list) do
-        local in_stack = in_inv:get_stack(slot, in_list)
+        local in_stack = in_inv:get_stack(in_list, slot)
         if in_stack then
-            local item_name = in_slot:get_name()
+            local item_name = in_stack:get_name()
             if opts.repair_mats[item_name] or (opts.repairable[item_name] and in_stack:get_wear() > 0) then
                 start_work = true
                 break
@@ -216,35 +219,32 @@ end
 
 base_repm.unlit_nodedef = base_mach.nodedef{
     -- node properties
-    description = "Terumetal Alloy Smelter",
+    description = "Equipment Reformer",
     tiles = {
-        terumet.tex('raw_mach_top'), terumet.tex('raw_mach_bot'),
-        terumet.tex('raw_sides_unlit'), terumet.tex('raw_sides_unlit'),
-        terumet.tex('raw_sides_unlit'), terumet.tex('repm_front_unlit')
+        terumet.tex('frame_tste'), terumet.tex('block_ceramic'),
+        terumet.tex('htfurn_sides'), terumet.tex('htfurn_sides'),
+        terumet.tex('htfurn_sides'), terumet.tex('repm_front')
     },
     -- callbacks
     on_construct = base_repm.init,
     on_timer = base_repm.tick,
     -- machine class data
     _terumach_class = {
-        name = 'Terumetal Alloy Smelter',
-        timer = 0.5,
+        name = 'Equipment Reformer',
+        timer = 1.0,
         -- NEW
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         -- end new
         drop_id = base_repm.unlit_id,
         get_drop_contents = base_repm.get_drop_contents,
-        on_form_action = FORM_ACTION,
         on_read_state = function(repm)
-            repm.flux_tank = repm.meta:get_int('flux_tank')
-            repm.heat_cost = repm.meta:get_int('heatcost') or 0
-            repm.zero_flux_recipes = (repm.meta:get_int('opt_zfr') or 0) == 1
+            repm.rmat_tank = repm.meta:get_int('rmat_tank')
+            repm.rmat_melting = repm.meta:get_int('rmat_melting')
         end,
         on_write_state = function(repm)
-            repm.meta:set_int('flux_tank', repm.flux_tank)
-            repm.meta:set_int('heatcost', repm.heat_cost or 0)
-            repm.meta:set_int('opt_zfr', (repm.zero_flux_recipes and 1) or 0)
+            repm.meta:set_int('rmat_tank', repm.rmat_tank)
+            repm.meta:set_int('rmat_melting', repm.rmat_melting)
         end
     }
 }
