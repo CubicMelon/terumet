@@ -47,7 +47,6 @@ function base_tdist.do_processing(tbox, dt)
         tbox.status_text = "Waiting for heat..."
         return
     end
-
     -- ignore node in output direction (facing dir)
     local facing_dir = util3d.FACING_DIRECTION[tbox.facing]
     base_mach.push_heat_adjacent(tbox, opts.HEAT_TRANSFER_RATE, {facing_dir})
@@ -60,11 +59,14 @@ function base_tdist.tick(pos, dt)
     
     if not base_mach.check_overheat(tbox, opts.MAX_HEAT) then
         base_mach.process_fuel(tbox)
-        base_tdist.do_processing(tbox, dt)
+        if tbox.machine.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.NO_XFER then
+            base_tdist.do_processing(tbox, dt)
+        end
     end
-    base_mach.set_timer(tbox)
+    
     -- write status back to meta
     base_mach.write_state(pos, tbox)
+    return true
 end
 
 base_tdist.nodedef = base_mach.nodedef{

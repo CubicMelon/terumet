@@ -109,8 +109,8 @@ base_mach.buttondefs.HEAT_XFER_TOGGLE = {
     end,
     icon = 'terumet_gui_heatxfer.png',
     name = 'hxfer_toggle',
-    on_text = 'Heat transfer on',
-    off_text = 'Heat transfer off'
+    on_text = 'Adjacent Heat Transfer on',
+    off_text = 'Adjacent Heat transfer off'
 }
 
 -- build and return a formspec given a machine state
@@ -490,6 +490,7 @@ function base_mach.check_overheat(machine, base_max_heat)
         machine.heat_level = machine.max_heat
         return false
     end
+
     if machine.heat_level > machine.max_heat then
         base_mach.generate_smoke(machine.pos, 8)
         if opts.OVERHEAT_SOUND then
