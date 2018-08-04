@@ -9,17 +9,20 @@ base_repm.id = terumet.id('mach_repm')
 -- state identifier consts
 base_repm.STATE = {}
 base_repm.STATE.IDLE = 0
-base_repm.STATE.WORKING = 0
+base_repm.STATE.RMAT_MELT = 1
+base_repm.STATE.REPAIRING = 2
 
 local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,        
     },
     machine = function(machine)
-        -- TODO
+        -- TODO: display tweaking
         local fs = base_mach.fs_meter(2.5,1, 'rmat', 100*machine.rmat_tank/opts.RMAT_MAXIMUM, 'Repair Material')
-        if machine.rmat_melting > 0 then
-            fs=fs..base_mach.fs_proc(3,2,'flux')
+        if machine.state == base_repm.STATE.RMAT_MELT then
+            fs=fs..base_mach.fs_proc(3,2,'melt', machine.inv:get_stack('process', 1))
+        elseif machine.state == base_repm.STATE.REPAIRING then
+            fs=fs..base_mach.fs_proc(3,2,'alloy')
         end
         return fs
     end,
@@ -31,11 +34,12 @@ function base_repm.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('in', 4)
+    inv:set_size('process', 1)
     inv:set_size('out', 4)
     inv:set_size('upgrade', 3)
 
     local init_repm = {
-        class = base_repm.unlit_nodedef._terumach_class,
+        class = base_repm.nodedef._terumach_class,
         rmat_tank = 0,
         rmat_melting = 0,
         state = base_repm.STATE.IDLE,
@@ -63,12 +67,23 @@ function base_repm.get_drop_contents(machine)
     return drops
 end
 
-function base_repm.process(repm, dt)
-    if repm.state ~= base_repm.STATE.WORKING then return end
-    
-    -- if still false at end of process function, then go idle
-    local continue_working = false
+function base_repm.try_eject_item(repm)
+    local proc_item = repm.inv:get_stack('process', 1)
+    if proc_item then
+        local out_inv, out_list = base_mach.get_output(repm)
+        if out_inv:room_for_item(out_list, proc_item) then
+            out_inv:add_item(out_list, proc_item)
+            repm.inv:set_stack('process', 1, nil)
+            repm.state = base_repm.STATE.IDLE
+            return true
+        end
+    end
+    return false
+end
 
+function base_repm.process(repm, dt)
+    if repm.state == base_repm.STATE.IDLE then return end
+    
     -- check inputs and melt/repair them accordingly
     local in_inv, in_list = base_mach.get_input(repm)
     local out_inv, out_list = base_mach.get_output(repm)
@@ -78,6 +93,32 @@ function base_repm.process(repm, dt)
         return
     end
 
+    if repm.state == base_repm.STATE.RMAT_MELT then
+        if base_mach.expend_heat(repm, opts.MELTING_HEAT, 'Melting repair material') then
+            local rmat_time = math.min(repm.state_time, dt)
+            local rmat_gain = rmat_time * opts.MELTING_RATE
+            repm.rmat_tank = math.min(opts.RMAT_MAXIMUM, repm.rmat_tank + rmat_gain)
+            repm.state_time = repm.state_time - rmat_time
+            if repm.rmat_tank == opts.RMAT_MAXIMUM or repm.state_time <= 0.01 then
+                repm.inv:set_stack('process', 1, nil)
+                repm.state = base_repm.STATE.IDLE
+            else
+                repm.status_text = 'Melting repair material (' .. terumet.format_time(repm.state_time) .. ')'
+            end
+        end
+    elseif repm.state == base_repm.STATE.REPAIRING then
+        if base_mach.expend_heat(repm, opts.REPAIR_HEAT, 'Repairing') then
+            -- TODO
+        else
+            -- in order to keep tools from being "stuck" in the machine,
+            -- if either heat or repmat runs out we eject the item before shutting down
+            -- try_eject_item will set state to IDLE if successful
+            base_repm.try_eject_item()
+        end
+    end
+
+    -- GARBAGE AFTER HERE ================================================================================
+    --[[
     local repair_items = {}
     -- check each slot if it is a repmat item to melt or a repairable
     for slot = 1,in_inv:get_size(in_list) do
@@ -150,39 +191,52 @@ function base_repm.process(repm, dt)
             repm.status_text = string.format('Repaired %d item%s', rep_count, (rep_count == 1 and '' or 's'))
         end
     end
-
-    if not continue_working then repm.state = base_repm.STATE.IDLE end
+    -- GARBAGE BEFORE HERE ================================================================================
+    ]]--
 end
 
 function base_repm.check_new_processing(repm)
-    -- check if switching from IDLE to WORKING
+    -- only check if presently IDLE
     if repm.state ~= base_repm.STATE.IDLE then return end
     
     local in_inv, in_list = base_mach.get_input(repm)
-    
+    local out_inv, out_list = base_mach.get_output(repm)
+
     if not in_inv then
         repm.status_text = "No input"
         return
     end
     
-    local start_work = false
-    -- check input for repmat items or repairables
-    -- at this point only checking IF there is work to do
+    repm.status_text = 'Idle' -- default if no processing found
+
+    -- check input slots
     for slot = 1,in_inv:get_size(in_list) do
         local in_stack = in_inv:get_stack(in_list, slot)
         if in_stack then
             local item_name = in_stack:get_name()
-            if opts.repair_mats[item_name] or (opts.repairable[item_name] and in_stack:get_wear() > 0) then
-                start_work = true
+            if opts.repair_mats[item_name] and (repm.rmat_tank < opts.RMAT_MAXIMUM) then
+                -- can be melted for repair material
+                local material_item = in_stack:take_item(1)
+                repm.inv:set_stack('process', 1, material_item)
+                in_inv:set_stack(in_list, slot, in_stack)
+                repm.state = base_repm.STATE.RMAT_MELT
+                repm.state_time = opts.repair_mats[item_name] * 0.5 / opts.MELTING_RATE
+                repm.status_text = string.format('Accepting %s as repair material...', terumet.itemstack_desc(material_item))
                 break
+            elseif opts.repairable[item_name] and in_stack:get_wear() > 0 then
+                -- can be repaired
+                repm.inv:set_stack('process', 1, in_stack)
+                in_inv:set_stack(in_list, slot, nil)
+                repm.state = base_repm.STATE.REPAIRING
+                -- do not set state_time for repairing
+                repm.status_text = string.format('Accepting %s for repairing...', terumet:itemstack_desc(in_stack))
+                break
+            elseif out_inv:room_for_item(out_list, in_stack) then
+                -- not usable and room in output
+                in_inv:remove_item(in_list, in_stack)
+                out_inv:add_item(out_list, in_stack)
             end
         end
-    end
-
-    if start_work then 
-        repm.state = base_repm.STATE.WORKING 
-    else
-        repm.status_text = 'Idle'
     end
 end
 
@@ -196,17 +250,15 @@ function base_repm.tick(pos, dt)
         venting = true
     else
         -- normal operation
+        base_repm.process(repm, dt)
         base_repm.check_new_processing(repm)
-        base_repm.process(repm)
     end
 
     if repm.state ~= base_repm.STATE.IDLE and (not repm.need_heat) then
         -- if still processing and not waiting for heat, reset timer to continue processing
         reset_timer = true
         base_mach.generate_smoke(pos)
-    end
-
-    if venting or base_mach.has_upgrade(repm, 'ext_input') then
+    elseif venting or base_mach.has_upgrade(repm, 'ext_input') then
         reset_timer = true
     end
     -- write status back to meta
@@ -217,7 +269,7 @@ function base_repm.tick(pos, dt)
     return reset_timer
 end
 
-base_repm.unlit_nodedef = base_mach.nodedef{
+base_repm.nodedef = base_mach.nodedef{
     -- node properties
     description = "Equipment Reformer",
     tiles = {
@@ -231,12 +283,12 @@ base_repm.unlit_nodedef = base_mach.nodedef{
     -- machine class data
     _terumach_class = {
         name = 'Equipment Reformer',
-        timer = 1.0,
+        timer = 0.5,
         -- NEW
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         -- end new
-        drop_id = base_repm.unlit_id,
+        drop_id = base_repm.id,
         get_drop_contents = base_repm.get_drop_contents,
         on_read_state = function(repm)
             repm.rmat_tank = repm.meta:get_int('rmat_tank')
@@ -249,7 +301,7 @@ base_repm.unlit_nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(base_repm.id, base_repm.unlit_nodedef)
+minetest.register_node(base_repm.id, base_repm.nodedef)
 
 minetest.register_craft{ output = base_repm.id, recipe = {
     {terumet.id('item_coil_tgol'), terumet.id('item_ceramic'), terumet.id('item_coil_tgol')},

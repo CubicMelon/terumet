@@ -21,7 +21,7 @@ local FSDEF = {
     machine = function(machine)
         local fs = base_mach.fs_meter(2.5,1, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d flux', machine.flux_tank))
         if machine.state == base_asm.STATE.FLUX_MELT then
-            fs=fs..base_mach.fs_proc(3,2,'flux')
+            fs=fs..base_mach.fs_proc(3,2,'melt',machine.inv:get_stack('result',1))
         elseif machine.state == base_asm.STATE.ALLOYING then
             fs=fs..base_mach.fs_proc(3,2,'alloy',machine.inv:get_stack('result',1))
         end
@@ -82,6 +82,7 @@ function base_asm.do_processing(smelter, dt)
         smelter.state_time = smelter.state_time - dt
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
+            smelter.inv:set_stack('result', 1, nil)
             smelter.state = base_asm.STATE.IDLE
         else
             smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
@@ -173,6 +174,7 @@ function base_asm.check_new_processing(smelter)
                     smelter.heat_cost = opts.COST_FLUX_MELTING_HU
                 end
                 in_inv:remove_item(in_list, flux_item)
+                smelter.inv:set_stack('result', 1, flux_item)
                 smelter.status_text = 'Accepting flux from '.. minetest.registered_items[flux_item].description ..'...'
                 return
             end

@@ -193,7 +193,7 @@ terumet.options.vulcan = {
     -- Heat cost per tick of vulcanizing
     COST_VULCANIZE = 10,
     -- Time to process one item (in seconds)
-    PROCESS_TIME = 10.0,
+    PROCESS_TIME = 6.0,
 }
 
 terumet.options.heat_ray = {
@@ -268,16 +268,15 @@ terumet.options.repm = {
     --
     MAX_HEAT = 5000,
 
-    -- HUs/tick to melt repair material
+    -- HUs/tick to melt repair material and repair material units processed per tick
     MELTING_HEAT = 20,
-    -- HUs/tick to repair one item
-    REPAIRING_HEAT = 10,
+    MELTING_RATE = 10,
+    -- HUs/tick to repair one item and repair material units applied to repairing per tick
+    REPAIR_HEAT = 10,
+    REPAIR_RATE = 20,
     -- maximum units of repair material that can be stored
     RMAT_MAXIMUM = 1000,
-    -- maximum units of repair material that can be melted per tick
-    MAX_MELT = 100,
-    -- maximum units of repair material that can be used to repair each tick (split evenly to all candidates)
-    MAX_REPAIR = 20,
+
     -- items that can be turned into "repair-material" and how much
     -- populated through registration, see interop/terumet_api.lua
     repair_mats = {}, -- DO NOT CHANGE
