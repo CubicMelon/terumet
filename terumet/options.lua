@@ -269,11 +269,11 @@ terumet.options.repm = {
     MAX_HEAT = 5000,
 
     -- HUs/tick to melt repair material and repair material units processed per tick
-    MELTING_HEAT = 20,
+    MELTING_HEAT = 10,
     MELTING_RATE = 10,
     -- HUs/tick to repair one item and repair material units applied to repairing per tick
-    REPAIR_HEAT = 10,
-    REPAIR_RATE = 20,
+    REPAIR_HEAT = 5,
+    REPAIR_RATE = 10,
     -- maximum units of repair material that can be stored
     RMAT_MAXIMUM = 1000,
 

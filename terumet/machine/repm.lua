@@ -64,7 +64,7 @@ function base_repm.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
     local rmat_tank = machine.meta:get_int('rmat_tank') or 0
     if rmat_tank > 0 then
-        local total_drop_ct = math.floor(rmat_tank / 10)
+        local total_drop_ct = math.floor(rmat_tank / opts.MELTING_RATE)
         while total_drop_ct > 0 do
             local drop_ct = math.min(99, total_drop_ct)
             drops[#drops+1] = string.format('%s %d', REPMAT_DROP_ID, drop_ct)
@@ -258,7 +258,7 @@ minetest.register_craftitem( REPMAT_DROP_ID, {
     description = 'Crystallized Repair Material',
     inventory_image = terumet.tex('item_cryst_bg')..'^('..terumet.tex('item_cryst')..'^[multiply:#39df34)',
 })
-terumet.register_repair_material(REPMAT_DROP_ID, 10)
+terumet.register_repair_material(REPMAT_DROP_ID, opts.MELTING_RATE)
 
 minetest.register_node(base_repm.id, base_repm.nodedef)
 
