@@ -72,9 +72,10 @@ Before you begin using it it's important to understand two things about the Allo
 One helpful thing to keep in mind is that unlike vanilla Minetest furnaces, all Terumetal machines will drop their contents when you break it and also will retain heat inside them (visible in the tool tip) for when you place them again. Specifically for the Alloy Smelter, thanks to some form of instant heat transfer technology any molten flux metal left in the internal tank will be dropped as crystallized Terumetal when broken and thus reusuable later just at the cost of the heat and time to re-melt them.
 
 ### Heating Machinery
-(updated for v1.6+)
-
 The starter method of heating is with a bucket of lava placed in the fuel slot of a machine. Your empty bucket will be returned.
+![Inserting Lava Bucket](tutorial/smelter_fueling.png)
+
+![After Lava Consumed](tutorial/smelter_fueling_2.png)
 
 Once up and running, you have many further options for how to heat machinery. The most straightforward is alloying Thermese (see the wiki above for more info) and then making Thermese Blocks which can be an effective tool for renewable heating. Thermese Blocks can heat up when cooked in a standard furnace or when adjacent to a lava source, and then inserted into a machine to deposit its heat. You will receive the unheated block back, and can reuse it as many times as you like.
 
