@@ -49,7 +49,7 @@ function base_tdist.do_processing(tbox, dt)
     end
 
     -- ignore node in output direction (facing dir)
-    local facing_dir = base_mach.FACING_DIRECTION[tbox.facing]
+    local facing_dir = util3d.FACING_DIRECTION[tbox.facing]
     base_mach.push_heat_adjacent(tbox, opts.HEAT_TRANSFER_RATE, {facing_dir})
     tbox.status_text = "Distributing heat to orange sides"
 end

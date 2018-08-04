@@ -14,7 +14,7 @@ base_repm.STATE.REPAIRING = 2
 
 local FSDEF = {
     control_buttons = {
-        base_mach.buttondefs.HEAT_XFER_TOGGLE,        
+        base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
         -- TODO: display tweaking
@@ -104,37 +104,32 @@ function base_repm.process(repm, dt)
             end
         end
     elseif repm.state == base_repm.STATE.REPAIRING then
-        if base_mach.expend_heat(repm, opts.REPAIR_HEAT, 'Repairing') then
-            local rep_item = repm.inv:get_stack('process', 1)
-            local rep_item_wear = rep_item:get_wear()
-            if rep_item_wear > 0 then
-                local item_full_repair_cost = opts.repairable[rep_item:get_name()]
-                if item_full_repair_cost then
-                    -- wear points removed per point of repmat
-                    local repair_per_rmp = math.ceil(65535 / item_full_repair_cost)
-                    -- repmat points used this tick
-                    local rmp_used = math.ceil(math.min(opts.REPAIR_RATE * dt, repair_per_rmp * rep_item_wear))
-                    if repm.rmat_tank >= rmp_used then
-                        repm.rmat_tank = repm.rmat_tank - rmp_used
-                        local new_wear = math.max(0, rep_item_wear - (rmp_used * repair_per_rmp))
-                        if new_wear > 0 then
-                            rep_item:set_wear(new_wear)
-                            repm.inv:set_stack('process', 1, rep_item)
-                            repm.status_text = string.format('Repairing %s... (%.1f wear)', terumet.itemstack_desc(rep_item), 100*new_wear/65535)
-                        else
-                            base_repm.try_eject_item(repm, 'Repair complete')
-                        end
+        local rep_item = repm.inv:get_stack('process', 1)
+        local rep_item_wear = rep_item:get_wear()
+        if rep_item_wear > 0 and base_mach.expend_heat(repm, opts.REPAIR_HEAT, 'Repairing') then
+            local item_full_repair_cost = opts.repairable[rep_item:get_name()]
+            if item_full_repair_cost then
+                -- wear points removed per point of repmat
+                local repair_per_rmp = math.ceil(65535 / item_full_repair_cost)
+                -- repmat points used this tick
+                local rmp_used = math.ceil(math.min(opts.REPAIR_RATE * dt, rep_item_wear * repair_per_rmp))
+                if repm.rmat_tank >= rmp_used then
+                    repm.rmat_tank = repm.rmat_tank - rmp_used
+                    local new_wear = math.max(0, rep_item_wear - (rmp_used * repair_per_rmp))
+                    rep_item:set_wear(new_wear)
+                    repm.inv:set_stack('process', 1, rep_item)
+                    if new_wear > 0 then
+                        repm.status_text = string.format('Repairing %s... (%.1f%% wear)', terumet.itemstack_desc(rep_item), 100*new_wear/65535)
                     else
-                        base_repm.try_eject_item(repm, 'Not enough repair material')
+                        base_repm.try_eject_item(repm, 'Repair complete')
                     end
                 else
-                    -- in case item becomes unrepairable mid-process
-                    -- (server reset with changed options?)
-                    base_repm.try_eject_item(repm, 'Item not repairable')
+                    base_repm.try_eject_item(repm, 'Not enough repair material')
                 end
             else
-                -- in case item is already repaired but was not ejected
-                base_repm.try_eject_item(repm, 'Repair complete')
+                -- in case item becomes unrepairable mid-process
+                -- (server reset with changed options?)
+                base_repm.try_eject_item(repm, 'Item not repairable')
             end
         else
             -- in order to keep tools from being "stuck" in the machine,
@@ -156,8 +151,6 @@ function base_repm.check_new_processing(repm)
         repm.status_text = "No input"
         return
     end
-    
-    repm.status_text = 'Idle' -- default if no processing found
 
     -- check input slots
     for slot = 1,in_inv:get_size(in_list) do
@@ -199,6 +192,7 @@ function base_repm.tick(pos, dt)
         -- venting heat
         venting = true
     else
+        repm.status_text = 'Idle' -- if not overwritten
         -- normal operation
         base_repm.process(repm, dt)
         base_repm.check_new_processing(repm)
