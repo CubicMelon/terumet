@@ -17,13 +17,6 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE
     },
-    machine = function(machine)
-        local fs = ''
-        if machine.state == base_lavam.STATE.MELT then
-            fs=fs..base_mach.fs_proc(3,2,'heatonly')
-        end
-        return fs
-    end,
     input = {true},
 }
 
