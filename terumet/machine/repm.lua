@@ -3,6 +3,9 @@ local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
+-- id for repair material drop item
+local REPMAT_DROP_ID = terumet.id('repmat_drop')
+
 local base_repm = {}
 base_repm.id = terumet.id('mach_repm')
 
@@ -61,8 +64,12 @@ function base_repm.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
     local rmat_tank = machine.meta:get_int('rmat_tank') or 0
     if rmat_tank > 0 then
-        -- TODO drop some sort of raw rmat item?
-        --drops[#drops+1] = terumet.id('item_cryst_raw', math.min(99, flux_tank))
+        local total_drop_ct = math.floor(rmat_tank / 10)
+        while total_drop_ct > 0 do
+            local drop_ct = math.min(99, total_drop_ct)
+            drops[#drops+1] = string.format('%s %d', REPMAT_DROP_ID, drop_ct)
+            total_drop_ct = total_drop_ct - drop_ct
+        end
     end
     return drops
 end
@@ -244,6 +251,14 @@ base_repm.nodedef = base_mach.nodedef{
         end
     }
 }
+
+-- register 'crystallized repair material' drop
+
+minetest.register_craftitem( REPMAT_DROP_ID, {
+    description = 'Crystallized Repair Material',
+    inventory_image = terumet.tex('item_cryst_bg')..'^('..terumet.tex('item_cryst')..'^[multiply:#39df34)',
+})
+terumet.register_repair_material(REPMAT_DROP_ID, 10)
 
 minetest.register_node(base_repm.id, base_repm.nodedef)
 

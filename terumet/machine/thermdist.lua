@@ -59,7 +59,7 @@ function base_tdist.tick(pos, dt)
     
     if not base_mach.check_overheat(tbox, opts.MAX_HEAT) then
         base_mach.process_fuel(tbox)
-        if tbox.machine.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.NO_XFER then
+        if tbox.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.NO_XFER then
             base_tdist.do_processing(tbox, dt)
         end
     end

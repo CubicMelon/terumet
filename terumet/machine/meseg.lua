@@ -31,8 +31,12 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') ..
+        if machine.effic and machine.progress then
+            return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') .. 
             base_mach.fs_meter(2,2.5,'mese', 100*machine.progress/opts.PROGRESS_NEED, 'Growth')
+        else
+            return ''
+        end
     end,
     input = {label='Seeds'},
     output = {label='Grown'}
