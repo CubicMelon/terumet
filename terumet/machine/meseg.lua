@@ -31,12 +31,8 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        if machine.effic and machine.progress then
-            return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') .. 
-            base_mach.fs_meter(2,2.5,'mese', 100*machine.progress/opts.PROGRESS_NEED, 'Growth')
-        else
-            return ''
-        end
+        return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') .. 
+        base_mach.fs_meter(2,2.5,'mese', 100*machine.progress/opts.PROGRESS_NEED, 'Growth')
     end,
     input = {label='Seeds'},
     output = {label='Grown'}
@@ -53,6 +49,8 @@ function base_msg.init(pos)
         state = base_msg.STATE.WAITING,
         state_time = 0,
         heat_level = 0,
+        effic = 0,
+        progress = 0,
         max_heat = opts.MAX_HEAT,
         status_text = 'New',
         inv = inv,
