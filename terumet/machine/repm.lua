@@ -22,7 +22,7 @@ local FSDEF = {
         if machine.state == base_repm.STATE.RMAT_MELT then
             fs=fs..base_mach.fs_proc(3,2,'melt', machine.inv:get_stack('process', 1))
         elseif machine.state == base_repm.STATE.REPAIRING then
-            fs=fs..base_mach.fs_proc(3,2,'alloy')
+            fs=fs..base_mach.fs_proc(3,2,'alloy', machine.inv:get_stack('process', 1))
         end
         return fs
     end,
@@ -67,7 +67,7 @@ function base_repm.get_drop_contents(machine)
     return drops
 end
 
-function base_repm.try_eject_item(repm)
+function base_repm.try_eject_item(repm, desc)
     local proc_item = repm.inv:get_stack('process', 1)
     if proc_item then
         local out_inv, out_list = base_mach.get_output(repm)
@@ -75,28 +75,25 @@ function base_repm.try_eject_item(repm)
             out_inv:add_item(out_list, proc_item)
             repm.inv:set_stack('process', 1, nil)
             repm.state = base_repm.STATE.IDLE
+            if desc then
+                repm.status_text = string.format('%s ejected: %s', terumet.itemstack_desc(proc_item), desc)
+            else
+                repm.status_text = string.format('%s ejected', terumet.itemstack_desc(proc_item))
+            end
             return true
         end
+        repm.status_text = string.format('Cannot eject %s: No output space', terumet.itemstack_desc(proc_item))
     end
     return false
 end
 
 function base_repm.process(repm, dt)
     if repm.state == base_repm.STATE.IDLE then return end
-    
-    -- check inputs and melt/repair them accordingly
-    local in_inv, in_list = base_mach.get_input(repm)
-    local out_inv, out_list = base_mach.get_output(repm)
-    if not in_inv then
-        repm.status_text = "No input"
-        repm.state = base_repm.STATE.IDLE
-        return
-    end
 
     if repm.state == base_repm.STATE.RMAT_MELT then
         if base_mach.expend_heat(repm, opts.MELTING_HEAT, 'Melting repair material') then
             local rmat_time = math.min(repm.state_time, dt)
-            local rmat_gain = rmat_time * opts.MELTING_RATE
+            local rmat_gain = math.floor(rmat_time * opts.MELTING_RATE)
             repm.rmat_tank = math.min(opts.RMAT_MAXIMUM, repm.rmat_tank + rmat_gain)
             repm.state_time = repm.state_time - rmat_time
             if repm.rmat_tank == opts.RMAT_MAXIMUM or repm.state_time <= 0.01 then
@@ -108,91 +105,44 @@ function base_repm.process(repm, dt)
         end
     elseif repm.state == base_repm.STATE.REPAIRING then
         if base_mach.expend_heat(repm, opts.REPAIR_HEAT, 'Repairing') then
-            -- TODO
+            local rep_item = repm.inv:get_stack('process', 1)
+            local rep_item_wear = rep_item:get_wear()
+            if rep_item_wear > 0 then
+                local item_full_repair_cost = opts.repairable[rep_item:get_name()]
+                if item_full_repair_cost then
+                    -- wear points removed per point of repmat
+                    local repair_per_rmp = math.ceil(65535 / item_full_repair_cost)
+                    -- repmat points used this tick
+                    local rmp_used = math.ceil(math.min(opts.REPAIR_RATE * dt, repair_per_rmp * rep_item_wear))
+                    if repm.rmat_tank >= rmp_used then
+                        repm.rmat_tank = repm.rmat_tank - rmp_used
+                        local new_wear = math.max(0, rep_item_wear - (rmp_used * repair_per_rmp))
+                        if new_wear > 0 then
+                            rep_item:set_wear(new_wear)
+                            repm.inv:set_stack('process', 1, rep_item)
+                            repm.status_text = string.format('Repairing %s... (%.1f wear)', terumet.itemstack_desc(rep_item), 100*new_wear/65535)
+                        else
+                            base_repm.try_eject_item(repm, 'Repair complete')
+                        end
+                    else
+                        base_repm.try_eject_item(repm, 'Not enough repair material')
+                    end
+                else
+                    -- in case item becomes unrepairable mid-process
+                    -- (server reset with changed options?)
+                    base_repm.try_eject_item(repm, 'Item not repairable')
+                end
+            else
+                -- in case item is already repaired but was not ejected
+                base_repm.try_eject_item(repm, 'Repair complete')
+            end
         else
             -- in order to keep tools from being "stuck" in the machine,
             -- if either heat or repmat runs out we eject the item before shutting down
             -- try_eject_item will set state to IDLE if successful
-            base_repm.try_eject_item()
+            base_repm.try_eject_item(repm, 'Not enough heat')
         end
     end
-
-    -- GARBAGE AFTER HERE ================================================================================
-    --[[
-    local repair_items = {}
-    -- check each slot if it is a repmat item to melt or a repairable
-    for slot = 1,in_inv:get_size(in_list) do
-        local in_stack = in_inv:get_stack(in_list, slot)
-        if in_stack then
-            local item_name = in_stack:get_name()
-            if opts.repair_mats[item_name] then
-                -- is a repmat item -> consume one and add its value to the currently-melting value
-                in_stack:set_count(in_stack:get_count() - 1)
-                repm.rmat_melting = repm.rmat_melting + opts.repair_mats[item_name]
-            elseif opts.repairable[item_name] and in_stack:get_wear() > 0 then
-                -- is a repairable item with wear -> put it into list of items to try to repair this tick
-                repair_items[#repair_items+1] = in_stack
-            elseif out_inv:room_for_item(out_list, in_stack) then
-                -- is not something we can process, move to output if there's space
-                in_inv:remove_item(in_list, in_stack)
-                out_inv:add_item(out_list, in_stack)
-            end
-        end
-    end
-    -- try to process any currently-melting repmat
-    local rmat_space = opts.RMAT_MAXIMUM - repm.rmat_tank
-    if repm.rmat_melting > 0 and rmat_space > 0 and base_mach.expend_heat(repm, opts.MELTING_HEAT, 'Melting repair material') then
-        local rmat_add = math.min(opts.MAX_MELT, repm.rmat_melting, rmat_space)
-        if rmat_add > 0 then
-            continue_working = true
-            repm.rmat_melting = repm.rmat_melting - rmat_add
-            repm.rmat_tank = repm.rmat_tank + rmat_add
-        else
-            minetest.log('error', 'somehow rmat_add was zero when it should not be possible')
-        end
-    end
-    -- try to repair previously-found items that are eligible
-    if #repair_items > 0 then
-        -- amount of maximum rmat that can be applied to each eligible item 
-        local max_repair_each = math.floor(opts.MAX_REPAIR / #repair_items)
-        -- keep track of how much rmat actually used and how many items repaired
-        local total_rmat_used = 0
-        local rep_count = 0
-        for _,rep_item in ipairs(repair_items) do
-            -- can't use standard heat using function because we only want to check for enough first
-            if repm.heat_level >= opts.REPAIRING_HEAT then 
-                local item_wear = rep_item:get_wear()
-                local item_rmat_total = opts.repairable[rep_item:get_name()]
-                local full_rmat_need = math.ceil(item_rmat_total * item_wear / 65535)
-                local used_rmat = math.min(full_rmat_need, max_repair_each)
-                if used_rmat > (repm.rmat_tank - total_rmat_used) then
-                    repm.status_text = 'Not enough repair material for '..rep_item:get_description()
-                elseif used_rmat > 0 then
-                    rep_item:set_wear(math.max(0, item_wear - (65535 * used_rmat / item_rmat_total)))
-                    total_rmat_used = total_rmat_used + used_rmat
-                    rep_count = rep_count + 1
-                    -- if fully repaired, move to output
-                    if (rep_item:get_wear() == 0) and out_inv and out_inv:room_for_item(out_list, rep_item) then
-                        in_inv:remove_item(in_list, rep_item)
-                        out_inv:add_item(out_list, rep_item)
-                    end
-                else
-                    minetest.log('error', 'somehow repair_item used 0 rmat to repair which should not be possible')
-                end
-            else
-                -- cause error message
-                base_mach.expend_heat(repm, opts.REPAIRING_HEAT, 'Repairing '..rep_item:get_description())
-                break
-            end
-        end
-        if rep_count > 0 then
-            continue_working = true
-            repm.rmat_tank = repm.rmat_tank - total_rmat_used
-            repm.status_text = string.format('Repaired %d item%s', rep_count, (rep_count == 1 and '' or 's'))
-        end
-    end
-    -- GARBAGE BEFORE HERE ================================================================================
-    ]]--
 end
 
 function base_repm.check_new_processing(repm)
@@ -220,16 +170,16 @@ function base_repm.check_new_processing(repm)
                 repm.inv:set_stack('process', 1, material_item)
                 in_inv:set_stack(in_list, slot, in_stack)
                 repm.state = base_repm.STATE.RMAT_MELT
-                repm.state_time = opts.repair_mats[item_name] * 0.5 / opts.MELTING_RATE
+                repm.state_time = opts.repair_mats[item_name] / opts.MELTING_RATE
                 repm.status_text = string.format('Accepting %s as repair material...', terumet.itemstack_desc(material_item))
                 break
             elseif opts.repairable[item_name] and in_stack:get_wear() > 0 then
                 -- can be repaired
                 repm.inv:set_stack('process', 1, in_stack)
-                in_inv:set_stack(in_list, slot, nil)
                 repm.state = base_repm.STATE.REPAIRING
+                in_inv:set_stack(in_list, slot, nil)
                 -- do not set state_time for repairing
-                repm.status_text = string.format('Accepting %s for repairing...', terumet:itemstack_desc(in_stack))
+                repm.status_text = string.format('Accepting %s for repairing...', terumet.itemstack_desc(in_stack))
                 break
             elseif out_inv:room_for_item(out_list, in_stack) then
                 -- not usable and room in output
@@ -306,5 +256,5 @@ minetest.register_node(base_repm.id, base_repm.nodedef)
 minetest.register_craft{ output = base_repm.id, recipe = {
     {terumet.id('item_coil_tgol'), terumet.id('item_ceramic'), terumet.id('item_coil_tgol')},
     {terumet.id('item_coil_tgol'), terumet.id('frame_tste'), terumet.id('item_coil_tgol')},
-    {terumet.id('item_ceramic'), 'bucket:empty_bucket', terumet.id('item_ceramic')}
+    {terumet.id('item_ceramic'), 'bucket:bucket_empty', terumet.id('item_ceramic')}
 }}
