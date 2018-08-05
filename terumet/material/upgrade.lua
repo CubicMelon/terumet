@@ -9,9 +9,8 @@ minetest.register_craftitem( upg_base_id, {
 })
 
 minetest.register_craft{ output = upg_base_id, recipe = {
-    {terumet.id('item_coil_raw'), terumet.id('item_ceramic'), terumet.id('item_coil_raw')},
     {terumet.id('item_ceramic'), terumet.id('item_ceramic'), terumet.id('item_ceramic')},
-    {terumet.id('item_coil_raw'), terumet.id('item_ceramic'), terumet.id('item_coil_raw')}
+    {terumet.id('item_coil_raw'), terumet.id('item_coil_raw'), terumet.id('item_coil_raw')},
 }}
 
 function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src_pattern)

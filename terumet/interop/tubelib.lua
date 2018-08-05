@@ -31,7 +31,7 @@ terumet.machine.register_on_place(function (pos, machine, placer)
     tubelib.add_node(pos, machine.class.name)
 end)
 
-terumet.machine.register_on_remove(function (pos, machine, digger)
+terumet.machine.register_on_remove(function (pos, machine)
     tubelib.remove_node(pos)
 end)
 
