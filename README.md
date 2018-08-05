@@ -1,8 +1,10 @@
 # Terumetal [terumet]
-### Current release version: v2.0
-A mod for the open-source voxel game Minetest (https://www.minetest.net/) version 0.4.16 or 0.4.17.X
+### Current release version: v2.1
+A mod for the open-source voxel game Minetest (https://www.minetest.net/) version 5.0
 
-Creates a new ore in the world which can be used to make useful alloys from many already available materials.
+Minetest 5.0 is presently in development and can be downloaded [here](https://gitlab.com/minetest/minetest/pipelines)
+
+This mod creates a new ore in the world which can be used to make useful alloys from many already available materials.
 
 ![Screenshot](https://github.com/Terumoc/terumet/blob/master/terumet/screenshot.png)
 
@@ -10,13 +12,13 @@ Creates a new ore in the world which can be used to make useful alloys from many
 See the changelog [Here](changelog.md)
 
 ## Installing
-Download the working v2.0 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v2.0)
-
-The current repo version [Here](https://github.com/Terumoc/terumet/archive/master.zip) is in-progress and is intended for **Minetest 5.0.0** which is presently in development.
+Download the latest v2.1 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v2.1)
 
 Unzip the folder into a temporary space then move/copy the subfolder **terumet** into your minetest **mods** folder.
 
 **The items outside of that folder are development files and are *not needed* to use the mod.**
+
+**Important: if you are still using Minetest 0.4.X then the last supported version of Terumetal is [version 2.0](https://github.com/Terumoc/terumet/releases/tag/v2.0).
 
 ## Mod Dependencies
 This mod depends on:
@@ -30,8 +32,6 @@ Additonal **optional** support for:
 * unified_inventory
 
 # Overview/Tutorial
-
-(Images are from v1.0 and may not be entirely accurate. The information continues to be, however.)
 
 ## Worldgen
 The only new thing generated in the world is a new type of ore:
