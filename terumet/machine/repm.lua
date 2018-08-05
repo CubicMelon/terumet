@@ -256,7 +256,7 @@ base_repm.nodedef = base_mach.nodedef{
 
 minetest.register_craftitem( REPMAT_DROP_ID, {
     description = 'Crystallized Repair Material',
-    inventory_image = terumet.tex('item_cryst_bg')..'^('..terumet.tex('item_cryst')..'^[multiply:#39df34)',
+    inventory_image = terumet.crystal_tex('#39df34'),
 })
 terumet.register_repair_material(REPMAT_DROP_ID, opts.MELTING_RATE)
 

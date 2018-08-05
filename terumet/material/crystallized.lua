@@ -9,7 +9,7 @@ terumet.register_crystal{
 }
 terumet.register_crystal{
     suffix='copper',
-    color='#ebba5d',
+    color='#af502e',
     name='Crystallized Copper',
     source='default:copper_lump',
     cooking_result='default:copper_ingot'
@@ -23,7 +23,7 @@ terumet.register_crystal{
 }
 terumet.register_crystal{
     suffix='iron',
-    color='#a95230',
+    color='#eeece8',
     name='Crystallized Iron',
     source='default:iron_lump',
     cooking_result='default:steel_ingot'

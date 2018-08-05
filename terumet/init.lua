@@ -124,6 +124,10 @@ function terumet.tex(id)
     end
 end
 
+function terumet.crystal_tex(color)
+    return string.format('%s^(%s^[multiply:%s)',terumet.tex('item_cryst_bg'),terumet.tex('item_cryst_fg'),color)
+end
+
 function terumet.tex_comp(base_tex, overlay_id)
     return base_tex .. '^' .. terumet.tex(overlay_id)
 end

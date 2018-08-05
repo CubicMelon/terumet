@@ -62,7 +62,7 @@ function terumet.register_crystal(data)
     local crys_id = terumet.id('item_cryst_' .. data.suffix)
     minetest.register_craftitem( crys_id, {
         description = data.name,
-        inventory_image = terumet.tex('item_cryst_bg')..'^('..terumet.tex('item_cryst')..'^[multiply:'..data.color..')',
+        inventory_image = terumet.crystal_tex(data.color),
     })
 
     minetest.register_craft{ type = 'cooking', 
