@@ -19,7 +19,7 @@ local FSDEF = {
     machine = function(machine)
         local fs = ''
         if machine.state == base_htf.STATE.COOKING then
-            fs=fs..base_mach.fs_proc(3,2,'gen', machine.inv:get_stack('result',1))
+            fs=fs..base_mach.fs_proc(3,2,'cook', machine.inv:get_stack('result',1))
         end
         return fs
     end,

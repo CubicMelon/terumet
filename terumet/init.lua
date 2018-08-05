@@ -136,8 +136,8 @@ terumet.do_lua_file('util3d')
 
 terumet.do_lua_file('interop/terumet_api')
 terumet.do_lua_file('options')
-terumet.do_lua_file('machine/machine')
-terumet.do_lua_file('machine/custom')
+terumet.do_lua_file('machine/generic/machine')
+terumet.do_lua_file('machine/generic/custom')
 terumet.do_lua_file('material/raw')
 terumet.do_lua_file('material/reg_alloy')
 terumet.do_lua_file('material/upgrade')
@@ -220,4 +220,8 @@ terumet.do_lua_file('machine/repm')
 
 if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')
+end
+
+if minetest.global_exists('tubelib') then
+    terumet.do_lua_file('interop/tubelib')
 end

@@ -16,17 +16,16 @@ minetest.register_craft{ output = upg_base_id, recipe = {
 
 function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src_pattern)
     local item_id = id('item_upg_'..upgrade_id)
+
     minetest.register_craftitem( item_id, {
         description = desc,
         inventory_image = tex('upg_'..upgrade_id),
         _terumach_upgrade_id = upgrade_id
     })
     
-    -- uncraftable upgrade (creative)
-    if not (source or source2 or src_pattern) then return end
-
     if not src_pattern then src_pattern = 'default' end
     local rec
+    local shapeless=false
     if src_pattern == 'default' then
         rec={
             {source2 or '', source, source2 or ''},
@@ -45,8 +44,18 @@ function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src
             {source2, upg_base_id, source},
             {source2, source2, source2}
         }
+    elseif src_pattern == 'single' then
+        rec={upg_base_id, source}
+        shapeless=true
+    elseif src_pattern == 'none' then
+        return
     end
-    minetest.register_craft{ output=item_id, recipe = rec}
+
+    if shapeless then
+        minetest.register_craft{ output=item_id, recipe=rec, type='shapeless' }
+    else
+        minetest.register_craft{ output=item_id, recipe=rec}
+    end
 end
 
 terumet.register_machine_upgrade('ext_input', 'External Input Upgrade', 'default:chest', id('item_coil_tcop'), 'left')
@@ -57,4 +66,4 @@ terumet.register_machine_upgrade('gen_up', 'Heat Generation Upgrade', id('item_c
 terumet.register_machine_upgrade('speed_up', 'Speed Upgrade', id('ingot_cgls'), id('item_cryst_dia'))
 terumet.register_machine_upgrade('cryst', 'Crystallization Upgrade', id('item_cryst_dia'), id('item_cryst_mese'))
 
-terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade\nCreative mode only')
+terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade\nCreative mode only', nil, nil, 'none')
