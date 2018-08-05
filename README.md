@@ -18,7 +18,7 @@ Unzip the folder into a temporary space then move/copy the subfolder **terumet**
 
 **The items outside of that folder are development files and are *not needed* to use the mod.**
 
-**Important: if you are still using Minetest 0.4.X then the last supported version of Terumetal is [version 2.0](https://github.com/Terumoc/terumet/releases/tag/v2.0).
+**Important: if you are still using Minetest 0.4.X then the last supported version of Terumetal is [version 2.0](https://github.com/Terumoc/terumet/releases/tag/v2.0).**
 
 ## Mod Dependencies
 This mod depends on:
