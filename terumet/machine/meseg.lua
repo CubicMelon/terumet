@@ -42,6 +42,9 @@ local FSDEF = {
 function base_msg.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
+    -- no upgrade slots at all:
+    -- already the garden is a little "cheaty" and adding the ability to alter the speed, heat transfer,
+    -- or add automated access to inventories seems a bit unnecessary
     inv:set_size('in', 1)
     inv:set_size('out', 1)
     local init_meseg = {

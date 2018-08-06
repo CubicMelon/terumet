@@ -30,6 +30,7 @@ All above mods should normally be included already if playing the default Minete
 
 Additonal **optional** support for:
 * unified_inventory
+* techpack / tubelib
 
 # Overview/Tutorial
 

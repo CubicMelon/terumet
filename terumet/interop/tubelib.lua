@@ -38,6 +38,7 @@ end)
 tubelib.register_node(terumet.id('mach_asmelt'), {terumet.id('mach_asmelt_lit')}, TUBELIB_MACHINE_DEF)
 tubelib.register_node(terumet.id('mach_htfurn'), {terumet.id('mach_htfurn_lit')}, TUBELIB_MACHINE_DEF)
 tubelib.register_node(terumet.id('mach_htr_furnace'), {terumet.id('mach_htr_furnace_lit')}, TUBELIB_MACHINE_DEF)
-tubelib.register_node(terumet.id('mach_meseg'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
+--oops: mese garden has no upgrade slots... consider adding it if support for other upgrades is added in future
+--tubelib.register_node(terumet.id('mach_meseg'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
 tubelib.register_node(terumet.id('mach_repm'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
 tubelib.register_node(terumet.id('mach_vulcan'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
