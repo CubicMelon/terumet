@@ -241,7 +241,7 @@ function base_mach.readonly_state(pos)
     if not node_info then return nil end -- unloaded
     machine.nodedef = minetest.registered_nodes[node_info.name]
     machine.class = machine.nodedef._terumach_class
-    if not machine.class then return nil end -- not a terumetal machi e
+    if not machine.class then return nil end -- not a terumetal machine
     machine.pos = pos
     machine.meta = meta
     machine.inv = meta:get_inventory()

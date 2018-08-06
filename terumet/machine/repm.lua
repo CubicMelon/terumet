@@ -97,9 +97,12 @@ end
 function base_repm.process(repm, dt)
     if repm.state == base_repm.STATE.IDLE then return end
 
+    local speed_mult = 1.0
+    if base_mach.has_upgrade(repm, 'speed_up') then speed_mult = 2.0 end
+
     if repm.state == base_repm.STATE.RMAT_MELT then
-        if base_mach.expend_heat(repm, opts.MELTING_HEAT, 'Melting repair material') then
-            local rmat_time = math.min(repm.state_time, dt)
+        if base_mach.expend_heat(repm, opts.MELTING_HEAT * speed_mult, 'Melting repair material') then
+            local rmat_time = math.min(repm.state_time, dt * speed_mult)
             local rmat_gain = math.floor(rmat_time * opts.MELTING_RATE)
             repm.rmat_tank = math.min(opts.RMAT_MAXIMUM, repm.rmat_tank + rmat_gain)
             repm.state_time = repm.state_time - rmat_time
@@ -113,13 +116,13 @@ function base_repm.process(repm, dt)
     elseif repm.state == base_repm.STATE.REPAIRING then
         local rep_item = repm.inv:get_stack('process', 1)
         local rep_item_wear = rep_item:get_wear()
-        if rep_item_wear > 0 and base_mach.expend_heat(repm, opts.REPAIR_HEAT, 'Repairing') then
+        if rep_item_wear > 0 and base_mach.expend_heat(repm, opts.REPAIR_HEAT * speed_mult, 'Repairing') then
             local item_full_repair_cost = opts.repairable[rep_item:get_name()]
             if item_full_repair_cost then
                 -- wear points removed per point of repmat
                 local repair_per_rmp = math.ceil(65535 / item_full_repair_cost)
                 -- repmat points used this tick
-                local rmp_used = math.ceil(math.min(opts.REPAIR_RATE * dt, rep_item_wear * repair_per_rmp))
+                local rmp_used = math.ceil(math.min(opts.REPAIR_RATE * dt * speed_mult, rep_item_wear * repair_per_rmp))
                 if repm.rmat_tank >= rmp_used then
                     repm.rmat_tank = repm.rmat_tank - rmp_used
                     local new_wear = math.max(0, rep_item_wear - (rmp_used * repair_per_rmp))

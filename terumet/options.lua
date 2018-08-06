@@ -45,6 +45,8 @@ terumet.options.heater = {
         MAX_HEAT = 500,
         -- Maximum HUs Furnace Heater can transfer per tick
         HEAT_TRANSFER_RATE = 20,
+        -- Base heat generation per second of burn time
+        HEAT_GEN = 10
     },
     solar={
         --

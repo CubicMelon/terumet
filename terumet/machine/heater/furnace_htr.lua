@@ -54,7 +54,10 @@ function furn_htr.get_drop_contents(machine)
 end
 
 function furn_htr.do_processing(heater, dt)
-    local gain = math.floor(heater.gen_rate * dt) -- heat gain this tick
+    local speed_mult = 1
+    if base_mach.has_upgrade(heater, 'speed_up') then speed_mult = 2 end
+
+    local gain = math.floor(opts.HEAT_GEN * dt * speed_mult) -- heat gain this tick
     if base_mach.has_upgrade(heater, 'gen_up') then gain = gain * 3 end
     if gain == 0 then return end
     local under_cap = heater.heat_level < (heater.max_heat - gain)
@@ -63,7 +66,7 @@ function furn_htr.do_processing(heater, dt)
     end
     if heater.state == furn_htr.STATE.BURNING then
         if under_cap then
-            heater.state_time = heater.state_time - dt
+            heater.state_time = heater.state_time - (dt * speed_mult)
             base_mach.gain_heat(heater, gain)
             if heater.state_time <= 0 then
                 heater.inv:set_stack('burn', 1, nil)
@@ -94,12 +97,7 @@ function furn_htr.check_new_processing(heater)
             heater.state = furn_htr.STATE.BURNING
             in_inv:set_stack(in_list, slot, cook_after.items[1])
             heater.inv:set_stack('burn', 1, input_stack)
-            heater.state_time = math.floor(cook_result.time * heater.class.timer)
-            heater.gen_rate = 5
-            if base_mach.has_upgrade(heater, 'speed_up') then
-                heater.state_time = heater.state_time / 2
-                heater.gen_rate = heater.gen_rate * 2
-            end
+            heater.state_time = cook_result.time / 2
             heater.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for burning...'
             return
         end
@@ -157,13 +155,7 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
         default_heat_xfer = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
         drop_id = furn_htr.unlit_id,
         on_external_heat = terumet.NO_FUNCTION,
-        get_drop_contents = furn_htr.get_drop_contents,
-        on_read_state = function(fheater)
-            fheater.gen_rate = fheater.meta:get_int('genrate') or 0
-        end,
-        on_write_state = function(fheater)
-            fheater.meta:set_int('genrate', fheater.gen_rate or 0)
-        end
+        get_drop_contents = furn_htr.get_drop_contents
     }
 }
 

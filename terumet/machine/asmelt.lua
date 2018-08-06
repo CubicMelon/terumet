@@ -78,8 +78,11 @@ function base_asm.get_drop_contents(machine)
 end
 
 function base_asm.do_processing(smelter, dt)
-    if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, smelter.heat_cost, 'Melting flux') then
-        smelter.state_time = smelter.state_time - dt
+    local speed_mult = 1
+    if base_mach.has_upgrade(smelter, 'speed_up') then speed_mult = 2 end
+
+    if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELTING_HU * speed_mult, 'Melting flux') then
+        smelter.state_time = smelter.state_time - (dt * speed_mult)
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + 1
             smelter.inv:set_stack('result', 1, nil)
@@ -87,10 +90,10 @@ function base_asm.do_processing(smelter, dt)
         else
             smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
         end
-    elseif smelter.state == base_asm.STATE.ALLOYING and base_mach.expend_heat(smelter, smelter.heat_cost, 'Alloying') then
+    elseif smelter.state == base_asm.STATE.ALLOYING and base_mach.expend_heat(smelter, opts.COST_FLUX_ALLOYING_HU * speed_mult, 'Alloying') then
         local result_stack = smelter.inv:get_stack('result', 1)
         local result_name = terumet.itemstack_desc(result_stack)
-        smelter.state_time = smelter.state_time - dt
+        smelter.state_time = smelter.state_time - (dt * speed_mult)
         if smelter.state_time <= 0 then
             local out_inv, out_list = base_mach.get_output(smelter)
             if out_inv then
@@ -146,13 +149,7 @@ function base_asm.check_new_processing(smelter)
             for _, consumed_source in ipairs(matched_recipe.input) do
                 in_inv:remove_item(in_list, consumed_source)
             end
-            if base_mach.has_upgrade(smelter, 'speed_up') then
-                smelter.state_time = matched_recipe.time / 2
-                smelter.heat_cost = opts.COST_FLUX_ALLOYING_HU * 2
-            else
-                smelter.state_time = matched_recipe.time
-                smelter.heat_cost = opts.COST_FLUX_ALLOYING_HU
-            end
+            smelter.state_time = matched_recipe.time
             smelter.inv:set_stack('result', 1, result)
             smelter.flux_tank = smelter.flux_tank - matched_recipe.flux
             smelter.status_text = 'Accepting materials to alloy ' .. result_name .. '...'
@@ -166,13 +163,7 @@ function base_asm.check_new_processing(smelter)
                 error_msg = 'Flux tank full!'
             else
                 smelter.state = base_asm.STATE.FLUX_MELT
-                if base_mach.has_upgrade(smelter, 'speed_up') then
-                    smelter.state_time = flux_params.time / 2
-                    smelter.heat_cost = opts.COST_FLUX_MELTING_HU * 2
-                else
-                    smelter.state_time = flux_params.time
-                    smelter.heat_cost = opts.COST_FLUX_MELTING_HU
-                end
+                smelter.state_time = flux_params.time
                 in_inv:remove_item(in_list, flux_item)
                 smelter.inv:set_stack('result', 1, flux_item)
                 smelter.status_text = 'Accepting flux from '.. minetest.registered_items[flux_item].description ..'...'
@@ -243,12 +234,10 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         on_form_action = FORM_ACTION,
         on_read_state = function(asmelt)
             asmelt.flux_tank = asmelt.meta:get_int('flux_tank')
-            asmelt.heat_cost = asmelt.meta:get_int('heatcost') or 0
             asmelt.zero_flux_recipes = (asmelt.meta:get_int('opt_zfr') or 0) == 1
         end,
         on_write_state = function(asmelt)
             asmelt.meta:set_int('flux_tank', asmelt.flux_tank)
-            asmelt.meta:set_int('heatcost', asmelt.heat_cost or 0)
             asmelt.meta:set_int('opt_zfr', (asmelt.zero_flux_recipes and 1) or 0)
         end
     }

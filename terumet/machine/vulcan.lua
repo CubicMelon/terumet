@@ -60,10 +60,13 @@ function base_vul.get_drop_contents(machine)
 end
 
 function base_vul.do_processing(vulcan, dt)
-    if vulcan.state == base_vul.STATE.VULCANIZING and base_mach.expend_heat(vulcan, vulcan.heat_cost, 'Vulcanizing') then
+    local speed_mult = 1.0
+    if base_mach.has_upgrade(vulcan, 'speed_up') then speed_mult = 2.0 end
+
+    if vulcan.state == base_vul.STATE.VULCANIZING and base_mach.expend_heat(vulcan, vulcan.heat_cost * speed_mult, 'Vulcanizing') then
         local result_stack = vulcan.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
-        vulcan.state_time = vulcan.state_time - dt
+        vulcan.state_time = vulcan.state_time - (dt * speed_mult)
         if vulcan.state_time <= 0 then
             local out_inv, out_list = base_mach.get_output(vulcan)
             if out_inv then
@@ -104,7 +107,6 @@ function base_vul.check_new_processing(vulcan)
             end
             in_inv:remove_item(in_list, input_stack:get_name())
             vulcan.inv:set_stack('result', 1, matched_recipe .. ' ' .. yield)
-            if base_mach.has_upgrade(vulcan, 'speed_up') then vulcan.state_time = vulcan.state_time / 2 end
             vulcan.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for vulcanizing...'
             return
         end

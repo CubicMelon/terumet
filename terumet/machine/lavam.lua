@@ -48,8 +48,11 @@ function base_lavam.get_drop_contents(machine)
 end
 
 function base_lavam.do_processing(lavam, dt)
-    if lavam.state == base_lavam.STATE.MELT and base_mach.expend_heat(lavam, lavam.heat_cost, 'Melting stone') then
-        lavam.state_time = lavam.state_time - dt
+    local speed_mult = 1.0
+    if base_mach.has_upgrade(lavam, 'speed_up') then speed_mult = 2.0 end
+
+    if lavam.state == base_lavam.STATE.MELT and base_mach.expend_heat(lavam, lavam.heat_cost * speed_mult, 'Melting stone') then
+        lavam.state_time = lavam.state_time - (dt * speed_mult)
         if lavam.state_time <= 0 then
             lavam.state = base_lavam.STATE.DISPENSE
             lavam.state_time = 0
@@ -86,10 +89,6 @@ function base_lavam.check_new_processing(lavam)
             lavam.state = base_lavam.STATE.MELT
             lavam.state_time = opts.MELT_TIME
             lavam.heat_cost = math.ceil(total_heat_required / opts.MELT_TIME)
-            if base_mach.has_upgrade(lavam, 'speed_up') then 
-                lavam.state_time = lavam.state_time / 2 
-                lavam.heat_cost = lavam.heat_cost * 2
-            end
             lavam.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for melting...'
             return
         end
