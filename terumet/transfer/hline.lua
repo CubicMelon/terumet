@@ -2,7 +2,7 @@ local LINE_SIZE = 1/6
 
 -- Special thanks to Elepower (https://gitlab.icynet.eu/evert/elepower) by IcyDiamond on the forums
 -- for revealing to me the magic of drawtype "nodebox", type "connected"
-minetest.register_node( terumet.id('conn_hline'), {
+minetest.register_node( terumet.id('xfer_hline'), {
     description = 'Heatline',
     tiles = {terumet.tex('hline')},
     

@@ -4,14 +4,14 @@ local base_mach = terumet.machine
 local opts = terumet.options.machine
 
 -- events are called with params: (pos, machine, [placer])
-local on_machine_place_events = {}
-local on_machine_remove_events = {}
+local on_machine_place_callbacks = {}
+local on_machine_remove_callbacks = {}
 
 function base_mach.register_on_place(event)
-    on_machine_place_events[#on_machine_place_events+1]=event
+    on_machine_place_callbacks[#on_machine_place_callbacks+1]=event
 end
 function base_mach.register_on_remove(event)
-    on_machine_remove_events[#on_machine_remove_events+1]=event
+    on_machine_remove_callbacks[#on_machine_remove_callbacks+1]=event
 end
 
 function base_mach.heat_pct(machine)
@@ -491,6 +491,17 @@ function base_mach.machine_to_itemstack(machine_id, machine_meta_fields)
     return stack
 end
 
+-- returns nil if not a machine or does not have that property
+function base_mach.get_class_property(nodename, prop)
+    local ndef = minetest.registered_nodes[nodename]
+    if ndef then
+        if ndef._terumach_class then
+            return ndef._terumach_class[prop]
+        end
+    end
+    return nil
+end
+
 --
 -- BASIC MACHINE NODEDEF TEMPLATE GENERATOR
 -- (makes considerable use of generic callbacks below)
@@ -552,6 +563,10 @@ function base_mach.nodedef(additions)
         after_place_node = base_mach.after_place_machine,
         -- terumetal machine class
         _terumach_class = {
+            -- dummy property to allow get_class_property(nodename, 'is_machine')
+            is_machine = true,
+            -- should be false for heatline input machine
+            heatline_target = true,
             -- timer: standard time (in seconds) for node timer to tick
             timer = 1.0,
             -- -
@@ -591,6 +606,12 @@ function base_mach.nodedef(additions)
                 --minetest.chat_send_player(player, 'You took action on the GUI for ' .. machine.class.name .. ', but it has no on_form_action callback. Oops!')
                 --minetest.chat_send_player(player, 'fields='..dump(fields))
             end
+            -- on_place
+            on_place = function(pos, machine, placer)
+            end
+            -- on_remove
+            on_remove = function(pos, machine)
+            end
         }
     }
     if additions._terumach_class then
@@ -617,7 +638,9 @@ function base_mach.on_destruct(pos)
     for _,item in ipairs(drops) do
         minetest.add_item(pos, item)
     end
-    for _,event in ipairs(on_machine_remove_events) do
+    -- event callbacks
+    mach.class.on_remove(pos, mach)
+    for _,event in ipairs(on_machine_remove_callbacks) do
         event(pos, mach)
     end
 end
@@ -633,7 +656,7 @@ function base_mach.on_blast(pos)
 end
 
 function base_mach.after_dig_machine(pos, oldnode, oldmeta_table, digger)
-    local drop_id = minetest.registered_nodes[oldnode.name]._terumach_class.drop_id or oldnode.name
+    local drop_id = base_mach.get_class_property(oldnode.name,'drop_id') or oldnode.name
     local drop_item = base_mach.machine_to_itemstack(drop_id, oldmeta_table.fields)
     if not digger:is_player() then
         minetest.add_item(pos, drop_item)
@@ -657,9 +680,12 @@ function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
     else
         machine.owner = '*'
     end
-    for _,event in ipairs(on_machine_place_events) do
+    -- event callbacks
+    machine.class.on_place(pos, machine, placer)
+    for _,event in ipairs(on_machine_place_callbacks) do
         event(pos, machine, placer)
     end
+    -- write final initial state
     base_mach.write_state(pos, machine)
 end
 

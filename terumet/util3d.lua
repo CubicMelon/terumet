@@ -24,6 +24,12 @@ function util3d.pos_plus(pos, offset)
     }
 end
 
+-- given a node pos plus offset, return the offset pos and node there
+function util3d.get_offset(pos, offset)
+    local pos = util3d.pos_plus(pos, offset)
+    return pos, minetest.get_node_or_nil(pos)
+end
+
 -- given a facedir node's param2, return the FACING index
 function util3d.param2_to_facing(param2)
     return math.floor(param2 / 4)
