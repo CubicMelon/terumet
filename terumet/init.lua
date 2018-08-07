@@ -132,6 +132,10 @@ function terumet.tex_comp(base_tex, overlay_id)
     return base_tex .. '^' .. terumet.tex(overlay_id)
 end
 
+function terumet.tex_trans(id, rot)
+    return terumet.tex(id) .. '^[transform' .. rot
+end
+
 terumet.do_lua_file('util3d')
 
 terumet.do_lua_file('interop/terumet_api')
@@ -213,10 +217,13 @@ terumet.do_lua_file('machine/htfurnace')
 terumet.do_lua_file('machine/vulcan')
 terumet.do_lua_file('machine/thermobox')
 terumet.do_lua_file('machine/thermdist')
-terumet.do_lua_file('machine/heatray')
 terumet.do_lua_file('machine/lavam')
 terumet.do_lua_file('machine/meseg')
 terumet.do_lua_file('machine/repm')
+
+terumet.do_lua_file('transfer/heatray')
+terumet.do_lua_file('transfer/hline')
+terumet.do_lua_file('transfer/hline_in')
 
 if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')
