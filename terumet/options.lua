@@ -134,7 +134,6 @@ terumet.options.heatline = {
     -- if dist > FAR_DIST then:
     --   heat_sent = HEAT_TRANSFER_MAX x (1 - ((dist - FAR_DIST) x FAR_SCALE))
     FAR_SCALE = 0.05
-    DEBUG = true,
 }
 
 terumet.options.smelter = {

@@ -37,8 +37,7 @@ end
 function debug_linklist_desc(links)
     if links then
         local count = #links
-        local time = links.profile_time
-        str=string.format('%d machine link(s) were found in %.5fms:\n', count, time)
+        str=string.format('%d linked machine(s):\n', count)
         for _,link in ipairs(links) do
             local linkinfo = string.format(' at %s d:%d\n', POS_STR(link.pos), link.dist)
             local machine_node = minetest.get_node_or_nil(link.pos)
@@ -91,7 +90,7 @@ local FSDEF = {
     machine = function(machine)
         -- TODO: display tweaking
         local fs = 'label[0.5,0.5;'
-        fs=fs..debug_linklist_desc(base_hlin.links[POS_STR(machine.pos)])
+        fs=fs..debug_linklist_desc(base_hlin.get_links(machine))
         fs=fs..']'
         return fs
     end,
@@ -113,7 +112,6 @@ end
 
 function base_hlin.find_links(machine)
     if not machine then return end
-    local profile_time_start = os.clock()
     -- stack of pending node visits:
     --  visit_stack[index] = {pos=node_pos, dist=distance_from_input}
     local visit_stack = {}
@@ -174,10 +172,6 @@ function base_hlin.find_links(machine)
         visited[POS_STR(vpos)] = true
     end
     
-    -- if debug mode is on, store link generation time (in msec) in links data as well
-    if opts.DEBUG then 
-        links.profile_time = (os.clock() - profile_time_start) * 1000 
-    end
     base_hlin.links[POS_STR(machine.pos)] = links
 end
 
