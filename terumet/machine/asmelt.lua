@@ -36,6 +36,7 @@ local FORM_ACTION = function(asmelt, fields, player)
     if fields.zfr_toggle then
         asmelt.zero_flux_recipes = not asmelt.zero_flux_recipes
         asmelt.meta:set_int('opt_zfr', (asmelt.zero_flux_recipes and 1) or 0)
+        return true -- update formspec
     end
 end
 

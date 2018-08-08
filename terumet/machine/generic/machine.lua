@@ -327,8 +327,7 @@ function base_mach.pending_heat_change(target, delta)
     return true
 end
 
--- update any pending heat transfers
--- automatically called on machine read/write
+-- update any pending heat transfers (should only be called by machine tick itself)
 function base_mach.process_pending_heat(machine)
     local pending = machine.meta:get_int('pending_heat_xfer') or 0
     if pending ~= 0 then
@@ -605,7 +604,7 @@ function base_mach.nodedef(additions)
             if machine then 
                 if base_mach.has_auth(machine, player_name) then
                     --minetest.chat_send_player(player_name, dump(fields))
-                    local save = false
+                    local updatefs = false
                     -- handle default buttondefs
                     if fields.hxfer_toggle then
                         if machine.heat_xfer_mode == machine.class.default_heat_xfer then
@@ -614,11 +613,16 @@ function base_mach.nodedef(additions)
                             machine.heat_xfer_mode = machine.class.default_heat_xfer
                         end
                         machine.meta:set_int('heat_xfer_mode', machine.heat_xfer_mode)
+                        updatefs = true
                     else
                         -- handle machine custom buttondefs
+                        -- return true to flag formspec should be updated
                         if machine.class.on_form_action then
-                            machine.class.on_form_action(machine, fields, player_name)
+                            updatefs = machine.class.on_form_action(machine, fields, player_name)
                         end
+                    end
+                    if updatefs then
+                        machine.meta:set_string('formspec', base_mach.build_fs(machine))
                     end
                 else
                     minetest.chat_send_player(player_name, 'You do not have permission to do that.')

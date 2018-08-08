@@ -24,6 +24,7 @@ local FORM_ACTION = function(ray, fields, player)
     if fields.seek_toggle then
         ray.show_seeking = not ray.show_seeking
         ray.meta:set_int('opt_seek', (ray.show_seeking and 1) or 0)
+        return true -- update formspec
     end
 end
 
