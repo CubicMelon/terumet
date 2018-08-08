@@ -130,6 +130,7 @@ function base_mach.find_adjacent_need_heat(pos)
 end
 
 -- given a list of target machines, evenly distribute up to total_hus from 'from' machine to them all
+-- update: returns total HUs sent
 function base_mach.do_push_heat(from, total_hus, targets)
     local total_distrib = math.min(from.heat_level, total_hus)
     if total_distrib == 0 or #targets == 0 then return end
@@ -155,6 +156,7 @@ function base_mach.do_push_heat(from, total_hus, targets)
         end
     end
     from.heat_level = from.heat_level - actual_hus_sent
+    return actual_hus_sent
 end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
@@ -190,28 +192,27 @@ end
 
 -- try to push an amount of heat to single target machine
 -- amount may be modified by heat_xfer upgrades in src or target
--- returns true if we did
+-- update: returns nil if none sent or value of HUs sent
 function base_mach.push_heat_single(machine, target, send_amount)
-    if send_amount <= 0 then return false end
-    if target.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.ACCEPT or target.heat_level >= target.max_heat then return false end
+    if send_amount <= 0 then return nil end
+    if target.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.ACCEPT or target.heat_level >= target.max_heat then return nil end
     if base_mach.has_upgrade(machine, 'heat_xfer') then
         send_amount = send_amount * 2
     end
     if base_mach.has_upgrade(target, 'heat_xfer') then
         send_amount = math.floor(send_amount * 1.25)
     end
-    base_mach.do_push_heat(machine, send_amount, {target})
-    return true
+    return base_mach.do_push_heat(machine, send_amount, {target})
 end
 
 function base_mach.read_state(pos)
     local machine = {}
-    local meta = minetest.get_meta(pos)
     local node_info = minetest.get_node_or_nil(pos)
     if not node_info then return nil end -- unloaded
     machine.nodedef = minetest.registered_nodes[node_info.name]
     machine.class = machine.nodedef._terumach_class
     if not machine.class then return nil end -- not a terumetal machine
+    local meta = minetest.get_meta(pos)
     machine.pos = pos
     machine.meta = meta
     machine.owner = meta:get_string('owner')

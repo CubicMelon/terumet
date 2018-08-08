@@ -117,7 +117,7 @@ terumet.options.thermdist = {
 
 terumet.options.heatline = {
     --
-    -- HEATLINE INPUT/OUTPUT SETTINGS
+    -- HEATLINE SETTINGS
     --
     -- Maximum HUs heatline input can contain
     MAX_HEAT = 5000,
@@ -134,6 +134,20 @@ terumet.options.heatline = {
     -- if dist > FAR_DIST then:
     --   heat_sent = HEAT_TRANSFER_MAX x (1 - ((dist - FAR_DIST) x FAR_SCALE))
     FAR_SCALE = 0.05
+}
+
+terumet.options.heat_ray = {
+    --
+    -- HEAT RAY EMITTER SETTINGS
+    --
+    -- Maximum HUs emitter can contain
+    MAX_HEAT = 2000,
+    -- HUs sent in one ray
+    SEND_AMOUNT = 1000,
+    -- maximum number of nodes emitter will seek before giving up
+    MAX_DISTANCE = 100,
+    -- set to zero to disable particle display of ray
+    RAY_PARTICLES_PER_NODE = 6
 }
 
 terumet.options.smelter = {
@@ -217,20 +231,6 @@ terumet.options.vulcan = {
     COST_VULCANIZE = 10,
     -- Time to process one item (in seconds)
     PROCESS_TIME = 6.0,
-}
-
-terumet.options.heat_ray = {
-    --
-    -- HEAT RAY EMITTER SETTINGS
-    --
-    -- Maximum HUs emitter can contain
-    MAX_HEAT = 2000,
-    -- HUs sent in one ray
-    SEND_AMOUNT = 1000,
-    -- maximum number of nodes emitter will seek before giving up
-    MAX_DISTANCE = 100,
-    -- set to zero to disable particle display of ray
-    RAY_PARTICLES_PER_NODE = 6
 }
 
 terumet.options.lavam = {

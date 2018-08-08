@@ -88,11 +88,12 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        -- TODO: display tweaking
-        local fs = 'label[0.5,0.5;'
-        fs=fs..debug_linklist_desc(base_hlin.get_links(machine))
-        fs=fs..']'
-        return fs
+        links = base_hlin.get_links(machine)
+        if links then
+            return string.format('label[0.5,0.5;%d linked machine(s). Last sent %d HU total.]', #links, machine.last_sent or 0)
+        else
+            return 'label[0.5,0.5;No links.]'
+        end
     end,
 }
 
@@ -178,9 +179,23 @@ end
 function base_hlin.distribute(hlin)
     if hlin.heat_level > 0 then
         local links = base_hlin.get_links(hlin)
+        local send_total = 0
         for _,link in ipairs(links) do
-            -- TODO
+            local target = base_mach.read_state(link.pos)
+            local sent = 0
+            if target then
+                if link.dist > opts.FAR_DIST then
+                    local send = opts.HEAT_TRANSFER_MAX * (1 - ((link.dist - opts.FAR_DIST) * opts.FAR_SCALE))
+                    if send > 0 and send < opts.HEAT_TRANSFER_MAX then 
+                        sent = base_mach.push_heat_single(hlin, target, send) 
+                    end
+                else
+                    sent = base_mach.push_heat_single(hlin, target, opts.HEAT_TRANSFER_MAX)
+                end
+            end
+            send_total = send_total + (sent or 0)
         end
+        hlin.last_sent = send_total
         hlin.state = base_hlin.STATE.ACTIVE
     else
         hlin.state = base_hlin.STATE.IDLE
@@ -199,8 +214,8 @@ function base_hlin.tick(pos, dt)
             base_hlin.delete_links(pos)
             hlin.state_time = opts.RECHECK_LINKS_TIMER
         end
-        base_hlin.distribute(hlin)
         hlin.status_text = string.format('%.1f seconds until recheck', hlin.state_time)
+        base_hlin.distribute(hlin)
     end
 
     base_mach.write_state(pos, hlin)
