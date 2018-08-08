@@ -121,7 +121,7 @@ end
 
 function base_cust.tick(pos, dt)
     -- read state from meta
-    local machine = base_mach.read_state(pos)
+    local machine = base_mach.tick_read_state(pos)
 
     base_cust.do_processing(machine, dt)
 

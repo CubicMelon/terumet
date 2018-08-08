@@ -163,7 +163,7 @@ end
 
 function base_msg.tick(pos, dt)
     -- read state from meta
-    local meseg = base_mach.read_state(pos)
+    local meseg = base_mach.tick_read_state(pos)
 
     local venting
     if base_mach.check_overheat(meseg, opts.MAX_HEAT) then

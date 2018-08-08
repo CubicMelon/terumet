@@ -195,7 +195,7 @@ end
 
 function base_repm.tick(pos, dt)
     -- read state from meta
-    local repm = base_mach.read_state(pos)
+    local repm = base_mach.tick_read_state(pos)
     local venting
     local reset_timer = false
     if base_mach.check_overheat(repm, opts.MAX_HEAT) then

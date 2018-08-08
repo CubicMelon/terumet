@@ -61,7 +61,7 @@ end
 
 function base_tdist.tick(pos, dt)
     -- read state from meta
-    local tbox = base_mach.read_state(pos)
+    local tbox = base_mach.tick_read_state(pos)
     local venting = false
 
     if base_mach.check_overheat(tbox, opts.MAX_HEAT) then

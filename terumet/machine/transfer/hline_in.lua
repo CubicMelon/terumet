@@ -88,11 +88,15 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        links = base_hlin.get_links(machine)
-        if links then
-            return string.format('label[0.5,0.5;%d linked machine(s). Last sent %d HU total.]', #links, machine.last_sent or 0)
+        if machine.state == base_hlin.STATE.IDLE then
+            return 'label[0.5,0.5;Currently idle.]'
         else
-            return 'label[0.5,0.5;No links.]'
+            local links = base_hlin.get_links(machine)
+            if links then
+                return string.format('label[0.5,0.5;%d linked machine(s). Last sent %d HU total.]', #links, machine.last_sent or 0)
+            else
+                return 'label[0.5,0.5;No links.]'
+            end
         end
     end,
 }
@@ -205,7 +209,7 @@ function base_hlin.distribute(hlin)
 end
 
 function base_hlin.tick(pos, dt)
-    local hlin = base_mach.read_state(pos)
+    local hlin = base_mach.tick_read_state(pos)
     local venting = base_mach.check_overheat(hlin, opts.MAX_HEAT)
     if not venting then
         hlin.state_time = hlin.state_time - dt

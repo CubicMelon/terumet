@@ -107,7 +107,7 @@ end
 
 function furn_htr.tick(pos, dt)
     -- read state from meta
-    local heater = base_mach.read_state(pos)
+    local heater = base_mach.tick_read_state(pos)
     local venting
     if base_mach.check_overheat(heater, opts.MAX_HEAT) then
         venting = true

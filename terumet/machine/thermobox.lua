@@ -64,7 +64,7 @@ end
 
 function base_tbox.tick(pos, dt)
     -- read state from meta
-    local tbox = base_mach.read_state(pos)
+    local tbox = base_mach.tick_read_state(pos)
     local venting = base_mach.check_overheat(tbox, opts.MAX_HEAT)
     if not venting then
         base_tbox.do_processing(tbox, dt)

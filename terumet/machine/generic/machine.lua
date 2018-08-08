@@ -119,7 +119,7 @@ function base_mach.find_adjacent_need_heat(pos)
         local ostate = base_mach.read_state(opos)
         -- read_state returns nil if area unloaded or not a terumetal machine
         if ostate then 
-            if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and ostate.heat_level < ostate.max_heat then
+            if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and base_mach.get_current_heat(ostate) < ostate.max_heat then
                 result[dir] = ostate
                 count = count + 1
             end
@@ -133,20 +133,18 @@ end
 -- update: returns total HUs sent
 function base_mach.do_push_heat(from, total_hus, targets)
     local total_distrib = math.min(from.heat_level, total_hus)
-    if total_distrib == 0 or #targets == 0 then return end
+    if total_distrib == 0 or #targets == 0 then return nil end
     -- can't afford to even give 1 HU to each target?
-    if from.heat_level < #targets then return end
+    if from.heat_level < #targets then return nil end
     local hus_each = math.floor(total_distrib / #targets)
     local actual_hus_sent = 0
     for i=1,#targets do
         local to_machine = targets[i]
         -- if from and to_machine are the same, don't bother sending any heat
         if not vector.equals(from.pos, to_machine.pos) then
-            local send_amount = math.min(hus_each, to_machine.max_heat - to_machine.heat_level)
+            local send_amount = math.min(hus_each, to_machine.max_heat - base_mach.get_current_heat(to_machine))
             if send_amount > 0 then
-                to_machine.heat_level = to_machine.heat_level + send_amount
-                --minetest.get_meta(to_machine.pos):set_int('heat_level', to_machine.heat_level)
-                base_mach.write_state(to_machine.pos, to_machine)
+                base_mach.pending_heat_change(to_machine.pos, send_amount)
                 -- call heat receive callback for node if exists
                 if to_machine.class.on_external_heat then
                     to_machine.class.on_external_heat(to_machine)
@@ -157,6 +155,34 @@ function base_mach.do_push_heat(from, total_hus, targets)
     end
     from.heat_level = from.heat_level - actual_hus_sent
     return actual_hus_sent
+end
+
+-- send total_hus divided up in a weighted manner to a list of weighted_targets machines
+-- each machine is expected to have a send_weight attribute (set by caller, default to 1 if not) and
+-- a "total_weight" which is used as the denominator for determining each amount of heat
+-- if a machine does not need heat, its weighted allotment of heat is not subtracted, leaving more available
+-- for other (even less-weighted) machines for this transaction
+-- returns total amount sent or nil if failed
+
+function base_mach.do_push_heat_weighted(from, weighted_targets, total_weight, total_hus)
+    if base_mach.has_upgrade(from, 'heat_xfer') then
+        total_hus = total_hus * 2
+    end
+    --for _,tg in ipairs(weighted_targets) do
+    --    if base_mach.has_upgrade(tg, 'heat_xfer') then math.floor(total_hus = total_hus * 1.2) end
+    --end
+    total_hus = math.min(from.heat_level, total_hus)
+    if total_hus == 0 or #weighted_targets == 0 then return nil end
+    local total_sent = 0
+    for _,target in ipairs(weighted_targets) do
+        local weight_ratio = (target.send_weight or 1) / total_weight
+        local send_amount = math.floor(total_hus * weight_ratio)
+        send_amount = math.min(send_amount, target.max_heat - base_mach.get_current_heat(target))
+        if send_amount > 0 then
+            base_mach.pending_heat_change(target.pos, send_amount)
+            -- TODO
+        end
+    end
 end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
@@ -233,8 +259,16 @@ function base_mach.read_state(pos)
     return machine
 end
 
+-- this version of read state is intended for a machines tick function
+-- updates heat with all pending changes before functioning
+function base_mach.tick_read_state(pos)
+    local machine = base_mach.read_state(pos)
+    base_mach.process_pending_heat(machine)
+    return machine
+end
+
 -- return simplified list of data of a machine at a specific position
--- intended to be used outside of the standard read_state, write_state loop (mostly by external mods)
+-- intended to be used outside of the machine's tick loop (external nodes)
 function base_mach.readonly_state(pos)
     local machine = {}
     local meta = minetest.get_meta(pos)
@@ -243,6 +277,7 @@ function base_mach.readonly_state(pos)
     machine.nodedef = minetest.registered_nodes[node_info.name]
     machine.class = machine.nodedef._terumach_class
     if not machine.class then return nil end -- not a terumetal machine
+    machine.heat_xfer_mode = meta:get_int('heat_xfer_mode') or machine.class.default_heat_xfer
     machine.pos = pos
     machine.meta = meta
     machine.inv = meta:get_inventory()
@@ -251,6 +286,10 @@ function base_mach.readonly_state(pos)
     return machine
 end
 
+-- WARNING!!
+-- THIS FUNCTION SHOULD ONLY BE CALLED BY MACHINE TICK FUNCTION (or on init)
+-- per project 'stop race conditions'
+-- use pending_heat_change to change another machine's heat_level (i.e. send heat)
 function base_mach.write_state(pos, machine)
     local meta = minetest.get_meta(pos)
     meta:set_string('owner', machine.owner)
@@ -264,6 +303,38 @@ function base_mach.write_state(pos, machine)
     meta:set_string('infotext', base_mach.build_infotext(machine))
     -- call write callback on node def if exists
     if machine.class.on_write_state then machine.class.on_write_state(machine) end
+end
+
+-- get a machine's current heat level plus any pending changes
+function base_mach.get_current_heat(machine)
+    local pending = machine.meta:get_int('pending_heat_xfer') or 0
+    if pending ~= 0 then
+        return machine.heat_level + pending
+    else
+        return machine.heat_level
+    end
+end
+
+-- add a pending heat change to be applied at beginning/end of machine action
+-- to save processing does NOT verify machine is there, so caller should do verifying first
+-- THIS should be called to change a machine's heat externally
+function base_mach.pending_heat_change(target, delta)
+    if delta == 0 then return end
+    local meta = minetest.get_meta(target)
+    local pending = meta:get_int('pending_heat_xfer') or 0
+    pending = pending + delta
+    meta:set_int('pending_heat_xfer', pending)
+    return true
+end
+
+-- update any pending heat transfers
+-- automatically called on machine read/write
+function base_mach.process_pending_heat(machine)
+    local pending = machine.meta:get_int('pending_heat_xfer') or 0
+    if pending ~= 0 then
+        machine.heat_level = machine.heat_level + pending
+        machine.meta:set_int('pending_heat_xfer', 0)
+    end
 end
 
 function base_mach.set_node(pos, target_node)
@@ -542,16 +613,12 @@ function base_mach.nodedef(additions)
                         else
                             machine.heat_xfer_mode = machine.class.default_heat_xfer
                         end
-                        save = true
+                        machine.meta:set_int('heat_xfer_mode', machine.heat_xfer_mode)
                     else
-                        -- handle machine custom buttondefs - returns true to auto save machine state
+                        -- handle machine custom buttondefs
                         if machine.class.on_form_action then
-                            save = machine.class.on_form_action(machine, fields, player_name)
+                            machine.class.on_form_action(machine, fields, player_name)
                         end
-                    end
-                    if save then
-                        base_mach.write_state(machine.pos, machine)
-                        base_mach.set_timer(machine)
                     end
                 else
                     minetest.chat_send_player(player_name, 'You do not have permission to do that.')
@@ -689,6 +756,7 @@ function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
     for _,event in ipairs(on_machine_place_callbacks) do
         event(pos, machine, placer)
     end
+    minetest.get_meta(pos):set_int('pending_heat_xfer', 0) -- just in case of an exploit
     -- write final initial state
     base_mach.write_state(pos, machine)
 end

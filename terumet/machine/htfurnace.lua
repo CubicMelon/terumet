@@ -123,7 +123,7 @@ end
 
 function base_htf.tick(pos, dt)
     -- read state from meta
-    local furnace = base_mach.read_state(pos)
+    local furnace = base_mach.tick_read_state(pos)
 
     local venting
     if base_mach.check_overheat(furnace, opts.MAX_HEAT) then

@@ -83,7 +83,7 @@ end
 
 function sol_htr.tick(pos, dt)
     -- read state from meta
-    local solar = base_mach.read_state(pos)
+    local solar = base_mach.tick_read_state(pos)
     if not base_mach.check_overheat(solar, opts.MAX_HEAT) then
         sol_htr.do_processing(solar, dt)
 

@@ -35,7 +35,7 @@ local FSDEF = {
 local FORM_ACTION = function(asmelt, fields, player)
     if fields.zfr_toggle then
         asmelt.zero_flux_recipes = not asmelt.zero_flux_recipes
-        return true -- return true to save new machine state
+        asmelt.meta:set_int('opt_zfr', (asmelt.zero_flux_recipes and 1) or 0)
     end
 end
 
@@ -177,7 +177,7 @@ end
 
 function base_asm.tick(pos, dt)
     -- read state from meta
-    local smelter = base_mach.read_state(pos)
+    local smelter = base_mach.tick_read_state(pos)
     local venting
     local reset_timer = false
     if base_mach.check_overheat(smelter, opts.MAX_HEAT) then
@@ -238,7 +238,7 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         end,
         on_write_state = function(asmelt)
             asmelt.meta:set_int('flux_tank', asmelt.flux_tank)
-            asmelt.meta:set_int('opt_zfr', (asmelt.zero_flux_recipes and 1) or 0)
+            -- zfr is set by form action
         end
     }
 }

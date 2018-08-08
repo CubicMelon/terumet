@@ -23,7 +23,7 @@ local FSDEF = {
 local FORM_ACTION = function(ray, fields, player)
     if fields.seek_toggle then
         ray.show_seeking = not ray.show_seeking
-        return true -- return true to save new machine state
+        ray.meta:set_int('opt_seek', (ray.show_seeking and 1) or 0)
     end
 end
 
@@ -167,7 +167,7 @@ base_ray.PARTICLE_ANIMATION = {
 
 function base_ray.tick(pos, dt)
     -- read state from meta
-    local ray = base_mach.read_state(pos)
+    local ray = base_mach.tick_read_state(pos)
 
     if ray.heat_level < opts.SEND_AMOUNT then
         ray.status_text = 'Waiting for enough heat...'
@@ -249,7 +249,7 @@ base_ray.nodedef = base_mach.nodedef{
         end,
         on_write_state = function(ray)
             ray.meta:set_string('last_error', ray.last_error or 'none')
-            ray.meta:set_int('opt_seek', (ray.show_seeking and 1) or 0)
+            -- opt seek is set by form action
         end
     }
 }

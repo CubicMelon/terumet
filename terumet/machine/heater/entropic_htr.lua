@@ -149,7 +149,7 @@ end
 
 function ent_htr.tick(pos, dt)
     -- read state from meta
-    local machine = base_mach.read_state(pos)
+    local machine = base_mach.tick_read_state(pos)
     if not base_mach.check_overheat(machine, opts.MAX_HEAT) then
         local pos_above = util3d.pos_plus(pos, util3d.ADJACENT_OFFSETS.up)
         local node_above = minetest.get_node_or_nil(pos_above)

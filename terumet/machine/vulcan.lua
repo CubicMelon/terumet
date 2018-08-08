@@ -116,7 +116,7 @@ end
 
 function base_vul.tick(pos, dt)
     -- read state from meta
-    local vulcan = base_mach.read_state(pos)
+    local vulcan = base_mach.tick_read_state(pos)
     local venting
 
     if base_mach.check_overheat(vulcan, opts.MAX_HEAT) then
