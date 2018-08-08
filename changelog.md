@@ -5,6 +5,12 @@ Newer versions listed first
 * Added support for [Techpack's tubelib](https://forum.minetest.net/viewtopic.php?f=11&t=19784). With a **Tube Support Upgrade** every machine with input/output can interact as expected with Tubelib's tubes. (Just combine a tube with a blank upgrade to get one)
 * Rebalanced Furnace Heater generation and fixed a place it was rounding where it shouldn't have been. There is also now an option to alter base generation.
 * Adjusted how Speed Upgrades work and also added Speed upgrade support to the Equipment Reformer. The way they work is completely uniform across all machines now. The time remaining for processing will always be "normal" time, but with an upgrade it will decrease at the increased rate. This new system works better for internal reasons, plus now inserting/removing Speed upgrades mid-process will have an effect now! (Before speed upgrades were only taken into account if in a machine at the start of a process)
+* Connectors between machines to transfer heat are *finally* here! 
+    * A **Heatline Distributor** is needed to act as the input and distributor for the heat energy to be sent. It acts like any other machine and can be provided heat from adjacent External Heaters, Thermoboxes, etc.
+    * Connect a series of **Heatlines** from the Distributor to any number of machines and they will be supplied heat through the lines!
+    * Heatlines have a default limit of a maximum effective distance of **36 blocks**. Beyond that point, nothing will be sent. Occasionally a puff of steam will be emitted from the heatline to indicate it is at its limit.
+    * Even before that limit, the amount of heat successfully transferred will decrease. None will be lost, but the rate of heat transferred to very far machines will be much less than nearby ones.
+    * These limitations can be changed in options.lua but they are in place for server friendliness.
 
 ## Version 2.1
 * **Breaking Change!!** Began moving the mod as a whole to the in-development Minetest 5.0.0. **It is no longer guaranteed to work in older versions like 0.4.16 or 0.4.17.x!**

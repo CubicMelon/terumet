@@ -200,14 +200,14 @@ end
 
 base_hlin.nodedef = base_mach.nodedef{
     -- node properties
-    description = 'Heatline Input',
+    description = 'Heatline Distributor',
     tiles = {terumet.tex('hline_in')},
     -- callbacks
     on_construct = base_hlin.init,
     on_timer = base_hlin.tick,
     -- terumet machine class data
     _terumach_class = {
-        name = 'Heatline Input',
+        name = 'Heatline Distributor',
         timer = 1.0,
         -- heatlines cannot send heat to this machine
         heatline_target = false,
