@@ -74,6 +74,14 @@ function base_tbox.tick(pos, dt)
     return venting or (tbox.state == base_tbox.STATE.ACTIVE)
 end
 
+-- callback when minetest screwdriver used on node
+function base_tbox.on_screwdriver(pos, node, user, mode, new_param2)
+    -- wake up
+    local machine = base_mach.read_state(pos)
+    base_mach.set_timer(machine)
+    return nil
+end
+
 base_tbox.nodedef = base_mach.nodedef{
     -- node properties
     description = "Thermobox",
@@ -84,7 +92,7 @@ base_tbox.nodedef = base_mach.nodedef{
     -- callbacks
     on_construct = base_tbox.init,
     on_timer = base_tbox.tick,
-    on_rotate = function() return nil end, -- default rotation
+    on_rotate = base_tbox.on_screwdriver,
     -- terumet machine class data
     _terumach_class = {
         name = 'Thermobox',

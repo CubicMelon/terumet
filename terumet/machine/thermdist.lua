@@ -76,6 +76,13 @@ function base_tdist.tick(pos, dt)
     return venting or (tbox.state == base_tdist.STATE.ACTIVE)
 end
 
+function base_tdist.on_screwdriver(pos, node, user, mode, new_param2)
+    -- wake up
+    local machine = base_mach.read_state(pos)
+    base_mach.set_timer(machine)
+    return nil
+end
+
 base_tdist.nodedef = base_mach.nodedef{
     -- node properties
     description = "Thermal Distributor",
@@ -86,7 +93,7 @@ base_tdist.nodedef = base_mach.nodedef{
     -- callbacks
     on_construct = base_tdist.init,
     on_timer = base_tdist.tick,
-    on_rotate = function() return nil end, -- default rotation
+    on_rotate = base_tdist.on_screwdriver,
     -- terumet machine class data
     _terumach_class = {
         name = 'Thermal Distributor',
