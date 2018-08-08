@@ -115,6 +115,28 @@ terumet.options.thermdist = {
     HEAT_TRANSFER_RATE = 250
 }
 
+terumet.options.heatline = {
+    --
+    -- HEATLINE INPUT/OUTPUT SETTINGS
+    --
+    -- Maximum HUs heatline input can contain
+    MAX_HEAT = 5000,
+    -- Maximum distance over a heatline input can send (in blocks of heatline)
+    -- when a heatline extends beyond this, it will occasionally display smoke particles to warn
+    MAX_DIST = 36,
+    -- Every RECHECK_LINE_TIMER seconds, recheck the heatline connections to an input
+    RECHECK_LINE_TIMER = 3.5,
+    -- Max heat transferred every tick to each machine
+    HEAT_TRANSFER_MAX = 500,
+    -- Heatline distance where heat transfer rate begins to decrease
+    FAR_DIST = 18,
+    -- Percentage reduction to heat for every block past FAR_DIST
+    -- if dist > FAR_DIST then:
+    --   heat_sent = HEAT_TRANSFER_MAX x (1 - ((dist - FAR_DIST) x FAR_SCALE))
+    FAR_SCALE = 0.05
+    DEBUG = true,
+}
+
 terumet.options.smelter = {
     --
     -- TERUMETAL ALLOY SMELTER SETTINGS

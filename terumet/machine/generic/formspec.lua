@@ -77,6 +77,8 @@ function base_mach.build_fs(machine)
     if fsdef.control then
         fs = fs .. fsdef.control(machine)
     end
+    -- DEBUG
+    fs = fs..string.format('label[0,%f;State: %d]', fs_height - 0.25, machine.state or 'nil') 
     -- control: buttons container
     fs = fs..'container[0,3]'
 

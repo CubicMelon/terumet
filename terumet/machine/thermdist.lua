@@ -6,6 +6,10 @@ local base_mach = terumet.machine
 local base_tdist = {}
 base_tdist.id = terumet.id('mach_thermdist')
 
+base_tdist.STATE = {}
+base_tdist.STATE.IDLE = 0
+base_tdist.STATE.ACTIVE = 1
+
 local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
@@ -21,7 +25,7 @@ function base_tdist.init(pos)
     inv:set_size('upgrade', 2)
     local init_box = {
         class = base_tdist.nodedef._terumach_class,
-        state = 0,
+        state = base_tdist.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
@@ -43,30 +47,33 @@ function base_tdist.get_drop_contents(machine)
 end
 
 function base_tdist.do_processing(tbox, dt)
-    if tbox.heat_level == 0 then
-        tbox.status_text = "Waiting for heat..."
+    if (tbox.heat_xfer_mode == base_mach.HEAT_XFER_MODE.NO_XFER) or (tbox.heat_level <= 0) then
+        tbox.status_text = "Idle"
+        tbox.state = base_tdist.STATE.IDLE
         return
     end
     -- ignore node in output direction (facing dir)
     local facing_dir = util3d.FACING_DIRECTION[tbox.facing]
     base_mach.push_heat_adjacent(tbox, opts.HEAT_TRANSFER_RATE, {facing_dir})
     tbox.status_text = "Distributing heat to orange sides"
+    tbox.state = base_tdist.STATE.ACTIVE
 end
 
 function base_tdist.tick(pos, dt)
     -- read state from meta
     local tbox = base_mach.read_state(pos)
-    
-    if not base_mach.check_overheat(tbox, opts.MAX_HEAT) then
+    local venting = false
+
+    if base_mach.check_overheat(tbox, opts.MAX_HEAT) then
+        venting = true
+    else
         base_mach.process_fuel(tbox)
-        if tbox.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.NO_XFER then
-            base_tdist.do_processing(tbox, dt)
-        end
+        base_tdist.do_processing(tbox, dt)
     end
     
     -- write status back to meta
     base_mach.write_state(pos, tbox)
-    return true
+    return venting or (tbox.state == base_tdist.STATE.ACTIVE)
 end
 
 base_tdist.nodedef = base_mach.nodedef{
@@ -87,8 +94,6 @@ base_tdist.nodedef = base_mach.nodedef{
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         drop_id = base_tdist.id,
-        on_external_heat = terumet.NO_FUNCTION,
-        on_inventory_change = terumet.NO_FUNCTION,
         get_drop_contents = base_tdist.get_drop_contents,
     }
 }

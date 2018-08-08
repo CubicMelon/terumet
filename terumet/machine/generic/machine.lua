@@ -605,10 +605,10 @@ function base_mach.nodedef(additions)
             on_form_action = function(machine, fields, player)
                 --minetest.chat_send_player(player, 'You took action on the GUI for ' .. machine.class.name .. ', but it has no on_form_action callback. Oops!')
                 --minetest.chat_send_player(player, 'fields='..dump(fields))
-            end
+            end,
             -- on_place
             on_place = function(pos, machine, placer)
-            end
+            end,
             -- on_remove
             on_remove = function(pos, machine)
             end

@@ -8,7 +8,8 @@ base_tbox.id = terumet.id('mach_thermobox')
 
 -- state identifier consts
 base_tbox.STATE = {}
-base_tbox.STATE.PUSHING = 0
+base_tbox.STATE.IDLE = 0
+base_tbox.STATE.ACTIVE = 1
 
 local FSDEF = {
     control_buttons = {
@@ -22,7 +23,7 @@ function base_tbox.init(pos)
     inv:set_size('upgrade', 2)
     local init_box = {
         class = base_tbox.nodedef._terumach_class,
-        state = base_tbox.STATE.PUSHING,
+        state = base_tbox.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
@@ -42,13 +43,13 @@ function base_tbox.get_drop_contents(machine)
 end
 
 function base_tbox.do_processing(tbox, dt)
-    if tbox.heat_level == 0 then
-        tbox.status_text = "Waiting for heat..."
+    if (tbox.heat_xfer_mode == base_mach.HEAT_XFER_MODE.NO_XFER) or (tbox.heat_level == 0) then
+        tbox.status_text = "Idle"
+        tbox.status = base_tbox.STATE.IDLE
         return
     end
     local out_pos = util3d.pos_plus(tbox.pos, util3d.FACING_OFFSETS[tbox.facing])
     local out_mach = base_mach.read_state(out_pos)
-
     if out_mach then
         if base_mach.push_heat_single(tbox, out_mach, opts.HEAT_TRANSFER_RATE) then
             tbox.status_text = "Providing heat to " .. out_mach.class.name
@@ -58,17 +59,19 @@ function base_tbox.do_processing(tbox, dt)
     else
         tbox.status_text = "No output machine found"
     end
+    tbox.status = base_tbox.STATE.ACTIVE
 end
 
 function base_tbox.tick(pos, dt)
     -- read state from meta
     local tbox = base_mach.read_state(pos)
-    if not base_mach.check_overheat(tbox, opts.MAX_HEAT) then
+    local venting = base_mach.check_overheat(tbox, opts.MAX_HEAT)
+    if not venting then
         base_tbox.do_processing(tbox, dt)
     end
     -- write status back to meta
     base_mach.write_state(pos, tbox)
-    base_mach.set_timer(tbox)
+    return venting or (tbox.state == base_tbox.STATE.ACTIVE)
 end
 
 base_tbox.nodedef = base_mach.nodedef{
@@ -89,8 +92,6 @@ base_tbox.nodedef = base_mach.nodedef{
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         drop_id = base_tbox.id,
-        on_external_heat = terumet.NO_FUNCTION,
-        on_inventory_change = terumet.NO_FUNCTION,
         get_drop_contents = base_tbox.get_drop_contents,
     }
 }

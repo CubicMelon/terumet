@@ -8,7 +8,7 @@ base_msg.id = terumet.id('mach_meseg')
 
 -- state identifier consts
 base_msg.STATE = {}
-base_msg.STATE.WAITING = 0
+base_msg.STATE.IDLE = 0
 base_msg.STATE.GROWING = 1
 base_msg.STATE.OUTPUT = 2
 
@@ -49,7 +49,7 @@ function base_msg.init(pos)
     inv:set_size('out', 1)
     local init_meseg = {
         class = base_msg.nodedef._terumach_class,
-        state = base_msg.STATE.WAITING,
+        state = base_msg.STATE.IDLE,
         state_time = 0,
         heat_level = 0,
         effic = 0,
@@ -144,7 +144,7 @@ function base_msg.do_growing(meseg, dt)
             if not has_seed then meseg.status_text = meseg.status_text .. 'No seed crystals ' end
             if not has_heat then meseg.status_text = meseg.status_text .. 'No heat' end
         else
-            meseg.state = base_msg.STATE.WAITING
+            meseg.state = base_msg.STATE.IDLE
         end
     end
 end
@@ -182,7 +182,7 @@ function base_msg.tick(pos, dt)
         base_mach.generate_smoke(pos)
     end
 
-    if venting or meseg.state ~= base_msg.STATE.WAITING then 
+    if venting or meseg.state ~= base_msg.STATE.IDLE then 
         base_mach.set_timer(meseg) 
     end
     -- write status back to meta

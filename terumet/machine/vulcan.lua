@@ -157,6 +157,9 @@ base_vul.nodedef = base_mach.nodedef{
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         get_drop_contents = base_vul.get_drop_contents,
+        on_external_heat = function(machine)
+            if machine.state == base_vul.STATE.IDLE then base_mach.set_timer(machine) end
+        end,
         on_read_state = function(vulcan)
             vulcan.heat_cost = vulcan.meta:get_int('heatcost') or 0
         end,
