@@ -51,11 +51,13 @@ function base_tbox.do_processing(tbox, dt)
     local out_pos = util3d.pos_plus(tbox.pos, util3d.FACING_OFFSETS[tbox.facing])
     local out_mach = base_mach.read_state(out_pos)
     if out_mach then
-        if base_mach.push_heat_single(tbox, out_mach, opts.HEAT_TRANSFER_RATE) then
-            tbox.status_text = "Providing heat to " .. out_mach.class.name
-        else
-            tbox.status_text = out_mach.class.name .. " does not require heat"
-        end
+        local res = base_mach.push_heat_single(tbox, out_mach, opts.HEAT_TRANSFER_RATE)
+        tbox.status_text ="result: "..res
+        --if res and res > 0 then
+          --  tbox.status_text = "Providing heat to " .. out_mach.class.name
+        --else
+          --  tbox.status_text = out_mach.class.name .. " does not require heat"
+        --end
     else
         tbox.status_text = "No output machine found"
     end

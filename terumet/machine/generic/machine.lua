@@ -143,6 +143,7 @@ function base_mach.do_push_heat(from, total_hus, targets)
         -- if from and to_machine are the same, don't bother sending any heat
         if not vector.equals(from.pos, to_machine.pos) then
             local send_amount = math.min(hus_each, to_machine.max_heat - base_mach.get_current_heat(to_machine))
+            --minetest.chat_send_all(string.format('push to %s hl: %d', to_machine.class.name, send_amount))
             if send_amount > 0 then
                 base_mach.pending_heat_change(to_machine.pos, send_amount)
                 -- call heat receive callback for node if exists
@@ -164,7 +165,7 @@ end
 -- for other (even less-weighted) machines for this transaction
 -- returns total amount sent or nil if failed
 
-function base_mach.do_push_heat_weighted(from, weighted_targets, total_weight, total_hus)
+--[[ function base_mach.do_push_heat_weighted(from, weighted_targets, total_weight, total_hus)
     if base_mach.has_upgrade(from, 'heat_xfer') then
         total_hus = total_hus * 2
     end
@@ -183,7 +184,7 @@ function base_mach.do_push_heat_weighted(from, weighted_targets, total_weight, t
             -- TODO
         end
     end
-end
+end ]]
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
 -- amount may be modified by heat_xfer upgrades in src or target(s)
@@ -220,8 +221,8 @@ end
 -- amount may be modified by heat_xfer upgrades in src or target
 -- update: returns nil if none sent or value of HUs sent
 function base_mach.push_heat_single(machine, target, send_amount)
-    if send_amount <= 0 then return nil end
-    if target.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.ACCEPT or target.heat_level >= target.max_heat then return nil end
+    if send_amount <= 0 then return 'sendamount < 0' end
+    if (target.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.ACCEPT) or (base_mach.get_current_heat(target) >= target.max_heat) then return 'xfer mode or heat above max' end
     if base_mach.has_upgrade(machine, 'heat_xfer') then
         send_amount = send_amount * 2
     end
@@ -308,11 +309,7 @@ end
 -- get a machine's current heat level plus any pending changes
 function base_mach.get_current_heat(machine)
     local pending = machine.meta:get_int('pending_heat_xfer') or 0
-    if pending ~= 0 then
-        return machine.heat_level + pending
-    else
-        return machine.heat_level
-    end
+    return machine.heat_level + pending
 end
 
 -- add a pending heat change to be applied at beginning/end of machine action
@@ -623,6 +620,7 @@ function base_mach.nodedef(additions)
                     end
                     if updatefs then
                         machine.meta:set_string('formspec', base_mach.build_fs(machine))
+                        base_mach.set_timer(machine)
                     end
                 else
                     minetest.chat_send_player(player_name, 'You do not have permission to do that.')

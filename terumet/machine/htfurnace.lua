@@ -179,7 +179,7 @@ base_htf.lit_nodedef.tiles = {
     terumet.tex('htfurn_sides'), terumet.tex('htfurn_sides'),
     terumet.tex('htfurn_sides'), terumet.tex('htfurn_front')
 }
-base_htf.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
+base_htf.lit_nodedef.groups.not_in_creative_inventory=1
 base_htf.lit_nodedef.light_source = 10
 
 
