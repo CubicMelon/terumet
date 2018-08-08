@@ -188,6 +188,8 @@ ent_htr.nodedef = base_mach.nodedef{
         on_external_heat = terumet.NO_FUNCTION,
         on_inventory_change = terumet.NO_FUNCTION,
         get_drop_contents = ent_htr.get_drop_contents,
+        -- heatlines cannot send heat to this machine
+        heatline_target = false,
         on_read_state = function(machine)
             machine.heat_rate = machine.meta:get_float('heat_rate')
             machine.search_pos = minetest.string_to_pos(machine.meta:get_string('search_pos'))

@@ -112,6 +112,8 @@ sol_htr.nodedef = base_mach.nodedef{
     _terumach_class = {
         name = 'Solar Heater',
         timer = 1.0,
+        -- heatlines cannot send heat to this machine
+        heatline_target = false,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
         on_external_heat = terumet.NO_FUNCTION,

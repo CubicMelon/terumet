@@ -513,7 +513,7 @@ function base_mach.nodedef(additions)
         is_ground_content = false,
         sounds = default.node_sound_metal_defaults(),
         paramtype2 = 'facedir',
-        groups = {cracky=1, terumach=1},
+        groups = {cracky=1},
         drop = '', -- since after_dig_node/on_destruct/on_blast handles machines dropping w/stored heat, flag machines as ignoring usual drop mechanic
         -- default inventory slot control
         allow_metadata_inventory_put = base_mach.allow_put,
@@ -623,6 +623,9 @@ function base_mach.nodedef(additions)
         if k ~= '_terumach_class' then
             new_nodedef[k] = v
         end
+    end
+    if new_nodedef._terumach_class.heatline_target then
+        new_nodedef.groups['terumet_hltarget']=1
     end
     return new_nodedef
 end

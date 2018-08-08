@@ -152,6 +152,8 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
         name = 'Furnace Heater',
         timer = 0.5,
         fsdef = FSDEF,
+        -- heatlines cannot send heat to this machine
+        heatline_target = false,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,
         drop_id = furn_htr.unlit_id,
         on_external_heat = terumet.NO_FUNCTION,

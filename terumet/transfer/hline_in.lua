@@ -65,7 +65,7 @@ function base_hlin.init(pos)
     local init_hlin = {
         class = base_hlin.nodedef._terumach_class,
         state = base_hlin.STATE.IDLE,
-        state_time = opts.RECHECK_LINE_TIMER,
+        state_time = opts.RECHECK_LINKS_TIMER,
         heat_level = 0,
         max_heat = opts.MAX_HEAT,
         status_text = 'New',
@@ -176,8 +176,17 @@ function base_hlin.find_links(machine)
 end
 
 function base_hlin.distribute(hlin)
-    local links = base_hlin.get_links(hlin)
-    hlin.state = base_hlin.STATE.ACTIVE
+    if hlin.heat_level > 0 then
+        local links = base_hlin.get_links(hlin)
+        for _,link in ipairs(links) do
+            -- TODO
+        end
+        hlin.state = base_hlin.STATE.ACTIVE
+    else
+        hlin.state = base_hlin.STATE.IDLE
+        hlin.state_time = -0.1 -- force next wakeup to recheck links
+        hlin.status_text = 'Idle'
+    end
 end
 
 function base_hlin.tick(pos, dt)
@@ -188,7 +197,7 @@ function base_hlin.tick(pos, dt)
         if hlin.state_time <= 0 then
             -- recheck line
             base_hlin.delete_links(pos)
-            hlin.state_time = opts.RECHECK_LINE_TIMER
+            hlin.state_time = opts.RECHECK_LINKS_TIMER
         end
         base_hlin.distribute(hlin)
         hlin.status_text = string.format('%.1f seconds until recheck', hlin.state_time)
@@ -221,5 +230,8 @@ base_hlin.nodedef = base_mach.nodedef{
         end
     }
 }
+
+-- manually add input machine as a connect target for heatlines even if they are not technically a target
+base_hlin.nodedef.groups['terumet_hltarget']=1
 
 minetest.register_node( base_hlin.id, base_hlin.nodedef )

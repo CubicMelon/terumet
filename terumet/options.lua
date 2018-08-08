@@ -124,8 +124,8 @@ terumet.options.heatline = {
     -- Maximum distance over a heatline input can send (in blocks of heatline)
     -- when a heatline extends beyond this, it will occasionally display smoke particles to warn
     MAX_DIST = 36,
-    -- Every RECHECK_LINE_TIMER seconds, recheck the heatline connections to an input
-    RECHECK_LINE_TIMER = 3.5,
+    -- Every RECHECK_LINKS_TIMER seconds, recheck the heatline on an input
+    RECHECK_LINKS_TIMER = 4.0,
     -- Max heat transferred every tick to each machine
     HEAT_TRANSFER_MAX = 500,
     -- Heatline distance where heat transfer rate begins to decrease

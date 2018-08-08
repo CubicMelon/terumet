@@ -6,7 +6,7 @@ minetest.register_node( terumet.id('xfer_hline'), {
     description = 'Heatline',
     tiles = {terumet.tex('hline')},
     
-    groups={cracky=3, oddly_breakable_by_hand=3, teruhline=1},
+    groups={cracky=3, oddly_breakable_by_hand=3,terumet_hline=1},
 
     drawtype = "nodebox",
     paramtype = 'light',
@@ -23,7 +23,7 @@ minetest.register_node( terumet.id('xfer_hline'), {
     connect_sides = { "top", "bottom", "front", "left", "back", "right" },
     is_ground_content = false,
     connects_to = {
-        "group:terumach",
-        "group:teruhline",
+        "group:terumet_hltarget",
+        "group:terumet_hline",
     },
 })
