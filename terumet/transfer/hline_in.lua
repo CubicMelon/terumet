@@ -185,7 +185,7 @@ function base_hlin.distribute(hlin)
             local sent = 0
             if target then
                 if link.dist > opts.FAR_DIST then
-                    local send = opts.HEAT_TRANSFER_MAX * (1 - ((link.dist - opts.FAR_DIST) * opts.FAR_SCALE))
+                    local send = math.floor(opts.HEAT_TRANSFER_MAX * (1 - ((link.dist - opts.FAR_DIST) * opts.FAR_SCALE)))
                     if send > 0 and send < opts.HEAT_TRANSFER_MAX then 
                         sent = base_mach.push_heat_single(hlin, target, send) 
                     end
@@ -210,7 +210,6 @@ function base_hlin.tick(pos, dt)
     if not venting then
         hlin.state_time = hlin.state_time - dt
         if hlin.state_time <= 0 then
-            -- recheck line
             base_hlin.delete_links(pos)
             hlin.state_time = opts.RECHECK_LINKS_TIMER
         end
@@ -246,7 +245,7 @@ base_hlin.nodedef = base_mach.nodedef{
     }
 }
 
--- manually add input machine as a connect target for heatlines even if they are not technically a target
+-- manually add input machine as a connect target for heatline nodes even if they are not technically a target
 base_hlin.nodedef.groups['terumet_hltarget']=1
 
 minetest.register_node( base_hlin.id, base_hlin.nodedef )
