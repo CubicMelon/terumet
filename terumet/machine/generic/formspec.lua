@@ -60,7 +60,7 @@ function base_mach.build_fs(machine)
         fs = fs..base_mach.fs_meter(0,0.5, 'heat', base_mach.heat_pct(machine), string.format('%d HU', base_mach.get_current_heat(machine)))
     end
     -- DEBUG
-    fs=fs..string.format('label[0.3,1.3;Pending: %d]', machine.meta:get_int('pending_heat_xfer') or -1)
+    --fs=fs..string.format('label[0.3,1.3;Pending: %d]', machine.meta:get_int('pending_heat_xfer') or -1)
     -- control: fuel_slot
     if fsdef.fuel_slot then
         local fsx = fsdef.fuel_slot.x or 0

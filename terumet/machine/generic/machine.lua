@@ -264,7 +264,6 @@ function base_mach.write_state(pos, machine)
     meta:set_string('status_text', machine.status_text)
     meta:set_int('heat_level', machine.heat_level or 0)
     meta:set_int('max_heat', machine.max_heat or 0)
-    meta:set_int('heat_xfer_mode', machine.heat_xfer_mode or machine.class.default_heat_xfer)
     meta:set_int('state', machine.state)
     meta:set_float('state_time', machine.state_time)
     meta:set_string('formspec', base_mach.build_fs(machine))
@@ -728,7 +727,10 @@ function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
     for _,event in ipairs(on_machine_place_callbacks) do
         event(pos, machine, placer)
     end
-    minetest.get_meta(pos):set_int('pending_heat_xfer', 0) -- just in case of an exploit
+    -- init default meta settings
+    local meta = minetest.get_meta(pos)
+    meta:set_int('pending_heat_xfer', 0) -- just in case of an exploit
+    meta:set_int('heat_xfer_mode', machine.class.default_heat_xfer)
     -- write final initial state
     base_mach.write_state(pos, machine)
 end
