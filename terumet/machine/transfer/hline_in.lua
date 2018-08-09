@@ -177,24 +177,39 @@ function base_hlin.find_links(machine)
         visited[POS_STR(vpos)] = true
     end
     
+    -- sort links by ascending distance
+    table.sort(links, function(la,lb)
+        return la.dist < lb.dist
+    end)
     base_hlin.links[POS_STR(machine.pos)] = links
 end
 
 function base_hlin.distribute(hlin)
     if hlin.heat_level > 0 then
+        hlin.last_sent = 0
         local links = base_hlin.get_links(hlin)
-        local targets = {}
-        local total_weight = 0
-        for _,link in ipairs(links) do
-            local target = base_mach.read_state(link.pos)
-            local sent = 0
-            if target then
-                targets[#targets+1] = target
-                target.send_weight = opts.MAX_DIST + 1 - link.dist
-                total_weight = total_weight + target.send_weight
+        if #links > 0 then
+            local total_send = opts.HEAT_TRANSFER_MAX
+            if base_mach.has_upgrade(hlin, 'heat_xfer') then total_send = total_send * 2 end
+            -- if we can't send max amount, divide up what IS available
+            total_send = math.min(hlin.heat_level, total_send)
+            local try_each_send = math.ceil(total_send / #links)
+            -- go to each target in order of ascending distance
+            for _,link in ipairs(links) do
+                if hlin.heat_level == 0 then break end
+                local target = base_mach.read_state(link.pos)
+                if target then
+                    local this_send_max = try_each_send
+                    if base_mach.has_upgrade(target, 'heat_xfer') then this_send_max = math.floor(this_send_max * 1.25) end
+                    local real_send = math.min(hlin.heat_level, this_send_max, target.max_heat - base_mach.get_current_heat(target))
+                    if real_send > 0 then
+                        base_mach.external_send_heat(target, real_send)
+                        hlin.heat_level = hlin.heat_level - real_send
+                        hlin.last_sent = hlin.last_sent + real_send
+                    end
+                end
             end
         end
-        hlin.last_sent = base_mach.do_push_heat_weighted(hlin, targets, total_weight, opts.HEAT_TRANSFER_MAX) or 0
         hlin.state = base_hlin.STATE.ACTIVE
     else
         hlin.state = base_hlin.STATE.IDLE

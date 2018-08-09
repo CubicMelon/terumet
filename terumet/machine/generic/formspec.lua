@@ -57,7 +57,7 @@ function base_mach.build_fs(machine)
     if machine.heat_level > machine.max_heat then
         fs = fs..'image[0,0.5;3.5,1;terumet_gui_overheat.png^[transformR270]label[1.2,0.9;Overheated]'
     else
-        fs = fs..base_mach.fs_meter(0,0.5, 'heat', base_mach.heat_pct(machine), string.format('%d HU', machine.heat_level))
+        fs = fs..base_mach.fs_meter(0,0.5, 'heat', base_mach.heat_pct(machine), string.format('%d HU', base_mach.get_current_heat(machine)))
     end
     -- DEBUG
     fs=fs..string.format('label[0.3,1.3;Pending: %d]', machine.meta:get_int('pending_heat_xfer') or -1)

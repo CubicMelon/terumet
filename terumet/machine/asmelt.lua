@@ -16,7 +16,7 @@ base_asm.STATE.ALLOYING = 2
 local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
-        {flag='', icon='default_bronze_ingot.png', name='zfr_toggle', on_text='Using zero flux recipes', off_text='Ingoring zero flux recipes'}
+        {flag='zero_flux_recipes', icon='default_bronze_ingot.png', name='zfr_toggle', on_text='Using zero flux recipes', off_text='Ignoring zero flux recipes'}
     },
     machine = function(machine)
         local fs = base_mach.fs_meter(2.5,1, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d flux', machine.flux_tank))
@@ -179,6 +179,7 @@ end
 function base_asm.tick(pos, dt)
     -- read state from meta
     local smelter = base_mach.tick_read_state(pos)
+
     local venting
     local reset_timer = false
     if base_mach.check_overheat(smelter, opts.MAX_HEAT) then
@@ -206,8 +207,6 @@ function base_asm.tick(pos, dt)
     -- write status back to meta
     base_mach.write_state(pos, smelter)
 
-    -- TODAY I LEARNED
-    -- if you return true from an on_timer callback, it automatically resets timer to last timeout
     return reset_timer
 end
 
@@ -234,12 +233,11 @@ base_asm.unlit_nodedef = base_mach.nodedef{
         get_drop_contents = base_asm.get_drop_contents,
         on_form_action = FORM_ACTION,
         on_read_state = function(asmelt)
-            asmelt.flux_tank = asmelt.meta:get_int('flux_tank')
             asmelt.zero_flux_recipes = (asmelt.meta:get_int('opt_zfr') or 0) == 1
+            asmelt.flux_tank = asmelt.meta:get_int('flux_tank')
         end,
         on_write_state = function(asmelt)
             asmelt.meta:set_int('flux_tank', asmelt.flux_tank)
-            -- zfr is set by form action
         end
     }
 }

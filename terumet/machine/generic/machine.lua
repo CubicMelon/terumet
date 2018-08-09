@@ -15,7 +15,7 @@ function base_mach.register_on_remove(event)
 end
 
 function base_mach.heat_pct(machine)
-    return 100.0 * machine.heat_level / machine.max_heat
+    return 100.0 * base_mach.get_current_heat(machine) / machine.max_heat
 end
 
 -- implement machine owner protection
@@ -145,57 +145,13 @@ function base_mach.do_push_heat(from, total_hus, targets)
             local send_amount = math.min(hus_each, to_machine.max_heat - base_mach.get_current_heat(to_machine))
             --minetest.chat_send_all(string.format('push to %s hl: %d', to_machine.class.name, send_amount))
             if send_amount > 0 then
-                base_mach.pending_heat_change(to_machine.pos, send_amount)
-                -- call heat receive callback for node if exists
-                if to_machine.class.on_external_heat then
-                    to_machine.class.on_external_heat(to_machine)
-                end
+                base_mach.external_send_heat(to_machine, send_amount)
                 actual_hus_sent = actual_hus_sent + send_amount
             end
         end
     end
     from.heat_level = from.heat_level - actual_hus_sent
     return actual_hus_sent
-end
-
--- send total_hus divided up in a weighted manner to a list of weighted_targets machines
--- each machine is expected to have a send_weight attribute (set by caller, default to 1 if not) and
--- a "total_weight" which is used as the denominator for determining each amount of heat
--- if a machine does not need heat, its weighted allotment of heat is not subtracted, leaving more available
--- for other (even less-weighted) machines for this transaction
--- returns total amount sent or nil if failed
-
--- TODO
-function base_mach.do_push_heat_weighted(from, weighted_targets, total_hus)
-    if #weighted_targets < 1 then return 0 end
-    if base_mach.has_upgrade(from, 'heat_xfer') then
-        total_hus = total_hus * 2
-    end
-    local total_weight = 0
-    for _,tg in ipairs(weighted_targets) do
-        if base_mach.has_upgrade(tg, 'heat_xfer') then total_hus = math.floor(total_hus * 1.1) end
-        total_weight = total_weight + (tg.send_weight or 1)
-    end
-    total_hus = math.min(from.heat_level, total_hus)
-    if total_hus == 0 or #weighted_targets == 0 then return nil end
-    local total_sent = 0
-    for _,target in ipairs(weighted_targets) do
-        if from.heat_level == 0 then break end
-        local weight_ratio = (target.send_weight or 1) / total_weight
-        local send_amount = math.max(1, math.floor(total_hus * weight_ratio))
-        if base_mach.has_upgrade(target, 'heat_xfer') then send_amount = math.floor(send_amount * 1.25) end
-        send_amount = math.min(send_amount, target.max_heat - base_mach.get_current_heat(target), from.heat_level)
-        if send_amount > 0 then
-            base_mach.pending_heat_change(target.pos, send_amount)
-            if target.class.on_external_heat then
-                target.class.on_external_heat(target)
-            end
-            total_sent = total_sent + send_amount
-            from.heat_level = from.heat_level - send_amount
-        end
-    end
-
-    return total_sent
 end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
@@ -302,7 +258,6 @@ end
 -- WARNING!!
 -- THIS FUNCTION SHOULD ONLY BE CALLED BY MACHINE TICK FUNCTION (or on init)
 -- per project 'stop race conditions'
--- use pending_heat_change to change another machine's heat_level (i.e. send heat)
 function base_mach.write_state(pos, machine)
     local meta = minetest.get_meta(pos)
     meta:set_string('owner', machine.owner)
@@ -324,15 +279,17 @@ function base_mach.get_current_heat(machine)
     return machine.heat_level + pending
 end
 
--- add a pending heat change to be applied at beginning/end of machine action
--- to save processing does NOT verify machine is there, so caller should do verifying first
--- THIS should be called to change a machine's heat externally
-function base_mach.pending_heat_change(target, delta)
-    if delta == 0 then return end
-    local meta = minetest.get_meta(target)
+-- send heat externally to another machine
+function base_mach.external_send_heat(machine, delta)
+    if (not machine) or delta == 0 then return false end
+    local meta = minetest.get_meta(machine.pos)
     local pending = meta:get_int('pending_heat_xfer') or 0
     pending = pending + delta
     meta:set_int('pending_heat_xfer', pending)
+    -- call heat receive callback for node if exists
+    if machine.class.on_external_heat then
+        machine.class.on_external_heat(machine)
+    end
     return true
 end
 
@@ -492,6 +449,8 @@ function base_mach.expend_heat(machine, value, process)
     return true
 end
 
+-- for use by machine itself ONLY
+-- use external_send_heat for outside machine
 function base_mach.gain_heat(machine, value)
     machine.heat_level = math.min(machine.max_heat, machine.heat_level + value)
 end
@@ -612,7 +571,6 @@ function base_mach.nodedef(additions)
             local machine = base_mach.read_state(pos)
             if machine then 
                 if base_mach.has_auth(machine, player_name) then
-                    --minetest.chat_send_player(player_name, dump(fields))
                     local updatefs = false
                     -- handle default buttondefs
                     if fields.hxfer_toggle then

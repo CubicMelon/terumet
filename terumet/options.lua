@@ -126,8 +126,8 @@ terumet.options.heatline = {
     MAX_DIST = 36,
     -- Every RECHECK_LINKS_TIMER seconds, recheck the heatline on an input
     RECHECK_LINKS_TIMER = 4.0,
-    -- Max heat transferred every tick
-    HEAT_TRANSFER_MAX = 500,
+    -- Max heat transferred every tick (divided among all connected machines in order of distance)
+    HEAT_TRANSFER_MAX = 250,
 }
 
 terumet.options.heat_ray = {
