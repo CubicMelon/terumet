@@ -183,16 +183,18 @@ end
 function base_hlin.distribute(hlin)
     if hlin.heat_level > 0 then
         local links = base_hlin.get_links(hlin)
-        local send_total = 0
+        local targets = {}
+        local total_weight = 0
         for _,link in ipairs(links) do
             local target = base_mach.read_state(link.pos)
             local sent = 0
             if target then
-                sent = base_mach.push_heat_single(hlin, target, opts.HEAT_TRANSFER_MAX)
+                targets[#targets+1] = target
+                target.send_weight = opts.MAX_DIST + 1 - link.dist
+                total_weight = total_weight + target.send_weight
             end
-            send_total = send_total + (sent or 0)
         end
-        hlin.last_sent = send_total
+        hlin.last_sent = base_mach.do_push_heat_weighted(hlin, targets, total_weight, opts.HEAT_TRANSFER_MAX) or 0
         hlin.state = base_hlin.STATE.ACTIVE
     else
         hlin.state = base_hlin.STATE.IDLE

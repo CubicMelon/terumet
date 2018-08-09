@@ -126,14 +126,8 @@ terumet.options.heatline = {
     MAX_DIST = 36,
     -- Every RECHECK_LINKS_TIMER seconds, recheck the heatline on an input
     RECHECK_LINKS_TIMER = 4.0,
-    -- Max heat transferred every tick to each machine
-    HEAT_TRANSFER_MAX = 5,
-    -- Heatline distance where heat transfer rate begins to decrease
-    FAR_DIST = 18,
-    -- Percentage reduction to heat for every block past FAR_DIST
-    -- if dist > FAR_DIST then:
-    --   heat_sent = HEAT_TRANSFER_MAX x (1 - ((dist - FAR_DIST) x FAR_SCALE))
-    FAR_SCALE = 0.05
+    -- Max heat transferred every tick
+    HEAT_TRANSFER_MAX = 500,
 }
 
 terumet.options.heat_ray = {

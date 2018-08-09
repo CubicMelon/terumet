@@ -165,26 +165,38 @@ end
 -- for other (even less-weighted) machines for this transaction
 -- returns total amount sent or nil if failed
 
---[[ function base_mach.do_push_heat_weighted(from, weighted_targets, total_weight, total_hus)
+-- TODO
+function base_mach.do_push_heat_weighted(from, weighted_targets, total_hus)
+    if #weighted_targets < 1 then return 0 end
     if base_mach.has_upgrade(from, 'heat_xfer') then
         total_hus = total_hus * 2
     end
-    --for _,tg in ipairs(weighted_targets) do
-    --    if base_mach.has_upgrade(tg, 'heat_xfer') then math.floor(total_hus = total_hus * 1.2) end
-    --end
+    local total_weight = 0
+    for _,tg in ipairs(weighted_targets) do
+        if base_mach.has_upgrade(tg, 'heat_xfer') then total_hus = math.floor(total_hus * 1.1) end
+        total_weight = total_weight + (tg.send_weight or 1)
+    end
     total_hus = math.min(from.heat_level, total_hus)
     if total_hus == 0 or #weighted_targets == 0 then return nil end
     local total_sent = 0
     for _,target in ipairs(weighted_targets) do
+        if from.heat_level == 0 then break end
         local weight_ratio = (target.send_weight or 1) / total_weight
-        local send_amount = math.floor(total_hus * weight_ratio)
-        send_amount = math.min(send_amount, target.max_heat - base_mach.get_current_heat(target))
+        local send_amount = math.max(1, math.floor(total_hus * weight_ratio))
+        if base_mach.has_upgrade(target, 'heat_xfer') then send_amount = math.floor(send_amount * 1.25) end
+        send_amount = math.min(send_amount, target.max_heat - base_mach.get_current_heat(target), from.heat_level)
         if send_amount > 0 then
             base_mach.pending_heat_change(target.pos, send_amount)
-            -- TODO
+            if target.class.on_external_heat then
+                target.class.on_external_heat(target)
+            end
+            total_sent = total_sent + send_amount
+            from.heat_level = from.heat_level - send_amount
         end
     end
-end ]]
+
+    return total_sent
+end
 
 -- find all adjacent accepting machines and push desired amount of heat to them, split evenly
 -- amount may be modified by heat_xfer upgrades in src or target(s)
@@ -221,8 +233,8 @@ end
 -- amount may be modified by heat_xfer upgrades in src or target
 -- update: returns nil if none sent or value of HUs sent
 function base_mach.push_heat_single(machine, target, send_amount)
-    if send_amount <= 0 then return 'sendamount < 0' end
-    if (target.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.ACCEPT) or (base_mach.get_current_heat(target) >= target.max_heat) then return 'xfer mode or heat above max' end
+    if send_amount <= 0 then return nil end
+    if (target.heat_xfer_mode ~= base_mach.HEAT_XFER_MODE.ACCEPT) or (base_mach.get_current_heat(target) >= target.max_heat) then return nil end
     if base_mach.has_upgrade(machine, 'heat_xfer') then
         send_amount = send_amount * 2
     end
