@@ -127,16 +127,10 @@ function base_vul.tick(pos, dt)
         base_mach.process_fuel(vulcan)
     end
 
-    if vulcan.state ~= base_vul.STATE.IDLE and (not vulcan.need_heat) then
-        -- if still processing and not waiting for heat, reset timer to continue processing
-        base_mach.set_timer(vulcan)
-    elseif venting or base_mach.has_upgrade(vulcan, 'ext_input') then
-        base_mach.set_timer(vulcan)
-    end
-
     -- write status back to meta
     base_mach.write_state(pos, vulcan)
 
+    return (vulcan.state ~= base_vul.STATE.IDLE) or vulcan.need_heat or venting
 end
 
 base_vul.nodedef = base_mach.nodedef{
@@ -157,9 +151,6 @@ base_vul.nodedef = base_mach.nodedef{
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,
         get_drop_contents = base_vul.get_drop_contents,
-        on_external_heat = function(machine)
-            if machine.state == base_vul.STATE.IDLE then base_mach.set_timer(machine) end
-        end,
         on_read_state = function(vulcan)
             vulcan.heat_cost = vulcan.meta:get_int('heatcost') or 0
         end,

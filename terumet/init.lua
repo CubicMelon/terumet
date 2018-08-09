@@ -149,6 +149,7 @@ terumet.do_lua_file('material/entropy')
 
 -- reg_alloy(name, id, block hardness level, repair material value)
 terumet.reg_alloy('Terucopper', 'tcop', 1, 20)
+terumet.reg_alloy('Terutin', 'ttin', 1, 15)
 terumet.reg_alloy('Terusteel', 'tste', 2, 40)
 terumet.reg_alloy('Terugold', 'tgol', 3, 80)
 terumet.reg_alloy('Coreglass', 'cgls', 4, 120)
@@ -157,7 +158,7 @@ terumet.reg_alloy('Teruchalcum', 'tcha', 2, 60)
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
 terumet.do_lua_file('material/coil')
-terumet.do_lua_file('material/htglass')
+terumet.do_lua_file('material/misc')
 
 terumet.do_lua_file('material/crystallized')
 

@@ -175,6 +175,11 @@ terumet.options.smelter = {
         {result='terumet:ingot_tcop', flux=1, time=2.5, input={'default:copper_ingot'}},
         {result='terumet:block_tcop', flux=8, time=22.5, input={'default:copperblock'}},
         {result='terumet:ingot_tcop', flux=1, time=1.0, input={'terumet:item_cryst_copper'}},
+    -- Terutin
+        {result='terumet:ingot_ttin', flux=1, time=2.0, input={'default:tin_lump'}},
+        {result='terumet:ingot_ttin', flux=1, time=1.5, input={'default:tin_ingot'}},
+        {result='terumet:block_ttin', flux=8, time=15.0, input={'default:tinblock'}},
+        {result='terumet:ingot_ttin', flux=1, time=0.5, input={'terumet:item_cryst_tin'}},
     -- Terusteel
         {result='terumet:ingot_tste', flux=2, time=4.5, input={'default:iron_lump'}},
         {result='terumet:ingot_tste', flux=2, time=3.5, input={'default:steel_ingot'}},

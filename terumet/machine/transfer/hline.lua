@@ -1,8 +1,10 @@
 local LINE_SIZE = 1/6
 
+local line_id = terumet.id('xfer_hline')
+
 -- Special thanks to Elepower (https://gitlab.icynet.eu/evert/elepower) by IcyDiamond on the forums
 -- for revealing to me the magic of drawtype "nodebox", type "connected"
-minetest.register_node( terumet.id('xfer_hline'), {
+minetest.register_node( line_id, {
     description = 'Heatline',
     tiles = {terumet.tex('hline')},
     
@@ -27,3 +29,9 @@ minetest.register_node( terumet.id('xfer_hline'), {
         "group:terumet_hline",
     },
 })
+
+minetest.register_craft{ output = terumet.id('xfer_hline',6) , recipe = {
+    {terumet.id('item_ceramic'), terumet.id('item_ceramic'), terumet.id('item_ceramic')},
+    {terumet.id('item_coil_tgol'), terumet.id('item_coil_tgol'), terumet.id('item_coil_tgol')},
+    {terumet.id('item_ceramic'), terumet.id('item_ceramic'), terumet.id('item_ceramic')}
+}}

@@ -43,7 +43,7 @@ function base_tbox.get_drop_contents(machine)
 end
 
 function base_tbox.do_processing(tbox, dt)
-    if (tbox.heat_xfer_mode == base_mach.HEAT_XFER_MODE.NO_XFER) or (tbox.heat_level == 0) then
+    if tbox.heat_level == 0 then
         tbox.status_text = "Idle"
         tbox.status = base_tbox.STATE.IDLE
         return
@@ -53,7 +53,7 @@ function base_tbox.do_processing(tbox, dt)
     if out_mach then
         local res = base_mach.push_heat_single(tbox, out_mach, opts.HEAT_TRANSFER_RATE)
         if res and res > 0 then
-            tbox.status_text = "Providing heat to " .. out_mach.class.name
+            tbox.status_text = string.format('Providing heat to %s (%d last sent)', out_mach.class.name, res)
         else
             tbox.status_text = out_mach.class.name .. " does not require heat"
         end
