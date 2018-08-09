@@ -16,7 +16,7 @@ TEXTURE_FILES = [
     ['block_ceramic', 'ingot_cgls', 'block_cgls', 'tool_pick_cgls', 'tool_shovel_cgls', 'tool_axe_cgls', 'tool_sword_cgls', 'upg_gen_up', 'upg_speed_up', 'upg_tubelib'],
     ['item_entropy', 'item_thermese', 'block_thermese', 'frame_tste', 'frame_cgls', 'frame_raw', 'block_thermese_hot', 'item_htg', 'upg_cryst', 'hline'],
     ['htfurn_front', 'htfurn_top_unlit', 'htfurn_sides', 'htfurn_top_lit', 'vulcan_sides', 'vulcan_top', 'htr_solar_top', 'vulcan_front', 'upg_cheat', 'hline_in'],
-    ['item_heatunit', 'ingot_tcha', 'block_tcha', 'tool_pick_tcha', 'tool_shovel_tcha', 'tool_axe_tcha', 'tool_sword_tcha', 'tool_ore_saw', 'block_entropy'],
+    ['item_heatunit', 'ingot_tcha', 'block_tcha', 'tool_pick_tcha', 'tool_shovel_tcha', 'tool_axe_tcha', 'tool_sword_tcha', 'tool_ore_saw', 'block_entropy', 'item_cryscham'],
     ['hray_sides', 'hray_front', 'hray_back', 'rayref_sides', 'rayref_front', 'rayref_back', 'tbox_sides', 'tbox_front', 'tbox_back'],
     ['tdis_sides', 'tdis_front', 'tdis_back', 'raw_heater_sides', 'tste_heater_sides', 'cgls_heater_sides', 'htr_entropy_top'],
     ['item_dust_ob', 'ingot_ttin', 'block_ttin', 'item_press']

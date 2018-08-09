@@ -225,5 +225,5 @@ minetest.register_node(base_msg.id, base_msg.nodedef)
 minetest.register_craft{ output = base_msg.id, recipe = {
     {terumet.id('item_thermese'), terumet.id('item_coil_tcop'), terumet.id('item_thermese')},
     {terumet.id('item_ceramic'), terumet.id('frame_tste'), terumet.id('item_ceramic')},
-    {terumet.id('item_ceramic'), 'bucket:bucket_water', terumet.id('item_ceramic')}
+    {terumet.id('item_ceramic'), terumet.id('item_cryscham'), terumet.id('item_ceramic')}
 }}

@@ -16,9 +16,9 @@ minetest.register_node( ent_matrix_id, {
 
 minetest.register_craft{ output = ent_crystal_id,
     recipe = {
-        { terumet.id('item_cryst_ob'), terumet.id('item_cryst_mese'), terumet.id('item_cryst_ob') },
+        { terumet.id('item_dust_ob'), terumet.id('item_cryst_mese'), terumet.id('item_dust_ob') },
         { terumet.id('item_cryst_mese'), terumet.id('item_cryst_dia'), terumet.id('item_cryst_mese') },
-        { terumet.id('item_cryst_ob'), terumet.id('item_cryst_mese'), terumet.id('item_cryst_ob') },
+        { terumet.id('item_dust_ob'), terumet.id('item_cryst_mese'), terumet.id('item_dust_ob') },
 }}
 
 minetest.register_craft{ output = ent_matrix_id,
