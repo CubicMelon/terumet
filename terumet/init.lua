@@ -88,6 +88,13 @@ function terumet.do_lua_file(name)
     dofile(minetest.get_modpath(terumet.mod_name) .. '/' .. name .. '.lua')
 end
 
+-- create a copy of node groups from an unlit machine for lit version of machine
+function terumet.create_lit_node_groups(unlit_groups)
+    local new_groups = {not_in_creative_inventory=1}
+    for k,v in pairs(unlit_groups) do new_groups[k] = v end
+    return new_groups
+end
+
 function terumet.itemstack_desc(stack)
     local stack_desc = stack:get_definition().description
     if stack:get_count() > 1 then 
@@ -95,6 +102,19 @@ function terumet.itemstack_desc(stack)
     else
         return stack_desc
     end
+end
+
+-- given a table with 'group:XXX' keys and a node/item definition with groups, return the
+-- (first) value in the table where node/item has a group key of XXX, otherwise nil
+function terumet.match_group_key(table, def)
+    if not def then return nil end
+    for group_name,_ in pairs(def.groups) do
+        local grp_key = 'group:'..group_name
+        if table[grp_key] then
+            return table[grp_key]
+        end
+    end
+    return nil
 end
 
 function terumet.id(id, number)
@@ -158,6 +178,7 @@ terumet.reg_alloy('Teruchalcum', 'tcha', 2, 60)
 terumet.do_lua_file('material/ceramic')
 terumet.do_lua_file('material/thermese')
 terumet.do_lua_file('material/coil')
+terumet.do_lua_file('material/crushed')
 terumet.do_lua_file('material/misc')
 
 terumet.do_lua_file('material/crystallized')
@@ -221,6 +242,7 @@ terumet.do_lua_file('machine/thermdist')
 terumet.do_lua_file('machine/lavam')
 terumet.do_lua_file('machine/meseg')
 terumet.do_lua_file('machine/repm')
+terumet.do_lua_file('machine/crusher')
 
 terumet.do_lua_file('machine/transfer/heatray')
 terumet.do_lua_file('machine/transfer/hline')

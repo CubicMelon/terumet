@@ -91,15 +91,7 @@ function ent_htr.do_processing(machine, dt)
             if not effects then
                 -- check groups for definition
                 local def = minetest.registered_nodes[found_node.name]
-                if def then
-                    for group_name,_ in pairs(def.groups) do
-                        local grp_key = 'group:'..group_name
-                        if opts.EFFECTS[grp_key] then
-                            effects = opts.EFFECTS[grp_key]
-                            break
-                        end
-                    end
-                end
+                effects = terumet.match_group_key(opts.EFFECTS, def)
             end
             if effects then
                 machine.state = ent_htr.STATE.DRAINING

@@ -5,12 +5,18 @@ Newer versions listed first
 * Added support for [Techpack's tubelib](https://forum.minetest.net/viewtopic.php?f=11&t=19784). With a **Tube Support Upgrade** every machine with input/output can interact as expected with Tubelib's tubes. (Just combine a tube with a blank upgrade to get one)
 * Rebalanced Furnace Heater generation and fixed a place it was rounding where it shouldn't have been. There is also now an option to alter base generation.
 * Adjusted how Speed Upgrades work and also added Speed upgrade support to the Equipment Reformer. The way they work is completely uniform across all machines now. The time remaining for processing will always be "normal" time, but with an upgrade it will decrease at the increased rate. This new system works better for internal reasons, plus now inserting/removing Speed upgrades mid-process will have an effect now! (Before speed upgrades were only taken into account if in a machine at the start of a process)
+* Several recipes have changed to use intermediate components such as a **Crystal Growth Chamber** or **Obsidian Grit**. The methods for obtaining them (see the Expansion Crusher) are also newly available.
+* **Terutin** is now possible to alloy (with Tin only, exactly like it sounds) and is a necessary component to create the Expansion Crusher's presses as it is an alloy with exception thermal expansion properties.
 * Connectors between machines to transfer heat are *finally* here! 
     * A **Heatline Distributor** is needed to act as the input and distributor for the heat energy to be sent. It acts like any other machine and can be provided heat from adjacent External Heaters, Thermoboxes, etc.
     * Connect a series of **Heatlines** from the Distributor to any number of machines and they will be supplied heat through the lines!
     * Heatlines have a default limit of a maximum effective distance of **36 blocks**. Beyond that point, nothing will be sent. Occasionally a puff of steam will be emitted from the heatline to indicate it is at its limit.
     * Even before that limit, the amount of heat successfully transferred will decrease. None will be lost, but the rate of heat transferred to very far machines will be much less than nearby ones.
     * These limitations can be changed in options.lua but they are in place for server friendliness.
+* Added **Expansion Crusher**, a Tier 1 machine that crushes stuff exactly like it sounds. Beyond the usual utility of turning cobblestone to gravel or sand, it also:
+    * Squeeze and dry many types of vegetation (and wheat) into useful **Biomatter** which can be burned for fuel almost as effectively as coal.
+    * Crush **Sawdust** from wood and tree logs (currently with no use but future plans remain)
+    * Crush **Obsidian Grit** out of obsidian shards, which has replaced a few places where Obsidian or Crystallized Obsidian was once necessary. 
 
 ## Version 2.1
 * **Breaking Change!!** Began moving the mod as a whole to the in-development Minetest 5.0.0. **It is no longer guaranteed to work in older versions like 0.4.16 or 0.4.17.x!**

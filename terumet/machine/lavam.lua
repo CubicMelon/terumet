@@ -168,7 +168,7 @@ base_lavam.lit_nodedef.tiles = {
     terumet.tex('raw_sides_lit'), terumet.tex('raw_sides_lit'),
     terumet.tex('raw_sides_lit'), terumet.tex('lavam_front_lit')
 }
-base_lavam.lit_nodedef.groups.not_in_creative_inventory=1
+base_lavam.lit_nodedef.groups= terumet.create_lit_node_groups(base_lavam.unlit_nodedef.groups)
 base_lavam.lit_nodedef.light_source = 10
 
 -- TODO fix recipes etc.

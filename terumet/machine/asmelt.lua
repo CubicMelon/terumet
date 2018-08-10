@@ -250,7 +250,7 @@ base_asm.lit_nodedef.tiles = {
     terumet.tex('raw_sides_lit'), terumet.tex('raw_sides_lit'),
     terumet.tex('raw_sides_lit'), terumet.tex('asmelt_front_lit')
 }
-base_asm.lit_nodedef.groups.not_in_creative_inventory=1
+base_asm.lit_nodedef.groups = terumet.create_lit_node_groups(base_asm.unlit_nodedef.groups)
 base_asm.lit_nodedef.light_source = 10
 
 

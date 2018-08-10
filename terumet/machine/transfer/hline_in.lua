@@ -101,9 +101,6 @@ local FSDEF = {
     end,
 }
 
--- on hlin.get_links() if links[pos] is empty, calls find_links
--- also calls find_links on update button press
-
 function base_hlin.get_links(machine)
     if not machine then return nil end
     local mposstr = POS_STR(machine.pos)
@@ -193,6 +190,7 @@ function base_hlin.distribute(hlin)
             if base_mach.has_upgrade(hlin, 'heat_xfer') then total_send = total_send * 2 end
             -- if we can't send max amount, divide up what IS available
             total_send = math.min(hlin.heat_level, total_send)
+            -- TODO ignore machines that don't need/request heat in division
             local try_each_send = math.ceil(total_send / #links)
             -- go to each target in order of ascending distance
             for _,link in ipairs(links) do

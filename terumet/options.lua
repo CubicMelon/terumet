@@ -99,6 +99,32 @@ terumet.options.heater = {
     }
 }
 
+terumet.options.crusher = {
+    --
+    -- CRUSHER SETTINGS
+    --
+
+    MAX_HEAT = 500,
+
+    COST_HEATING = 5, -- per sec.
+    TIME_HEATING = 4.0, -- in sec.
+    TIME_COOLING = 6.0, -- in sec.
+
+    recipes = {
+        ['default:stone']='default:cobble',
+        ['default:cobble']='default:gravel',
+        ['default:gravel']='default:silver_sand',
+        ['default:obsidian']='default:obsidian_shard 9',
+        ['default:obsidian_shard']='terumet:item_dust_ob',
+        ['default:sandstone']='default:sand',
+        ['default:coalblock']='default:coal_lump 9',
+        ['farming:wheat']='terumet:item_dust_bio 2',
+        ['group:flora']='terumet:item_dust_bio',
+        ['group:leaves']='terumet:item_dust_bio',
+        ['group:tree']='terumet:item_dust_wood 4',
+        ['group:wood']='terumet:item_dust_wood 1',
+    }
+}
 
 terumet.options.thermobox = {
     --

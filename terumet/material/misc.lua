@@ -1,17 +1,3 @@
--- TODO
--- remove this when crushing machine is available
-
-minetest.register_craftitem( terumet.id('item_dust_ob'), {
-    description = 'Obsidian Grit',
-    inventory_image = terumet.tex('item_dust_ob')
-})
-
-minetest.register_craft{ output = terumet.id('item_dust_ob'),
-    type = 'shapeless',
-    recipe={'default:obsidian_shard'}
-}
-
--- =============================================
 
 local htg_id = terumet.id('item_htglass')
 minetest.register_craftitem( htg_id, {
@@ -54,9 +40,9 @@ minetest.register_craftitem( press_id, {
 
 minetest.register_craft{ output = press_id,
     recipe = {
-        {'default:stone', 'default:stone', 'default:stone'},
-        {terumet.id('ingot_tste'), terumet.id('ingot_tste'), terumet.id('ingot_tste')},
-        {terumet.id('ingot_ttin'), terumet.id('block_ttin'), terumet.id('ingot_ttin')}
+        {'default:stone', terumet.id('block_ttin'), 'default:stone'},
+        {terumet.id('ingot_tcha'), terumet.id('ingot_tcha'), terumet.id('ingot_tcha')},
+        {terumet.id('ingot_ttin'), terumet.id('ingot_ttin'), terumet.id('ingot_ttin')}
     }
 }
 

@@ -169,7 +169,7 @@ furn_htr.lit_nodedef.tiles = {
     terumet.tex('raw_heater_sides'), terumet.tex('raw_heater_sides'),
     terumet.tex('raw_heater_sides'), terumet.tex('htr_furnace_front_lit')
 }
-furn_htr.lit_nodedef.groups={cracky=1, not_in_creative_inventory=1}
+furn_htr.lit_nodedef.groups=terumet.create_lit_node_groups(furn_htr.unlit_nodedef.groups)
 furn_htr.lit_nodedef.light_source = 10
 
 
