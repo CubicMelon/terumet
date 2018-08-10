@@ -1,7 +1,7 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
-## Version 2.1.1
+## Version 2.2
 * Added support for [Techpack's tubelib](https://forum.minetest.net/viewtopic.php?f=11&t=19784). With a **Tube Support Upgrade** every machine with input/output can interact as expected with Tubelib's tubes. (Just combine a tube with a blank upgrade to get one)
 * Rebalanced Furnace Heater generation and fixed a place it was rounding where it shouldn't have been. There is also now an option to alter base generation.
 * Adjusted how Speed Upgrades work and also added Speed upgrade support to the Equipment Reformer. The way they work is completely uniform across all machines now. The time remaining for processing will always be "normal" time, but with an upgrade it will decrease at the increased rate. This new system works better for internal reasons, plus now inserting/removing Speed upgrades mid-process will have an effect now! (Before speed upgrades were only taken into account if in a machine at the start of a process)
