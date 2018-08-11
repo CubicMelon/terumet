@@ -41,16 +41,20 @@ function terumet.register_heatline_block(base, code)
     if not base_def then error('base '..base..' is not defined') end
     local def = {}
     for k,v in pairs(base_def) do 
-        if type(v) == 'table' then
-            -- copy 1 deep subtables (groups)
-            def[k] = {}
-            for sk,sv in pairs(base_def[k]) do def[k][sk] = sv end
+        if k == 'groups' then
+            def.groups = {}
+            for gk,gv in pairs(v) do 
+                if not terumet.options.heatline.BLOCK_REMOVE_GROUPS[gk] then
+                    def.groups[gk]=gv
+                end
+            end
         else
             def[k] = v
         end
     end
     if not def.groups then def.groups = {} end
     def.groups.terumet_hline = 1
+
     for tn,tile in ipairs(def.tiles) do
         def.tiles[tn] = tile .. '^' .. terumet.tex('blockov_hline')
     end

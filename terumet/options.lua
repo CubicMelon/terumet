@@ -157,6 +157,16 @@ terumet.options.heatline = {
     RECHECK_LINKS_TIMER = 4.0,
     -- Max heat transferred every tick (divided among all connected machines in order of distance)
     HEAT_TRANSFER_MAX = 250,
+
+    -- Groups to remove from blocks turned into heatline blocks
+    -- ex: 'wood' prevents wood planks with heatlines from being used as wood in general recipes
+    -- if any other groups cause problems when transferred over to a heatline block, add it here
+    -- (1 has no specific meaning, only to provide a value)
+    BLOCK_REMOVE_GROUPS = {
+        ['wood']=1,
+        ['stone']=1,
+        ['flammable']=1,
+    }
 }
 
 terumet.options.heat_ray = {

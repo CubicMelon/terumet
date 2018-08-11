@@ -13,8 +13,9 @@ Newer versions listed first
     * Heatlines have a default limit of a maximum effective distance of **36 blocks**. Beyond that point, nothing will be sent. Occasionally a puff of steam will be emitted from the heatline to indicate it is at its limit.
     * Heat is sent in order from nearest to farthest connected machine each tick. Far machines may be passed over if the distributor is low on heat.
     * These limitations can be changed in options.lua but they are in place for server friendliness.
+    * For cosmetic purposes, you can also make **Heatline Blocks** from many default blocks like stone, bricks, cobblestone, and wood which act as heatlines but look like the original block (with a small visible heatline port).
 * Added **Expansion Crusher**, a Tier 1 machine that crushes stuff exactly like it sounds. Beyond the usual utility of turning cobblestone to gravel or sand, it also:
-    * Squeeze and dry many types of vegetation (and wheat) into useful **Biomatter** which can be burned for fuel almost as effectively as coal.
+    * Squeeze and dry many types of vegetation (and wheat) into useful **Biomatter** which can be burned for fuel almost as effectively as coal. Biomatter is also useful to create **Plant Glue**.
     * Crush **Wood Mulch** from wood and tree logs, which can be used to create paper and inexpensive **Pressed Wood**.
     * Crush **Obsidian Grit** out of obsidian shards, which has replaced a few places where Obsidian or Crystallized Obsidian was once necessary.
 

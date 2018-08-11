@@ -37,7 +37,7 @@ minetest.register_node(terumet.id('block_pwood'), {
     description = "Pressed Wood",
     tiles = pwood_tiles,
     is_ground_content = false,
-    groups = {choppy = 2, oddly_breakable_by_hand = 2, wood = 1},
+    groups = {choppy = 2, oddly_breakable_by_hand = 2},
     sounds = default.node_sound_wood_defaults(),
 })
 
