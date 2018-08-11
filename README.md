@@ -1,5 +1,5 @@
 # Terumetal [terumet]
-### Current release version: v2.1
+### Current release version: v2.2
 A mod for the open-source voxel game Minetest (https://www.minetest.net/) version 5.0
 
 Minetest 5.0 is presently in development and can be downloaded [here](https://gitlab.com/minetest/minetest/pipelines)
@@ -12,7 +12,7 @@ This mod creates a new ore in the world which can be used to make useful alloys 
 See the changelog [Here](changelog.md)
 
 ## Installing
-Download the latest v2.1 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v2.1)
+Download the latest v2.2 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v2.2)
 
 Unzip the folder into a temporary space then move/copy the subfolder **terumet** into your minetest **mods** folder.
 
@@ -25,12 +25,14 @@ This mod depends on:
 * default
 * bucket
 * screwdriver
+* farming
 
 All above mods should normally be included already if playing the default Minetest subgame.
 
-Additonal **optional** support for:
-* unified_inventory
+Additonal *optional* support for:
+* unified_inventory (**HIGHLY recommended**)
 * techpack / tubelib
+* stairs
 
 # Overview/Tutorial
 
@@ -45,7 +47,7 @@ Which can be found in stone or desert stone:
 
 Like any other standard Minetest ore mining it provides you with one or more raw lumps of ore, which can be cooked in a furnace to create ingots.
 
-Do not make too many ingots from this new ore though because it is much better used as a flux for alloying than by itself; most tools made from raw Terumetal Ore will be very brittle and break quickly. In a pinch they *can* be useful since they are capable of digging very hard material quickly (and curiously, *ONLY* very hard material) but will only last a few blocks worth of digging.
+Most tools made from pure Terumetal Ore will be very brittle and break quickly. In a pinch they *can* be useful since they are capable of digging very hard material quickly (and curiously, *ONLY* very hard material) but will only last a few blocks worth of digging.
 
 ## Alloy Smelter
 The real use of Terumetal Ingots is creating an Alloy Smelter. First you'll need some intermediate materials that use them:
@@ -67,10 +69,10 @@ Place the smelter block down somewhere and you can then right-click it to access
 ![Alloy Smelter GUI](tutorial/smelter_gui.png)
 
 Before you begin using it it's important to understand two things about the Alloy Smelter:
-1. It requires heat to do anything.
+1. It requires heat to function.
 2. The flux metal used to alloy with other materials is melted first and stored inside.
 
-One helpful thing to keep in mind is that unlike vanilla Minetest furnaces, all Terumetal machines will drop their contents when you break it and also will retain heat inside them (visible in the tool tip) for when you place them again. Specifically for the Alloy Smelter, thanks to some form of instant heat transfer technology any molten flux metal left in the internal tank will be dropped as crystallized Terumetal when broken and thus reusuable later just at the cost of the heat and time to re-melt them.
+One helpful thing to keep in mind is that unlike vanilla Minetest furnaces, all Terumetal machines will drop their contents when you break it and also will retain heat inside them (visible in the tool tip) for when you place them again. Specifically for the Alloy Smelter, any molten flux metal left in the internal tank will be dropped as crystallized Terumetal when broken and thus reusuable later just at the cost of the heat and time to re-melt.
 
 ### Heating Machinery
 The starter method of heating is with a bucket of lava placed in the fuel slot of a machine. Your empty bucket will be returned.
@@ -78,9 +80,14 @@ The starter method of heating is with a bucket of lava placed in the fuel slot o
 
 ![After Lava Consumed](tutorial/smelter_fueling_2.png)
 
-Once up and running, you have many further options for how to heat machinery. The most straightforward is alloying Thermese (see the wiki above for more info) and then making Thermese Blocks which can be an effective tool for renewable heating. Thermese Blocks can heat up when cooked in a standard furnace or when adjacent to a lava source, and then inserted into a machine to deposit its heat. You will receive the unheated block back, and can reuse it as many times as you like.
+Once up and running, you have many further options for how to heat machinery. The most straightforward is alloying **Thermese** and then making **Thermese Blocks** which can be an effective tool for renewable heating. Thermese Blocks can heat up when cooked in a standard furnace or when adjacent to a lava source, and then inserted into a machine to deposit its heat. You will receive the unheated block back, and can reuse it as many times as you like.
 
-More high-powered and speedy methods are through dedicated Heater machines-- the Furnace Heater or Solar Heater-- which build heat through burning fuel or from sunlight then can provide heat to adjacent machines. Presently these ONLY work with adjacent machinery, but there is always the option of moving the machine since like all other machines, they retain their stored heat when broken.
+More high-powered and convenient methods of generating heat are through dedicated External Heater machines which build heat energy based on burning fuel (**Furnace Heater**), sunlight (**Solar Heater**), or the environment itself (**EEE Heater**).
+
+There are three options for moving heat energy (HU, short for heat units) to machines that need it:
+1. Shortest range: External Heaters will transfer heat to adjacent machines that need heat automatically. A **Thermal Distributor** will split one input into many adjacent machines, and a **Thermobox** can take many inputs to one output, as well as provide a large internal buffer for heat. In case this adjacent transfer is inconvenient, a button to toggle nearly every machine's ability to exchange heat adjacently is provided on their UI.
+2. Short-medium range: **Heatline**s can transfer heat energy over a distance. Funnel heat energy into a **Heatline Distributor** and then machines connected to that distributor with heatlines will receive heat. These conduits can extend as far as 32 blocks from the distributor (by default settings).
+3. Any range: The advanced **HEAT Ray Emitter** can send large bursts of heat energy through the air to an accepting machine it strikes with its beam.
 
 ### Flux Metal
 The Terumetal Alloy Smelter is a specialized smelter only for making alloys, all but one of which require terumetal. Therefore it has an internal tank especially for molten Terumetal. This tank is the meter in the center indicated by a pink ore symbol. It can be filled by inserting raw terumetal in any form then waiting a few seconds for each item to melt. Naturally, this process requires heat and some will be spent by how much flux is melted.
@@ -101,6 +108,7 @@ In total there are five alloys the smelter can create all based on Terumetal and
 | Material | Flux/Ingot* | Time* | Alloy |  |
 |----------------------------|-------------|---------|------------|----------------------|
 | Copper Lump | 1 | 3 sec. | Terucopper | ![Terucopper Ingot](terumet/textures/terumet_ingot_tcop.png) |
+| Tin Lump | 1 | 2 sec. | Terutin | ![Terutin Ingot](terumet/textures/terumet_ingot_ttin.png) |
 | Iron Lump | 2 | 4 sec. | Terusteel | ![Terusteel Ingot](terumet/textures/terumet_ingot_tste.png) |
 | Gold Lump | 3 | 4 sec. | Terugold | ![Terugold Ingot](terumet/textures/terumet_ingot_tgol.png) |
 | Bronze Ingot + 2 Tin Lumps | 3 | 4.5 sec. | Teruchalcum | ![Teruchalcum Ingot](terumet/textures/terumet_ingot_tcha.png) |
@@ -110,11 +118,11 @@ In total there are five alloys the smelter can create all based on Terumetal and
 
 Like melting flux, creating an alloy requires heat. The amount of heat required is dependent on how long the alloying process takes; therefore, the alloys that require more time also require more heat.
 
-Each of the four alloys can also be created in **block form** by inserting a block of the source material -- a Copper Block instead of a Copper Lump or a Diamond Block and Obsidian Block for Coreglass -- alloying an entire block will take longer along with the required preperation of making the blocks but will consume quite a bit less flux than doing them individually.
+Each of the four alloys can also be created in block form by inserting a block of the source material -- a Copper Block instead of a Copper Lump or a Diamond Block and Obsidian Block for Coreglass -- alloying an entire block will take longer along with the required preperation of making the blocks but will consume quite a bit less flux than doing them individually.
 
 To create an alloy simply place the source materials into the input, and if there's enough molten flux all that's left is to wait. If an insufficient amount of flux is in the internal tank the smelter will indicate how much additional flux is required.
 
 ![Alloying Copper to Terucopper](tutorial/smelter_alloying.png)
 
 ## Options
-See options.lua for some ways to modify how the alloying process works.
+See options.lua for many, many ways to adjust or alter how machines function and recipes for creating items.

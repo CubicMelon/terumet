@@ -205,6 +205,7 @@ terumet.options.smelter = {
     -- Default alloy-making recipes
     recipes = {
     -- Standard Bronze
+    -- Note these are first in the recipe list to override single terucopper/terutin if all elements for bronze are available
         {result='default:bronze_ingot 9', flux=0, time=8.0, input={'default:copper_lump 8', 'default:tin_lump'}},
         {result='default:bronze_ingot 9', flux=0, time=6.0, input={'default:copper_ingot 8', 'default:tin_ingot'}},
         {result='default:bronzeblock 9', flux=0, time=40.5, input={'default:copperblock 8', 'default:tinblock'}},
