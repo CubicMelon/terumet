@@ -3,6 +3,8 @@ minetest.register_craftitem( terumet.id('item_dust_ob'), {
     inventory_image = terumet.tex('item_dust_ob')
 })
 
+-- ========================================================
+
 local woodmulch_item = terumet.id('item_dust_wood')
 minetest.register_craftitem( woodmulch_item, {
     description = 'Wood Mulch',
@@ -10,9 +12,9 @@ minetest.register_craftitem( woodmulch_item, {
 })
 
 minetest.register_craft({
-	type = 'fuel',
-	recipe = woodmulch_item,
-	burntime = 10,
+    type = 'fuel',
+    recipe = woodmulch_item,
+    burntime = 10,
 })
 
 minetest.register_craft{ output = 'default:paper',
@@ -20,6 +22,36 @@ minetest.register_craft{ output = 'default:paper',
     recipe = {'bucket:bucket_water', woodmulch_item, woodmulch_item},
     replacements={{'bucket:bucket_water','bucket:bucket_empty'}}
 }
+
+local pwood_ytex = terumet.tex('block_pwood')
+local pwood_xztex = terumet.tex('block_pwood_sides')
+local pwood_tiles = {pwood_ytex, pwood_ytex, pwood_xztex}
+
+minetest.register_node(terumet.id('block_pwood'), {
+    description = "Pressed Wood",
+    tiles = pwood_tiles,
+    is_ground_content = false,
+    groups = {choppy = 2, oddly_breakable_by_hand = 2, wood = 1},
+    sounds = default.node_sound_wood_defaults(),
+})
+
+minetest.register_craft{ output = terumet.id('block_pwood 20'),
+    recipe = terumet.recipe_3x3(woodmulch_item),
+}
+
+if minetest.global_exists('stairs') then
+    stairs.register_stair_and_slab(
+        'terumet_pwood',
+        terumet.id('block_pwood'),
+        {choppy = 2, oddly_breakable_by_hand = 2},
+        pwood_tiles,
+        'Pressed Wood Stair',
+        'Pressed Wood Slab',
+        default.node_sound_wood_defaults()
+    )
+end
+
+-- =======================================================
 
 local biomat_item = terumet.id('item_dust_bio')
 local biomat_block = terumet.id('block_dust_bio')
@@ -30,9 +62,9 @@ minetest.register_craftitem( biomat_item, {
 })
 
 minetest.register_craft{
-	type = 'fuel',
-	recipe = biomat_item,
-	burntime = 30,
+    type = 'fuel',
+    recipe = biomat_item,
+    burntime = 30,
 }
 
 minetest.register_node( biomat_block, {
@@ -44,9 +76,9 @@ minetest.register_node( biomat_block, {
 })
 
 minetest.register_craft{
-	type = 'fuel',
-	recipe = biomat_block,
-	burntime = 280,
+    type = 'fuel',
+    recipe = biomat_block,
+    burntime = 280,
 }
 
 minetest.register_craft{ output = biomat_block,

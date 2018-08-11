@@ -19,7 +19,7 @@ TEXTURE_FILES = [
     ['item_heatunit', 'ingot_tcha', 'block_tcha', 'tool_pick_tcha', 'tool_shovel_tcha', 'tool_axe_tcha', 'tool_sword_tcha', 'tool_ore_saw', 'block_entropy', 'item_cryscham'],
     ['hray_sides', 'hray_front', 'hray_back', 'rayref_sides', 'rayref_front', 'rayref_back', 'tbox_sides', 'tbox_front', 'tbox_back'],
     ['tdis_sides', 'tdis_front', 'tdis_back', 'raw_heater_sides', 'tste_heater_sides', 'cgls_heater_sides', 'htr_entropy_top', 'crush_front_unlit', 'crush_front_lit'],
-    ['item_dust_ob', 'ingot_ttin', 'block_ttin', 'item_press', 'item_dust_wood', 'block_dust_bio', 'item_dust_bio']
+    ['item_dust_ob', 'ingot_ttin', 'block_ttin', 'item_press', 'item_dust_wood', 'block_dust_bio', 'item_dust_bio', 'block_pwood', 'block_pwood_sides']
 ]
 
 with Image(filename=SOURCE_FILE) as source:

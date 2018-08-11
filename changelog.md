@@ -15,7 +15,7 @@ Newer versions listed first
     * These limitations can be changed in options.lua but they are in place for server friendliness.
 * Added **Expansion Crusher**, a Tier 1 machine that crushes stuff exactly like it sounds. Beyond the usual utility of turning cobblestone to gravel or sand, it also:
     * Squeeze and dry many types of vegetation (and wheat) into useful **Biomatter** which can be burned for fuel almost as effectively as coal.
-    * Crush **Wood Mulch** from wood and tree logs, which can be used to create paper.
+    * Crush **Wood Mulch** from wood and tree logs, which can be used to create paper and inexpensive **Pressed Wood**.
     * Crush **Obsidian Grit** out of obsidian shards, which has replaced a few places where Obsidian or Crystallized Obsidian was once necessary.
 
 ## Version 2.1
