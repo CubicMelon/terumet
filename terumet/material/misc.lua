@@ -8,8 +8,8 @@ minetest.register_craftitem( htg_id, {
 minetest.register_craft{ output = htg_id .. ' 3',
     recipe = {
         {'', 'default:obsidian_glass', ''},
-        {terumet.id('item_cryst_tin'), terumet.id('item_dust_ob'), terumet.id('item_cryst_tin')},
-        {'', 'default:obsidian_glass', ''}
+        {terumet.id('item_cryst_tin'), terumet.id('item_glue'), terumet.id('item_cryst_tin')},
+        {'', terumet.id('item_dust_ob'), ''}
     }
 }
 

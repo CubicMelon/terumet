@@ -39,3 +39,5 @@ minetest.register_craft{ output = saw_id,
         {id('ingot_tcha'), id('ingot_tcha'), id('ingot_tste')},
         {'', id('ingot_tste'), ''}
 }}
+
+terumet.register_repairable_item(saw_id, 240) -- 4x value of ingot_tcha

@@ -177,6 +177,6 @@ minetest.register_node(base_lavam.lit_id, base_lavam.lit_nodedef)
 
 minetest.register_craft{ output = base_lavam.unlit_id, recipe = {
     {terumet.id('item_coil_raw'), terumet.id('item_coil_raw'), terumet.id('item_coil_raw')},
-    {terumet.id('item_coil_raw'), terumet.id('frame_raw'), terumet.id('item_coil_raw')},
-    {'default:furnace', 'default:furnace', 'default:furnace'}
+    {terumet.id('ingot_ttin'), terumet.id('frame_raw'), terumet.id('ingot_ttin')},
+    {terumet.id('ingot_ttin'), 'default:furnace', terumet.id('ingot_ttin')}
 }}

@@ -97,6 +97,8 @@ end
 
 function terumet.itemstack_desc(stack)
     local stack_desc = stack:get_definition().description
+    -- use only what is before a newline if one is in the description
+    if stack_desc:find('\n') then stack_desc = stack_desc:match('(.*)\n') end
     if stack:get_count() > 1 then 
         return string.format('%s (x%d)', stack_desc, stack:get_count())
     else

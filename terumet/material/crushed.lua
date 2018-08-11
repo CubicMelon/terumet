@@ -1,3 +1,10 @@
+local biomat_item = terumet.id('item_dust_bio')
+local biomat_block = terumet.id('block_dust_bio')
+
+local woodmulch_item = terumet.id('item_dust_wood')
+
+local glue_item = terumet.id('item_glue')
+
 minetest.register_craftitem( terumet.id('item_dust_ob'), {
     description = 'Obsidian Grit',
     inventory_image = terumet.tex('item_dust_ob')
@@ -5,7 +12,6 @@ minetest.register_craftitem( terumet.id('item_dust_ob'), {
 
 -- ========================================================
 
-local woodmulch_item = terumet.id('item_dust_wood')
 minetest.register_craftitem( woodmulch_item, {
     description = 'Wood Mulch',
     inventory_image = terumet.tex('item_dust_wood')
@@ -35,8 +41,8 @@ minetest.register_node(terumet.id('block_pwood'), {
     sounds = default.node_sound_wood_defaults(),
 })
 
-minetest.register_craft{ output = terumet.id('block_pwood 20'),
-    recipe = terumet.recipe_3x3(woodmulch_item),
+minetest.register_craft{ output = terumet.id('block_pwood', 16),
+    recipe = terumet.recipe_box(woodmulch_item, 'group:glue'),
 }
 
 if minetest.global_exists('stairs') then
@@ -52,9 +58,6 @@ if minetest.global_exists('stairs') then
 end
 
 -- =======================================================
-
-local biomat_item = terumet.id('item_dust_bio')
-local biomat_block = terumet.id('block_dust_bio')
 
 minetest.register_craftitem( biomat_item, {
     description = 'Biomatter',
@@ -88,4 +91,30 @@ minetest.register_craft{ output = biomat_block,
 minetest.register_craft{ output = biomat_item..' 9',
     type = 'shapeless',
     recipe = {biomat_block}
+}
+
+-- =======================================================
+
+minetest.register_craftitem( glue_item, {
+    description = 'Plant Glue',
+    groups = {glue=1},
+    inventory_image = terumet.tex('item_glue')
+})
+
+minetest.register_craft{ output = glue_item,
+    type = 'shapeless',
+    recipe = {'bucket:bucket_water', biomat_item},
+    replacements={{'bucket:bucket_water','bucket:bucket_empty'}}
+}
+
+minetest.register_craft{ output = glue_item .. ' 9',
+    type = 'shapeless',
+    recipe = {'bucket:bucket_water', biomat_block},
+    replacements={{'bucket:bucket_water','bucket:bucket_empty'}}
+}
+
+minetest.register_craft{ output = glue_item .. ' 8',
+    type = 'shapeless',
+    recipe = {'bucket:bucket_water', 'farming:flour'},
+    replacements={{'bucket:bucket_water','bucket:bucket_empty'}}
 }

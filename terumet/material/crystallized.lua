@@ -35,7 +35,6 @@ terumet.register_crystal{
     source='default:gold_lump',
     cooking_result='default:gold_ingot'
 }
--- following are WIP, will be created from custom items not yet implemented
 terumet.register_crystal{
     suffix='ob',
     color='#1f2631',
