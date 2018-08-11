@@ -106,7 +106,7 @@ terumet.options.crusher = {
 
     MAX_HEAT = 500,
 
-    COST_HEATING = 5, -- per sec.
+    COST_HEATING = 20, -- per sec.
     TIME_HEATING = 4.0, -- in sec.
     TIME_COOLING = 6.0, -- in sec.
 
@@ -123,6 +123,7 @@ terumet.options.crusher = {
         ['default:apple']='terumet:item_dust_bio 2',
         ['group:flora']='terumet:item_dust_bio',
         ['group:leaves']='terumet:item_dust_bio',
+        ['group:sapling']='terumet:item_dust_bio',
         ['group:tree']='terumet:item_dust_wood 4',
         ['group:wood']='terumet:item_dust_wood 1',
     }

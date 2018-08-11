@@ -8,7 +8,7 @@ minetest.register_node( line_id, {
     description = 'Heatline',
     tiles = {terumet.tex('hline')},
     
-    groups={cracky=3, oddly_breakable_by_hand=3,terumet_hline=1},
+    groups={cracky=3, oddly_breakable_by_hand=3, terumet_hline=1},
 
     drawtype = "nodebox",
     paramtype = 'light',

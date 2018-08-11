@@ -664,6 +664,7 @@ function base_mach.nodedef(additions)
         end
     end
     if new_nodedef._terumach_class.heatline_target then
+        -- if node is a heatline target, add group to allow heatlines to connect
         new_nodedef.groups['terumet_hltarget']=1
     end
     return new_nodedef

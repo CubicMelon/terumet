@@ -29,9 +29,10 @@ base_hlin.STATE.IDLE = 0
 -- has heat, sending some periodically
 base_hlin.STATE.ACTIVE = 1
 
-local HEATLINE_ID = terumet.id('xfer_hline')
 local is_heatline = function(node)
-    return node and (node.name == HEATLINE_ID)
+    if not node then return false end
+    local def = minetest.registered_nodes[node.name]
+    return def and def.groups and def.groups['terumet_hline']
 end
 
 function debug_linklist_desc(links)
@@ -88,16 +89,31 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        if machine.state == base_hlin.STATE.IDLE then
-            return 'label[0.5,0.5;Currently idle.]'
-        else
+        if machine.state ~= base_hlin.STATE.IDLE then
             local links = base_hlin.get_links(machine)
             if links then
-                return string.format('label[0.5,0.5;%d linked machine(s). Last sent %d HU total.]', #links, machine.last_sent or 0)
+                fs = string.format('label[0.5,0.5;%d linked machines:\n%s]', #links, machine.last_sent or '')
+                local ix = 0
+                local iy = 1.5
+                for _,link in ipairs(links) do
+                    local node = minetest.get_node_or_nil(link.pos)
+                    if node and base_mach.get_class_property(node.name, 'is_machine') then
+                        fs=fs..string.format('item_image[%.1f,%.1f;1,1;%s]tooltip[%.1f,%.1f;1,1;%s %d distance at %s]',
+                            ix, iy, node.name,
+                            ix, iy, base_mach.get_class_property(node.name, 'name'), link.dist, POS_STR(link.pos))
+                        ix=ix+1
+                        if ix>7 then
+                            ix=0
+                            iy=iy+1
+                        end
+                    end
+                end
+                return fs
             else
                 return 'label[0.5,0.5;No links.]'
             end
         end
+        return ''
     end,
 }
 
@@ -183,31 +199,41 @@ end
 
 function base_hlin.distribute(hlin)
     if hlin.heat_level > 0 then
-        hlin.last_sent = 0
+        hlin.last_sent = 'No connected machines.'
+        local total = 0
         local links = base_hlin.get_links(hlin)
         if #links > 0 then
-            local total_send = opts.HEAT_TRANSFER_MAX
-            if base_mach.has_upgrade(hlin, 'heat_xfer') then total_send = total_send * 2 end
-            -- if we can't send max amount, divide up what IS available
-            total_send = math.min(hlin.heat_level, total_send)
-            -- TODO ignore machines that don't need/request heat in division
-            local try_each_send = math.ceil(total_send / #links)
-            -- go to each target in order of ascending distance
+            -- list of currently existing, heat-needing machines
+            local needy = {}
+            -- check each linked machine in order of ascending distance
             for _,link in ipairs(links) do
-                if hlin.heat_level == 0 then break end
-                local target = base_mach.read_state(link.pos)
-                if target then
+                local linked_mach = base_mach.read_state(link.pos) 
+                if linked_mach and (base_mach.get_current_heat(linked_mach) < linked_mach.max_heat) then
+                    needy[#needy+1] = linked_mach
+                end
+            end
+            if #needy > 0 then
+                local total_send = opts.HEAT_TRANSFER_MAX
+                if base_mach.has_upgrade(hlin, 'heat_xfer') then total_send = total_send * 2 end
+                -- if we can't send max amount, divide up what is available
+                total_send = math.min(hlin.heat_level, total_send)
+                local try_each_send = math.ceil(total_send / #needy)
+                for _,target in ipairs(needy) do
+                    if hlin.heat_level == 0 then break end
                     local this_send_max = try_each_send
                     if base_mach.has_upgrade(target, 'heat_xfer') then this_send_max = math.floor(this_send_max * 1.25) end
                     local real_send = math.min(hlin.heat_level, this_send_max, target.max_heat - base_mach.get_current_heat(target))
                     if real_send > 0 then
                         base_mach.external_send_heat(target, real_send)
                         hlin.heat_level = hlin.heat_level - real_send
-                        hlin.last_sent = hlin.last_sent + real_send
+                        total = total + real_send
                     end
                 end
+                hlin.last_sent = string.format('Last sent %d HU to %d needing machine(s).', total, #needy)
+            else
+                hlin.last_sent = 'None connected need heat.'
             end
-        end
+        end        
         hlin.state = base_hlin.STATE.ACTIVE
     else
         hlin.state = base_hlin.STATE.IDLE
@@ -225,7 +251,7 @@ function base_hlin.tick(pos, dt)
             base_hlin.delete_links(pos)
             hlin.state_time = opts.RECHECK_LINKS_TIMER
         end
-        hlin.status_text = string.format('%.1f seconds until recheck', hlin.state_time)
+        hlin.status_text = 'Distributing heat through heatline'
         base_hlin.distribute(hlin)
     end
 

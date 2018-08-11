@@ -3,17 +3,23 @@ minetest.register_craftitem( terumet.id('item_dust_ob'), {
     inventory_image = terumet.tex('item_dust_ob')
 })
 
-local sawdust_item = terumet.id('item_dust_wood')
-minetest.register_craftitem( sawdust_item, {
-    description = 'Sawdust',
+local woodmulch_item = terumet.id('item_dust_wood')
+minetest.register_craftitem( woodmulch_item, {
+    description = 'Wood Mulch',
     inventory_image = terumet.tex('item_dust_wood')
 })
 
 minetest.register_craft({
 	type = 'fuel',
-	recipe = sawdust_item,
+	recipe = woodmulch_item,
 	burntime = 10,
 })
+
+minetest.register_craft{ output = 'default:paper',
+    type = 'shapeless',
+    recipe = {'bucket:bucket_water', woodmulch_item, woodmulch_item},
+    replacements={{'bucket:bucket_water','bucket:bucket_empty'}}
+}
 
 local biomat_item = terumet.id('item_dust_bio')
 local biomat_block = terumet.id('block_dust_bio')

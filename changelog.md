@@ -11,12 +11,12 @@ Newer versions listed first
     * A **Heatline Distributor** is needed to act as the input and distributor for the heat energy to be sent. It acts like any other machine and can be provided heat from adjacent External Heaters, Thermoboxes, etc.
     * Connect a series of **Heatlines** from the Distributor to any number of machines and they will be supplied heat through the lines!
     * Heatlines have a default limit of a maximum effective distance of **36 blocks**. Beyond that point, nothing will be sent. Occasionally a puff of steam will be emitted from the heatline to indicate it is at its limit.
-    * Even before that limit, the amount of heat successfully transferred will decrease. None will be lost, but the rate of heat transferred to very far machines will be much less than nearby ones.
+    * Heat is sent in order from nearest to farthest connected machine each tick. Far machines may be passed over if the distributor is low on heat.
     * These limitations can be changed in options.lua but they are in place for server friendliness.
 * Added **Expansion Crusher**, a Tier 1 machine that crushes stuff exactly like it sounds. Beyond the usual utility of turning cobblestone to gravel or sand, it also:
     * Squeeze and dry many types of vegetation (and wheat) into useful **Biomatter** which can be burned for fuel almost as effectively as coal.
-    * Crush **Sawdust** from wood and tree logs (currently with no use but future plans remain)
-    * Crush **Obsidian Grit** out of obsidian shards, which has replaced a few places where Obsidian or Crystallized Obsidian was once necessary. 
+    * Crush **Wood Mulch** from wood and tree logs, which can be used to create paper.
+    * Crush **Obsidian Grit** out of obsidian shards, which has replaced a few places where Obsidian or Crystallized Obsidian was once necessary.
 
 ## Version 2.1
 * **Breaking Change!!** Began moving the mod as a whole to the in-development Minetest 5.0.0. **It is no longer guaranteed to work in older versions like 0.4.16 or 0.4.17.x!**

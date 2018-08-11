@@ -179,5 +179,5 @@ minetest.register_node(furn_htr.lit_id, furn_htr.lit_nodedef)
 minetest.register_craft{ output = furn_htr.unlit_id, recipe = {
     {terumet.id('item_coil_tcop'), 'default:furnace', terumet.id('item_coil_tcop')},
     {terumet.id('item_ceramic'), terumet.id('frame_raw'), terumet.id('item_ceramic')},
-    {terumet.id('item_coil_tcop'), 'default:copperblock', terumet.id('item_coil_tcop')}
+    {terumet.id('item_coil_tcop'), terumet.id('block_tcop'), terumet.id('item_coil_tcop')}
 }}
