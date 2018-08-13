@@ -1,8 +1,27 @@
 terumet.options = {}
 
 terumet.options.cosmetic = {
-    -- Set to false for Tempered Glass to be streaky similar to default Minetest glass
-    CLEAR_TEMPERED_GLASS = true,
+    -- Set to false/nil for Terumetal Glass to be streaky similar to default Minetest glass
+    CLEAR_GLASS = true,
+    -- Style of reinforced blocks:
+    -- 1 = rebar on top/bottom only
+    -- 2 = rebar on all faces
+    -- false/nil = not visible (reinforced blocks look exact same as original block)
+    REINFORCING_VISIBLE = 1,
+    -- Set to false/nil for heatline blocks to not have visible ports
+    BLOCK_HEATLINE_VISIBLE = true,
+}
+
+terumet.options.misc = {
+    -- Groups to remove from transformed blockes (heatline/reinforced blocks)
+    -- ex: 'wood' prevents wood planks with heatlines/reinforcing from being used as wood in general recipes
+    -- if any other groups cause problems when transferred over to a block, add it here
+    -- (1 has no specific meaning, only to provide a value)
+    BLOCK_REMOVE_GROUPS = {
+        ['wood']=1,
+        ['stone']=1,
+        ['flammable']=1,
+    }
 }
 
 terumet.options.tools = {
@@ -162,16 +181,6 @@ terumet.options.heatline = {
     RECHECK_LINKS_TIMER = 4.0,
     -- Max heat transferred every tick (divided among all connected machines in order of distance)
     HEAT_TRANSFER_MAX = 250,
-
-    -- Groups to remove from blocks turned into heatline blocks
-    -- ex: 'wood' prevents wood planks with heatlines from being used as wood in general recipes
-    -- if any other groups cause problems when transferred over to a heatline block, add it here
-    -- (1 has no specific meaning, only to provide a value)
-    BLOCK_REMOVE_GROUPS = {
-        ['wood']=1,
-        ['stone']=1,
-        ['flammable']=1,
-    }
 }
 
 terumet.options.heat_ray = {

@@ -1,4 +1,4 @@
--- Terumet v2.2
+-- Terumet v2.3
 
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
 -- Written for Minetest IN-DEV version 5.0.0
@@ -26,12 +26,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=2, minor=2, patch=0}
+terumet.version = {major=2, minor=3, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
 
 terumet.RAND = PcgRandom(os.time())
+
+function terumet.chance(pct)
+    if pct <= 0 then return false end
+    if pct >= 100 then return true end
+    return terumet.RAND:next(1,100) <= pct
+end
+
+-- function for a node's on_blast callback to be removed with a pct% chance
+function terumet.blast_chance(pct, id)
+    return function(pos)
+        if terumet.chance(pct) then
+            minetest.remove_node(pos)
+            return {id}
+        else
+            return nil
+        end
+    end
+end
 
 -- empty function useful for where a callback is necessary but using nil would cause undesired default behavior
 terumet.NO_FUNCTION = function() end
@@ -47,6 +65,12 @@ end
 function terumet.recipe_box(outer, inner)
     return {
         {outer, outer, outer}, {outer, inner, outer}, {outer, outer, outer}
+    }
+end
+
+function terumet.recipe_plus(i)
+    return {
+        {'', i, ''}, {i, i, i}, {'', i, ''}
     }
 end
 
@@ -183,6 +207,7 @@ terumet.do_lua_file('material/coil')
 terumet.do_lua_file('material/crushed')
 terumet.do_lua_file('material/pwood')
 terumet.do_lua_file('material/tglass')
+terumet.do_lua_file('material/rebar')
 terumet.do_lua_file('material/misc')
 
 terumet.do_lua_file('material/crystallized')

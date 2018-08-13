@@ -44,7 +44,7 @@ function terumet.register_heatline_block(base, code)
         if k == 'groups' then
             def.groups = {}
             for gk,gv in pairs(v) do 
-                if not terumet.options.heatline.BLOCK_REMOVE_GROUPS[gk] then
+                if not terumet.options.misc.BLOCK_REMOVE_GROUPS[gk] then
                     def.groups[gk]=gv
                 end
             end
@@ -55,11 +55,13 @@ function terumet.register_heatline_block(base, code)
     if not def.groups then def.groups = {} end
     def.groups.terumet_hline = 1
 
-    for tn,tile in ipairs(def.tiles) do
-        def.tiles[tn] = tile .. '^' .. terumet.tex('blockov_hline')
+    if terumet.options.cosmetic.BLOCK_HEATLINE_VISIBLE then
+        for tn,tile in ipairs(def.tiles) do
+            def.tiles[tn] = tile .. '^' .. terumet.tex('blockov_hline')
+        end
     end
     def.description = 'Heatline '..def.description
-
+    
     local hlblock_id = terumet.id('hline_block_'..code)
     minetest.register_node(hlblock_id, def)
 

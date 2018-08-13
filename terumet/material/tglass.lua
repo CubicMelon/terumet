@@ -2,7 +2,7 @@ local tglass_id = terumet.id('block_tglass')
 
 local tiles, glowtiles
 
-if terumet.options.cosmetic.CLEAR_TEMPERED_GLASS then
+if terumet.options.cosmetic.CLEAR_GLASS then
     tiles = {terumet.tex('block_tglass_frame'), terumet.tex('blank')}
     glowtiles = {terumet.tex('block_tglassglow_frame'), terumet.tex('blank')}
 else
@@ -19,6 +19,7 @@ minetest.register_node(tglass_id, {
     sunlight_propagates = true,
     groups = {cracky = 1, level = 3},
     sounds = default.node_sound_glass_defaults(),
+	on_blast = terumet.blast_chance(30, tglass_id),
 })
 
 local tglass_glow_id = tglass_id..'glow'
@@ -33,4 +34,5 @@ minetest.register_node(tglass_glow_id, {
     light_source=13,
     groups = {cracky = 1, level = 3},
     sounds = default.node_sound_glass_defaults(),
+	on_blast = terumet.blast_chance(15, tglass_glow_id),
 })

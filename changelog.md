@@ -1,6 +1,11 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+## Version 2.3
+* Added **Terumetal Glass** and **Terumetal Glow Glass**, made via the Alloy Smelter. Both are very hard, durable glasses that are not easily broken (even by explosion).
+* Added **Teruchalcum Rebar** and various **Reinforced Blocks** -- each level of reinforcing increases the hardness of the block and the level of the tool required to break it. Each increased level of reinforcement also reduces the chance of the block being broken by explosion (Single: 40%, Double: 20%, Triple: 3%)
+* Cosmetic options for glass and reinforced blocks are available in options.lua
+
 ## Version 2.2
 * Added support for [Techpack's tubelib](https://forum.minetest.net/viewtopic.php?f=11&t=19784). With a **Tube Support Upgrade** every machine with input/output can interact as expected with Tubelib's tubes. (Just combine a tube with a blank upgrade to get one)
 * Rebalanced Furnace Heater generation and fixed a place it was rounding where it shouldn't have been. There is also now an option to alter base generation.
