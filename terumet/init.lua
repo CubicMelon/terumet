@@ -182,6 +182,7 @@ terumet.do_lua_file('material/thermese')
 terumet.do_lua_file('material/coil')
 terumet.do_lua_file('material/crushed')
 terumet.do_lua_file('material/pwood')
+terumet.do_lua_file('material/tglass')
 terumet.do_lua_file('material/misc')
 
 terumet.do_lua_file('material/crystallized')

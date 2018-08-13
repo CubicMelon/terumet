@@ -1,5 +1,10 @@
 terumet.options = {}
 
+terumet.options.cosmetic = {
+    -- Set to false for Tempered Glass to be streaky similar to default Minetest glass
+    CLEAR_TEMPERED_GLASS = true,
+}
+
 terumet.options.tools = {
     --
     -- TOOL SETTINGS
@@ -210,6 +215,10 @@ terumet.options.smelter = {
         {result='default:bronze_ingot 9', flux=0, time=6.0, input={'default:copper_ingot 8', 'default:tin_ingot'}},
         {result='default:bronzeblock 9', flux=0, time=40.5, input={'default:copperblock 8', 'default:tinblock'}},
         {result='default:bronze_ingot 9', flux=0, time=2.0, input={'terumet:item_cryst_copper 8', 'terumet:item_cryst_tin'}},
+    -- Terumetal Glass
+        {result='terumet:block_tglass 4', flux=1, time=8.0, input={'default:glass 4', 'default:silver_sand'}},
+    -- Terumetal Glow Glass
+        {result='terumet:block_tglassglow 4', flux=1, time=8.0, input={'terumet:block_tglass 4', 'default:mese_crystal'}},
     -- Terucopper
         {result='terumet:ingot_tcop', flux=1, time=3.0, input={'default:copper_lump'}},
         {result='terumet:ingot_tcop', flux=1, time=2.5, input={'default:copper_ingot'}},
