@@ -45,7 +45,7 @@ end
 function base_tbox.do_processing(tbox, dt)
     if tbox.heat_level == 0 then
         tbox.status_text = "Idle"
-        tbox.status = base_tbox.STATE.IDLE
+        tbox.state = base_tbox.STATE.IDLE
         return
     end
     local out_pos = util3d.pos_plus(tbox.pos, util3d.FACING_OFFSETS[tbox.facing])
@@ -60,7 +60,7 @@ function base_tbox.do_processing(tbox, dt)
     else
         tbox.status_text = "No output machine found"
     end
-    tbox.status = base_tbox.STATE.ACTIVE
+    tbox.state = base_tbox.STATE.ACTIVE
 end
 
 function base_tbox.tick(pos, dt)
