@@ -20,7 +20,7 @@ TEXTURE_FILES = [
     ['hray_sides', 'hray_front', 'hray_back', 'rayref_sides', 'rayref_front', 'rayref_back', 'tbox_sides', 'tbox_front', 'tbox_back', 'blockov_hline'],
     ['tdis_sides', 'tdis_front', 'tdis_back', 'raw_heater_sides', 'tste_heater_sides', 'cgls_heater_sides', 'htr_entropy_top', 'crush_front_unlit', 'crush_front_lit'],
     ['item_dust_ob', 'ingot_ttin', 'block_ttin', 'item_press', 'item_dust_wood', 'block_dust_bio', 'item_dust_bio', 'block_pwood', 'block_pwood_sides', 'item_glue'],
-    ['block_tglass_frame', 'block_tglass_streak', 'block_tglassglow_frame', 'block_tglassglow_streak']
+    ['block_tglass_frame', 'block_tglass_streak', 'block_tglassglow_frame', 'block_tglassglow_streak', 'item_rebar', 'blockov_rebar1', 'blockov_rebar2', 'blockov_rebar3']
 ]
 
 with Image(filename=SOURCE_FILE) as source:

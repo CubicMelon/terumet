@@ -122,3 +122,10 @@ local gravelyzer_data = {
 
 -- call terumet.register_heat_machine with (id, machine_data)
 terumet.register_heat_machine( 'tmapisample:gravelyzer', gravelyzer_data )
+
+-- register a recipe for our machine
+minetest.register_craft{ output='tmapisample:gravelyzer', recipe={
+    {'','default:flint',''},
+    {'default:flint','terumet:frame_raw','default:flint'},
+    {'','default:flint',''}
+}}

@@ -1,1 +1,0 @@
-A sample of how to use the Terumet API to create a simple custom heat machine.
