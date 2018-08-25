@@ -59,9 +59,9 @@ function terumet.register_reinforced_block(base, code)
         if rlv == 1 then
             recbase = base
             minetest.register_craft{ output=id..' 4', recipe = {
-                {'', recbase, ''},
-                {recbase, rebar_id, recbase},
-                {'', recbase, ''}
+                {rebar_id, recbase, rebar_id},
+                {recbase, '', recbase},
+                {rebar_id, recbase, rebar_id}
             }}
         elseif rlv == 2 then
             recbase = reinf_block_id(code, 1)
@@ -80,17 +80,3 @@ function terumet.register_reinforced_block(base, code)
         end
     end
 end
-
-terumet.register_reinforced_block('default:stone', 'stone')
-terumet.register_reinforced_block('default:cobble', 'cobble')
-terumet.register_reinforced_block('default:stonebrick', 'stonebrick')
-terumet.register_reinforced_block('default:stone_block', 'stoneblock')
-terumet.register_reinforced_block('default:desert_stone', 'desertstone')
-terumet.register_reinforced_block('default:desert_cobble', 'desertcobble')
-terumet.register_reinforced_block('default:desert_stonebrick', 'desertstonebrick')
-terumet.register_reinforced_block('default:wood', 'wood')
-terumet.register_reinforced_block('default:junglewood', 'junglewood')
-terumet.register_reinforced_block('default:pine_wood', 'pinewood')
-terumet.register_reinforced_block('default:acacia_wood', 'acaciawood')
-terumet.register_reinforced_block('default:aspen_wood', 'aspenwood')
-terumet.register_reinforced_block('terumet:block_pwood', 'pwood')

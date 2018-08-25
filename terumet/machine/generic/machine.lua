@@ -780,20 +780,26 @@ end
 
 function base_mach.allow_put(pos, listname, index, stack, player)
     if minetest.is_protected(pos, player:get_player_name()) then
+        -- deny based on protection
         return 0 -- number of items allowed to move
     end
     if listname == "fuel" then
+        -- only allow fuel items into fuel slot
         if opts.BASIC_HEAT_SOURCES[stack:get_name()] then
             return stack:get_count()
         else
             return 0
         end
     elseif listname == 'upgrade' then
+        -- deny insert immediately if target upgrade slot is not empty
+        if not minetest.get_meta(pos):get_inventory():get_stack(listname, index):is_empty() then return 0 end
+        -- only allow upgrade items into upgrade slot
         if stack:get_definition()._terumach_upgrade_id then
             return 1
         end
         return 0
     elseif listname == "out" then
+        -- deny insertion into output slots
         return 0
     else
         return stack:get_count()

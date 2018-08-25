@@ -276,6 +276,21 @@ terumet.do_lua_file('machine/transfer/heatray')
 terumet.do_lua_file('machine/transfer/hline')
 terumet.do_lua_file('machine/transfer/hline_in')
 
+-- register default blocks that can be converted into heatline or reinforced blocks
+terumet.register_convertable_block('default:stone', 'stone')
+terumet.register_convertable_block('default:cobble', 'cobble')
+terumet.register_convertable_block('default:stonebrick', 'stonebrick')
+terumet.register_convertable_block('default:stone_block', 'stoneblock')
+terumet.register_convertable_block('default:desert_stone', 'desertstone')
+terumet.register_convertable_block('default:desert_cobble', 'desertcobble')
+terumet.register_convertable_block('default:desert_stonebrick', 'desertstonebrick')
+terumet.register_convertable_block('default:wood', 'wood')
+terumet.register_convertable_block('default:junglewood', 'junglewood')
+terumet.register_convertable_block('default:pine_wood', 'pinewood')
+terumet.register_convertable_block('default:acacia_wood', 'acaciawood')
+terumet.register_convertable_block('default:aspen_wood', 'aspenwood')
+terumet.register_convertable_block('terumet:block_pwood', 'pwood')
+
 if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')
 end

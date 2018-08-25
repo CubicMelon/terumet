@@ -1,11 +1,26 @@
 -- API for other mods to interface with this mod
 
+
+-- register an external block for use in making heatline versions and/or reinforced versions
+-- if you wish to exclude one or the other, pass {heatline=true} or {reinforced=true} as 3rd argument
+function terumet.register_convertable_block(id, unique_code, exclude)
+    exclude = exclude or {}
+    if not exclude.heatline then
+        terumet.register_heatline_block(id, unique_code)
+    end
+    if not exclude.reinforced then
+        terumet.register_reinforced_block(id, unique_code)
+    end
+end
+
+-- register an item that provide Repair Material to Equipment Reformer
 -- value = repair material value provided by 1 item
 function terumet.register_repair_material(id, value)
     -- TODO error checking
     terumet.options.repm.repair_mats[id] = value
 end
 
+-- register a tool that can be repaired in Equipment Reformer
 -- needed_mat = amount of repair material value to repair fully worn tool
 function terumet.register_repairable_item(id, needed_mat)
     -- TODO error checking

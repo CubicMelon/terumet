@@ -56,7 +56,8 @@ function terumet.register_heatline_block(base, code)
     def.groups.terumet_hline = 1
 
     if terumet.options.cosmetic.BLOCK_HEATLINE_VISIBLE then
-        for tn,tile in ipairs(def.tiles) do
+        def.tiles = {}
+        for tn,tile in ipairs(base_def.tiles) do
             def.tiles[tn] = tile .. '^' .. terumet.tex('blockov_hline')
         end
     end
@@ -70,17 +71,3 @@ function terumet.register_heatline_block(base, code)
         {line_id, terumet.id('item_glue'), line_id},
         {base, line_id, base}}}
 end
-
-terumet.register_heatline_block('default:stone', 'stone')
-terumet.register_heatline_block('default:cobble', 'cobble')
-terumet.register_heatline_block('default:stonebrick', 'stonebrick')
-terumet.register_heatline_block('default:stone_block', 'stoneblock')
-terumet.register_heatline_block('default:desert_stone', 'desertstone')
-terumet.register_heatline_block('default:desert_cobble', 'desertcobble')
-terumet.register_heatline_block('default:desert_stonebrick', 'desertstonebrick')
-terumet.register_heatline_block('default:wood', 'wood')
-terumet.register_heatline_block('default:junglewood', 'junglewood')
-terumet.register_heatline_block('default:pine_wood', 'pinewood')
-terumet.register_heatline_block('default:acacia_wood', 'acaciawood')
-terumet.register_heatline_block('default:aspen_wood', 'aspenwood')
-terumet.register_heatline_block('terumet:block_pwood', 'pwood')
