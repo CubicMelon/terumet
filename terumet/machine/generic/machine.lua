@@ -43,20 +43,19 @@ function setup_machine_protection()
 end
 
 function find_external_protection_mod()
-    for mod,_ in pairs(terumet.options.protection.EXTERNAL_MODS) do
-        if minetest.global_exists(mod) then
+    local modlist = minetest.get_modnames()
+    for _,mod in pairs(modlist) do
+        if terumet.options.protection.EXTERNAL_MODS[mod] then
             return true
         end
     end
     return false
 end
 
--- set up machine protection if necessary after all mods are loaded
-minetest.after(0.1, function()
-    if not find_external_protection_mod() then
-        setup_machine_protection()
-    end
-end)
+-- set up machine protection if necessary
+if not find_external_protection_mod() then
+    setup_machine_protection()
+end
 
 --
 -- CONSTANTS
