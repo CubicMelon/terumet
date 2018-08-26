@@ -187,10 +187,12 @@ terumet.options.heatline = {
     -- Maximum distance over a heatline input can send (in blocks of heatline)
     -- when a heatline extends beyond this, it will occasionally display smoke particles to warn
     MAX_DIST = 36,
-    -- Every RECHECK_LINKS_TIMER seconds, recheck the heatline on an input
+    -- Every RECHECK_LINKS_TIMER seconds, recheck the heatline network on an input
     RECHECK_LINKS_TIMER = 4.0,
     -- Max heat transferred every tick (divided among all connected machines in order of distance)
     HEAT_TRANSFER_MAX = 250,
+    -- whether /heatlines chat command is available to list all heatline network info
+    DEBUG_CHAT_COMMAND = false,
 }
 
 terumet.options.heat_ray = {

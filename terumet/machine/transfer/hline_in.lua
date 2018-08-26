@@ -10,18 +10,20 @@ local POS_STR = minetest.pos_to_string
 -- server cache of links keyed by location of input machine
 base_hlin.links = {}
 
-minetest.register_chatcommand('heatlines', {
-    description = 'Display a list of all currently cached heatline links',
-    func = function(name, param)
-        local count = 0
-        for orig,links in pairs(base_hlin.links) do
-            minetest.chat_send_player(name, '***** Links originating from '..orig..':')
-            minetest.chat_send_player(name, debug_linklist_desc(links))
-            count = count + 1
+if opts.DEBUG_CHAT_COMMAND then
+    minetest.register_chatcommand('heatlines', {
+        description = 'Display a list of all currently cached heatline links',
+        func = function(name, param)
+            local count = 0
+            for orig,links in pairs(base_hlin.links) do
+                minetest.chat_send_player(name, '***** Links originating from '..orig..':')
+                minetest.chat_send_player(name, debug_linklist_desc(links))
+                count = count + 1
+            end
+            minetest.chat_send_player(name, 'Total cached heatline links: '..count)
         end
-        minetest.chat_send_player(name, 'Total cached heatline links: '..count)
-    end
-})
+    })
+end
 
 base_hlin.STATE = {}
 -- no heat stored, so nothing to do
@@ -231,13 +233,12 @@ function base_hlin.distribute(hlin)
                 end
                 hlin.last_sent = string.format('Last sent %d HU to %d needing machine(s).', total, #needy)
             else
-                hlin.last_sent = 'None connected need heat.'
+                hlin.last_sent = 'No connected machines need heat.'
             end
         end        
         hlin.state = base_hlin.STATE.ACTIVE
     else
         hlin.state = base_hlin.STATE.IDLE
-        --hlin.state_time = -0.1 -- force next wakeup to recheck links
         hlin.status_text = 'Idle'
     end
 end
@@ -283,7 +284,8 @@ base_hlin.nodedef = base_mach.nodedef{
     }
 }
 
--- manually add input machine as a connect target for heatline nodes even if they are not technically a target
+-- manually add input machine as a visual connect target for heatline nodes even if they are 
+-- not a target for heat transfer
 base_hlin.nodedef.groups['terumet_hltarget']=1
 
 minetest.register_node( base_hlin.id, base_hlin.nodedef )

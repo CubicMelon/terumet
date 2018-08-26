@@ -280,15 +280,21 @@ terumet.register_convertible_block('default:acacia_wood', 'acaciawood')
 terumet.register_convertible_block('default:aspen_wood', 'aspenwood')
 terumet.register_convertible_block('terumet:block_pwood', 'pwood')
 
--- register default tools as repairable
--- default metal values of 1 ingot:
-local dmv_values = {steel=10, bronze = 30, mese = 90, diamond = 100}
--- each type of tool based on ingots used to make
-for dmat, value in pairs(dmv_values) do
-    terumet.register_repairable_item("default:pick_"..dmat, value*3)
-    terumet.register_repairable_item("default:axe_"..dmat, value*3)
-    terumet.register_repairable_item("default:shovel_"..dmat, value)
-    terumet.register_repairable_item("default:sword_"..dmat, value*2)
+-- register repairable default tools and materials
+-- {value of 1 item, item id}:
+local dmv_values = {
+    steel={10, 'default:steel_ingot'}, 
+    bronze={30, 'default:bronze_ingot'},
+    mese={90, 'default:mese_crystal'},
+    diamond={100, 'default:diamond'}
+}
+
+for dmat, v in pairs(dmv_values) do
+    terumet.register_repairable_item("default:pick_"..dmat, v[1]*3)
+    terumet.register_repairable_item("default:axe_"..dmat, v[1]*3)
+    terumet.register_repairable_item("default:shovel_"..dmat, v[1])
+    terumet.register_repairable_item("default:sword_"..dmat, v[1]*2)
+    terumet.register_repair_material(v[2], v[1])
 end
 
 if minetest.global_exists('unified_inventory') then 

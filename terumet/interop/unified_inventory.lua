@@ -32,6 +32,24 @@ function add_terumet_recipes()
         }
     end
     
+    -- add each repair material to UnInv
+    for id, repmatval in pairs(terumet.options.repm.repair_mats) do
+        unified_inventory.register_craft{
+            type = 'terumet_repmat',
+            output = terumet.id('uninv_repmat', repmatval),
+            items = {id}
+        }
+    end
+
+    -- add each repairable tool to UnInv
+    for id, rmreq in pairs(terumet.options.repm.repairable) do
+        unified_inventory.register_craft{
+            type = 'terumet_repair',
+            output = id,
+            items = {id, terumet.id('uninv_repmat', rmreq)}
+        }
+    end
+
     -- add each crystal vulcanizer recipe to UnInv
     for source, crystal in pairs(terumet.options.vulcan.recipes) do
         unified_inventory.register_craft{
@@ -65,6 +83,13 @@ minetest.register_craftitem( terumet.id('uninv_time_req'), {
     groups={not_in_creative_inventory=1}
 })
 
+-- dummy item to display amount of repair material
+minetest.register_craftitem( terumet.id('uninv_repmat'), {
+    description = "repair material value",
+    inventory_image = terumet.tex('uninv_repmat'),
+    groups={not_in_creative_inventory=1}
+})
+
 -- register terumetal alloying with UnInv
 unified_inventory.register_craft_type( 'terumet_alloy', {
     description = 'Terumetal Alloy Smelting',
@@ -78,6 +103,22 @@ unified_inventory.register_craft_type( 'terumet_crush', {
     description = 'Expansion Crusher',
     icon = 'terumet_crush_front_lit.png',
     width=1,
+    height=1,
+})
+
+-- register repair materials with UnInv
+unified_inventory.register_craft_type( 'terumet_repmat', {
+    description = 'Equipment Reformer\n(material)',
+    icon = 'terumet_repm_front.png',
+    width=1,
+    height=1,
+})
+
+-- register tool repair with UnInv
+unified_inventory.register_craft_type( 'terumet_repair', {
+    description = 'Equipment Reformer\n(for 100% wear)',
+    icon = 'terumet_repm_front.png',
+    width=2,
     height=1,
 })
 

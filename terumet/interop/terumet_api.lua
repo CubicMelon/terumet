@@ -199,7 +199,7 @@ function terumet.register_heat_machine( id, data )
             terumet.machine.set_timer(init)
         end,
         on_timer = function(pos, dt)
-            local machine = terumet.machine.read_state(pos)
+            local machine = terumet.machine.tick_read_state(pos)
             local re_tick = false
             if not terumet.machine.check_overheat(machine, data.heat_max) then
                 re_tick = data.tick_function(machine, dt)
