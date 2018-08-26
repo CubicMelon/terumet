@@ -1,5 +1,15 @@
 terumet.options = {}
 
+terumet.options.protection = {
+    -- List of potential external mods that will handle machine protection in lieu of the default owner system
+    -- If any of these mods are found on load, the default protection system will NOT be active
+    -- and all machine protection will be based on mintest.is_protected implemented by external mods
+    -- (1 has no specific meaning, only to provide a value)
+    EXTERNAL_MODS = {
+        ['areas']=1
+    }
+}
+
 terumet.options.cosmetic = {
     -- Set to false/nil for Terumetal Glass to be streaky similar to default Minetest glass
     CLEAR_GLASS = true,
@@ -13,7 +23,7 @@ terumet.options.cosmetic = {
 }
 
 terumet.options.misc = {
-    -- Groups to remove from transformed blockes (heatline/reinforced blocks)
+    -- Groups to remove from converted blocks (heatline/reinforced blocks)
     -- ex: 'wood' prevents wood planks with heatlines/reinforcing from being used as wood in general recipes
     -- if any other groups cause problems when transferred over to a block, add it here
     -- (1 has no specific meaning, only to provide a value)

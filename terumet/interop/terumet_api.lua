@@ -3,7 +3,7 @@
 
 -- register an external block for use in making heatline versions and/or reinforced versions
 -- if you wish to exclude one or the other, pass {heatline=true} or {reinforced=true} as 3rd argument
-function terumet.register_convertable_block(id, unique_code, exclude)
+function terumet.register_convertible_block(id, unique_code, exclude)
     exclude = exclude or {}
     if not exclude.heatline then
         terumet.register_heatline_block(id, unique_code)

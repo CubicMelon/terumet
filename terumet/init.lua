@@ -246,17 +246,6 @@ terumet.reg_tools('Teruchalcum', 'tcha',
     {1.8, 0.7, 0.45}, 90, 2, sword_opts.BRONZE_ALLOY, 60
 )
 
--- register default tools as repairable
--- default metal values of 1 ingot:
-local dmv_values = {steel=10, bronze = 30, mese = 90, diamond = 100}
--- each type of tool based on ingots used to make
-for dmat, value in pairs(dmv_values) do
-    terumet.register_repairable_item("default:pick_"..dmat, value*3)
-    terumet.register_repairable_item("default:axe_"..dmat, value*3)
-    terumet.register_repairable_item("default:shovel_"..dmat, value)
-    terumet.register_repairable_item("default:sword_"..dmat, value*2)
-end
-
 terumet.do_lua_file('tool/ore_saw')
 
 terumet.do_lua_file('machine/heater/furnace_htr')
@@ -277,19 +266,30 @@ terumet.do_lua_file('machine/transfer/hline')
 terumet.do_lua_file('machine/transfer/hline_in')
 
 -- register default blocks that can be converted into heatline or reinforced blocks
-terumet.register_convertable_block('default:stone', 'stone')
-terumet.register_convertable_block('default:cobble', 'cobble')
-terumet.register_convertable_block('default:stonebrick', 'stonebrick')
-terumet.register_convertable_block('default:stone_block', 'stoneblock')
-terumet.register_convertable_block('default:desert_stone', 'desertstone')
-terumet.register_convertable_block('default:desert_cobble', 'desertcobble')
-terumet.register_convertable_block('default:desert_stonebrick', 'desertstonebrick')
-terumet.register_convertable_block('default:wood', 'wood')
-terumet.register_convertable_block('default:junglewood', 'junglewood')
-terumet.register_convertable_block('default:pine_wood', 'pinewood')
-terumet.register_convertable_block('default:acacia_wood', 'acaciawood')
-terumet.register_convertable_block('default:aspen_wood', 'aspenwood')
-terumet.register_convertable_block('terumet:block_pwood', 'pwood')
+terumet.register_convertible_block('default:stone', 'stone')
+terumet.register_convertible_block('default:cobble', 'cobble')
+terumet.register_convertible_block('default:stonebrick', 'stonebrick')
+terumet.register_convertible_block('default:stone_block', 'stoneblock')
+terumet.register_convertible_block('default:desert_stone', 'desertstone')
+terumet.register_convertible_block('default:desert_cobble', 'desertcobble')
+terumet.register_convertible_block('default:desert_stonebrick', 'desertstonebrick')
+terumet.register_convertible_block('default:wood', 'wood')
+terumet.register_convertible_block('default:junglewood', 'junglewood')
+terumet.register_convertible_block('default:pine_wood', 'pinewood')
+terumet.register_convertible_block('default:acacia_wood', 'acaciawood')
+terumet.register_convertible_block('default:aspen_wood', 'aspenwood')
+terumet.register_convertible_block('terumet:block_pwood', 'pwood')
+
+-- register default tools as repairable
+-- default metal values of 1 ingot:
+local dmv_values = {steel=10, bronze = 30, mese = 90, diamond = 100}
+-- each type of tool based on ingots used to make
+for dmat, value in pairs(dmv_values) do
+    terumet.register_repairable_item("default:pick_"..dmat, value*3)
+    terumet.register_repairable_item("default:axe_"..dmat, value*3)
+    terumet.register_repairable_item("default:shovel_"..dmat, value)
+    terumet.register_repairable_item("default:sword_"..dmat, value*2)
+end
 
 if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')

@@ -6,6 +6,13 @@ Newer versions listed first
 * Added **Teruchalcum Rebar** and various **Reinforced Blocks** -- each level of reinforcing increases the hardness of the block and the level of the tool required to break it. Each increased level of reinforcement also reduces the chance of the block being broken by explosion (Single: 40%, Double: 20%, Triple: 3%)
 * Cosmetic options for glass and reinforced blocks are available in options.lua
 * It should *finally* be much more difficult to insert more than one upgrade item into a machine's upgrade slot (multiple upgrades in a slot never did anything anyway)
+* Machine access control has been simplified and Terumetal now supports nearly any mod that implements minetest.is_protected:
+    * There's a list of external protection mods in the options.lua file now under options.protection
+    * If any of these mods are active on loading, then Terumetal will NOT implement any special protection and rely on minetest.is_protected to handle access control.
+    * If none of the listed mods are active, then Terumetal adds its old protection based on owner alone via minetest.is_protected
+    * Right now the only mod that is listed by default is [areas](https://github.com/ShadowNinja/areas) by ShadowNinja, as requested and suggested by [Sires](https://forum.minetest.net/viewtopic.php?p=329194#p329194) on the Minetest forum. However, adding support for other mods is simple as adding its name to the options.protection.EXTERNAL_MODS section.
+* Additionally, the default Terumetal machine protection will prevent non-owners from digging machines.
+
 
 ## Version 2.2
 * Added support for [Techpack's tubelib](https://forum.minetest.net/viewtopic.php?f=11&t=19784). With a **Tube Support Upgrade** every machine with input/output can interact as expected with Tubelib's tubes. (Just combine a tube with a blank upgrade to get one)

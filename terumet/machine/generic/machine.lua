@@ -18,26 +18,45 @@ function base_mach.heat_pct(machine)
     return 100.0 * base_mach.get_current_heat(machine) / machine.max_heat
 end
 
--- implement machine owner protection
-local old_is_protected = minetest.is_protected
-minetest.is_protected = function(pos, name)
-    if (not name) or name == '' then return true end
-    local node = minetest.get_node_or_nil(pos)
-    if node then
-        local nodedef = minetest.registered_nodes[node.name]
-        if nodedef and nodedef._terumach_class then
-            local owner = minetest.get_meta(pos):get_string('owner')
-            if base_mach.has_auth({owner=owner}, name) then
-                return false
-            else
-                minetest.chat_send_player(name, 'You do not have permission to do that.')
-                minetest.record_protection_violation(pos, name)
-                return true
+-- if any other protection mod is not found, then use our own simple owner-based protection
+-- this function is called only if any protection mod in terumet.options.protection.EXTERNAL_MODS is not found
+function setup_machine_protection()
+    local old_is_protected = minetest.is_protected
+    minetest.is_protected = function(pos, name)
+        if (not name) or name == '' then return true end
+        local node = minetest.get_node_or_nil(pos)
+        if node then
+            local nodedef = minetest.registered_nodes[node.name]
+            if nodedef and nodedef._terumach_class then
+                local owner = minetest.get_meta(pos):get_string('owner')
+                if (owner == '*') or (owner == name) then
+                    return false
+                else
+                    minetest.chat_send_player(name, "You are not the machine's owner.")
+                    minetest.record_protection_violation(pos, name)
+                    return true
+                end
             end
         end
-    end
-    return old_is_protected(pos, name)
+        return old_is_protected(pos, name)
+    end 
 end
+
+function find_external_protection_mod()
+    for mod,_ in pairs(terumet.options.protection.EXTERNAL_MODS) do
+        if minetest.global_exists(mod) then
+            return true
+        end
+    end
+    return false
+end
+
+-- set up machine protection if necessary after all mods are loaded
+minetest.after(0.1, function()
+    if not find_external_protection_mod() then
+        setup_machine_protection()
+    end
+end)
 
 --
 -- CONSTANTS
@@ -400,12 +419,6 @@ function base_mach.set_low_heat_msg(machine, process)
     end
 end
 
--- return true if given player has authorization to use machine
--- (at minimum machine just has owner attribute)
-function base_mach.has_auth(machine, player)
-    return (machine.owner == '') or (machine.owner == '*') or (machine.owner == player)
-end
-
 -- handle basic fuel heating
 function base_mach.process_fuel(machine)
     local fuel_item = machine.inv:get_stack('fuel',1)
@@ -558,6 +571,13 @@ function base_mach.nodedef(additions)
         allow_metadata_inventory_move = base_mach.allow_move,
         allow_metadata_inventory_take = base_mach.allow_take,
         -- default callbacks
+        can_dig = function(pos, user)
+            if user and user:is_player() then
+                return not minetest.is_protected(pos, user:get_player_name())
+            else
+                return false
+            end
+        end,
         on_destruct = base_mach.on_destruct,
         on_blast = base_mach.on_blast,
         on_metadata_inventory_move = base_mach.simple_inventory_event,-- base_mach.on_inventory_move, for event_data
@@ -569,7 +589,7 @@ function base_mach.nodedef(additions)
             local player_name = sender:get_player_name()
             local machine = base_mach.read_state(pos)
             if machine then 
-                if base_mach.has_auth(machine, player_name) then
+                if not minetest.is_protected(machine.pos, player_name) then
                     local updatefs = false
                     -- handle default buttondefs
                     if fields.hxfer_toggle then
@@ -591,9 +611,6 @@ function base_mach.nodedef(additions)
                         machine.meta:set_string('formspec', base_mach.build_fs(machine))
                         base_mach.set_timer(machine)
                     end
-                else
-                    minetest.chat_send_player(player_name, 'You do not have permission to do that.')
-                    minetest.record_protection_violation(pos, player_name)
                 end
             end
         end,    

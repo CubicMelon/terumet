@@ -33,7 +33,7 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
         description = mat_name .. ' Shovel',
         inventory_image = tex(shovel_id),
         tool_capabilities = {
-            full_punch_interval = 1.0 - (max_level * 0.1),
+            full_punch_interval = math.max(0.4, 1.0 - (max_level * 0.15)),
             max_drop_level = max_level,
             groupcaps = {
                 crumbly = {times=dig_times, uses=base_use_count, maxlevel=max_level},
@@ -54,7 +54,7 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
         description = mat_name .. ' Axe',
         inventory_image = tex(axe_id),
         tool_capabilities = {
-            full_punch_interval = math.max(0.55, 1.0 - (max_level * 0.15)),
+            full_punch_interval = math.max(0.5, 1.0 - (max_level * 0.15)),
             max_drop_level = max_level,
             groupcaps = {
                 choppy = {times=dig_times, uses=base_use_count, maxlevel=max_level},
