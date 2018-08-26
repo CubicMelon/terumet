@@ -12,7 +12,7 @@ Newer versions listed first
     * If none of the listed mods are active, then Terumetal adds its old protection based on owner alone via minetest.is_protected
     * Right now the only mod that is listed by default is [areas](https://github.com/ShadowNinja/areas) by ShadowNinja, as requested and suggested by [Sires](https://forum.minetest.net/viewtopic.php?p=329194#p329194) on the Minetest forum. However, adding support for other mods is simple as adding its name to the options.protection.EXTERNAL_MODS section.
 * Additionally, the default Terumetal machine protection will prevent non-owners from digging machines.
-
+* Terumetal shovels and axes adjusted to dig faster
 
 ## Version 2.2
 * Added support for [Techpack's tubelib](https://forum.minetest.net/viewtopic.php?f=11&t=19784). With a **Tube Support Upgrade** every machine with input/output can interact as expected with Tubelib's tubes. (Just combine a tube with a blank upgrade to get one)
