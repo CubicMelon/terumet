@@ -1,3 +1,8 @@
+# IMPORTANT MESSAGE
+Presently the mod is heavily broken due to changes to Minetest during development.
+When or even if this will be fixed is not known. My apologies!
+
+
 # Terumetal [terumet]
 ### Current release version: v2.2
 A mod for the open-source voxel game Minetest (https://www.minetest.net/) version 5.0
