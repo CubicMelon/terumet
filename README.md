@@ -1,6 +1,6 @@
-# IMPORTANT MESSAGE
-Presently the mod is heavily broken due to changes to Minetest during development.
-When or even if this will be fixed is not known. My apologies!
+# Good News!
+The mod is working again with the latest Dev builds!
+No updates or changes have been made, but the outstanding piston bug will be fixed when I have time to work on it.
 
 
 # Terumetal [terumet]
