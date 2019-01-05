@@ -288,7 +288,7 @@ base_hlin.nodedef = base_mach.nodedef{
 -- not a target for heat transfer
 base_hlin.nodedef.groups['terumet_hltarget']=1
 
-minetest.register_node( base_hlin.id, base_hlin.nodedef )
+base_mach.define_machine_node( base_hlin.id, base_hlin.nodedef )
 
 minetest.register_craft{ output = base_hlin.id, recipe = {
     {terumet.id('block_ceramic'), terumet.id('item_coil_tgol'), terumet.id('block_ceramic')},

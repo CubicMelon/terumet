@@ -171,9 +171,8 @@ base_lavam.lit_nodedef.tiles = {
 base_lavam.lit_nodedef.groups= terumet.create_lit_node_groups(base_lavam.unlit_nodedef.groups)
 base_lavam.lit_nodedef.light_source = 10
 
--- TODO fix recipes etc.
-minetest.register_node(base_lavam.unlit_id, base_lavam.unlit_nodedef)
-minetest.register_node(base_lavam.lit_id, base_lavam.lit_nodedef)
+base_mach.define_machine_node(base_lavam.unlit_id, base_lavam.unlit_nodedef)
+base_mach.define_machine_node(base_lavam.lit_id, base_lavam.lit_nodedef)
 
 minetest.register_craft{ output = base_lavam.unlit_id, recipe = {
     {terumet.id('item_coil_raw'), terumet.id('item_coil_raw'), terumet.id('item_coil_raw')},

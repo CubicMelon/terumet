@@ -105,7 +105,7 @@ base_tdist.nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(base_tdist.id, base_tdist.nodedef)
+base_mach.define_machine_node(base_tdist.id, base_tdist.nodedef)
 
 minetest.register_craft{ output = base_tdist.id,
     recipe = {

@@ -121,7 +121,7 @@ sol_htr.nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(sol_htr.id, sol_htr.nodedef)
+base_mach.define_machine_node(sol_htr.id, sol_htr.nodedef)
 
 minetest.register_craft{ output = sol_htr.id, recipe = {
     {terumet.id('item_htglass'), terumet.id('item_htglass'), terumet.id('item_htglass')},

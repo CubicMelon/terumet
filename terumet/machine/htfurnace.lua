@@ -183,8 +183,8 @@ base_htf.lit_nodedef.groups = terumet.create_lit_node_groups(base_htf.unlit_node
 base_htf.lit_nodedef.light_source = 10
 
 
-minetest.register_node(base_htf.unlit_id, base_htf.unlit_nodedef)
-minetest.register_node(base_htf.lit_id, base_htf.lit_nodedef)
+base_mach.define_machine_node(base_htf.unlit_id, base_htf.unlit_nodedef)
+base_mach.define_machine_node(base_htf.lit_id, base_htf.lit_nodedef)
 
 minetest.register_craft{ output = base_htf.unlit_id, recipe = {
     {terumet.id('item_coil_tcop'), terumet.id('item_coil_tcop'), terumet.id('item_coil_tcop')},

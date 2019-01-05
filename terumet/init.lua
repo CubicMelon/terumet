@@ -248,6 +248,11 @@ terumet.reg_tools('Teruchalcum', 'tcha',
 
 terumet.do_lua_file('tool/ore_saw')
 
+-- setup mesecon piston interop before machines are defined
+if minetest.global_exists('mesecon') then -- no 's'
+    terumet.do_lua_file('interop/mesecons')
+end
+
 terumet.do_lua_file('machine/heater/furnace_htr')
 terumet.do_lua_file('machine/heater/solar_htr')
 terumet.do_lua_file('machine/heater/entropic_htr')

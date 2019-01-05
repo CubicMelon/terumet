@@ -197,7 +197,7 @@ ent_htr.nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(ent_htr.id, ent_htr.nodedef)
+base_mach.define_machine_node(ent_htr.id, ent_htr.nodedef)
 
 minetest.register_craft{ output = ent_htr.id, recipe = {
     {terumet.id('item_upg_gen_up'), terumet.id('item_htglass'), terumet.id('item_upg_gen_up')},

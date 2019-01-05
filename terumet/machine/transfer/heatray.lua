@@ -255,7 +255,7 @@ base_ray.nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(base_ray.id, base_ray.nodedef)
+base_mach.define_machine_node(base_ray.id, base_ray.nodedef)
 
 minetest.register_craft{ output = base_ray.id, recipe = {
     {terumet.id('item_coil_tgol'), terumet.id('item_htglass'), terumet.id('item_coil_tgol')},

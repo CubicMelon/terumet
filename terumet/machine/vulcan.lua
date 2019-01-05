@@ -160,7 +160,7 @@ base_vul.nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(base_vul.id, base_vul.nodedef)
+base_mach.define_machine_node(base_vul.id, base_vul.nodedef)
 
 minetest.register_craft{ output = base_vul.id, recipe = {
     {terumet.id('item_coil_tgol'), terumet.id('item_cryscham'), terumet.id('item_coil_tgol')},

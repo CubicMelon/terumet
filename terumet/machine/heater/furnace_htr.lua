@@ -173,8 +173,8 @@ furn_htr.lit_nodedef.groups=terumet.create_lit_node_groups(furn_htr.unlit_nodede
 furn_htr.lit_nodedef.light_source = 10
 
 
-minetest.register_node(furn_htr.unlit_id, furn_htr.unlit_nodedef)
-minetest.register_node(furn_htr.lit_id, furn_htr.lit_nodedef)
+base_mach.define_machine_node(furn_htr.unlit_id, furn_htr.unlit_nodedef)
+base_mach.define_machine_node(furn_htr.lit_id, furn_htr.lit_nodedef)
 
 minetest.register_craft{ output = furn_htr.unlit_id, recipe = {
     {terumet.id('item_coil_tcop'), 'default:furnace', terumet.id('item_coil_tcop')},

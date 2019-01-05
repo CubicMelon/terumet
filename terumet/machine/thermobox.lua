@@ -105,7 +105,7 @@ base_tbox.nodedef = base_mach.nodedef{
     }
 }
 
-minetest.register_node(base_tbox.id, base_tbox.nodedef)
+base_mach.define_machine_node(base_tbox.id, base_tbox.nodedef)
 
 minetest.register_craft{ output = base_tbox.id,
     recipe = {

@@ -198,8 +198,8 @@ base_crs.lit_nodedef.tiles = {
 base_crs.lit_nodedef.groups = terumet.create_lit_node_groups(base_crs.unlit_nodedef.groups)
 base_crs.lit_nodedef.light_source = 10
 
-minetest.register_node(base_crs.unlit_id, base_crs.unlit_nodedef)
-minetest.register_node(base_crs.lit_id, base_crs.lit_nodedef)
+base_mach.define_machine_node(base_crs.unlit_id, base_crs.unlit_nodedef)
+base_mach.define_machine_node(base_crs.lit_id, base_crs.lit_nodedef)
 
 minetest.register_craft{ output = base_crs.unlit_id, recipe = {
     {terumet.id('item_coil_tcop'), terumet.id('item_press'), terumet.id('item_coil_tcop')},

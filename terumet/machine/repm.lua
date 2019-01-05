@@ -263,7 +263,7 @@ minetest.register_craftitem( REPMAT_DROP_ID, {
 })
 terumet.register_repair_material(REPMAT_DROP_ID, opts.MELTING_RATE)
 
-minetest.register_node(base_repm.id, base_repm.nodedef)
+base_mach.define_machine_node(base_repm.id, base_repm.nodedef)
 
 minetest.register_craft{ output = base_repm.id, recipe = {
     {terumet.id('item_coil_tgol'), terumet.id('item_ceramic'), terumet.id('item_coil_tgol')},

@@ -3,6 +3,21 @@ terumet.machine = {}
 local base_mach = terumet.machine
 local opts = terumet.options.machine
 
+local on_machine_node_creation_callbacks = {}
+-- define a new callback for machine node creation (for interop)
+-- callback is called with params (machine_id, machine_def)
+function base_mach.register_on_new_machine_node(cb)
+    on_machine_node_creation_callbacks[#on_machine_node_creation_callbacks+1]=cb
+end
+
+-- centralized call to define a new machine node
+function base_mach.define_machine_node(id, def)
+    minetest.register_node(id, def)
+    for _,cb in ipairs(on_machine_node_creation_callbacks) do
+        cb(id, def)
+    end
+end
+
 -- events are called with params: (pos, machine, [placer])
 local on_machine_place_callbacks = {}
 local on_machine_remove_callbacks = {}
