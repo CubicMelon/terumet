@@ -7,3 +7,4 @@ tubelib?
 stairs?
 tnt?
 mesecons?
+bushes?

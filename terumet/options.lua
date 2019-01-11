@@ -153,15 +153,17 @@ terumet.options.crusher = {
         ['default:sandstone']='default:sand',
         ['default:silver_sandstone']='default:silver_sand',
         ['default:coalblock']='default:coal_lump 9',
-        ['farming:wheat']='terumet:item_dust_bio 2',
         ['default:apple']='terumet:item_dust_bio 2',
         ['group:flora']='terumet:item_dust_bio',
         ['group:leaves']='terumet:item_dust_bio',
         ['group:sapling']='terumet:item_dust_bio',
         ['group:tree']='terumet:item_dust_wood 4',
         ['group:wood']='terumet:item_dust_wood 1',
+        ['bushes:BushLeaves1']='terumet:item_dust_bio',
+        ['bushes:BushLeaves2']='terumet:item_dust_bio',
     }
 }
+terumet.do_lua_file('interop/farming') -- see interop/farming.lua, adds farming crops to crusher
 
 terumet.options.thermobox = {
     --

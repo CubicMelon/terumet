@@ -3,6 +3,9 @@ Newer versions listed first
 
 ## Version 2.4
 * Added support to run under (currently) stable Minetest 0.4.17 -- those asking for it rejoice!
+* Added support for other mods plants/crops being used in the Expansion Crusher
+    * bushes
+    * farming (farming redo ver.)
 
 ## Version 2.3
 * Added **Terumetal Glass** and **Terumetal Glow Glass**, made via the Alloy Smelter. Both are very hard, durable glasses that are not easily broken (even by explosion).
