@@ -1,6 +1,9 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+## Version 2.4
+* Added support to run under (currently) stable Minetest 0.4.17 -- those asking for it rejoice!
+
 ## Version 2.3
 * Added **Terumetal Glass** and **Terumetal Glow Glass**, made via the Alloy Smelter. Both are very hard, durable glasses that are not easily broken (even by explosion).
 * Added **Teruchalcum Rebar** and various **Reinforced Blocks** -- each level of reinforcing increases the hardness of the block and the level of the tool required to break it. Each increased level of reinforcement also reduces the chance of the block being broken by explosion (Single: 40%, Double: 20%, Triple: 3%)

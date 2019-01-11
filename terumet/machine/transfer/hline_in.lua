@@ -94,15 +94,19 @@ local FSDEF = {
         if machine.state ~= base_hlin.STATE.IDLE then
             local links = base_hlin.get_links(machine)
             if links then
-                fs = string.format('label[0.5,0.5;%d linked machines:\n%s]', #links, machine.last_sent or '')
+                local fs = string.format('label[0.5,0.5;%d linked machines:\n%s]', #links, machine.last_sent or '')
                 local ix = 0
                 local iy = 1.5
                 for _,link in ipairs(links) do
                     local node = minetest.get_node_or_nil(link.pos)
                     if node and base_mach.get_class_property(node.name, 'is_machine') then
-                        fs=fs..string.format('item_image[%.1f,%.1f;1,1;%s]tooltip[%.1f,%.1f;1,1;%s %d distance at %s]',
-                            ix, iy, node.name,
+                        fs=fs..string.format('item_image[%.1f,%.1f;1,1;%s]',
+                            ix, iy, node.name)
+                        if not terumet.legacy then
+                            -- custom tooltips not attached to specific GUI elements are not supported pre-5
+                            fs=fs..string.format('tooltip[%.1f,%.1f;1,1;%s %d distance at %s]',
                             ix, iy, base_mach.get_class_property(node.name, 'name'), link.dist, POS_STR(link.pos))
+                        end
                         ix=ix+1
                         if ix>7 then
                             ix=0

@@ -1,7 +1,8 @@
--- Terumet v2.3
+-- Terumet v2.4
 
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
--- Written for Minetest IN-DEV version 5.0.0
+-- Written for Minetest version 5.0.0
+-- Now also supports Minetest 0.4.17
 -- Creates a new ore in the world which can be used to make useful alloys
 -- and heat-powered machines.
 
@@ -10,7 +11,7 @@
 --  > RSL-Redstonier [https://github.com/RSL-Redstonier]
 --  > Chem871 [https://github.com/Chemguy99] for many ideas and requests
 
---[[ Copyright (C) 2017-2018 Terumoc (Scott Horvath)
+--[[ Copyright (C) 2017-2019 Terumoc (Scott Horvath)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +31,13 @@ terumet.version = {major=2, minor=3, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
+
+-- this isn't the suggested way to check for game version but... it works for my purposes
+terumet.legacy = minetest.get_version().string:find('0.4.17')
+
+if terumet.legacy then
+    minetest.log('[terumet] MTv0.4.17.* detected - in legacy mode!')
+end
 
 terumet.RAND = PcgRandom(os.time())
 
