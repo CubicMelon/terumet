@@ -1,7 +1,7 @@
 # Good News!
 The mod is working again with the latest Dev builds!
-No updates or changes have been made, but the outstanding piston bug will be fixed when I have time to work on it.
-
+Also, support for legacy/stable Minetest 0.4.17 has been added!
+The legacy support has not been exhaustively tested, so please report any bugs on 0.4.17 servers. Thanks!
 
 # Terumetal [terumet]
 ### Current release version: v2.2
