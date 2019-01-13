@@ -154,6 +154,7 @@ terumet.options.crusher = {
         ['default:silver_sandstone']='default:silver_sand',
         ['default:coalblock']='default:coal_lump 9',
         ['default:apple']='terumet:item_dust_bio 2',
+        ['default:papyrus']='terumet:item_dust_bio 3',
         ['group:flora']='terumet:item_dust_bio',
         ['group:leaves']='terumet:item_dust_bio',
         ['group:sapling']='terumet:item_dust_bio',
@@ -242,6 +243,11 @@ terumet.options.smelter = {
         {result='terumet:block_tglass 4', flux=1, time=8.0, input={'default:glass 4', 'default:silver_sand'}},
     -- Terumetal Glow Glass
         {result='terumet:block_tglassglow 4', flux=1, time=8.0, input={'terumet:block_tglass 4', 'default:mese_crystal'}},
+    -- Teruchalchum
+        {result='terumet:ingot_tcha 3', flux=9, time=6.0, input={'default:bronze_ingot', 'default:tin_lump 2'}},
+        {result='terumet:ingot_tcha 3', flux=9, time=4.0, input={'default:bronze_ingot', 'default:tin_ingot 2'}},
+        {result='terumet:block_tcha 3', flux=75, time=54.0, input={'default:bronzeblock', 'default:tinblock 2'}},
+        {result='terumet:ingot_tcha 3', flux=9, time=3.0, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
     -- Terucopper
         {result='terumet:ingot_tcop', flux=1, time=3.0, input={'default:copper_lump'}},
         {result='terumet:ingot_tcop', flux=1, time=2.5, input={'default:copper_ingot'}},
@@ -262,11 +268,6 @@ terumet.options.smelter = {
         {result='terumet:ingot_tgol', flux=3, time=4.0, input={'default:gold_ingot'}},
         {result='terumet:block_tgol', flux=25, time=36.0, input={'default:goldblock'}},
         {result='terumet:ingot_tgol', flux=3, time=2.5, input={'terumet:item_cryst_gold'}},
-    -- Teruchalchum
-        {result='terumet:ingot_tcha 3', flux=9, time=6.0, input={'default:bronze_ingot', 'default:tin_lump 2'}},
-        {result='terumet:ingot_tcha 3', flux=9, time=4.0, input={'default:bronze_ingot', 'default:tin_ingot 2'}},
-        {result='terumet:block_tcha 3', flux=75, time=54.0, input={'default:bronzeblock', 'default:tinblock 2'}},
-        {result='terumet:ingot_tcha 3', flux=9, time=3.0, input={'default:bronze_ingot', 'terumet:item_cryst_tin 2'}},
     -- Coreglass
         {result='terumet:ingot_cgls', flux=5, time=10.0, input={'default:diamond', 'default:obsidian_shard'}},
         {result='terumet:block_cgls', flux=30, time=90.0, input={'default:diamondblock', 'default:obsidian'}},
