@@ -11,12 +11,12 @@ Newer versions listed first
 
 |Armor Alloy  |Defense|Heal|Durability|Special Effects  |
 |-------------|-------|----|----------|-----------------|
-|Terucopper   |60     |0   |500       |                 |
-|Terutin      |40     |20  |300       |Movement Speed++ |
-|Terusteel    |100    |0   |1000      |Movement Speed-  |
-|Teruchalcum  |70     |40  |2000      |                 |
-|Terugold     |50     |80  |200       |Reduced Gravity  |
-|Coreglass    |120    |20  |500       |Movement Speed+, Jump+|
+|Terucopper   |26     |0   |500       |                 |
+|Terutin      |18     |20  |300       |Movement Speed++ |
+|Terusteel    |60     |0   |1000      |Movement Speed-  |
+|Teruchalcum  |46     |24  |2000      |                 |
+|Terugold     |14     |72  |200       |Reduced Gravity  |
+|Coreglass    |52     |32  |500       |Movement Speed+, 2-Block Jump|
 
 ## Version 2.3
 * Added **Terumetal Glass** and **Terumetal Glow Glass**, made via the Alloy Smelter. Both are very hard, durable glasses that are not easily broken (even by explosion).
