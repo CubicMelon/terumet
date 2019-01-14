@@ -51,6 +51,7 @@ function reg_terumet_armor(data)
     data.speed = data.speed or 0
     data.gravity = data.gravity or 0
     data.jump = data.jump or 0
+    data.mrv = data.mrv or 10 -- material repair value of 1x mat
     data.dgroups = data.dgroups or {cracky=3, snappy=3, choppy=3, crumbly=3, level=1}
     data.name = data.name or data.suffix
 
@@ -67,6 +68,7 @@ function reg_terumet_armor(data)
         damage_groups = data.dgroups,
     })
     reg_recipe_boots(boots_id, data.mat)
+    terumet.register_repairable_item(boots_id, data.mrv*4)
 
     local helm_id = terumet.id('armor_helm_'..data.suffix)
     desc = data.name..' Helmet'
@@ -81,6 +83,7 @@ function reg_terumet_armor(data)
         damage_groups = data.dgroups,
     })
     reg_recipe_helm(helm_id, data.mat)
+    terumet.register_repairable_item(helm_id, data.mrv*5)
 
     local chest_id = terumet.id('armor_chest_'..data.suffix)
     desc = data.name..' Chestplate'
@@ -95,6 +98,7 @@ function reg_terumet_armor(data)
         damage_groups = data.dgroups,
     })
     reg_recipe_chest(chest_id, data.mat)
+    terumet.register_repairable_item(chest_id, data.mrv*8)
 
     local legs_id = terumet.id('armor_legs_'..data.suffix)
     desc = data.name..' Greaves'
@@ -109,17 +113,18 @@ function reg_terumet_armor(data)
         damage_groups = data.dgroups,
     })
     reg_recipe_legs(legs_id, data.mat)
+    terumet.register_repairable_item(legs_id, data.mrv*7)
 end
 
 -- Tercopper: 8x2 + 5x2 = 26 defense
-reg_terumet_armor{suffix='tcop', name='Terucopper', mat=terumet.id('ingot_tcop'), def=5, defhi=8, heal=0, uses=500}
+reg_terumet_armor{suffix='tcop', name='Terucopper', mat=terumet.id('ingot_tcop'), mrv=20, def=5, defhi=8, heal=0, uses=500}
 -- Terutin: 5x2 + 4x2 = 18 defense | 5x4 = 20% heal
-reg_terumet_armor{suffix='ttin', name='Terutin', mat=terumet.id('ingot_ttin'), def=4, defhi=5, heal=5, speed=0.1, xinfo='[Speed++]', uses=300}
+reg_terumet_armor{suffix='ttin', name='Terutin', mat=terumet.id('ingot_ttin'), mrv=21, def=4, defhi=5, heal=5, speed=0.1, xinfo='[Speed++]', uses=300}
 -- Terusteel: 18x2 + 12x2 = 60 defense
-reg_terumet_armor{suffix='tste', name='Terusteel', mat=terumet.id('ingot_tste'), def=12, defhi=18, heal=0, speed=-0.05, xinfo='[Speed-]', uses=1000}
+reg_terumet_armor{suffix='tste', name='Terusteel', mat=terumet.id('ingot_tste'), mrv=40, def=12, defhi=18, heal=0, speed=-0.05, xinfo='[Speed-]', uses=1000}
 -- Teruchalcum: 14x2 + 9x2 = 46 defense | 6x4 = 24% heal
-reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), def=9, defhi=14, heal=6, uses=2000}
+reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), mrv=60, def=9, defhi=14, heal=6, uses=2000}
 -- Terugold: 4x2 + 3x2 = 14 defense | 16x4 = 18x4 = 72% heal
-reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), def=3, defhi=4, heal=18, jump=-0.05, gravity=-0.12, xinfo='[Float++]', uses=200}
+reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), mrv=80, def=3, defhi=4, heal=18, jump=-0.05, gravity=-0.12, xinfo='[Float++]', uses=200}
 -- Coreglass: 16x2 + 10x2 = 52 defense | 8x4 = 32% heal
-reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'), def=10, defhi=16, heal=8, speed=0.05, jump=0.08, xinfo='[Speed+] [2-Block Jump]', uses=500}
+reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'), mrv=120, def=10, defhi=16, heal=8, speed=0.05, jump=0.08, xinfo='[Speed+] [2-Block Jump]', uses=500}

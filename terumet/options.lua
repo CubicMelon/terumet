@@ -378,7 +378,7 @@ terumet.options.repm = {
 
     -- all items that can be repaired and how much "repair-material" is required to remove a full wear bar
     -- (TODO) mods can add addtional ones through the API terumet.register_repairable_item -- see interop/terumet_api.lua
-    repairable = {} -- DO NOT CHANGE
+    repairable = {}, -- DO NOT CHANGE
 }
 
 terumet.options.ore_saw = {
