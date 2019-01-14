@@ -310,6 +310,10 @@ for dmat, v in pairs(dmv_values) do
     terumet.register_repair_material(v[2], v[1])
 end
 
+if minetest.global_exists('armor') then
+    terumet.do_lua_file('interop/3darmor')
+end
+
 if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')
 end
