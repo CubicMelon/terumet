@@ -6,6 +6,17 @@ Newer versions listed first
 * Added support for other mods plants/crops being used in the Expansion Crusher
     * bushes
     * farming (farming redo ver.)
+    * Papyrus
+* Added armors for all 6 alloys when [3d_armor](https://github.com/stujones11/minetest-3d_armor) mod is also active. Descriptions for each set follow. The defense/heal values given are for the full 4-piece set. Additionally, the special effects become more powerful the more pieces of the set are worn.
+
+|Armor Alloy  |Defense|Heal|Durability|Special Effects  |
+|-------------|-------|----|----------|-----------------|
+|Terucopper   |60     |0   |500       |                 |
+|Terutin      |40     |20  |300       |Movement Speed++ |
+|Terusteel    |100    |0   |1000      |Movement Speed-  |
+|Teruchalcum  |70     |40  |2000      |                 |
+|Terugold     |50     |80  |200       |Reduced Gravity  |
+|Coreglass    |120    |20  |500       |Movement Speed+, Jump+|
 
 ## Version 2.3
 * Added **Terumetal Glass** and **Terumetal Glow Glass**, made via the Alloy Smelter. Both are very hard, durable glasses that are not easily broken (even by explosion).
