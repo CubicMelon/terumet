@@ -118,12 +118,12 @@ end
 
 -- Tercopper: 8x2 + 5x2 = 26 defense
 reg_terumet_armor{suffix='tcop', name='Terucopper', mat=terumet.id('ingot_tcop'), mrv=20, def=5, defhi=8, heal=0, uses=500}
--- Terutin: 5x2 + 4x2 = 18 defense | 5x4 = 20% heal
-reg_terumet_armor{suffix='ttin', name='Terutin', mat=terumet.id('ingot_ttin'), mrv=21, def=4, defhi=5, heal=5, speed=0.1, xinfo='[Speed++]', uses=300}
+-- Terutin: 5x2 + 4x2 = 18 defense | 6x4 = 24% heal
+reg_terumet_armor{suffix='ttin', name='Terutin', mat=terumet.id('ingot_ttin'), mrv=21, def=4, defhi=5, heal=6, speed=0.1, xinfo='[Speed++]', uses=300}
 -- Terusteel: 18x2 + 12x2 = 60 defense
 reg_terumet_armor{suffix='tste', name='Terusteel', mat=terumet.id('ingot_tste'), mrv=40, def=12, defhi=18, heal=0, speed=-0.05, xinfo='[Speed-]', uses=1000}
--- Teruchalcum: 14x2 + 9x2 = 46 defense | 6x4 = 24% heal
-reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), mrv=60, def=9, defhi=14, heal=6, uses=2000}
+-- Teruchalcum: 11x2 + 8x2 = 38 defense | 5x4 = 20% heal
+reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), mrv=60, def=8, defhi=11, heal=5, uses=2000}
 -- Terugold: 4x2 + 3x2 = 14 defense | 16x4 = 18x4 = 72% heal
 reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), mrv=80, def=3, defhi=4, heal=18, jump=-0.05, gravity=-0.12, xinfo='[Float++]', uses=200}
 -- Coreglass: 16x2 + 10x2 = 52 defense | 8x4 = 32% heal

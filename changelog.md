@@ -12,9 +12,9 @@ Newer versions listed first
 |Armor Alloy  |Defense|Heal|Durability|Special Effects  |
 |-------------|-------|----|----------|-----------------|
 |Terucopper   |26     |0   |500       |                 |
-|Terutin      |18     |20  |300       |Movement Speed++ |
+|Terutin      |18     |24  |300       |Movement Speed++ |
 |Terusteel    |60     |0   |1000      |Movement Speed-  |
-|Teruchalcum  |46     |24  |2000      |                 |
+|Teruchalcum  |38     |20  |2000      |                 |
 |Terugold     |14     |72  |200       |Reduced Gravity  |
 |Coreglass    |52     |32  |500       |Movement Speed+, 2-Block Jump|
 
