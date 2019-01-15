@@ -73,7 +73,7 @@ function base_asm.get_drop_contents(machine)
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
     local flux_tank = machine.meta:get_int('flux_tank') or 0
     if flux_tank > 0 then
-        drops[#drops+1] = terumet.id('item_cryst_raw', math.min(99, flux_tank))
+        drops[#drops+1] = terumet.id('item_cryst_raw', math.min(99, math.floor(flux_tank / opts.FLUX_VALUE)))
     end
     return drops
 end
@@ -85,7 +85,7 @@ function base_asm.do_processing(smelter, dt)
     if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELTING_HU * speed_mult, 'Melting flux') then
         smelter.state_time = smelter.state_time - (dt * speed_mult)
         if smelter.state_time <= 0 then
-            smelter.flux_tank = smelter.flux_tank + 1
+            smelter.flux_tank = smelter.flux_tank + opts.FLUX_VALUE
             smelter.inv:set_stack('result', 1, nil)
             smelter.state = base_asm.STATE.IDLE
         else
@@ -160,8 +160,8 @@ function base_asm.check_new_processing(smelter)
     -- if could not begin alloying anything, check for flux to melt
     for flux_item, flux_params in pairs(opts.FLUX_ITEMS) do
         if in_inv:contains_item(in_list, flux_item) then
-            if smelter.flux_tank >= opts.FLUX_MAXIMUM then
-                error_msg = 'Flux tank full!'
+            if (smelter.flux_tank + opts.FLUX_VALUE) > opts.FLUX_MAXIMUM then
+                error_msg = 'Flux tank is full!'
             else
                 smelter.state = base_asm.STATE.FLUX_MELT
                 smelter.state_time = flux_params.time

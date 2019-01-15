@@ -37,7 +37,9 @@ All above mods should normally be included already if playing the default Minete
 Additonal *optional* support for:
 * unified_inventory (**HIGHLY recommended**)
 * techpack / tubelib
-* stairs
+* 3d_armor
+
+Note: mesecons is listed as an optional dependent only for code to prevent Terumetal machines from being moved by mesecon pistons.
 
 # Overview/Tutorial
 

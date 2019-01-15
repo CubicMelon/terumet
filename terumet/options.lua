@@ -218,9 +218,13 @@ terumet.options.smelter = {
     --
     -- Maximum HUs smelter can contain
     MAX_HEAT = 2000,
-    -- Maximum size (in item count) of an alloy smelter's flux tank
-    -- (note if greater than 99, some flux could be lost when breaking a smelter -- only up to 99 flux will be dropped)
-    FLUX_MAXIMUM = 50,
+    -- Amount of flux value (FV) one item is worth
+    FLUX_VALUE = 2,
+    -- Maximum stored FV of an alloy smelter's flux tank
+    -- NOTE: if FLUX_MAXIMUM / FLUX_VALUE > 99, flux could be lost on breaking a smelter
+    -- (only a maximum of 1 stack of Crystallized Terumetal will be dropped)
+    -- also if stored flux < FLUX_VALUE, that amount will be lost (minimum 1 Crystallized Terumetal dropped)
+    FLUX_MAXIMUM = 100,
     -- Heat expended per tick melting flux
     COST_FLUX_MELTING_HU = 2,
     -- Heat expended per tick alloying

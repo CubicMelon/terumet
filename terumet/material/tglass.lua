@@ -17,7 +17,7 @@ minetest.register_node(tglass_id, {
     tiles = tiles,
     is_ground_content = false,
     sunlight_propagates = true,
-    groups = {cracky = 1, level = 3},
+    groups = {cracky = 1, level = 2},
     sounds = default.node_sound_glass_defaults(),
     on_blast = terumet.blast_chance(30, tglass_id),
 })
@@ -32,7 +32,7 @@ minetest.register_node(tglass_glow_id, {
     is_ground_content = false,
     sunlight_propagates = true,
     light_source=13,
-    groups = {cracky = 1, level = 3},
+    groups = {cracky = 1, level = 2},
     sounds = default.node_sound_glass_defaults(),
     on_blast = terumet.blast_chance(15, tglass_glow_id),
 })
