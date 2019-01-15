@@ -7,6 +7,9 @@ Newer versions listed first
     * bushes
     * farming (farming redo ver.)
     * Papyrus
+* Reduced node level of Terumetal Glass - now level 2
+* Added a multiplier to the value of Terumetal Flux in the Alloy Smelter -- x2 by default. Having to constantly farm Raw Terumetal proved to be quite tedious in testing, so now each item is worth 2 units of flux by default. Also doubled the max size of the flux tank to accomodate.
+    * When a smelter that contains flux is broken it now drops Flux Tank / Multiplier Crystallized Terumetal, to prevent duplication. It rounds down, so if less than the multiplier is in the tank you will lose that flux, but it is a very minor loss in comparison.
 * Added armors for all 6 alloys when [3d_armor](https://github.com/stujones11/minetest-3d_armor) mod is also active. Descriptions for each set follow. The defense/heal values given are for the full 4-piece set. Additionally, the special effects become more powerful the more pieces of the set are worn.
 
 |Armor Alloy  |Defense|Heal|Durability|Special Effects  |
