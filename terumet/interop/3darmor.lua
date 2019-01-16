@@ -116,6 +116,38 @@ function reg_terumet_armor(data)
     terumet.register_repairable_item(legs_id, data.mrv*7)
 end
 
+-- enable terumet bands if we can add a new equip type
+if armor.elements then
+    table.insert(armor.elements, "terumet_brcr")
+
+    function reg_terumet_band(data)
+        if not data or not data.suffix then error('Missing data on registering Terumetal bracer') end
+        data.uses = data.uses or 500
+        data.def = data.def or 0
+        data.heal = data.heal or 0
+        data.speed = data.speed or 0
+        data.gravity = data.gravity or 0
+        data.jump = data.jump or 0
+        data.dgroups = data.dgroups or {cracky=3, snappy=3, choppy=3, crumbly=3, level=1}
+        data.name = data.name or data.suffix
+
+        local band_id = terumet.id('brcr'..data.suffix)
+        local desc = data.name .. ' Bracers'
+        if data.xinfo then desc=desc..'\n'..data.xinfo end
+        armor:register_armor(band_id, {
+            description= desc,
+            inventory_image = terumet.tex('invbrcr_'..data.suffix),
+            texture = terumet.tex('armbrcr_'..data.suffix),
+            preview = terumet.tex('prvbrcr_'..data.suffix),
+            groups = gen_armor_groups('armor_terumet_brcr', data),
+            armor_groups = {fleshy=data.def},
+            damage_groups = data.dgroups,
+        })
+    end
+
+    reg_terumet_band{suffix='base', name='Base', def=10, uses=800}
+end
+
 -- Tercopper: 8x2 + 5x2 = 26 defense
 reg_terumet_armor{suffix='tcop', name='Terucopper', mat=terumet.id('ingot_tcop'), mrv=20, def=5, defhi=8, heal=0, uses=500}
 -- Terutin: 5x2 + 4x2 = 18 defense | 6x4 = 24% heal
