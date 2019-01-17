@@ -17,20 +17,18 @@ This mod creates a new ore in the world which can be used to make useful alloys 
 See the changelog [Here](changelog.md)
 
 ## Installing
-Download the latest v2.2 release from [Here](https://github.com/Terumoc/terumet/releases/tag/v2.2)
+Click the green "Clone or download" button above to get a ZIP file of the up-to-date work in progress version of the mod. If you want an older stable version, click the "releases" header.
 
-Unzip the folder into a temporary space then move/copy the subfolder **terumet** into your minetest **mods** folder.
+Unzip the folder into a temporary space then move/copy the *subfolder* **terumet** into your minetest **mods** folder.
 
-**The items outside of that folder are development files and are *not needed* to use the mod.**
-
-**Important: if you are still using Minetest 0.4.X then the last supported version of Terumetal is [version 2.0](https://github.com/Terumoc/terumet/releases/tag/v2.0).**
+**The items outside of that folder are development files and are *not needed* to use the mod. They can be deleted after moving the "terumet" folder out.**
 
 ## Mod Dependencies
 This mod depends on:
 * default
 * bucket
 * screwdriver
-* farming
+* farming (either default or farming redo)
 
 All above mods should normally be included already if playing the default Minetest subgame.
 
