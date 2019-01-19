@@ -19,7 +19,7 @@ Newer versions listed first
 |Terusteel    |  9x2 + 14x2=  46 |    0     |  7/ea |      800 |
 |Teruchalcum  |  7x2 + 11x2=  36 |  4x4= 16 |  4/ea |     1500 |
 |Terugold     |  2x2 +  3x2=  10 | 10x4= 40 |  5/ea |      300 |
-|Coreglass    |  6x2 + 10x2=  32 |  6x4= 24 |  3/ea |      600 | 
+|Coreglass    |  6x2 + 14x2=  40 |  6x4= 24 |  3/ea |      600 | 
 
 * Added bracers when 3d_armor is active. Each act as a new armor slot ("terumet_brcr") and provide one powerful special effect.
 

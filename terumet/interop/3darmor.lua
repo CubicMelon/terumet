@@ -188,4 +188,4 @@ reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'
 reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), mrv=80, 
     def=2, defhi=3, heal=10, speed=-0.05, gravity=0.025, xinfo='Weight +5', uses=300}
 reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'), mrv=120,
-    def=6, defhi=10, heal=6, speed=-0.03, gravity=0.015, xinfo='Weight +3', uses=600}
+    def=6, defhi=14, heal=6, speed=-0.03, gravity=0.015, xinfo='Weight +3', uses=600}
