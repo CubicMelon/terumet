@@ -167,9 +167,11 @@ if opts.BRACERS then
                 {coil, metal, coil}
             }}
         end
+
+        terumet.register_repairable_item(band_id, data.rep or 80)
     end
 
-    reg_terumet_band{suffix='base', name='Base', xinfo='No special effects', def=5, uses=500}
+    reg_terumet_band{suffix='base', name='Terumetal', xinfo='No effects', def=5, uses=500, rep=80}
 
     for band_id, band_data in pairs(opts.BRACERS) do
         band_data.suffix = band_id

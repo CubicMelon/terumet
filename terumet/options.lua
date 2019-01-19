@@ -407,17 +407,17 @@ terumet.options.armor = {
     -- delete or comment out entire BRACERS = {...} block to disable all bracers
     BRACERS = { -- delete single line or comment out (add -- to start) to disable that type of bracer
         -- water-breathing bracer
-        aqua={name='Aqua', mat='default:papyrus', xinfo='Underwater breathing', def=5, uses=500, breathing=1},
+        aqua={name='Aqua', mat='default:papyrus', xinfo='Underwater breathing', def=5, uses=500, rep=100, breathing=1},
         -- high jump bracer
-        jump={name='Jump', mat='default:mese_crystal', xinfo='Increase jump height', def=5, uses=500, jump=0.32},
+        jump={name='Jump', mat='default:mese_crystal', xinfo='Increase jump height', def=5, uses=500, rep=150, jump=0.32},
         -- movement speed bracer
-        spd={name='Speed', mat='terumet:item_cryst_dia', xinfo='Increase move speed', def=5, uses=500, speed=0.4},
+        spd={name='Speed', mat='terumet:item_cryst_dia', xinfo='Increase move speed', def=5, uses=500, rep=400, speed=0.4},
         -- anti-gravity bracer
-        agv={name='Antigravity', mat='default:flint', xinfo='Reduce gravity', def=5, uses=500, gravity=-0.6, jump=-0.2},
+        agv={name='Antigravity', mat='default:flint', xinfo='Reduce gravity', def=5, uses=500, rep=150, gravity=-0.6, jump=-0.2},
         -- high heal bracer
-        heal={name='Heal', mat='default:apple', xinfo='Heal +30', heal=30, uses=400},
+        heal={name='Heal', mat='default:apple', xinfo='Heal +30', heal=30, uses=400, rep=200},
         -- high defense bracer
-        def={name='Defense', mat='default:obsidian', xinfo='Defense +30', def=33, uses=1000},
+        def={name='Defense', mat='default:obsidian', xinfo='Defense +30', def=33, uses=1000, rep=300},
     },
     -- Item used to create bracer crystals
     BRACER_CRYSTAL_ITEM = 'default:steelblock',
