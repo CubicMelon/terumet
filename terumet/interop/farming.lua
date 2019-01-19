@@ -5,7 +5,7 @@
 local small_crops = {
     'wheat', 'peas', 'barley', 'beans', 'pepper', 'beetroot', 'chili_pepper', 'blueberries',
     'cucumber', 'grapes', 'garlic', 'onion', 'pea_pod', 'pineapple_ring', 'pineapple_top', 'potato',
-    'raspberries', 'tomato', 'corn'
+    'raspberries', 'tomato', 'corn', 'rhubarb'
 }
 
 for _,crop in ipairs(small_crops) do
