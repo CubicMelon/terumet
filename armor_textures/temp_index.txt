@@ -1,6 +1,6 @@
-terumet_armhelm_temp.png:head
-terumet_armchest_temp.png:torso
-terumet_armlegs_temp.png:legs
-terumet_armboots_temp.png:feet
+terumet_armhelm_base.png:head
+terumet_armchest_base.png:torso
+terumet_armlegs_base.png:legs
+terumet_armboots_base.png:feet
 
 

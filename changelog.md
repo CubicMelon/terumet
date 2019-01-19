@@ -10,16 +10,18 @@ Newer versions listed first
 * Reduced node level of Terumetal Glass - now level 2
 * Added a multiplier to the value of Terumetal Flux in the Alloy Smelter -- x2 by default. Having to constantly farm Raw Terumetal proved to be quite tedious in testing, so now each item is worth 2 units of flux by default. Also doubled the max size of the flux tank to accomodate.
     * When a smelter that contains flux is broken it now drops Flux Tank / Multiplier Crystallized Terumetal, to prevent duplication. It rounds down, so if less than the multiplier is in the tank you will lose that flux, but it is a very minor loss in comparison.
-* Added armors for all 6 alloys when [3d_armor](https://github.com/stujones11/minetest-3d_armor) mod is also active. Descriptions for each set follow. The defense/heal values given are for the full 4-piece set. Additionally, the special effects become more powerful the more pieces of the set are worn.
+* Added armors for all 6 alloys when [3d_armor](https://github.com/stujones11/minetest-3d_armor) mod is also active. Descriptions for each set follow.
 
-|Armor Alloy  |Defense|Heal|Durability|Special Effects  |
-|-------------|-------|----|----------|-----------------|
-|Terucopper   |26     |0   |500       |                 |
-|Terutin      |18     |24  |300       |Movement Speed++ |
-|Terusteel    |60     |0   |1000      |Movement Speed-  |
-|Teruchalcum  |38     |20  |2000      |                 |
-|Terugold     |14     |72  |200       |Reduced Gravity  |
-|Coreglass    |52     |32  |500       |Movement Speed+, 2-Block Jump|
+|Armor Alloy  |Defense           |Heal      |Weight |Durability|
+|-------------|------------------|----------|-------|----------|
+|Terucopper   |  4x2 +  6x2=  20 |  2x4=  8 |    0  |     1200 |
+|Terutin      |  3x2 +  5x2=  16 |  3x4= 12 | -2/ea |      500 |
+|Terusteel    |  9x2 + 14x2=  46 |    0     |  7/ea |      800 |
+|Teruchalcum  |  7x2 + 11x2=  36 |  4x4= 16 |  4/ea |     1500 |
+|Terugold     |  2x2 +  3x2=  10 | 10x4= 40 |  5/ea |      300 |
+|Coreglass    |  6x2 + 10x2=  32 |  6x4= 24 |  3/ea |      600 | 
+
+* Added bracers when 3d_armor is active. Each act as a new armor slot ("terumet_brcr") and provide one powerful special effect.
 
 ## Version 2.3
 * Added **Terumetal Glass** and **Terumetal Glow Glass**, made via the Alloy Smelter. Both are very hard, durable glasses that are not easily broken (even by explosion).

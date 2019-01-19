@@ -31,7 +31,7 @@ end
 -- required data keys and descriptions:
 local ALLOY_REQUIRED = {
     result='[itemstack string] what will be output',
-    inputs='[table, 1-4 stacks] table of itemstacks consumed as input',
+    input='[table, 1-4 stacks] table of itemstacks consumed as input',
     time='[float] time in seconds to process',
     flux='[integer] amount of terumetal flux consumed from tank',
 }
@@ -44,8 +44,8 @@ function terumet.register_alloy_recipe(data)
             error(string.format('terumet.register_alloy_recipe: recipe data is missing required key %s: %s', req_key, desc))
         end
     end
-    if type(inputs) ~= 'table' or #inputs < 1 or #inputs > 4 then
-        error('terumet.register_alloy_recipe: invalid inputs; must be a table of 1-4 itemstack strings (inclusive)')
+    if type(data.input) ~= 'table' or #data.input < 1 or #data.input > 4 then
+        error('terumet.register_alloy_recipe: invalid input; must be a table of 1-4 itemstack strings (inclusive)')
     end
     local list = terumet.options.smelter.recipes
     list[#list+1] = data
