@@ -65,6 +65,10 @@ minetest.register_craft{ output = biomat_item..' 9',
     recipe = {biomat_block}
 }
 
+minetest.register_craft{ output = 'default:torch 4',
+    recipe = { {biomat_item},
+               {'group:stick'}}
+}
 -- =======================================================
 
 minetest.register_craftitem( glue_item, {

@@ -47,8 +47,7 @@ function terumet.register_alloy_recipe(data)
     if type(data.input) ~= 'table' or #data.input < 1 or #data.input > 4 then
         error('terumet.register_alloy_recipe: invalid input; must be a table of 1-4 itemstack strings (inclusive)')
     end
-    local list = terumet.options.smelter.recipes
-    list[#list+1] = data
+    table.insert(terumet.options.smelter.recipes, 1, data)
 end
 
 -- register a new crystallized material with the provided data
