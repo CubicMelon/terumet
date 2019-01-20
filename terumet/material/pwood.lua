@@ -27,3 +27,8 @@ if minetest.global_exists('stairs') then
         default.node_sound_wood_defaults()
     )
 end
+
+if minetest.global_exists('walls') then
+    walls.register(terumet.id('walls_pwood'), 'Pressed Wood Wall', pwood_tiles,
+		pwood_id, default.node_sound_stone_defaults())
+end

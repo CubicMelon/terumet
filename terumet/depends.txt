@@ -2,6 +2,7 @@ default
 bucket
 screwdriver
 farming
+walls
 unified_inventory?
 tubelib?
 stairs?
