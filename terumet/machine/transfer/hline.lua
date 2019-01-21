@@ -62,8 +62,8 @@ function terumet.register_heatline_block(base, code)
         end
     end
     def.description = 'Heatline '..def.description
-    
     local hlblock_id = terumet.id('hline_block_'..code)
+    def.drop = hlblock_id -- override cobblestone drops
     minetest.register_node(hlblock_id, def)
 
     minetest.register_craft{ output = hlblock_id..' 4', recipe = {
