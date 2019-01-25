@@ -96,6 +96,7 @@ function furn_htr.check_new_processing(heater)
         if cook_result.time ~= 0 then
             heater.state = furn_htr.STATE.BURNING
             in_inv:set_stack(in_list, slot, cook_after.items[1])
+            input_stack:set_count(1)
             heater.inv:set_stack('burn', 1, input_stack)
             heater.state_time = cook_result.time / 2
             heater.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for burning...'
