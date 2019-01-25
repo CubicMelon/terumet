@@ -60,32 +60,45 @@ local CRYSTAL_REQUIRED = {
     suffix='[string] ID suffix for crystallized item',
     color='[colorspec] minetest colorspec for crystallized item color',
     name='[string] name of crystallized item',
-    source='[itemstack string] source item that creates crystallized item',
-    cooking_result='[itemstack string] result of cooking crystallized item'
+    cooking_result='[itemstack string] result of cooking crystallized item',
 }
 
+
 function terumet.register_crystal(data)
+    local this_func = 'terumet.register_crystal'
     if not data then
-        error('terumet.register_crystal: no material data provided')
+        error(this_func..': no data provided')
     end
     for req_key, desc in pairs(CRYSTAL_REQUIRED) do
         if not data[req_key] then
-            error(string.format('terumet.register_crystal: material data is missing required key %s: %s', req_key, desc))
+            error(string.format('%s: data missing required key %s: %s', this_func, req_key, desc))
         end
     end
-    local crys_id = terumet.id('item_cryst_' .. data.suffix)
+    local crys_id = terumet.id('item_cryst_'..data.suffix)
     minetest.register_craftitem( crys_id, {
         description = data.name,
         inventory_image = terumet.crystal_tex(data.color),
     })
-
     minetest.register_craft{ type = 'cooking', 
         output = data.cooking_result,
         recipe = crys_id,
         cooktime = 5
     }
+    return crys_id -- returns crystal item ID
+end
 
-    terumet.options.vulcan.recipes[data.source] = crys_id
+-- register an item that can be put into crystal vulcanizer
+-- requires source item and result, optionally include integer modifier
+-- by default creates 2 result items, but count_modifier is added to that value
+-- +1 more result item if vulcanizer has upgrade
+function terumet.register_vulcan_result(source, result, count_modifier)
+    count_modifier = count_modifier or 0
+    local this_func = 'terumet.register_vulcan_result'
+    if not source then error(this_func..': no source item provided') end
+    if not result then error(this_func..': no result item provided') end
+    local count = 2 + count_modifier
+    if( count < 1 ) then count = 1 end
+    terumet.options.vulcan.recipes[source] = {result, count}
 end
 
 -- register that a node can generate heat when extracted by the Environmental Entropy Extraction Heater (EEE Heater)

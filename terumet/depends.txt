@@ -5,6 +5,7 @@ farming
 walls
 unified_inventory?
 tubelib?
+doors?
 stairs?
 tnt?
 mesecons?

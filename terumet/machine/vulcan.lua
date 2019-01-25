@@ -96,7 +96,7 @@ function base_vul.check_new_processing(vulcan)
         local input_stack = in_inv:get_stack(in_list, slot)
         local matched_recipe = opts.recipes[input_stack:get_name()]
         if matched_recipe then
-            local yield = 2
+            local yield = matched_recipe[2]
             vulcan.state = base_vul.STATE.VULCANIZING
             vulcan.state_time = opts.PROCESS_TIME
             vulcan.heat_cost = opts.COST_VULCANIZE
@@ -106,7 +106,7 @@ function base_vul.check_new_processing(vulcan)
                 vulcan.heat_cost = vulcan.heat_cost * 2
             end
             in_inv:remove_item(in_list, input_stack:get_name())
-            vulcan.inv:set_stack('result', 1, matched_recipe .. ' ' .. yield)
+            vulcan.inv:set_stack('result', 1, matched_recipe[1] .. ' ' .. yield)
             vulcan.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for vulcanizing...'
             return
         end

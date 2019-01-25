@@ -124,7 +124,7 @@ if opts.BRACERS then
         inventory_image = terumet.tex(brcrcrys_id)
     })
     -- add vulcan crystallizer recipe for bracer crystal
-    terumet.options.vulcan.recipes[opts.BRACER_CRYSTAL_ITEM] = brcrcrys_id
+    terumet.options.vulcan.recipes[opts.BRACER_CRYSTAL_ITEM] = {brcrcrys_id, 2}
 
     function reg_terumet_band(data)
         if not data or not data.suffix then error('Missing data on registering Terumetal bracer') end

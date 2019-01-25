@@ -314,6 +314,10 @@ if minetest.global_exists('armor') then
     terumet.do_lua_file('interop/3darmor')
 end
 
+if minetest.global_exists('doors') then
+    terumet.do_lua_file('interop/doors')
+end
+
 if minetest.global_exists('unified_inventory') then 
     terumet.do_lua_file('interop/unified_inventory')
 end

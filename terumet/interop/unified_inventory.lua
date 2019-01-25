@@ -51,10 +51,11 @@ function add_terumet_recipes()
     end
 
     -- add each crystal vulcanizer recipe to UnInv
-    for source, crystal in pairs(terumet.options.vulcan.recipes) do
+    for source, result in pairs(terumet.options.vulcan.recipes) do
+        --minetest.log(string.format('%s => %s x %s', source or 'NIL', result[1] or 'NIL', result[2] or 'NIL'))
         unified_inventory.register_craft{
             type = 'terumet_vulcan',
-            output = crystal .. ' 2',  -- change here if yield updated
+            output = result[1] .. ' ' .. result[2],
             items = {source}
         }
     end
