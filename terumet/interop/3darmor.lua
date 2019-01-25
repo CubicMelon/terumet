@@ -120,10 +120,10 @@ if opts.BRACERS then
 
     local brcrcrys_id = terumet.id('item_brcrcrys')
     minetest.register_craftitem( brcrcrys_id, {
-        description = 'Bracer Crystal',
+        description = 'Base Bracer Element',
         inventory_image = terumet.tex(brcrcrys_id)
     })
-    -- add vulcan crystallizer recipe for bracer crystal
+    -- add vulcan crystallizer recipe for bracer casters
     terumet.options.vulcan.recipes[opts.BRACER_CRYSTAL_ITEM] = {brcrcrys_id, 2}
 
     function reg_terumet_band(data)
@@ -151,7 +151,7 @@ if opts.BRACERS then
         if data.mat then
             local ecryst_id = terumet.id('item_brcrcrys_'..data.suffix)
             minetest.register_craftitem( ecryst_id, {
-                description = data.name..' Bracer Crystal',
+                description = data.name..' Bracer Element',
                 inventory_image = terumet.tex(ecryst_id)
             })
 
