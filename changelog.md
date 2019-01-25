@@ -10,6 +10,9 @@ Newer versions listed first
 * Reduced node level of Terumetal Glass - now level 2
 * Added a multiplier to the value of Terumetal Flux in the Alloy Smelter -- x2 by default. Having to constantly farm Raw Terumetal proved to be quite tedious in testing, so now each item is worth 2 units of flux by default. Also doubled the max size of the flux tank to accomodate.
     * When a smelter that contains flux is broken it now drops Flux Tank / Multiplier Crystallized Terumetal, to prevent duplication. It rounds down, so if less than the multiplier is in the tank you will lose that flux, but it is a very minor loss in comparison.
+* Revamped how crystal vulcanizer recipes are defined. This change also allowed all ore nodes to now be crystallized to increase yield significantly. (Using ore saw to gather 1 iron ore node can now be vulcanized into 3 crystallized iron, 4 with upgrade)
+    * External mods and dependent mods can determine the item IDs for default crystallized materials through `terumet.crystal_ids[X] where X can be 'iron', 'gold', 'diamond', etc...
+* Machine processing formspecs now display a stack count when processing multiple items at once
 * Added armors for all 6 alloys when [3d_armor](https://github.com/stujones11/minetest-3d_armor) mod is also active. Descriptions for each set follow. Higher "Weight" reduces movement speed and jump height.
 
 |Armor Alloy  |Defense           |Heal      |Weight |Durability|
