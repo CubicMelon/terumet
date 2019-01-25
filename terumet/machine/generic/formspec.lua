@@ -173,8 +173,14 @@ end
 -- basic process display
 function base_mach.fs_proc(fsx, fsy, proc, itemstack)
     if itemstack and not itemstack:is_empty() then
-        return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]item_image[%f,%f;1,1;%s]', 
-            fsx, fsy, proc, fsx+0.4, fsy+0.4, itemstack:get_name())
+        local count = itemstack:get_count()
+        if count > 1 then
+            return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]item_image[%f,%f;1,1;%s]label[%f,%f;x%d]', 
+                fsx, fsy, proc, fsx+0.4, fsy+0.4, itemstack:get_name(), fsx+1,fsy+1.3, count)
+        else
+            return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]item_image[%f,%f;1,1;%s]',
+                fsx, fsy, proc, fsx+0.4, fsy+0.4, itemstack:get_name())
+        end
     else
         return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]', fsx, fsy, proc)
     end
