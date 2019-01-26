@@ -13,6 +13,7 @@ Newer versions listed first
 * Revamped how crystal vulcanizer recipes are defined. This change also allowed all ore nodes to now be crystallized to increase yield significantly. (Using ore saw to gather 1 iron ore node can now be vulcanized into 3 crystallized iron, 4 with upgrade)
     * External mods and dependent mods can determine the item IDs for default crystallized materials through `terumet.crystal_ids[X] where X can be 'iron', 'gold', 'diamond', etc...
 * Machine processing formspecs now display a stack count when processing multiple items at once
+* Added metal doors for all 6 alloys in 4 styles each. They are protected like iron doors and have a node level akin to their metal block levels.
 * Added armors for all 6 alloys when [3d_armor](https://github.com/stujones11/minetest-3d_armor) mod is also active. Descriptions for each set follow. Higher "Weight" reduces movement speed and jump height.
 
 |Armor Alloy  |Defense           |Heal      |Weight |Durability|
