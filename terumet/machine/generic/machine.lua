@@ -238,6 +238,7 @@ function base_mach.read_state(pos)
     local node_info = minetest.get_node_or_nil(pos)
     if not node_info then return nil end -- unloaded
     machine.nodedef = minetest.registered_nodes[node_info.name]
+    if not machine.nodedef then return nil end
     machine.class = machine.nodedef._terumach_class
     if not machine.class then return nil end -- not a terumetal machine
     local meta = minetest.get_meta(pos)
