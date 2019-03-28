@@ -162,7 +162,8 @@ terumet.options.crusher = {
         ['group:wood']='terumet:item_dust_wood 1',
         ['bushes:BushLeaves1']='terumet:item_dust_bio',
         ['bushes:BushLeaves2']='terumet:item_dust_bio',
-        ['dryplants:grass']='terumet:item_dust_bio'
+        ['dryplants:grass']='terumet:item_dust_bio',
+        ['vines:vines']='terumet:item_dust_bio'
     }
 }
 terumet.do_lua_file('interop/farming') -- see interop/farming.lua, adds farming crops to crusher

@@ -21,6 +21,7 @@ base_mach.buttondefs.HEAT_XFER_TOGGLE = {
     off_text = 'Adjacent Heat transfer off'
 }
 
+
 -- build and return a formspec given a machine state
 -- takes fsdef table from machine's class definition to define what is shown and where
 -- _terumach_class.fsdef guidelines: is a table with definitions for sections or elements. Nearly all info is optional and will be given standard defaults (or omitted) if not provided
