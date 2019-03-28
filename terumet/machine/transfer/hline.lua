@@ -7,7 +7,7 @@ local line_id = terumet.id('xfer_hline')
 minetest.register_node( line_id, {
     description = 'Heatline',
     tiles = {terumet.tex('hline')},
-    
+
     groups={cracky=3, oddly_breakable_by_hand=3, terumet_hline=1},
 
     drawtype = "nodebox",
@@ -40,10 +40,10 @@ function terumet.register_heatline_block(base, code)
     local base_def = minetest.registered_nodes[base]
     if not base_def then error('base '..base..' is not defined') end
     local def = {}
-    for k,v in pairs(base_def) do 
+    for k,v in pairs(base_def) do
         if k == 'groups' then
             def.groups = {}
-            for gk,gv in pairs(v) do 
+            for gk,gv in pairs(v) do
                 if not terumet.options.misc.BLOCK_REMOVE_GROUPS[gk] then
                     def.groups[gk]=gv
                 end

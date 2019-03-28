@@ -1,5 +1,5 @@
 local opts = terumet.options.vulcan
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
@@ -91,7 +91,6 @@ end
 function base_vul.check_new_processing(vulcan)
     if vulcan.state ~= base_vul.STATE.IDLE then return end
     local in_inv, in_list = base_mach.get_input(vulcan)
-    local cook_result
     for slot = 1,in_inv:get_size(in_list) do
         local input_stack = in_inv:get_stack(in_list, slot)
         local matched_recipe = opts.recipes[input_stack:get_name()]
@@ -100,7 +99,7 @@ function base_vul.check_new_processing(vulcan)
             vulcan.state = base_vul.STATE.VULCANIZING
             vulcan.state_time = opts.PROCESS_TIME
             vulcan.heat_cost = opts.COST_VULCANIZE
-            if base_mach.has_upgrade(vulcan, 'cryst') then 
+            if base_mach.has_upgrade(vulcan, 'cryst') then
                 yield = yield + 1
                 vulcan.state_time = vulcan.state_time * 3
                 vulcan.heat_cost = vulcan.heat_cost * 2

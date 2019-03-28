@@ -1,5 +1,5 @@
 local opts = terumet.options.repm
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
@@ -153,7 +153,7 @@ end
 function base_repm.check_new_processing(repm)
     -- only check if presently IDLE
     if repm.state ~= base_repm.STATE.IDLE then return end
-    
+
     local in_inv, in_list = base_mach.get_input(repm)
     local out_inv, out_list = base_mach.get_output(repm)
 

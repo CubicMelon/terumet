@@ -100,13 +100,8 @@ end
 function base_lavam.tick(pos, dt)
     -- read state from meta
     local lavam = base_mach.tick_read_state(pos)
-    local venting
     local reset_timer = false
-    if base_mach.check_overheat(lavam, opts.MAX_HEAT) then
-        -- venting heat
-        venting = true
-    else
-        -- normal operation
+    if not base_mach.check_overheat(lavam, opts.MAX_HEAT) then
         base_lavam.do_processing(lavam, dt)
         base_lavam.check_new_processing(lavam)
         base_mach.process_fuel(lavam)

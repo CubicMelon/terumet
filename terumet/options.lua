@@ -297,7 +297,7 @@ terumet.options.furnace = {
     TIME_MULT = 0.5,
 }
 
-terumet.options.vulcan = { 
+terumet.options.vulcan = {
     --
     -- CRYSTAL VULCANIZER SETTINGS
     --
@@ -320,9 +320,9 @@ terumet.options.lavam = {
     -- Nodes that can be melted to lava
     -- related number is total required heat to melt
     VALID_STONES = {
-        ['default:stone']=1500, 
-        ['default:cobble']=2000, 
-        ['default:desert_stone']=1400, 
+        ['default:stone']=1500,
+        ['default:cobble']=2000,
+        ['default:desert_stone']=1400,
         ['default:desert_cobble']=1800
     },
     -- total time for 1 item required in seconds (best if required heat/MELT_TIME is a whole number)

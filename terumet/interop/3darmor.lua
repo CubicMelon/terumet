@@ -1,12 +1,12 @@
 -- add armor when 3darmor mod is also active
 local opts = terumet.options.armor
 
-function gen_armor_groups(type, data)
+local function gen_armor_groups(type, data)
     local grps = {
-        armor_use=data.uses, 
+        armor_use=data.uses,
         armor_heal=(data.heal or 0),
         armor_water=(data.breathing or 0),
-        physics_speed=(data.speed or 0), 
+        physics_speed=(data.speed or 0),
         physics_gravity=(data.gravity or 0),
         physics_jump=(data.jump or 0),
     }
@@ -14,14 +14,14 @@ function gen_armor_groups(type, data)
     return grps
 end
 
-function reg_recipe_boots(id, mat)
+local function reg_recipe_boots(id, mat)
     minetest.register_craft{output=id, recipe={
         {mat, '', mat},
         {mat, '', mat}
     }}
 end
 
-function reg_recipe_legs(id, mat)
+local function reg_recipe_legs(id, mat)
     minetest.register_craft{output=id, recipe={
         {mat, mat, mat},
         {mat, '', mat},
@@ -29,7 +29,7 @@ function reg_recipe_legs(id, mat)
     }}
 end
 
-function reg_recipe_chest(id, mat)
+local function reg_recipe_chest(id, mat)
     minetest.register_craft{output=id, recipe={
         {mat, '', mat},
         {mat, mat, mat},
@@ -37,14 +37,14 @@ function reg_recipe_chest(id, mat)
     }}
 end
 
-function reg_recipe_helm(id, mat)
+local function reg_recipe_helm(id, mat)
     minetest.register_craft{output=id, recipe={
         {mat, mat, mat},
         {mat, '', mat},
     }}
 end
 
-function format_desc(fullname, xinfo)
+local function format_desc(fullname, xinfo)
     if xinfo then
         return string.format("%s\n%s", fullname, minetest.colorize(opts.EFFECTS_TEXTCOLOR, xinfo))
     else
@@ -52,7 +52,7 @@ function format_desc(fullname, xinfo)
     end
 end
 
-function reg_terumet_armor(data)
+local function reg_terumet_armor(data)
     if not data or not data.suffix or not data.mat then error('Missing data on registering Terumetal armor') end
     data.uses = data.uses or 500
     data.def = (data.def or 1)
@@ -126,7 +126,7 @@ if opts.BRACERS then
     -- add vulcan crystallizer recipe for bracer casters
     terumet.options.vulcan.recipes[opts.BRACER_CRYSTAL_ITEM] = {brcrcrys_id, 2}
 
-    function reg_terumet_band(data)
+    local function reg_terumet_band(data)
         if not data or not data.suffix then error('Missing data on registering Terumetal bracer') end
         data.uses = data.uses or 500
         data.def = data.def or 0
@@ -183,11 +183,11 @@ reg_terumet_armor{suffix='tcop', name='Terucopper', mat=terumet.id('ingot_tcop')
     def=4, defhi=6, heal=2, uses=1200}
 reg_terumet_armor{suffix='ttin', name='Terutin', mat=terumet.id('ingot_ttin'), mrv=21,
     def=3, defhi=5, heal=3, speed=0.02, gravity=-0.01, xinfo='Weight -2', uses=500}
-reg_terumet_armor{suffix='tste', name='Terusteel', mat=terumet.id('ingot_tste'), mrv=40, 
+reg_terumet_armor{suffix='tste', name='Terusteel', mat=terumet.id('ingot_tste'), mrv=40,
     def=9, defhi=14, heal=0, speed=-0.07, gravity=0.045, xinfo='Weight +7', uses=800}
-reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), mrv=60, 
+reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), mrv=60,
     def=7, defhi=11, heal=4, speed=-0.04, gravity=0.02, xinfo='Weight +4', uses=1500}
-reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), mrv=80, 
+reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), mrv=80,
     def=2, defhi=3, heal=10, speed=-0.05, gravity=0.025, xinfo='Weight +5', uses=300}
 reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'), mrv=120,
     def=6, defhi=14, heal=6, speed=-0.03, gravity=0.015, xinfo='Weight +3', uses=600}

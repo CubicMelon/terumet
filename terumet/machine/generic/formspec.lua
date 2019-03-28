@@ -5,9 +5,10 @@ local SPECIAL_OWNERS = {
     ['*'] = '<Everyone>'
 }
 
-local fs_container = function(fsx,fsy,machine,content_func)
-    return string.format('container[%f,%f]%scontainer_end[]', fsx, fsy, func(machine))
-end
+-- UNUSED TEST
+-- local fs_container = function(fsx,fsy,machine,content_func)
+--    return string.format('container[%f,%f]%scontainer_end[]', fsx, fsy, func(machine))
+-- end
 
 base_mach.buttondefs = {}
 -- standard control button to toggle on/off heat transfer
@@ -81,12 +82,12 @@ function base_mach.build_fs(machine)
         fs = fs .. fsdef.control(machine)
     end
     -- DEBUG
-    fs = fs..string.format('label[0,%f;State: %d]', fs_height - 0.25, machine.state or 'nil') 
+    fs = fs..string.format('label[0,%f;State: %d]', fs_height - 0.25, machine.state or 'nil')
     -- control: buttons container
     fs = fs..'container[0,3]'
 
     local btx = 0
-    local bty = 0 
+    local bty = 0
     for _, buttondef in ipairs(fsdef.control_buttons) do
         if buttondef.flag then
             local flag_on = false
@@ -176,7 +177,7 @@ function base_mach.fs_proc(fsx, fsy, proc, itemstack)
     if itemstack and not itemstack:is_empty() then
         local count = itemstack:get_count()
         if count > 1 then
-            return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]item_image[%f,%f;1,1;%s]label[%f,%f;x%d]', 
+            return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]item_image[%f,%f;1,1;%s]label[%f,%f;x%d]',
                 fsx, fsy, proc, fsx+0.4, fsy+0.4, itemstack:get_name(), fsx+1,fsy+1.3, count)
         else
             return string.format('image[%f,%f;2,2;terumet_gui_proc_%s.png]item_image[%f,%f;1,1;%s]',

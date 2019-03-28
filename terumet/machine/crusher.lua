@@ -1,5 +1,5 @@
 local opts = terumet.options.crusher
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
@@ -115,7 +115,6 @@ function base_crs.check_new_processing(crusher)
         crusher.status_text = "No input"
         return
     end
-    local output = nil
     -- check inputs in order
     for in_slot = 1,in_inv:get_size(in_list) do
         local input_stack = in_inv:get_stack(in_list, in_slot)
@@ -156,9 +155,6 @@ function base_crs.tick(pos, dt)
         base_mach.set_node(pos, base_crs.unlit_id)
     end
 
-    if venting or base_mach.has_upgrade(crusher, 'ext_input') then
-        reset_timer = true
-    end
     -- write status back to metad
     base_mach.write_state(pos, crusher)
 

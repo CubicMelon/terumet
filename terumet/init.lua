@@ -65,7 +65,7 @@ terumet.EMPTY = {}
 terumet.ZERO_XYZ = {x=0,y=0,z=0}
 
 function terumet.recipe_3x3(i)
-    return { 
+    return {
         {i, i, i}, {i, i, i}, {i, i, i}
     }
 end
@@ -97,7 +97,7 @@ function terumet.particle_stream(pointA, pointB, density, particle_data, player)
     if pcount < 1 then return end -- guard against div/0
     local step = {x=(dist_vector.x/pcount), y=(dist_vector.y/pcount), z=(dist_vector.z/pcount)}
     local ppos = vector.new(pointA)
-    for pnum = 1,pcount do
+    for _ = 1,pcount do
         ppos = util3d.pos_plus(ppos, step)
         minetest.add_particle{
             pos = vector.new(ppos),
@@ -131,7 +131,7 @@ function terumet.itemstack_desc(stack)
     local stack_desc = stack:get_definition().description
     -- use only what is before a newline if one is in the description
     if stack_desc:find('\n') then stack_desc = stack_desc:match('(.*)\n') end
-    if stack:get_count() > 1 then 
+    if stack:get_count() > 1 then
         return string.format('%s (x%d)', stack_desc, stack:get_count())
     else
         return stack_desc
@@ -220,7 +220,6 @@ terumet.do_lua_file('material/misc')
 terumet.do_lua_file('material/crystallized')
 
 local id = terumet.id
-local tex = terumet.tex
 
 -- register raw terumetal ingot as weak repair-material
 terumet.register_repair_material(id('ingot_raw'), 10)
@@ -233,15 +232,15 @@ terumet.reg_tools('Pure Terumetal', 'raw',
     id('ingot_raw'),
     {2.0}, 10, 2, sword_opts.TERUMETAL, 10
 )
-terumet.reg_tools('Terucopper', 'tcop', 
+terumet.reg_tools('Terucopper', 'tcop',
     id('ingot_tcop'),
     {3.2, 1.4, 0.8}, 40, 1, sword_opts.COPPER_ALLOY, 20
 )
-terumet.reg_tools('Terusteel', 'tste', 
+terumet.reg_tools('Terusteel', 'tste',
     id('ingot_tste'),
     {2.9, 1.3, 0.7}, 50, 2, sword_opts.IRON_ALLOY, 40
 )
-terumet.reg_tools('Terugold', 'tgol', 
+terumet.reg_tools('Terugold', 'tgol',
     id('ingot_tgol'),
     {2.7, 1.2, 0.63}, 60, 3, sword_opts.GOLD_ALLOY, 80
 )
@@ -296,7 +295,7 @@ terumet.register_convertible_block('terumet:block_pwood', 'pwood')
 -- register repairable default tools and materials
 -- {value of 1 item, item id}:
 local dmv_values = {
-    steel={10, 'default:steel_ingot'}, 
+    steel={10, 'default:steel_ingot'},
     bronze={30, 'default:bronze_ingot'},
     mese={90, 'default:mese_crystal'},
     diamond={100, 'default:diamond'}
@@ -318,7 +317,7 @@ if minetest.global_exists('doors') then
     terumet.do_lua_file('interop/doors')
 end
 
-if minetest.global_exists('unified_inventory') then 
+if minetest.global_exists('unified_inventory') then
     terumet.do_lua_file('interop/unified_inventory')
 end
 

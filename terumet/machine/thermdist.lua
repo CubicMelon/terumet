@@ -1,5 +1,5 @@
 local opts = terumet.options.thermdist
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
@@ -70,7 +70,7 @@ function base_tdist.tick(pos, dt)
         base_mach.process_fuel(tbox)
         base_tdist.do_processing(tbox, dt)
     end
-    
+
     -- write status back to meta
     base_mach.write_state(pos, tbox)
     return venting or (tbox.state == base_tdist.STATE.ACTIVE)

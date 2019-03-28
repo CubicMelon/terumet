@@ -1,4 +1,4 @@
-function add_terumet_recipes()
+local function add_terumet_recipes()
     -- add each defined alloy recipe to UnInv
     for _, recipe in pairs(terumet.options.smelter.recipes) do
         local listed = {}
@@ -31,7 +31,7 @@ function add_terumet_recipes()
             items = {source}
         }
     end
-    
+
     -- add each repair material to UnInv
     for id, repmatval in pairs(terumet.options.repm.repair_mats) do
         unified_inventory.register_craft{

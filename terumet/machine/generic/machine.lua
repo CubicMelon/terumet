@@ -35,7 +35,7 @@ end
 
 -- if any other protection mod is not found, then use our own simple owner-based protection
 -- this function is called only if any protection mod in terumet.options.protection.EXTERNAL_MODS is not found
-function setup_machine_protection()
+local function setup_machine_protection()
     local old_is_protected = minetest.is_protected
     minetest.is_protected = function(pos, name)
         if (not name) or name == '' then return true end
@@ -54,10 +54,10 @@ function setup_machine_protection()
             end
         end
         return old_is_protected(pos, name)
-    end 
+    end
 end
 
-function find_external_protection_mod()
+local function find_external_protection_mod()
     local modlist = minetest.get_modnames()
     for _,mod in pairs(modlist) do
         if terumet.options.protection.EXTERNAL_MODS[mod] then
@@ -90,7 +90,7 @@ local SMOKE_ANIMATION = {
     length=1.5
 }
 
--- 
+--
 -- CRAFTING MATERIALS
 --
 
@@ -142,7 +142,7 @@ terumet.do_lua_file('machine/generic/formspec')
 -- GENERIC META
 --
 
--- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent positions 
+-- return a list of {count=number, direction=machine_state, direction=machine_state...} from all adjacent positions
 -- where there is a machine w/heat_xfer_mode of ACCEPT and heat_level < max_heat
 function base_mach.find_adjacent_need_heat(pos)
     local result = {}
@@ -151,7 +151,7 @@ function base_mach.find_adjacent_need_heat(pos)
         local opos = util3d.pos_plus(pos, offset)
         local ostate = base_mach.read_state(opos)
         -- read_state returns nil if area unloaded or not a terumetal machine
-        if ostate then 
+        if ostate then
             if ostate.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and base_mach.get_current_heat(ostate) < ostate.max_heat then
                 result[dir] = ostate
                 count = count + 1
@@ -195,7 +195,7 @@ function base_mach.push_heat_adjacent(machine, send_amount, ignore_sides)
     local adjacent_needy = base_mach.find_adjacent_need_heat(machine.pos, ignore_sides)
     if ignore_sides then
         for _,ignored_side in ipairs(ignore_sides) do
-            if adjacent_needy[ignored_side] then 
+            if adjacent_needy[ignored_side] then
                 adjacent_needy[ignored_side] = nil
                 adjacent_needy.count = adjacent_needy.count - 1
             end
@@ -207,8 +207,8 @@ function base_mach.push_heat_adjacent(machine, send_amount, ignore_sides)
         end
         local send_targets = {}
         for dir, target in pairs(adjacent_needy) do
-            if dir ~= 'count' then 
-                send_targets[#send_targets+1] = target 
+            if dir ~= 'count' then
+                send_targets[#send_targets+1] = target
                 if base_mach.has_upgrade(target, 'heat_xfer') then
                     send_amount = math.floor(send_amount * 1.25)
                 end
@@ -470,7 +470,7 @@ function base_mach.expend_heat(machine, value, process)
     if machine.heat_level < value then
         base_mach.set_low_heat_msg(machine, process)
         machine.need_heat = true
-        return false 
+        return false
     end
     machine.heat_level = machine.heat_level - value
     return true
@@ -486,7 +486,7 @@ function base_mach.generate_particle(pos, data, count)
     if not opts.PARTICLES then return end
     count = count or 1
     data = data or terumet.EMPTY
-    for n = 1,count do
+    for _ = 1,count do
         local px = pos.x + (terumet.RAND:next(-5,5) / 10)
         local py = pos.y + 0.5 + (terumet.RAND:next(0,100) / 250)
         local pz = pos.z + (terumet.RAND:next(-5,5) / 10)
@@ -522,7 +522,7 @@ end
 function base_mach.generate_smoke(pos, count)
     if not opts.PARTICLES then return end
     count = count or 1
-    for n = 1,count do
+    for _ = 1,count do
         local px = pos.x + (terumet.RAND:next(-5,5) / 10)
         local py = pos.y + 0.5 + (terumet.RAND:next(0,100) / 250)
         local pz = pos.z + (terumet.RAND:next(-5,5) / 10)
@@ -603,7 +603,7 @@ function base_mach.nodedef(additions)
             if not sender:is_player() then return end
             local player_name = sender:get_player_name()
             local machine = base_mach.read_state(pos)
-            if machine then 
+            if machine then
                 if not minetest.is_protected(machine.pos, player_name) then
                     local updatefs = false
                     -- handle default buttondefs
@@ -628,7 +628,7 @@ function base_mach.nodedef(additions)
                     end
                 end
             end
-        end,    
+        end,
         -- callbacks for saving/loading heat level
         after_dig_node = base_mach.after_dig_machine,
         after_place_node = base_mach.after_place_machine,
@@ -650,7 +650,7 @@ function base_mach.nodedef(additions)
             -- -
             -- on_inventory_change: fn(machine, event_data) -> nil
             -- called whenever items are put in/taken out/moved within inventory
-            -- event_data will contain specific info ONLY IF the nodedef's 
+            -- event_data will contain specific info ONLY IF the nodedef's
             --      on_metadata_inventory_* was pointed to base_mach.on_inventory_*
             --      instead of base_mach.simple_inventory_event
             on_inventory_change = function(machine, event_data)

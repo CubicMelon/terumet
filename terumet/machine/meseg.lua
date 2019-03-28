@@ -1,5 +1,5 @@
 local opts = terumet.options.meseg
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
@@ -31,7 +31,7 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     machine = function(machine)
-        return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') .. 
+        return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') ..
         base_mach.fs_meter(2,2.5,'mese', 100*machine.progress/opts.PROGRESS_NEED, 'Growth')
     end,
     input = {label='Seeds'},
@@ -126,7 +126,7 @@ function base_msg.do_growing(meseg, dt)
     local has_heat = base_mach.expend_heat(meseg, opts.GROW_HEAT, 'Heating garden')
     if has_seed and has_heat then
         local seed_count = input_stack:get_count()
-        if meseg.effic < opts.MAX_EFFIC then 
+        if meseg.effic < opts.MAX_EFFIC then
             meseg.effic = math.min(meseg.effic + seed_count, opts.MAX_EFFIC)
         end
         meseg.progress = meseg.progress + math.floor(seed_count * meseg.effic / opts.MAX_EFFIC)
@@ -136,7 +136,7 @@ function base_msg.do_growing(meseg, dt)
             meseg.status_text = 'Growth complete!'
         else
             meseg.status_text = 'Growing...'
-        end        
+        end
     else
         meseg.effic = math.floor(meseg.effic * opts.EFFIC_LOSS_RATE)
         if meseg.effic > 0 then
@@ -182,8 +182,8 @@ function base_msg.tick(pos, dt)
         base_mach.generate_smoke(pos)
     end
 
-    if venting or meseg.state ~= base_msg.STATE.IDLE then 
-        base_mach.set_timer(meseg) 
+    if venting or meseg.state ~= base_msg.STATE.IDLE then
+        base_mach.set_timer(meseg)
     end
     -- write status back to meta
     base_mach.write_state(pos, meseg)

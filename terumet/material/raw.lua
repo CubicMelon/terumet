@@ -41,7 +41,7 @@ minetest.register_node( id('block_raw'), {
     sounds = default.node_sound_metal_defaults()
 })
 
-minetest.register_craft{ type = 'cooking', 
+minetest.register_craft{ type = 'cooking',
     output = id('ingot_raw'),
     recipe = id('lump_raw'),
     cooktime = 10

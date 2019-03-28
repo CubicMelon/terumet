@@ -3,7 +3,7 @@
 -- "Facing" is the direction the top of the node points, i.e. the axis the node rotates around with a screwdriver.
 -- "Rotation" is the direction the "front" of the node points, i.e. the face that rotates with a screwdriver.
 
--- The 6th texture in "tiles" of a facedir-type node is considered the "front" since that 
+-- The 6th texture in "tiles" of a facedir-type node is considered the "front" since that
 -- is the side that faces the player when placed.
 
 -- by Terumoc
@@ -26,7 +26,7 @@ end
 
 -- given a node pos plus offset, return the offset pos and node there
 function util3d.get_offset(pos, offset)
-    local pos = util3d.pos_plus(pos, offset)
+    pos = util3d.pos_plus(pos, offset)
     return pos, minetest.get_node_or_nil(pos)
 end
 

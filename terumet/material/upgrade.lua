@@ -21,7 +21,7 @@ function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src
         inventory_image = tex('upg_'..upgrade_id),
         _terumach_upgrade_id = upgrade_id
     })
-    
+
     if not src_pattern then src_pattern = 'default' end
     local rec
     local shapeless=false

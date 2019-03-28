@@ -1,5 +1,5 @@
 local opts = terumet.options.heat_ray
-local base_opts = terumet.options.machine
+--local base_opts = terumet.options.machine
 local base_mach = terumet.machine
 
 local base_ray = {}
@@ -85,7 +85,7 @@ function base_ray.goto_next_node(ray, search)
         base_ray.set_search_result(ray, 'Unloaded area at ' .. minetest.pos_to_string(npos))
         return nil
     end
-    
+
     local npos_nodedef = minetest.registered_nodes[npos_node.name]
     if not npos_nodedef then
         base_ray.set_search_result(ray, 'Unknown node at ' .. minetest.pos_to_string(npos))
@@ -183,7 +183,6 @@ function base_ray.tick(pos, dt)
                     if hit_machine then
                         if hit_machine.heat_xfer_mode == base_mach.HEAT_XFER_MODE.ACCEPT and hit_machine.heat_level < hit_machine.max_heat then
                             base_ray.fire(ray, hit_machine)
-                            search = nil
                         else
                             base_ray.set_search_result(ray, hit_machine.class.name .. ' at ' .. minetest.pos_to_string(search.pos) .. ' does not require heat')
                         end

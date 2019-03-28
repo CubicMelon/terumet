@@ -1,5 +1,5 @@
 local opts = terumet.options.heatline
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 local base_mach = terumet.machine
 
 local base_hlin = {}
@@ -9,6 +9,30 @@ local POS_STR = minetest.pos_to_string
 
 -- server cache of links keyed by location of input machine
 base_hlin.links = {}
+
+local function debug_linklist_desc(links)
+    if links then
+        local count = #links
+        local str=string.format('%d linked machine(s):\n', count)
+        for _,link in ipairs(links) do
+            local linkinfo = string.format(' at %s d:%d\n', POS_STR(link.pos), link.dist)
+            local machine_node = minetest.get_node_or_nil(link.pos)
+            if machine_node then
+                local machine_name = base_mach.get_class_property(machine_node.name, 'name')
+                if machine_name then
+                    str=str..machine_name..linkinfo
+                else
+                    str=str..'(not machine)'..linkinfo
+                end
+            else
+                str=str..'<unavailable>'..linkinfo
+            end
+        end
+        return str
+    else
+        return 'no link data'
+    end
+end
 
 if opts.DEBUG_CHAT_COMMAND then
     minetest.register_chatcommand('heatlines', {
@@ -35,30 +59,6 @@ local is_heatline = function(node)
     if not node then return false end
     local def = minetest.registered_nodes[node.name]
     return def and def.groups and def.groups['terumet_hline']
-end
-
-function debug_linklist_desc(links)
-    if links then
-        local count = #links
-        str=string.format('%d linked machine(s):\n', count)
-        for _,link in ipairs(links) do
-            local linkinfo = string.format(' at %s d:%d\n', POS_STR(link.pos), link.dist)
-            local machine_node = minetest.get_node_or_nil(link.pos)
-            if machine_node then
-                local machine_name = base_mach.get_class_property(machine_node.name, 'name')
-                if machine_name then
-                    str=str..machine_name..linkinfo
-                else
-                    str=str..'(not machine)'..linkinfo
-                end
-            else
-                str=str..'<unavailable>'..linkinfo
-            end
-        end
-        return str
-    else
-        return 'no link data'
-    end
 end
 
 function base_hlin.init(pos)
@@ -161,7 +161,7 @@ function base_hlin.find_links(machine)
         local visit = visit_stack[#visit_stack]
         visit_stack[#visit_stack] = nil
         local vpos = visit.pos
-        local vnode = minetest.get_node_or_nil(visit.pos)
+        -- local vnode = minetest.get_node_or_nil(visit.pos)
         local vdist = visit.dist + 1
         for _,offset in pairs(util3d.ADJACENT_OFFSETS) do
             local adj_pos, adj_node = util3d.get_offset(vpos, offset)
@@ -195,7 +195,7 @@ function base_hlin.find_links(machine)
         end
         visited[POS_STR(vpos)] = true
     end
-    
+
     -- sort links by ascending distance
     table.sort(links, function(la,lb)
         return la.dist < lb.dist
@@ -213,7 +213,7 @@ function base_hlin.distribute(hlin)
             local needy = {}
             -- check each linked machine in order of ascending distance
             for _,link in ipairs(links) do
-                local linked_mach = base_mach.read_state(link.pos) 
+                local linked_mach = base_mach.read_state(link.pos)
                 if linked_mach and (base_mach.get_current_heat(linked_mach) < linked_mach.max_heat) then
                     needy[#needy+1] = linked_mach
                 end
@@ -239,7 +239,7 @@ function base_hlin.distribute(hlin)
             else
                 hlin.last_sent = 'No connected machines need heat.'
             end
-        end        
+        end
         hlin.state = base_hlin.STATE.ACTIVE
     else
         hlin.state = base_hlin.STATE.IDLE
@@ -288,7 +288,7 @@ base_hlin.nodedef = base_mach.nodedef{
     }
 }
 
--- manually add input machine as a visual connect target for heatline nodes even if they are 
+-- manually add input machine as a visual connect target for heatline nodes even if they are
 -- not a target for heat transfer
 base_hlin.nodedef.groups['terumet_hltarget']=1
 

@@ -1,5 +1,5 @@
 local opts = terumet.options.smelter
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 

@@ -1,5 +1,5 @@
 local opts = terumet.options.heater.solar
-local base_opts = terumet.options.machine
+-- local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
@@ -56,9 +56,9 @@ function sol_htr.do_processing(solar, dt)
     local night_light = minetest.get_node_light(above, 0)
     local present_light = minetest.get_node_light(above, nil)
     if not (night_light and present_light) then return end -- in case above is not loaded?
-    
+
     local effective_light = math.min(15, math.max(0, present_light - night_light + LIGHT_LEEWAY))
-    
+
     local gain = opts.SOLAR_GAIN_RATES[effective_light+1]
 
     if base_mach.has_upgrade(solar, 'gen_up') then gain = gain * 2 end
