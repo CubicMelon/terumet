@@ -16,7 +16,7 @@ local FSDEF = {
         {flag='show_seeking', icon='terumet_part_seek.png', name='seek_toggle', on_text='Seeking visible', off_text='Seeking not visible'}
     },
     machine = function(machine)
-        return string.format('label[0,1;:Last result: %s]', machine.last_error)
+        return string.format('label[0,1;:Last result: %s]', machine.last_error or 'none')
     end
 }
 

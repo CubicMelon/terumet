@@ -77,7 +77,7 @@ function base_mach.build_fs(machine)
         fs = fs..string.format('label[%f,%f;Upgrades]list[context;upgrade;%f,%f;3,%d]', upx, upy, upx, upy+0.5, math.ceil(upg_ct/3))
     end
     --fs = fs..string.format('label[0,%f;HU Xfer: %s]', fs_height - 1, opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
-    fs = fs..string.format('label[0,%f;Owner: \n%s]', fs_height - 1, SPECIAL_OWNERS[machine.owner] or machine.owner)
+    fs = fs..string.format('label[0,%f;Owner: \n%s]', fs_height - 1, SPECIAL_OWNERS[machine.owner] or machine.owner or "(BUG)none")
     if fsdef.control then
         fs = fs .. fsdef.control(machine)
     end
