@@ -33,10 +33,10 @@ terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
 
 -- this isn't the suggested way to check for game version but... it works for my purposes
-terumet.legacy = minetest.get_version().string:find('0.4.17')
+terumet.legacy = minetest.get_version().string:find('0.4')
 
 if terumet.legacy then
-    minetest.log('[terumet] MTv0.4.17.* detected - in legacy mode!')
+    minetest.log('[terumet] MTv0.4.* detected - in legacy mode!')
 end
 
 terumet.RAND = PcgRandom(os.time())
