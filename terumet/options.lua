@@ -309,6 +309,9 @@ terumet.options.vulcan = {
     COST_VULCANIZE = 10,
     -- Time to process one item (in seconds)
     PROCESS_TIME = 6.0,
+    -- when true, crystalizing obsidian always produces exactly one crystal.
+    -- this prevents easy infinite obsidian loops.
+    LIMIT_OBSIDIAN = true,
 }
 
 terumet.options.lavam = {
