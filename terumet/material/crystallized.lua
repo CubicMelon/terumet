@@ -1,4 +1,5 @@
 local id=terumet.id
+local opts = terumet.options.vulcan
 
 local crys_terumetal = terumet.register_crystal{
     suffix='raw',
@@ -51,7 +52,11 @@ local crys_ob = terumet.register_crystal{
     name='Crystallized Obsidian',
     cooking_result='default:obsidian'
 }
-terumet.register_vulcan_result('default:obsidian', crys_ob)
+if opts.LIMIT_OBSIDIAN then
+    terumet.register_vulcan_result('default:obsidian', crys_ob, -1)
+else
+    terumet.register_vulcan_result('default:obsidian', crys_ob)
+end
 
 local crys_mese = terumet.register_crystal{
     suffix='mese',

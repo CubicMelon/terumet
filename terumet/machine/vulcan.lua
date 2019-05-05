@@ -93,19 +93,23 @@ function base_vul.check_new_processing(vulcan)
     local in_inv, in_list = base_mach.get_input(vulcan)
     for slot = 1,in_inv:get_size(in_list) do
         local input_stack = in_inv:get_stack(in_list, slot)
-        local matched_recipe = opts.recipes[input_stack:get_name()]
+        local source = input_stack:get_name()
+        local matched_recipe = opts.recipes[source]
         if matched_recipe then
+            local result = matched_recipe[1]
             local yield = matched_recipe[2]
             vulcan.state = base_vul.STATE.VULCANIZING
             vulcan.state_time = opts.PROCESS_TIME
             vulcan.heat_cost = opts.COST_VULCANIZE
-            if base_mach.has_upgrade(vulcan, 'cryst') then
+            -- if limited, obsidian will not benefit from crystalization upgrade
+            local limit_obsidian = opts.LIMIT_OBSIDIAN and source == 'default:obsidian'
+            if not limit_obsidian and base_mach.has_upgrade(vulcan, 'cryst') then
                 yield = yield + 1
                 vulcan.state_time = vulcan.state_time * 3
                 vulcan.heat_cost = vulcan.heat_cost * 2
             end
             in_inv:remove_item(in_list, input_stack:get_name())
-            vulcan.inv:set_stack('result', 1, matched_recipe[1] .. ' ' .. yield)
+            vulcan.inv:set_stack('result', 1, result .. ' ' .. yield)
             vulcan.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for vulcanizing...'
             return
         end
