@@ -12,7 +12,7 @@ minetest.register_tool( saw_id, {
         if pointed_thing.type == 'node' and pointed_thing.under then
             local npos = pointed_thing.under
             local node_id = minetest.get_node(npos).name
-            if opts.VALID_ORES[node_id] then
+            if opts.VALID_ORES[node_id] and not minetest.is_protected(npos, user:get_player_name()) then
                 terumet.give_player_item(user.pos, user, node_id)
                 minetest.remove_node(npos)
                 minetest.sound_play( 'terumet_saw', {
