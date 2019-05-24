@@ -130,6 +130,8 @@ function base_vul.tick(pos, dt)
         base_mach.process_fuel(vulcan)
     end
 
+    if venting or base_mach.has_upgrade(vulcan, 'ext_input') then base_mach.set_timer(vulcan) end
+
     -- write status back to meta
     base_mach.write_state(pos, vulcan)
 
