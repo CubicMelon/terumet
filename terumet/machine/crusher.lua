@@ -158,7 +158,7 @@ function base_crs.tick(pos, dt)
     -- write status back to metad
     base_mach.write_state(pos, crusher)
 
-    return crusher.state ~= base_crs.STATE.IDLE or venting
+    return crusher.state ~= base_crs.STATE.IDLE or base_mach.has_upgrade(crusher, 'ext_input') or venting
 end
 
 base_crs.unlit_nodedef = base_mach.nodedef{

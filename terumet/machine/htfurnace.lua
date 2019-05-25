@@ -143,10 +143,10 @@ function base_htf.tick(pos, dt)
         base_mach.set_node(pos, base_htf.unlit_id)
     end
 
-    if venting or base_mach.has_upgrade(furnace, 'ext_input') then base_mach.set_timer(furnace) end
     -- write status back to meta
     base_mach.write_state(pos, furnace)
 
+    return venting or base_mach.has_upgrade(furnace, 'ext_input')
 end
 
 base_htf.unlit_nodedef = base_mach.nodedef{
