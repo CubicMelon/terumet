@@ -2,6 +2,7 @@
 
 
 -- register an external block for use in making heatline versions and/or reinforced versions
+-- need to include name of your mod as 4th param to make minetest happy
 -- if you wish to exclude one or the other, pass {heatline=true} or {reinforced=true} as 3rd argument
 function terumet.register_convertible_block(id, unique_code, exclude)
     exclude = exclude or {}

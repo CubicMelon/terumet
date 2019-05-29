@@ -11,7 +11,7 @@ local desc = {'Reinforced %s', 'Double-reinforced %s', 'Triple-reinforced %s'}
 local blchance = {40, 20, 3}
 
 local function reinf_block_id(code, rlv)
-    return terumet.id('reinf_block_'..code..rlv)
+    return minetest.get_current_modname()..':reinf_block_'..code..rlv
 end
 
 function terumet.register_reinforced_block(base, code)
