@@ -1,6 +1,14 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+## Version 2.5
+* Moved Concrete Mix & Concrete from my other mod into Terumetal.
+    * Make concrete mix with sand & gravel, when Concrete Mix in world comes in contact with water it hardens to Concrete.
+    * White concrete mix can be dyed into any of the 14 other standard dye colors.
+    * (Yes, just like another crafty game)
+    * Concrete can be made into doors, slabs, walls, stairs, etc.
+* Now depends on more minetest default game mods (doors, stairs, walls) -- shouldn't be a problem in 5.0
+
 ## Version 2.4
 * Added support to run under (currently) stable Minetest 0.4.17 -- those asking for it rejoice!
 * Added support for other mods plants/crops being used in the Expansion Crusher
