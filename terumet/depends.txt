@@ -3,6 +3,9 @@ bucket
 screwdriver
 farming
 walls
+doors
+stairs
+dye
 unified_inventory?
 tubelib?
 doors?

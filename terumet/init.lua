@@ -309,6 +309,8 @@ for dmat, v in pairs(dmv_values) do
     terumet.register_repair_material(v[2], v[1])
 end
 
+terumet.do_lua_file('material/concrete')
+
 local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib'}
 for _,mod in ipairs(INTEROPS) do
     if minetest.global_exists(mod) then terumet.do_lua_file('interop/'..mod) end
