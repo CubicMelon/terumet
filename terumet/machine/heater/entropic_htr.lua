@@ -17,6 +17,7 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE
     },
+    bg = 'gui_back3',
     machine = function(machine)
         local fs = ''
         if machine.state ~= ent_htr.STATE.FINDING then

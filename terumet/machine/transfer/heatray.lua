@@ -15,6 +15,7 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
         {flag='show_seeking', icon='terumet_part_seek.png', name='seek_toggle', on_text='Seeking visible', off_text='Seeking not visible'}
     },
+    bg='gui_back3',
     machine = function(machine)
         return string.format('label[0,1;:Last result: %s]', machine.last_error or 'none')
     end

@@ -15,6 +15,7 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
+    bg='gui_backc',
 }
 
 function base_tbox.init(pos)

@@ -7,6 +7,13 @@ Newer versions listed first
     * White concrete mix can be dyed into any of the 14 other standard dye colors.
     * (Yes, just like another crafty game)
     * Concrete can be made into doors, slabs, walls, stairs, etc.
+* Added Vacuum Oven - Tier 3 processing machine that can turn Coal into Coke & Tarballs
+    * Coke is a more efficient fuel than coal
+    * Tarballs can be used where plant glue is, or further cooked and vulcanized into Synthetic Rubber Bars
+* Added Vulcansuit armor set, made from Vulcansuit Plates
+    * Vulcansuit Plates are made by alloying Synthetic Rubber Bars with Teruchalcum
+    * The Vulcansuit is excellent full-body protection and the best overall armor available from the mod.
+* Redesigned machine interfaces with some Minetest 5.0 features. Each tier has its own appearance.
 * Now depends on more minetest default game mods (doors, stairs, walls) -- shouldn't be a problem in 5.0
 
 ## Version 2.4

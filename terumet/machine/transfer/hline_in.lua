@@ -90,6 +90,7 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
+    bg='gui_backc',
     machine = function(machine)
         if machine.state ~= base_hlin.STATE.IDLE then
             local links = base_hlin.get_links(machine)

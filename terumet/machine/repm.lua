@@ -19,6 +19,7 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
+    bg='gui_back2',
     machine = function(machine)
         -- TODO: display tweaking
         local fs = base_mach.fs_meter(2.5,1, 'rmat', 100*machine.rmat_tank/opts.RMAT_MAXIMUM, 'Repair Material')

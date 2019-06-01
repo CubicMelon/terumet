@@ -27,7 +27,8 @@ base_mach.buttondefs.HEAT_XFER_TOGGLE = {
 -- takes fsdef table from machine's class definition to define what is shown and where
 -- _terumach_class.fsdef guidelines: is a table with definitions for sections or elements. Nearly all info is optional and will be given standard defaults (or omitted) if not provided
 --      .size  -> must be a table with {x=width, y=height} (in item slots, like normal formspec dimensions), size defaults to 11x9 if not given
---      .theme -> string that provides background, listcolors
+--      .theme -> string that provides full background, listcolors
+--      .bg -> filename (without terumet or png) of backgroud image
 --      .before  -> fn(machine) that returns formspec string to insert after preamble
 --      .control -> fn(machine) that returns formspec string to insert inside machine controls container
 --      .control_buttons -> table of machine buttondefs:
@@ -49,7 +50,7 @@ function base_mach.build_fs(machine)
     local fs_width = (fsdef.size and fsdef.size.x) or 11
     local fs_height = (fsdef.size and fsdef.size.y) or 9
     local fs = string.format('size[%f,%f]', fs_width, fs_height)
-    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_gui_back.png;true]listcolors[#432d31;#91626b;#3f252b;#114f51;#d2fdff]', fs_width, fs_height))
+    fs = fs .. (fsdef.theme or string.format('background[0,0;%f,%f;terumet_%s.png;true]listcolors[#00000060;#000000C0;#00000000;#404040;#f0f0f0]', fs_width, fs_height, fsdef.bg or 'gui_back'))
     if fsdef.before then
         fs = fs .. fsdef.before(machine)
     end
@@ -82,7 +83,7 @@ function base_mach.build_fs(machine)
         fs = fs .. fsdef.control(machine)
     end
     -- DEBUG
-    fs = fs..string.format('label[0,%f;State: %d]', fs_height - 0.25, machine.state or 'nil')
+    -- fs = fs..string.format('label[0,%f;State: %d]', fs_height - 0.25, machine.state or 'nil')
     -- control: buttons container
     fs = fs..'container[0,3]'
 

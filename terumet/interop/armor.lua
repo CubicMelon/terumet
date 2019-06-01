@@ -120,10 +120,10 @@ if opts.BRACERS then
 
     local brcrcrys_id = terumet.id('item_brcrcrys')
     minetest.register_craftitem( brcrcrys_id, {
-        description = 'Base Bracer Element',
+        description = 'Blank Bracer Core',
         inventory_image = terumet.tex(brcrcrys_id)
     })
-    -- add vulcan crystallizer recipe for bracer casters
+    -- add vulcan crystallizer recipe for blank bracer core
     terumet.options.vulcan.recipes[opts.BRACER_CRYSTAL_ITEM] = {brcrcrys_id, 2}
 
     local function reg_terumet_band(data)
@@ -151,7 +151,7 @@ if opts.BRACERS then
         if data.mat then
             local ecryst_id = terumet.id('item_brcrcrys_'..data.suffix)
             minetest.register_craftitem( ecryst_id, {
-                description = data.name..' Bracer Element',
+                description = data.name..' Bracer Core',
                 inventory_image = terumet.tex(ecryst_id)
             })
 
@@ -191,3 +191,6 @@ reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), 
     def=2, defhi=3, heal=10, speed=-0.05, gravity=0.025, xinfo='Weight +5', uses=300}
 reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'), mrv=120,
     def=6, defhi=14, heal=6, speed=-0.03, gravity=0.015, xinfo='Weight +3', uses=600}
+
+reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'), mrv=300,
+    def=10, defhi=15, heal=8, speed=0.05, gravity=-0.025, xinfo='Weight -5', uses=2000}

@@ -16,6 +16,7 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
+    bg='gui_back2',
     machine = function(machine)
         local fs = ''
         if machine.state == base_htf.STATE.COOKING then

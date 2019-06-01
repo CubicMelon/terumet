@@ -14,6 +14,7 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
+    bg='gui_backc',
     fuel_slot = {true},
 }
 

@@ -297,6 +297,23 @@ terumet.options.furnace = {
     TIME_MULT = 0.5,
 }
 
+terumet.options.vac_oven = {
+    --
+    -- VACUUM OVEN SETTINGS
+    --
+    -- Maximum HUs machine can contain
+    MAX_HEAT = 10000,
+    -- HU cost per tick of cooking
+    COST_PER_TICK = 100,
+
+    recipes = {
+        {results={'terumet:item_tarball 4', 'terumet:item_coke'}, time=10.0, input='default:coal_lump'},
+        {results={'terumet:item_tarball 40', 'terumet:block_coke'}, time=80.0, input='default:coalblock'},
+    },
+
+    MAX_RESULTS = 2, -- Maximum number of result items from recipes (adjust this if any larger recipes are added)
+}
+
 terumet.options.vulcan = {
     --
     -- CRYSTAL VULCANIZER SETTINGS

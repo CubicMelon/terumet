@@ -216,7 +216,7 @@ terumet.do_lua_file('material/pwood')
 terumet.do_lua_file('material/tglass')
 terumet.do_lua_file('material/rebar')
 terumet.do_lua_file('material/misc')
-
+terumet.do_lua_file('material/coalproc')
 terumet.do_lua_file('material/crystallized')
 
 local id = terumet.id
@@ -272,6 +272,7 @@ terumet.do_lua_file('machine/lavam')
 terumet.do_lua_file('machine/meseg')
 terumet.do_lua_file('machine/repm')
 terumet.do_lua_file('machine/crusher')
+terumet.do_lua_file('machine/vacoven')
 
 terumet.do_lua_file('machine/transfer/heatray')
 terumet.do_lua_file('machine/transfer/hline')

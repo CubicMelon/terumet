@@ -30,6 +30,7 @@ local FSDEF = {
     control_buttons = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
+    bg='gui_back2',
     machine = function(machine)
         return base_mach.fs_meter(2,1.5,'effc', 100*machine.effic/opts.MAX_EFFIC, 'Efficiency') ..
         base_mach.fs_meter(2,2.5,'mese', 100*machine.progress/opts.PROGRESS_NEED, 'Growth')

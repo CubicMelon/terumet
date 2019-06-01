@@ -14,6 +14,18 @@ local function add_terumet_recipes()
         }
     end
 
+    -- add each defined vacuum oven recipe (1 entry for each output)
+    for _, recipe in ipairs(terumet.options.vac_oven.recipes) do
+        local time = terumet.id('uninv_time_req', math.ceil(recipe.time))
+        for _, output in ipairs(recipe.results) do
+            unified_inventory.register_craft{
+                type = 'terumet_vacoven',
+                output = output,
+                items = {recipe.input, time}
+            }
+        end
+    end
+
     -- add each defined flux source to UnInv
     for source, details in pairs(terumet.options.smelter.FLUX_ITEMS) do
         unified_inventory.register_craft{
@@ -137,6 +149,14 @@ unified_inventory.register_craft_type( 'terumet_ore_saw', {
     icon = 'terumet_tool_ore_saw.png^[transformFX',
     width=1,
     height=1,
+})
+
+-- register vacuum oven with UnInv
+unified_inventory.register_craft_type( 'terumet_vacoven', {
+    description = 'Vacuum Oven',
+    icon = 'terumet_vacoven_front.png',
+    width=3,
+    height=2,
 })
 
 -- call after all mods are loaded to catch new submod recipes/changes
