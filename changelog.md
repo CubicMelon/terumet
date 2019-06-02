@@ -7,8 +7,8 @@ Newer versions listed first
     * This change in turn greatly encouraged this modification: ALL old Heat Unit measurements have been **universally multiplied by 10**.
     * While it may cause some issues with upgrading (I apologize!) this means no longer will things be more expensive than expected because of long server ticks.
     * **IMPORTANT**: A huge portion of options.lua has changed to reflect this; if you have custom options I suggest making note of your changes, placing the new default options.lua in place, then re-adding your changes. Remember any old HU modifications you did should be now be multiplied by 10!
-* Because of the above update, a new (and similarly overdue) item was added: **Batteries**
-    * Most usefully, the basic Copper battery can be used as a starting point for alloying -- you no longer HAVE to seek out natural lava.
+* Because of the above update, a new (and similarly overdue) item was added: **Heat Batteries**
+    * Most usefully, the basic Copper battery can be used as a starting point for alloying -- you no longer HAVE to seek out elusive natural lava to start using this mod.
     * Batteries can be cooked via any normal means (vanilla Furnace, etc.) and will provide a small amount of HU to a heat machine when put in its Fuel slot.
     * For technical reasons, The High-Temp furnace's standard speed bonus does not apply when heating batteries. Sorry!
         * (It's because you could easily double Heat this way; its heat costs are purely based on how long it takes to heat an item)
