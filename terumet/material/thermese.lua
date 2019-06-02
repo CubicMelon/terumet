@@ -54,5 +54,5 @@ minetest.register_abm{
 minetest.register_craft{ type = 'cooking',
     output = thblock_hot_id,
     recipe = thblock_id,
-    cooktime = 10
+    cooktime = 30
 }

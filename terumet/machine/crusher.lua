@@ -65,11 +65,11 @@ function base_crs.get_drop_contents(machine)
 end
 
 function base_crs.do_processing(crusher, dt)
-    local speed_mult = 1
-    if base_mach.has_upgrade(crusher, 'speed_up') then speed_mult = 2 end
+    if base_mach.has_upgrade(crusher, 'speed_up') then dt = dt * 2 end
 
-    if crusher.state == base_crs.STATE.HEATING and base_mach.expend_heat(crusher, opts.COST_HEATING * speed_mult, 'Heating presses') then
-        crusher.state_time = crusher.state_time - (dt * speed_mult)
+    local heat_req = math.min(dt, crusher.state_time) * opts.COOK_HUPS
+    if crusher.state == base_crs.STATE.HEATING and base_mach.expend_heat(crusher, heat_req, 'Heating presses') then
+        crusher.state_time = crusher.state_time - dt
         if crusher.state_time <= 0 then
             crusher.inv:set_stack('process', 1, nil)
             crusher.state = base_crs.STATE.COOLING
@@ -79,7 +79,7 @@ function base_crs.do_processing(crusher, dt)
             crusher.status_text = 'Heating presses (' .. terumet.format_time(crusher.state_time) .. ')'
         end
     elseif crusher.state == base_crs.STATE.COOLING then
-        crusher.state_time = crusher.state_time - (dt * speed_mult)
+        crusher.state_time = crusher.state_time - dt
         if crusher.state_time <= 0 then
             local result_stack = crusher.inv:get_stack('result', 1)
             local result_name = terumet.itemstack_desc(result_stack)

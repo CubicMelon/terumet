@@ -60,11 +60,11 @@ function base_vov.get_drop_contents(machine)
 end
 
 function base_vov.do_processing(oven, dt)
-    local speed_mult = 1
-    if base_mach.has_upgrade(oven, 'speed_up') then speed_mult = 2 end
+    if base_mach.has_upgrade(oven, 'speed_up') then dt = dt * 2 end
 
-    if oven.state == base_vov.STATE.COOKING and base_mach.expend_heat(oven, opts.COST_PER_TICK * speed_mult, 'Heating') then
-        oven.state_time = oven.state_time - (dt * speed_mult)
+    local heat_req = math.min(dt, oven.state_time) * opts.COOK_HUPS
+    if oven.state == base_vov.STATE.COOKING and base_mach.expend_heat(oven, heat_req, 'Heating') then
+        oven.state_time = oven.state_time - dt
         if oven.state_time <= 0 then
             local out_inv, out_list = base_mach.get_output(oven)
             if out_inv then

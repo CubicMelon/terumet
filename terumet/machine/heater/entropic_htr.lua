@@ -114,7 +114,7 @@ function ent_htr.do_processing(machine, dt)
             machine.status_text = minetest.pos_to_string(machine.search_pos) .. ' unloaded or invalid...'
         end
     else
-        local gain = math.ceil(machine.heat_rate * dt)
+        local gain = math.floor(machine.heat_rate * dt)
         --if gain == 0 then return end -- no longer necessary?
         local under_cap = machine.heat_level < (machine.max_heat - gain)
         if machine.state == ent_htr.STATE.DRAIN_FULL and under_cap then

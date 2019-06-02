@@ -124,7 +124,7 @@ function base_msg.do_growing(meseg, dt)
     local in_inv, in_list = base_mach.get_input(meseg)
     local input_stack = in_inv:get_stack(in_list, 1) -- supports only 1 slot input
     local has_seed = (input_stack and input_stack:get_name() == opts.SEED_ITEM)
-    local has_heat = base_mach.expend_heat(meseg, opts.GROW_HEAT, 'Heating garden')
+    local has_heat = base_mach.expend_heat(meseg, dt * opts.HEAT_HUPS, 'Heating garden')
     if has_seed and has_heat then
         local seed_count = input_stack:get_count()
         if meseg.effic < opts.MAX_EFFIC then

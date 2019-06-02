@@ -85,11 +85,7 @@ for index,dye_info in ipairs(dye.dyes) do
         local basic_powder = mix_id(1)
         minetest.register_craft({
             output = mix_id(index)..' 8',
-            recipe = {
-                {basic_powder, basic_powder, basic_powder},
-                {basic_powder, dye_id, basic_powder},
-                {basic_powder, basic_powder, basic_powder}
-            }
+            recipe = terumet.recipe_box(basic_powder, dye_id)
         })
     end
 

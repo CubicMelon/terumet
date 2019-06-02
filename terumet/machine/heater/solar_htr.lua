@@ -60,7 +60,7 @@ function sol_htr.do_processing(solar, dt)
 
     local effective_light = math.min(15, math.max(0, present_light - night_light + LIGHT_LEEWAY))
 
-    local gain = opts.SOLAR_GAIN_RATES[effective_light+1]
+    local gain = math.floor(opts.SOLAR_HUPS[effective_light+1] * dt)
 
     if base_mach.has_upgrade(solar, 'gen_up') then gain = gain * 2 end
     local last_eff = 100.0*effective_light/15

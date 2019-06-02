@@ -89,7 +89,7 @@ local function reg_terumet_armor(data)
 
     local chest_id = terumet.id('armchest_'..data.suffix)
     armor:register_armor(chest_id, {
-        description= format_desc(data.name..' Chestplate', data.xinfo),
+        description= format_desc(data.name..' Chestpiece', data.xinfo),
         inventory_image = terumet.tex('invchest_'..data.suffix),
         texture = terumet.tex('armchest_'..data.suffix),
         preview = terumet.tex('prvchest_'..data.suffix),
@@ -102,7 +102,7 @@ local function reg_terumet_armor(data)
 
     local legs_id = terumet.id('armlegs_'..data.suffix)
     armor:register_armor(legs_id, {
-        description= format_desc(data.name..' Greaves', data.xinfo),
+        description= format_desc(data.name..' Leggings', data.xinfo),
         inventory_image = terumet.tex('invlegs_'..data.suffix),
         texture = terumet.tex('armlegs_'..data.suffix),
         preview = terumet.tex('prvlegs_'..data.suffix),
@@ -194,3 +194,4 @@ reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'),
 
 reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'), mrv=300,
     def=10, defhi=15, heal=8, speed=0.05, gravity=-0.025, xinfo='Weight -5', uses=2000}
+    -- TODO: implement proper preview graphics for vulcansuit

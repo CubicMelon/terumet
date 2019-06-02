@@ -1,4 +1,4 @@
--- Terumet v2.5
+-- Terumet v3.0
 
 -- Mod for open-source voxel game Minetest (https://www.minetest.net/)
 -- Written for Minetest version 5.0.0
@@ -27,7 +27,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=2, minor=5, patch=0}
+terumet.version = {major=3, minor=0, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"
@@ -216,8 +216,8 @@ terumet.do_lua_file('material/pwood')
 terumet.do_lua_file('material/tglass')
 terumet.do_lua_file('material/rebar')
 terumet.do_lua_file('material/misc')
-terumet.do_lua_file('material/coalproc')
 terumet.do_lua_file('material/crystallized')
+terumet.do_lua_file('material/battery')
 
 local id = terumet.id
 
@@ -311,6 +311,7 @@ for dmat, v in pairs(dmv_values) do
 end
 
 terumet.do_lua_file('material/concrete')
+terumet.do_lua_file('material/coalproc')
 
 local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib'}
 for _,mod in ipairs(INTEROPS) do

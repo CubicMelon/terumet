@@ -79,11 +79,11 @@ function base_asm.get_drop_contents(machine)
 end
 
 function base_asm.do_processing(smelter, dt)
-    local speed_mult = 1
-    if base_mach.has_upgrade(smelter, 'speed_up') then speed_mult = 2 end
+    if base_mach.has_upgrade(smelter, 'speed_up') then dt = dt * 2 end
 
-    if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, opts.COST_FLUX_MELTING_HU * speed_mult, 'Melting flux') then
-        smelter.state_time = smelter.state_time - (dt * speed_mult)
+    local heat_req = math.min(dt, smelter.state_time) * opts.MELT_HUPS
+    if smelter.state == base_asm.STATE.FLUX_MELT and base_mach.expend_heat(smelter, heat_req, 'Melting flux') then
+        smelter.state_time = smelter.state_time - dt
         if smelter.state_time <= 0 then
             smelter.flux_tank = smelter.flux_tank + opts.FLUX_VALUE
             smelter.inv:set_stack('result', 1, nil)
@@ -91,27 +91,30 @@ function base_asm.do_processing(smelter, dt)
         else
             smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
         end
-    elseif smelter.state == base_asm.STATE.ALLOYING and base_mach.expend_heat(smelter, opts.COST_FLUX_ALLOYING_HU * speed_mult, 'Alloying') then
-        local result_stack = smelter.inv:get_stack('result', 1)
-        local result_name = terumet.itemstack_desc(result_stack)
-        smelter.state_time = smelter.state_time - (dt * speed_mult)
-        if smelter.state_time <= 0 then
-            local out_inv, out_list = base_mach.get_output(smelter)
-            if out_inv then
-                if out_inv:room_for_item(out_list, result_stack) then
-                    smelter.inv:set_stack('result', 1, nil)
-                    out_inv:add_item(out_list, result_stack)
-                    smelter.state = base_asm.STATE.IDLE
+    else
+        heat_req = math.min(dt, smelter.state_time) * opts.ALLOY_HUPS
+        if smelter.state == base_asm.STATE.ALLOYING and base_mach.expend_heat(smelter, heat_req, 'Alloying') then
+            local result_stack = smelter.inv:get_stack('result', 1)
+            local result_name = terumet.itemstack_desc(result_stack)
+            smelter.state_time = smelter.state_time - dt
+            if smelter.state_time <= 0 then
+                local out_inv, out_list = base_mach.get_output(smelter)
+                if out_inv then
+                    if out_inv:room_for_item(out_list, result_stack) then
+                        smelter.inv:set_stack('result', 1, nil)
+                        out_inv:add_item(out_list, result_stack)
+                        smelter.state = base_asm.STATE.IDLE
+                    else
+                        smelter.status_text = result_name .. ' ready - no output space!'
+                        smelter.state_time = -0.1
+                    end
                 else
-                    smelter.status_text = result_name .. ' ready - no output space!'
+                    smelter.status_text = 'No output'
                     smelter.state_time = -0.1
                 end
             else
-                smelter.status_text = 'No output'
-                smelter.state_time = -0.1
+                smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(smelter.state_time) .. ')'
             end
-        else
-            smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(smelter.state_time) .. ')'
         end
     end
 end

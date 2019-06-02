@@ -62,13 +62,13 @@ function base_htf.get_drop_contents(machine)
 end
 
 function base_htf.do_processing(furnace, dt)
-    local speed_mult = 1
-    if base_mach.has_upgrade(furnace, 'speed_up') then speed_mult = 2 end
+    if base_mach.has_upgrade(furnace, 'speed_up') then dt = dt * 2 end
 
-    if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, opts.COST_COOKING_HU * speed_mult, 'Cooking') then
+    local heat_req = math.min(dt, furnace.state_time) * opts.COOK_HUPS
+    if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, heat_req, 'Cooking') then
         local result_stack = furnace.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
-        furnace.state_time = furnace.state_time - (dt * speed_mult)
+        furnace.state_time = furnace.state_time - dt
         if furnace.state_time <= 0 then
             local out_inv, out_list = base_mach.get_output(furnace)
             if out_inv then
@@ -110,11 +110,16 @@ function base_htf.check_new_processing(furnace)
                 max_hear_distance = 16
             })
         end
+        local is_battery = input_stack:get_definition().groups._terumetal_battery
         if cook_result.time ~= 0 then
             furnace.state = base_htf.STATE.COOKING
             in_inv:set_stack(in_list, slot, cook_after.items[1])
             furnace.inv:set_stack('result', 1, cook_result.item)
-            furnace.state_time = math.floor(cook_result.time * opts.TIME_MULT * furnace.class.timer)
+            if is_battery then
+                furnace.state_time = cook_result.time
+            else
+                furnace.state_time = cook_result.time * opts.TIME_MULT
+            end
             furnace.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for cooking...'
             return
         end

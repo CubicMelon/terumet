@@ -467,6 +467,7 @@ end
 -- automatically sets need_heat and "low heat message" if fails
 function base_mach.expend_heat(machine, value, process)
     if base_mach.has_upgrade(machine, 'cheat') then return true end
+    value = math.floor(value)
     if machine.heat_level < value then
         base_mach.set_low_heat_msg(machine, process)
         machine.need_heat = true
@@ -479,6 +480,7 @@ end
 -- for use by machine itself ONLY
 -- use external_send_heat for outside machine
 function base_mach.gain_heat(machine, value)
+    value = math.floor(value)
     machine.heat_level = math.min(machine.max_heat, machine.heat_level + value)
 end
 

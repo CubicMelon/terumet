@@ -61,13 +61,13 @@ function base_vul.get_drop_contents(machine)
 end
 
 function base_vul.do_processing(vulcan, dt)
-    local speed_mult = 1.0
-    if base_mach.has_upgrade(vulcan, 'speed_up') then speed_mult = 2.0 end
+    if base_mach.has_upgrade(vulcan, 'speed_up') then dt = dt * 2 end
 
-    if vulcan.state == base_vul.STATE.VULCANIZING and base_mach.expend_heat(vulcan, vulcan.heat_cost * speed_mult, 'Vulcanizing') then
+    local heat_req = math.min(dt, vulcan.state_time) * vulcan.heat_cost
+    if vulcan.state == base_vul.STATE.VULCANIZING and base_mach.expend_heat(vulcan, heat_req, 'Vulcanizing') then
         local result_stack = vulcan.inv:get_stack('result', 1)
         local result_name = result_stack:get_definition().description
-        vulcan.state_time = vulcan.state_time - (dt * speed_mult)
+        vulcan.state_time = vulcan.state_time - dt
         if vulcan.state_time <= 0 then
             local out_inv, out_list = base_mach.get_output(vulcan)
             if out_inv then
@@ -101,7 +101,7 @@ function base_vul.check_new_processing(vulcan)
             local yield = matched_recipe[2]
             vulcan.state = base_vul.STATE.VULCANIZING
             vulcan.state_time = opts.PROCESS_TIME
-            vulcan.heat_cost = opts.COST_VULCANIZE
+            vulcan.heat_cost = opts.VULCANIZE_HUPS
             -- if limited, obsidian will not benefit from crystalization upgrade
             local limit_obsidian = opts.LIMIT_OBSIDIAN and source == 'default:obsidian'
             if not limit_obsidian and base_mach.has_upgrade(vulcan, 'cryst') then

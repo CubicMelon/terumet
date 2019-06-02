@@ -1,17 +1,28 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
-## Version 2.5
-* Moved Concrete Mix & Concrete from my other mod into Terumetal.
+# Version 3.0
+* **MAJOR VERSION CHANGE**: ALL MACHINE FUNCTIONALITY IS NOW SCALED PER SECOND RATHER THAN PER TICK. -- MOST IMPORTANTLY: **HEAT COSTS**
+    * This is way overdue, especially since Minetest 5.0 seems to not call node ticks as uniformly as it used to.
+    * This change in turn greatly encouraged this modification: ALL old Heat Unit measurements have been **universally multiplied by 10**.
+    * While it may cause some issues with upgrading (I apologize!) this means no longer will things be more expensive than expected because of long server ticks.
+    * **IMPORTANT**: A huge portion of options.lua has changed to reflect this; if you have custom options I suggest making note of your changes, placing the new default options.lua in place, then re-adding your changes. Remember any old HU modifications you did should be now be multiplied by 10!
+* Because of the above update, a new (and similarly overdue) item was added: **Batteries**
+    * Most usefully, the basic Copper battery can be used as a starting point for alloying -- you no longer HAVE to seek out natural lava.
+    * Batteries can be cooked via any normal means (vanilla Furnace, etc.) and will provide a small amount of HU to a heat machine when put in its Fuel slot.
+    * For technical reasons, The High-Temp furnace's standard speed bonus does not apply when heating batteries. Sorry!
+        * (It's because you could easily double Heat this way; its heat costs are purely based on how long it takes to heat an item)
+* Moved cosmetic blocks **Concrete Mix & Concrete** from my other mod into Terumetal.
     * Make concrete mix with sand & gravel, when Concrete Mix in world comes in contact with water it hardens to Concrete.
     * White concrete mix can be dyed into any of the 14 other standard dye colors.
     * (Yes, just like another crafty game)
     * Concrete can be made into doors, slabs, walls, stairs, etc.
-* Added Vacuum Oven - Tier 3 processing machine that can turn Coal into Coke & Tarballs
-    * Coke is a more efficient fuel than coal
-    * Tarballs can be used where plant glue is, or further cooked and vulcanized into Synthetic Rubber Bars
-* Added Vulcansuit armor set, made from Vulcansuit Plates
-    * Vulcansuit Plates are made by alloying Synthetic Rubber Bars with Teruchalcum
+* Added **Vacuum Oven** - Tier 3 processing machine that can turn Coal into **Coke & Tarballs**
+    * Coke is a more long-burning fuel than plain Coal
+    * Tarballs can be used where plant glue is, or further cooked and vulcanized into **Synthetic Rubber Bars**
+    * Tarballs can also be used to make **Asphalt** - a cosmetic block.
+* Added **Vulcansuit Armor** set, made from Vulcansuit Plates
+    * **Vulcansuit Plates** are made by alloying Synthetic Rubber Bars with Teruchalcum
     * The Vulcansuit is excellent full-body protection and the best overall armor available from the mod.
 * Redesigned machine interfaces with some Minetest 5.0 features. Each tier has its own appearance.
 * Now depends on more minetest default game mods (doors, stairs, walls) -- shouldn't be a problem in 5.0

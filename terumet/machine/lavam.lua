@@ -48,11 +48,11 @@ function base_lavam.get_drop_contents(machine)
 end
 
 function base_lavam.do_processing(lavam, dt)
-    local speed_mult = 1.0
-    if base_mach.has_upgrade(lavam, 'speed_up') then speed_mult = 2.0 end
+    if base_mach.has_upgrade(lavam, 'speed_up') then dt = dt * 2.0 end
 
-    if lavam.state == base_lavam.STATE.MELT and base_mach.expend_heat(lavam, lavam.heat_cost * speed_mult, 'Melting stone') then
-        lavam.state_time = lavam.state_time - (dt * speed_mult)
+    local heat_req = math.min(dt, lavam.state_time) * opts.COOK_HUPS
+    if lavam.state == base_lavam.STATE.MELT and base_mach.expend_heat(lavam, heat_req, 'Melting stone') then
+        lavam.state_time = lavam.state_time - dt
         if lavam.state_time <= 0 then
             lavam.state = base_lavam.STATE.DISPENSE
             lavam.state_time = 0

@@ -57,7 +57,7 @@ function furn_htr.do_processing(heater, dt)
     local speed_mult = 1
     if base_mach.has_upgrade(heater, 'speed_up') then speed_mult = 2 end
 
-    local gain = math.floor(opts.HEAT_GEN * dt * speed_mult) -- heat gain this tick
+    local gain = math.floor(opts.GEN_HUPS * math.min(dt, heater.state_time) * speed_mult)
     if base_mach.has_upgrade(heater, 'gen_up') then gain = gain * 3 end
     if gain == 0 then return end
     local under_cap = heater.heat_level < (heater.max_heat - gain)

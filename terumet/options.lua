@@ -55,8 +55,8 @@ terumet.options.machine = {
     --
     -- Heat sources that can be used in fuel slots of machines
     BASIC_HEAT_SOURCES = {
-        ['bucket:bucket_lava']={ hus=2000, return_item='bucket:bucket_empty' },
-        ['terumet:block_thermese_hot']={ hus=400, return_item='terumet:block_thermese'}
+        ['bucket:bucket_lava']={ hus=20000, return_item='bucket:bucket_empty' },
+        ['terumet:block_thermese_hot']={ hus=5000, return_item='terumet:block_thermese'},
     },
     -- Whether machines emit smoke particles or not while working
     PARTICLES = true,
@@ -76,59 +76,59 @@ terumet.options.heater = {
         -- FURNACE HEATER SETTINGS
         --
         -- Maximum HUs Furnace Heater can store
-        MAX_HEAT = 500,
+        MAX_HEAT = 10000,
         -- Maximum HUs Furnace Heater can transfer per tick
-        HEAT_TRANSFER_RATE = 20,
+        HEAT_TRANSFER_RATE = 300,
         -- Base heat generation per second of burn time
-        HEAT_GEN = 10
+        GEN_HUPS = 100
     },
     solar={
         --
         -- SOLAR HEATER SETTINGS
         --
         -- Maximum HUs Solar Heater can store
-        MAX_HEAT = 4000,
-        -- HUs Solar Heater generates per tick based on sunlight level
-        SOLAR_GAIN_RATES = { 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3, 4, 6, 12, 24 },
+        MAX_HEAT = 40000,
+        -- HUs Solar Heater generates per second based on sunlight level
+        SOLAR_HUPS = { 0, 0, 0, 0, 0, 10, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100 },
         -- Maximum HUs Solar Heater can transfer per tick
-        HEAT_TRANSFER_RATE = 100,
+        HEAT_TRANSFER_RATE = 1000,
     },
     entropy={
         --
         -- ENTROPIC HEATER SETTINGS
         --
-        MAX_HEAT = 20000,
-        HEAT_TRANSFER_RATE = 500,
+        MAX_HEAT = 200000,
+        HEAT_TRANSFER_RATE = 5000,
         -- the maximum extent the heater "scans" from the main machine
         MAX_RANGE = {x=5, y=5, z=5},
         -- if a node time is not defined, use this time
         DEFAULT_DRAIN_TIME = 1.0,
         EFFECTS = {
-            ['default:water_source']={change='default:ice', time=5.0, hups=100}, -- 500 HU total
-            ['default:water_flowing']={change='default:ice', time=2.5, hups=120}, -- 300 HU total
-            ['default:lava_source']={change='default:obsidian', time=2.0, hups=1000}, -- 2000 HU total
-            ['default:lava_flowing']={change='default:obsidian', time=1.0, hups=500}, -- 500 HU total
-            ['default:dirt_with_grass']={change='default:dirt', hups=100},
-            ['default:sandstone']={change='default:sand', hups=300},
-            ['default:silver_sandstone']={change='default:silver_sand', hups=300},
-            ['default:stone']={change='default:cobble', time=3.0, hups=100}, -- 300 HU total
-            ['default:cobble']={change='default:gravel', time=3.0, hups=80}, -- 240 HU total
-            ['default:gravel']={change='default:silver_sand', time=3.0, hups=50}, -- 150 HU total
-            ['default:coalblock']={change='default:stone_with_coal', time=60.0, hups=150}, -- 9000 HU total
-            ['default:stone_with_coal']={change='default:stone', time=10.0, hups=150}, -- 1500 HU total
-            ['default:mossycobble']={change='default:cobble', time=15.0, hups=50}, -- 750 HU total
-            ['default:clay']={change='default:dirt', time=5.0, hups=50}, -- 250 HU total
-            ['default:cactus']={change='air', time=10.0, hups=20}, -- 200 HU total
-            ['default:papyrus']={change='air', time=20.0, hups=20}, -- 400 HU total
-            ['group:flora']={change='default:dry_shrub', time=6.0, hups=15}, -- 90 hu total
-            ['default:dry_shrub']={change='air', time=3.0, hups=15}, -- 45 HUs total
-            ['fire:basic_flame']={change='air', time=0.5, hups=1000}, -- 500 HU total
-            ['fire:permanent_flame']={change='air', time=0.5, hups=1000}, -- 500 HU total
-            ['air']={time=1.0, hups=5}, -- 10 HU total
-            ['group:tree']={change='air', time=12.0, hups=30}, -- 360 HU total
-            ['group:sapling']={change='air', time=4.0, hups=40}, -- 160 HU total
-            ['group:wood']={change='air', time=9.0, hups=10}, --  90 HU total
-            ['group:leaves']={change='air', time=4.0, hups=20}, -- 80 HU total
+            ['default:water_source']={change='default:ice', time=5.0, hups=1000},
+            ['default:water_flowing']={change='default:ice', time=2.5, hups=1200},
+            ['default:lava_source']={change='default:obsidian', time=2.0, hups=10000},
+            ['default:lava_flowing']={change='default:obsidian', time=1.0, hups=5000},
+            ['default:dirt_with_grass']={change='default:dirt', hups=1000},
+            ['default:sandstone']={change='default:sand', hups=3000},
+            ['default:silver_sandstone']={change='default:silver_sand', hups=3000},
+            ['default:stone']={change='default:cobble', time=3.0, hups=1000},
+            ['default:cobble']={change='default:gravel', time=3.0, hups=800},
+            ['default:gravel']={change='default:silver_sand', time=3.0, hups=500},
+            ['default:coalblock']={change='default:stone_with_coal', time=60.0, hups=1500},
+            ['default:stone_with_coal']={change='default:stone', time=10.0, hups=1500},
+            ['default:mossycobble']={change='default:cobble', time=15.0, hups=500},
+            ['default:clay']={change='default:dirt', time=5.0, hups=500},
+            ['default:cactus']={change='air', time=10.0, hups=2000},
+            ['default:papyrus']={change='air', time=20.0, hups=2000},
+            ['group:flora']={change='default:dry_shrub', time=6.0, hups=150},
+            ['default:dry_shrub']={change='air', time=3.0, hups=1500},
+            ['fire:basic_flame']={change='air', time=0.5, hups=10000},
+            ['fire:permanent_flame']={change='air', time=0.5, hups=10000},
+            ['air']={time=1.0, hups=500},
+            ['group:tree']={change='air', time=12.0, hups=300},
+            ['group:sapling']={change='air', time=4.0, hups=400},
+            ['group:wood']={change='air', time=9.0, hups=100},
+            ['group:leaves']={change='air', time=4.0, hups=200},
         }
     }
 }
@@ -138,9 +138,9 @@ terumet.options.crusher = {
     -- CRUSHER SETTINGS
     --
 
-    MAX_HEAT = 500,
+    MAX_HEAT = 5000,
 
-    COST_HEATING = 20, -- per sec.
+    HEAT_HUPS = 200,
     TIME_HEATING = 4.0, -- in sec.
     TIME_COOLING = 6.0, -- in sec.
 
@@ -172,15 +172,15 @@ terumet.options.thermobox = {
     --
     -- THERMOBOX SETTINGS
     --
-    MAX_HEAT = 20000,
-    HEAT_TRANSFER_RATE = 250
+    MAX_HEAT = 200000,
+    HEAT_TRANSFER_RATE = 2500
 }
 
 terumet.options.thermdist = {
     --
     -- THERMAL DISTRIBUTOR SETTINGS
-    MAX_HEAT = 2000,
-    HEAT_TRANSFER_RATE = 250
+    MAX_HEAT = 20000,
+    HEAT_TRANSFER_RATE = 2500
 }
 
 terumet.options.heatline = {
@@ -188,14 +188,14 @@ terumet.options.heatline = {
     -- HEATLINE SETTINGS
     --
     -- Maximum HUs heatline input can contain
-    MAX_HEAT = 5000,
+    MAX_HEAT = 50000,
     -- Maximum distance over a heatline input can send (in blocks of heatline)
     -- when a heatline extends beyond this, it will occasionally display smoke particles to warn
     MAX_DIST = 36,
     -- Every RECHECK_LINKS_TIMER seconds, recheck the heatline network on an input
     RECHECK_LINKS_TIMER = 4.0,
     -- Max heat transferred every tick (divided among all connected machines in order of distance)
-    HEAT_TRANSFER_MAX = 250,
+    HEAT_TRANSFER_MAX = 2500,
     -- whether /heatlines chat command is available to list all heatline network info
     DEBUG_CHAT_COMMAND = false,
 }
@@ -205,11 +205,11 @@ terumet.options.heat_ray = {
     -- HEAT RAY EMITTER SETTINGS
     --
     -- Maximum HUs emitter can contain
-    MAX_HEAT = 2000,
+    MAX_HEAT = 20000,
     -- HUs sent in one ray
-    SEND_AMOUNT = 1000,
+    SEND_AMOUNT = 10000,
     -- maximum number of nodes emitter will seek before giving up
-    MAX_DISTANCE = 100,
+    MAX_DISTANCE = 1000,
     -- set to zero to disable particle display of ray
     RAY_PARTICLES_PER_NODE = 6
 }
@@ -219,7 +219,7 @@ terumet.options.smelter = {
     -- TERUMETAL ALLOY SMELTER SETTINGS
     --
     -- Maximum HUs smelter can contain
-    MAX_HEAT = 2000,
+    MAX_HEAT = 20000,
     -- Amount of flux value (FV) one item is worth
     FLUX_VALUE = 2,
     -- Maximum stored FV of an alloy smelter's flux tank
@@ -227,10 +227,10 @@ terumet.options.smelter = {
     -- (only a maximum of 1 stack of Crystallized Terumetal will be dropped)
     -- also if stored flux < FLUX_VALUE, that amount will be lost (minimum 1 Crystallized Terumetal dropped)
     FLUX_MAXIMUM = 100,
-    -- Heat expended per tick melting flux
-    COST_FLUX_MELTING_HU = 2,
-    -- Heat expended per tick alloying
-    COST_FLUX_ALLOYING_HU = 1,
+    -- Heat expended per second melting flux
+    MELT_HUPS = 20,
+    -- Heat expended per second alloying
+    ALLOY_HUPS = 10,
     -- Default items usable as flux
     FLUX_ITEMS = {
         ['terumet:lump_raw']={time=3.0},
@@ -290,10 +290,11 @@ terumet.options.furnace = {
     -- HIGH-TEMP FURNACE SETTINGS
     --
     -- Maximum HUs ht-furnace can contain
-    MAX_HEAT = 3000,
-    -- Heat cost per tick of cooking
-    COST_COOKING_HU = 5,
+    MAX_HEAT = 30000,
+    -- Heat cost per second
+    COOK_HUPS = 100,
     -- Multiplier applied to normal cooking time
+    -- NOTE: This multiplier is ignored for battery heating
     TIME_MULT = 0.5,
 }
 
@@ -302,9 +303,9 @@ terumet.options.vac_oven = {
     -- VACUUM OVEN SETTINGS
     --
     -- Maximum HUs machine can contain
-    MAX_HEAT = 10000,
+    MAX_HEAT = 100000,
     -- HU cost per tick of cooking
-    COST_PER_TICK = 100,
+    COOK_HUPS = 500,
 
     recipes = {
         {results={'terumet:item_tarball 4', 'terumet:item_coke'}, time=10.0, input='default:coal_lump'},
@@ -321,9 +322,9 @@ terumet.options.vulcan = {
     -- populated through registration, see interop/terumet_api.lua
     recipes = {}, -- DO NOT CHANGE
     -- Maximum HUs vulcanizer can contain
-    MAX_HEAT = 6000,
-    -- Heat cost per tick of vulcanizing
-    COST_VULCANIZE = 10,
+    MAX_HEAT = 60000,
+    -- Heat cost per second of vulcanizing
+    VULCANIZE_HUPS = 200,
     -- Time to process one item (in seconds)
     PROCESS_TIME = 6.0,
     -- when true, crystalizing obsidian always produces exactly one crystal.
@@ -336,14 +337,14 @@ terumet.options.lavam = {
     -- LAVA MELTER SETTINGS
     --
     -- Maximum HUs melter can contain
-    MAX_HEAT = 3000,
+    MAX_HEAT = 30000,
     -- Nodes that can be melted to lava
     -- related number is total required heat to melt
     VALID_STONES = {
-        ['default:stone']=1500,
-        ['default:cobble']=2000,
-        ['default:desert_stone']=1400,
-        ['default:desert_cobble']=1800
+        ['default:stone']=15000,
+        ['default:cobble']=20000,
+        ['default:desert_stone']=14000,
+        ['default:desert_cobble']=18000
     },
     -- total time for 1 item required in seconds (best if required heat/MELT_TIME is a whole number)
     MELT_TIME = 200
@@ -354,11 +355,11 @@ terumet.options.meseg = {
     -- MESE GARDEN SETTINGS
     --
     -- Maximum HUs garden can contain
-    MAX_HEAT = 5000,
+    MAX_HEAT = 50000,
     -- HUs required to begin growing
-    START_HEAT = 1000,
+    START_HEAT = 10000,
     -- HUs required per second when growing
-    GROW_HEAT = 35,
+    HEAT_HUPS = 350,
     -- Multiplier applied to efficiency every second not heated or seeded
     EFFIC_LOSS_RATE = 0.75,
     -- Maximum efficiency "points" (at this level, progress is 100% of possible rate)
@@ -387,13 +388,13 @@ terumet.options.repm = {
     --
     -- EQUIPMENT REFORMER SETTINGS
     --
-    MAX_HEAT = 5000,
+    MAX_HEAT = 50000,
 
-    -- HUs/tick to melt repair material and repair material units processed per tick
-    MELTING_HEAT = 10,
+    -- HUs/sec to melt repair material and repair material units processed per tick
+    MELT_HUPS = 100,
     MELTING_RATE = 10,
-    -- HUs/tick to repair one item and repair material units applied to repairing per tick
-    REPAIR_HEAT = 5,
+    -- HUs/sec to repair one item and repair material units applied to repairing per tick
+    REPAIR_HUPS = 30,
     REPAIR_RATE = 10,
     -- maximum units of repair material that can be stored
     RMAT_MAXIMUM = 1000,
