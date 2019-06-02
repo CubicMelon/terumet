@@ -15,6 +15,7 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE
     },
     bg='gui_back2',
+    battery_slot={true},
     machine = function(machine)
         local fs = ''
         if machine.last_sun and machine.last_interf then
@@ -28,7 +29,7 @@ function sol_htr.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('upgrade', 2)
-
+    inv:set_size('battery',1)
     local init_heater = {
         class = sol_htr.nodedef._terumach_class,
         state = sol_htr.STATE.GENERATING,
@@ -62,7 +63,7 @@ function sol_htr.do_processing(solar, dt)
 
     local gain = math.floor(opts.SOLAR_HUPS[effective_light+1] * dt)
 
-    if base_mach.has_upgrade(solar, 'gen_up') then gain = gain * 2 end
+    if base_mach.has_upgrade(solar, 'gen_up') then gain = gain * 1.35 end
     local last_eff = 100.0*effective_light/15
     local last_sun = 100.0*present_light/15
     local last_interf = math.max(0, 100.0*(night_light-LIGHT_LEEWAY)/15)
@@ -85,6 +86,7 @@ end
 function sol_htr.tick(pos, dt)
     -- read state from meta
     local solar = base_mach.tick_read_state(pos)
+    base_mach.process_battery(solar)
     if not base_mach.check_overheat(solar, opts.MAX_HEAT) then
         sol_htr.do_processing(solar, dt)
 

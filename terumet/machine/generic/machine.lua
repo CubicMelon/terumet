@@ -441,7 +441,6 @@ function base_mach.process_fuel(machine)
     local hu_value = 0
     if heat_source then
         hu_value = heat_source.hus
-        if base_mach.has_upgrade(machine, 'gen_up') then hu_value = math.floor(hu_value * 1.3) end
     end
     if heat_source and (machine.max_heat - machine.heat_level) >= hu_value then
         local out_inv, out_list = base_mach.get_output(machine)
@@ -450,7 +449,7 @@ function base_mach.process_fuel(machine)
             if (not return_item) or out_inv:room_for_item(out_list, return_item) then
                 out_inv:add_item(out_list, return_item)
             else
-                machine.status_text = 'Fuel: no output space for ' .. minetest.registered_items[return_item].description
+                machine.status_text = 'Heat Input: no return space for ' .. minetest.registered_items[return_item].description
                 return
             end
             machine.inv:remove_item('fuel', fuel_item:get_name())
@@ -459,6 +458,18 @@ function base_mach.process_fuel(machine)
         end
         machine.heat_level = math.min(machine.max_heat, machine.heat_level + hu_value)
         machine.need_heat = false
+    end
+end
+
+-- handle battery filling
+function base_mach.process_battery(machine)
+    local slot_item = machine.inv:get_stack('battery', 1)
+    if slot_item then
+        local binfo = slot_item:get_definition()._empty_battery_info
+        if binfo and machine.heat_level >= binfo.fill then
+            machine.inv:set_stack('battery', 1, binfo.change_to) -- batteries are expected to be 1-stacks only
+            machine.heat_level = machine.heat_level - binfo.fill
+        end
     end
 end
 
@@ -817,13 +828,19 @@ function base_mach.allow_put(pos, listname, index, stack, player)
         -- deny based on protection
         return 0 -- number of items allowed to move
     end
-    if listname == "fuel" then
+    if listname == 'fuel' then
         -- only allow fuel items into fuel slot
         if opts.BASIC_HEAT_SOURCES[stack:get_name()] then
             return stack:get_count()
         else
             return 0
         end
+    elseif listname == 'battery' then
+        -- only allow empty batteries in battery slot
+        if stack:get_definition()._empty_battery_info then
+            return 1
+        end
+        return 0
     elseif listname == 'upgrade' then
         -- deny insert immediately if target upgrade slot is not empty
         if not minetest.get_meta(pos):get_inventory():get_stack(listname, index):is_empty() then return 0 end

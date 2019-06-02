@@ -117,7 +117,7 @@ function base_repm.process(repm, dt)
     elseif repm.state == base_repm.STATE.REPAIRING then
         local rep_item = repm.inv:get_stack('process', 1)
         local rep_item_wear = rep_item:get_wear()
-        if rep_item_wear > 0 and base_mach.expend_heat(repm, dt * opts.REPAIR_HEAT, 'Repairing') then
+        if rep_item_wear > 0 and base_mach.expend_heat(repm, dt * opts.REPAIR_HUPS, 'Repairing') then
             local item_full_repair_cost = opts.repairable[rep_item:get_name()]
             if item_full_repair_cost then
                 -- wear points removed per point of repmat

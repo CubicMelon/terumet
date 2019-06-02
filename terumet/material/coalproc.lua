@@ -52,12 +52,7 @@ minetest.register_craft({
 
 local rubber_bar_id = terumet.id('item_rubber')
 
-minetest.register_craft({
-	type = 'cooking',
-	output = rubber_bar_id,
-	recipe = tarball_id,
-	cooktime = 60,
-})
+terumet.options.vulcan.recipes[tarball_id] = {rubber_bar_id, 1}
 
 minetest.register_craftitem( rubber_bar_id, {
     description = 'Synthetic Rubber Bar',

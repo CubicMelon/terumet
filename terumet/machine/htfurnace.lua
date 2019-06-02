@@ -67,7 +67,7 @@ function base_htf.do_processing(furnace, dt)
     local heat_req = math.min(dt, furnace.state_time) * opts.COOK_HUPS
     if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, heat_req, 'Cooking') then
         local result_stack = furnace.inv:get_stack('result', 1)
-        local result_name = result_stack:get_definition().description
+        local result_name = terumet.itemstack_desc(result_stack)
         furnace.state_time = furnace.state_time - dt
         if furnace.state_time <= 0 then
             local out_inv, out_list = base_mach.get_output(furnace)
@@ -120,7 +120,7 @@ function base_htf.check_new_processing(furnace)
             else
                 furnace.state_time = cook_result.time * opts.TIME_MULT
             end
-            furnace.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for cooking...'
+            furnace.status_text = 'Accepting ' .. terumet.itemstack_desc(input_stack) .. ' for cooking...'
             return
         end
     end

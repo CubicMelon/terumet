@@ -78,8 +78,8 @@ terumet.options.heater = {
         -- Maximum HUs Furnace Heater can store
         MAX_HEAT = 10000,
         -- Maximum HUs Furnace Heater can transfer per tick
-        HEAT_TRANSFER_RATE = 300,
-        -- Base heat generation per second of burn time
+        HEAT_TRANSFER_RATE = 500,
+        -- HU generation per second of burn time
         GEN_HUPS = 100
     },
     solar={
@@ -89,7 +89,7 @@ terumet.options.heater = {
         -- Maximum HUs Solar Heater can store
         MAX_HEAT = 40000,
         -- HUs Solar Heater generates per second based on sunlight level
-        SOLAR_HUPS = { 0, 0, 0, 0, 0, 10, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100 },
+        SOLAR_HUPS = { 0, 0, 0, 0, 0, 10, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60 },
         -- Maximum HUs Solar Heater can transfer per tick
         HEAT_TRANSFER_RATE = 1000,
     },

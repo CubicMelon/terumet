@@ -24,12 +24,14 @@ local FSDEF = {
         end
         return fs
     end,
+    battery_slot = {true},
     input = {x=2.5, y=1.5}
 }
 
 function furn_htr.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
+    inv:set_size('battery', 1)
     inv:set_size('in', 1)
     inv:set_size('burn', 1)
     inv:set_size('upgrade', 2)
@@ -48,17 +50,17 @@ end
 
 function furn_htr.get_drop_contents(machine)
     local drops = {}
+    default.get_inventory_drops(machine.pos, 'battery', drops)
     default.get_inventory_drops(machine.pos, 'in', drops)
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
     return drops
 end
 
 function furn_htr.do_processing(heater, dt)
-    local speed_mult = 1
-    if base_mach.has_upgrade(heater, 'speed_up') then speed_mult = 2 end
+    if base_mach.has_upgrade(heater, 'speed_up') then dt = dt * 2 end
 
-    local gain = math.floor(opts.GEN_HUPS * math.min(dt, heater.state_time) * speed_mult)
-    if base_mach.has_upgrade(heater, 'gen_up') then gain = gain * 3 end
+    local gain = opts.GEN_HUPS * math.min(dt, heater.state_time)
+    if base_mach.has_upgrade(heater, 'gen_up') then gain = gain * 2 end
     if gain == 0 then return end
     local under_cap = heater.heat_level < (heater.max_heat - gain)
     if heater.state == furn_htr.STATE.BURN_FULL and under_cap then
@@ -66,7 +68,7 @@ function furn_htr.do_processing(heater, dt)
     end
     if heater.state == furn_htr.STATE.BURNING then
         if under_cap then
-            heater.state_time = heater.state_time - (dt * speed_mult)
+            heater.state_time = heater.state_time - dt
             base_mach.gain_heat(heater, gain)
             if heater.state_time <= 0 then
                 heater.inv:set_stack('burn', 1, nil)
@@ -98,8 +100,8 @@ function furn_htr.check_new_processing(heater)
             in_inv:set_stack(in_list, slot, cook_after.items[1])
             input_stack:set_count(1)
             heater.inv:set_stack('burn', 1, input_stack)
-            heater.state_time = cook_result.time / 2
-            heater.status_text = 'Accepting ' .. input_stack:get_definition().description .. ' for burning...'
+            heater.state_time = cook_result.time
+            heater.status_text = 'Accepting ' .. terumet.itemstack_desc(input_stack) .. ' for burning...'
             return
         end
     end
@@ -110,6 +112,7 @@ function furn_htr.tick(pos, dt)
     -- read state from meta
     local heater = base_mach.tick_read_state(pos)
     local venting
+    base_mach.process_battery(heater)
     if base_mach.check_overheat(heater, opts.MAX_HEAT) then
         venting = true
     else

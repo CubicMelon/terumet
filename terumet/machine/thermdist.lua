@@ -16,6 +16,7 @@ local FSDEF = {
     },
     bg='gui_backc',
     fuel_slot = {true},
+    battery_slot = {true}
 }
 
 function base_tdist.init(pos)
@@ -43,6 +44,7 @@ function base_tdist.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
     default.get_inventory_drops(machine.pos, 'fuel', drops)
+    default.get_inventory_drops(machine.pos, 'battery', drops)
     default.get_inventory_drops(machine.pos, 'out', drops)
     return drops
 end
@@ -65,6 +67,7 @@ function base_tdist.tick(pos, dt)
     local tbox = base_mach.tick_read_state(pos)
     local venting = false
 
+    base_mach.process_battery(tbox)
     if base_mach.check_overheat(tbox, opts.MAX_HEAT) then
         venting = true
     else

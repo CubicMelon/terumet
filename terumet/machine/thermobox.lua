@@ -16,12 +16,16 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE,
     },
     bg='gui_backc',
+    fuel_slot={true},
+    battery_slot={true},
 }
 
 function base_tbox.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('upgrade', 2)
+    inv:set_size('fuel', 1)
+    inv:set_size('battery', 1)
     local init_box = {
         class = base_tbox.nodedef._terumach_class,
         state = base_tbox.STATE.IDLE,
@@ -40,6 +44,8 @@ end
 function base_tbox.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
+    default.get_inventory_drops(machine.pos, 'battery', drops)
+    default.get_inventory_drops(machine.pos, 'fuel', drops)
     return drops
 end
 
@@ -67,6 +73,8 @@ end
 function base_tbox.tick(pos, dt)
     -- read state from meta
     local tbox = base_mach.tick_read_state(pos)
+    base_mach.process_fuel(tbox)
+    base_mach.process_battery(tbox)
     local venting = base_mach.check_overheat(tbox, opts.MAX_HEAT)
     if not venting then
         base_tbox.do_processing(tbox, dt)

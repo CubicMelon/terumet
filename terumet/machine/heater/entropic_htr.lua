@@ -18,6 +18,7 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE
     },
     bg = 'gui_back3',
+    battery_slot={true},
     machine = function(machine)
         local fs = ''
         if machine.state ~= ent_htr.STATE.FINDING then
@@ -31,6 +32,7 @@ function ent_htr.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('upgrade', 6)
+    inv:set_size('battery',1)
     inv:set_size('drain', 1)
     local init_heater = {
         class = ent_htr.nodedef._terumach_class,
@@ -50,6 +52,7 @@ end
 function ent_htr.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
+    default.get_inventory_drops(machine.pos, 'battery', drops)
     return drops
 end
 
@@ -143,6 +146,7 @@ end
 function ent_htr.tick(pos, dt)
     -- read state from meta
     local machine = base_mach.tick_read_state(pos)
+    base_mach.process_battery(machine)
     if not base_mach.check_overheat(machine, opts.MAX_HEAT) then
         local pos_above = util3d.pos_plus(pos, util3d.ADJACENT_OFFSETS.up)
         local node_above = minetest.get_node_or_nil(pos_above)

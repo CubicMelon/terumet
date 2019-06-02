@@ -12,6 +12,8 @@ Newer versions listed first
     * Batteries can be cooked via any normal means (vanilla Furnace, etc.) and will provide a small amount of HU to a heat machine when put in its Fuel slot.
     * For technical reasons, The High-Temp furnace's standard speed bonus does not apply when heating batteries. Sorry!
         * (It's because you could easily double Heat this way; its heat costs are purely based on how long it takes to heat an item)
+* Machines that had a "Fuel" slot now have a "Heat In" slot where old heat sources (lava, heated thermese) and full batteries can be inserted to transfer into the machine.
+* Additionally, the generating/storage machines now have a "Heat Out" slot where empty heat batteries can be inserted and filled.
 * Moved cosmetic blocks **Concrete Mix & Concrete** from my other mod into Terumetal.
     * Make concrete mix with sand & gravel, when Concrete Mix in world comes in contact with water it hardens to Concrete.
     * White concrete mix can be dyed into any of the 14 other standard dye colors.
@@ -25,6 +27,9 @@ Newer versions listed first
     * **Vulcansuit Plates** are made by alloying Synthetic Rubber Bars with Teruchalcum
     * The Vulcansuit is excellent full-body protection and the best overall armor available from the mod.
 * Redesigned machine interfaces with some Minetest 5.0 features. Each tier has its own appearance.
+* The Furnace Heater no longer halves the burn time of the fuel it burns.
+    * Necessary to keep balance of Furnace Heater -> High-Temp Furnace -> Battery
+* The Solar Heater has had its generation rates reduced significantly, especially with this new x10 change.
 * Now depends on more minetest default game mods (doors, stairs, walls) -- shouldn't be a problem in 5.0
 
 ## Version 2.4

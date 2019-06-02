@@ -68,7 +68,13 @@ function base_mach.build_fs(machine)
     if fsdef.fuel_slot then
         local fsx = fsdef.fuel_slot.x or 0
         local fsy = fsdef.fuel_slot.y or 1.5
-        fs = fs..string.format('label[%f,%f;Fuel]list[context;fuel;%f,%f;1,1;]', fsx, fsy, fsx, fsy+0.5)
+        fs = fs..string.format('label[%f,%f;Heat In]list[context;fuel;%f,%f;1,1;]', fsx, fsy, fsx, fsy+0.5)
+    end
+    -- control: battery_slot
+    if fsdef.battery_slot then
+        local fsx = fsdef.battery_slot.x or 1.5
+        local fsy = fsdef.battery_slot.y or 1.5
+        fs = fs..string.format('label[%f,%f;Heat Out]list[context;battery;%f,%f;1,1;]', fsx, fsy, fsx, fsy+0.5)
     end
     -- control: upgrade slots
     local upg_ct = machine.inv:get_size('upgrade')

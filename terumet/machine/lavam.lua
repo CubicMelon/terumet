@@ -18,12 +18,14 @@ local FSDEF = {
         base_mach.buttondefs.HEAT_XFER_TOGGLE
     },
     input = {true},
+    fuel_slot = {true},
 }
 
 function base_lavam.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('in', 4)
+    inv:set_size('fuel', 1)
     inv:set_size('upgrade', 2)
 
     local init_lavam = {
@@ -43,6 +45,7 @@ end
 function base_lavam.get_drop_contents(machine)
     local drops = {}
     default.get_inventory_drops(machine.pos, 'in', drops)
+    default.get_inventory_drops(machine.pos, 'fuel', drops)
     default.get_inventory_drops(machine.pos, 'upgrade', drops)
     return drops
 end
