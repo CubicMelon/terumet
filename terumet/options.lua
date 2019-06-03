@@ -56,7 +56,6 @@ terumet.options.machine = {
     -- Heat sources that can be used in fuel slots of machines
     BASIC_HEAT_SOURCES = {
         ['bucket:bucket_lava']={ hus=20000, return_item='bucket:bucket_empty' },
-        ['terumet:block_thermese_hot']={ hus=5000, return_item='terumet:block_thermese'},
     },
     -- Whether machines emit smoke particles or not while working
     PARTICLES = true,
@@ -66,8 +65,10 @@ terumet.options.machine = {
         [1]='Accept',
         [2]='Provide',
     },
-    -- Sound played by overheated machines, (nil to disable)
-    OVERHEAT_SOUND = 'terumet_venting'
+    -- Sounds played by machines, (nil to disable)
+    OVERHEAT_SOUND = 'terumet_venting', -- when overheating and discharging
+    HEATIN_SOUND = 'terumet_heatin', -- when accepting heat from an item/battery
+    HEATOUT_SOUND = 'terumet_heatout', -- when depositing heat in a battery
 }
 
 terumet.options.heater = {

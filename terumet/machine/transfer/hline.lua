@@ -68,6 +68,6 @@ function terumet.register_heatline_block(base, code)
 
     minetest.register_craft{ output = hlblock_id..' 4', recipe = {
         {base, line_id, base},
-        {line_id, terumet.id('item_glue'), line_id},
+        {line_id, 'group:glue', line_id},
         {base, line_id, base}}}
 end

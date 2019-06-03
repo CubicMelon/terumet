@@ -12,6 +12,7 @@ Newer versions listed first
     * Batteries can be cooked via any normal means (vanilla Furnace, etc.) and will provide a small amount of HU to a heat machine when put in its Fuel slot.
     * For technical reasons, The High-Temp furnace's standard speed bonus does not apply when heating batteries. Sorry!
         * (It's because you could easily double Heat this way; its heat costs are purely based on how long it takes to heat an item)
+    * Because of this addition, the old heating feature of Thermese blocks is removed as it has been superseded by the more useful function of batteries.
 * Machines that had a "Fuel" slot now have a "Heat In" slot where old heat sources (lava, heated thermese) and full batteries can be inserted to transfer into the machine.
 * Additionally, the generating/storage machines now have a "Heat Out" slot where empty heat batteries can be inserted and filled.
 * Moved cosmetic blocks **Concrete Mix & Concrete** from my other mod into Terumetal.

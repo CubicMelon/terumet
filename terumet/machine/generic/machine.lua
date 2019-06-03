@@ -458,6 +458,13 @@ function base_mach.process_fuel(machine)
         end
         machine.heat_level = math.min(machine.max_heat, machine.heat_level + hu_value)
         machine.need_heat = false
+        if opts.HEATIN_SOUND then
+            minetest.sound_play( opts.HEATIN_SOUND, {
+                pos = machine.pos,
+                gain = 0.2,
+                max_hear_distance = 4,
+            })
+        end
     end
 end
 
@@ -469,6 +476,13 @@ function base_mach.process_battery(machine)
         if binfo and machine.heat_level >= binfo.fill then
             machine.inv:set_stack('battery', 1, binfo.change_to) -- batteries are expected to be 1-stacks only
             machine.heat_level = machine.heat_level - binfo.fill
+            if opts.HEATOUT_SOUND then
+                minetest.sound_play( opts.HEATOUT_SOUND, {
+                    pos = machine.pos,
+                    gain = 0.2,
+                    max_hear_distance = 4,
+                })
+            end
         end
     end
 end
@@ -592,7 +606,7 @@ function base_mach.nodedef(additions)
         is_ground_content = false,
         sounds = default.node_sound_metal_defaults(),
         paramtype2 = 'facedir',
-        groups = {cracky=1},
+        groups = {cracky=2},
         drop = '', -- since after_dig_node/on_destruct/on_blast handles machines dropping w/stored heat, flag machines as ignoring usual drop mechanic
         -- default inventory slot control
         allow_metadata_inventory_put = base_mach.allow_put,
