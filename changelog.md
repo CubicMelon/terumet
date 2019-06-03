@@ -4,7 +4,7 @@ Newer versions listed first
 # Version 3.0
 * **MAJOR VERSION CHANGE**: ALL MACHINE FUNCTIONALITY IS NOW SCALED PER SECOND RATHER THAN PER TICK. -- MOST IMPORTANTLY: **HEAT COSTS**
     * This is way overdue, especially since Minetest 5.0 seems to not call node ticks as uniformly as it used to.
-    * This change in turn greatly encouraged this modification: ALL old Heat Unit measurements have been **universally multiplied by 10**.
+    * This change in turn greatly encouraged this modification due to scaling: ALL old Heat Unit values have been **universally multiplied by 10**.
     * While it may cause some issues with upgrading (I apologize!) this means no longer will things be more expensive than expected because of long server ticks.
     * **IMPORTANT**: A huge portion of options.lua has changed to reflect this; if you have custom options I suggest making note of your changes, placing the new default options.lua in place, then re-adding your changes. Remember any old HU modifications you did should be now be multiplied by 10!
 * Because of the above update, a new (and similarly overdue) item was added: **Heat Batteries**
