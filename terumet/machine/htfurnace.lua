@@ -11,6 +11,7 @@ base_htf.lit_id = terumet.id('mach_htfurn_lit')
 base_htf.STATE = {}
 base_htf.STATE.IDLE = 0
 base_htf.STATE.COOKING = 1
+base_htf.STATE.EJECT = 2
 
 local FSDEF = {
     control_buttons = {
@@ -19,7 +20,7 @@ local FSDEF = {
     bg='gui_back2',
     machine = function(machine)
         local fs = ''
-        if machine.state == base_htf.STATE.COOKING then
+        if machine.state ~= base_htf.STATE.IDLE then
             fs=fs..base_mach.fs_proc(3,2,'cook', machine.inv:get_stack('result',1))
         end
         return fs
@@ -66,26 +67,28 @@ function base_htf.do_processing(furnace, dt)
 
     local heat_req = math.min(dt, furnace.state_time) * opts.COOK_HUPS
     if furnace.state == base_htf.STATE.COOKING and base_mach.expend_heat(furnace, heat_req, 'Cooking') then
-        local result_stack = furnace.inv:get_stack('result', 1)
-        local result_name = terumet.itemstack_desc(result_stack)
+        local result_name = terumet.itemstack_desc(furnace.inv:get_stack('result', 1))
         furnace.state_time = furnace.state_time - dt
         if furnace.state_time <= 0 then
-            local out_inv, out_list = base_mach.get_output(furnace)
-            if out_inv then
-                if out_inv:room_for_item(out_list, result_stack) then
-                    furnace.inv:set_stack('result', 1, nil)
-                    out_inv:add_item(out_list, result_stack)
-                    furnace.state = base_htf.STATE.IDLE
-                else
-                    furnace.status_text = result_name .. ' ready - no output space!'
-                    furnace.state_time = -0.1
-                end
-            else
-                furnace.status_text = 'No output'
-                furnace.state_time = -0.1
-            end
+            furnace.state = base_htf.STATE.EJECT
         else
             furnace.status_text = 'Cooking ' .. result_name .. ' (' .. terumet.format_time(furnace.state_time) .. ')'
+        end
+    end
+    if furnace.state == base_htf.STATE.EJECT then
+        local out_inv, out_list = base_mach.get_output(furnace)
+        if out_inv then
+            local result_stack = furnace.inv:get_stack('result', 1)
+            local result_name = terumet.itemstack_desc(result_stack)
+            if out_inv:room_for_item(out_list, result_stack) then
+                furnace.inv:set_stack('result', 1, nil)
+                out_inv:add_item(out_list, result_stack)
+                furnace.state = base_htf.STATE.IDLE
+            else
+                furnace.status_text = result_name .. ' ready - no output space!'
+            end
+        else
+            furnace.status_text = 'No output'
         end
     end
 end
@@ -140,19 +143,18 @@ function base_htf.tick(pos, dt)
         base_mach.process_fuel(furnace)
     end
 
-    if furnace.state ~= base_htf.STATE.IDLE and (not furnace.need_heat) then
-        -- if still processing and not waiting for heat, reset timer to continue processing
-        base_mach.set_timer(furnace)
+    local working = furnace.state == base_htf.STATE.COOKING and (not furnace.need_heat)
+    if working then
         base_mach.set_node(pos, base_htf.lit_id)
-        base_mach.generate_smoke(pos)
     else
         base_mach.set_node(pos, base_htf.unlit_id)
     end
+    if working or venting then base_mach.generate_smoke(pos) end
 
     -- write status back to meta
     base_mach.write_state(pos, furnace)
 
-    return venting or base_mach.has_upgrade(furnace, 'ext_input')
+    return working or venting or base_mach.has_upgrade(furnace, 'ext_input')
 end
 
 base_htf.unlit_nodedef = base_mach.nodedef{

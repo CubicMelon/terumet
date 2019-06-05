@@ -10,6 +10,7 @@ base_vul.id = terumet.id('mach_vulcan')
 base_vul.STATE = {}
 base_vul.STATE.IDLE = 0
 base_vul.STATE.VULCANIZING = 1
+base_vul.STATE.EJECT = 2
 
 local FSDEF = {
     control_buttons = {
@@ -18,7 +19,7 @@ local FSDEF = {
     bg='gui_back2',
     machine = function(machine)
         local fs = ''
-        if machine.state == base_vul.STATE.VULCANIZING then
+        if machine.state ~= base_vul.STATE.IDLE then
             fs=base_mach.fs_proc(3,2,'gen',machine.inv:get_stack('result',1))
         end
         return fs
@@ -65,26 +66,29 @@ function base_vul.do_processing(vulcan, dt)
 
     local heat_req = math.min(dt, vulcan.state_time) * vulcan.heat_cost
     if vulcan.state == base_vul.STATE.VULCANIZING and base_mach.expend_heat(vulcan, heat_req, 'Vulcanizing') then
-        local result_stack = vulcan.inv:get_stack('result', 1)
-        local result_name = result_stack:get_definition().description
+        local result_name = terumet.itemstack_desc(vulcan.inv:get_stack('result', 1))
         vulcan.state_time = vulcan.state_time - dt
         if vulcan.state_time <= 0 then
-            local out_inv, out_list = base_mach.get_output(vulcan)
-            if out_inv then
-                if out_inv:room_for_item(out_list, result_stack) then
-                    vulcan.inv:set_stack('result', 1, nil)
-                    out_inv:add_item(out_list, result_stack)
-                    vulcan.state = base_vul.STATE.IDLE
-                else
-                    vulcan.status_text = result_name .. ' ready - no output space!'
-                    vulcan.state_time = -0.1
-                end
-            else
-                vulcan.status_text = 'No output'
-                vulcan.state_time = -0.1
-            end
+            vulcan.state = base_vul.STATE.EJECT
         else
             vulcan.status_text = 'Creating ' .. result_name .. ' (' .. terumet.format_time(vulcan.state_time) .. ')'
+        end
+    end
+
+    if vulcan.state == base_vul.STATE.EJECT then
+        local out_inv, out_list = base_mach.get_output(vulcan)
+        if out_inv then
+            local result_stack = vulcan.inv:get_stack('result', 1)
+            local result_name = terumet.itemstack_desc(result_stack)
+            if out_inv:room_for_item(out_list, result_stack) then
+                vulcan.inv:set_stack('result', 1, nil)
+                out_inv:add_item(out_list, result_stack)
+                vulcan.state = base_vul.STATE.IDLE
+            else
+                vulcan.status_text = result_name .. ' ready - no output space!'
+            end
+        else
+            vulcan.status_text = 'No output'
         end
     end
 end
@@ -134,7 +138,7 @@ function base_vul.tick(pos, dt)
     -- write status back to meta
     base_mach.write_state(pos, vulcan)
 
-    return base_mach.has_upgrade(vulcan, 'ext_input') or (vulcan.state ~= base_vul.STATE.IDLE) or vulcan.need_heat or venting
+    return base_mach.has_upgrade(vulcan, 'ext_input') or venting or (vulcan.state ~= base_vul.STATE.IDLE)
 end
 
 base_vul.nodedef = base_mach.nodedef{

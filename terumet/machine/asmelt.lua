@@ -12,6 +12,7 @@ base_asm.STATE = {}
 base_asm.STATE.IDLE = 0
 base_asm.STATE.FLUX_MELT = 1
 base_asm.STATE.ALLOYING = 2
+base_asm.STATE.EJECT = 3
 
 local FSDEF = {
     control_buttons = {
@@ -22,7 +23,7 @@ local FSDEF = {
         local fs = base_mach.fs_meter(2.5,1, 'flux', 100*machine.flux_tank/opts.FLUX_MAXIMUM, string.format('%d flux', machine.flux_tank))
         if machine.state == base_asm.STATE.FLUX_MELT then
             fs=fs..base_mach.fs_proc(3,2,'melt',machine.inv:get_stack('result',1))
-        elseif machine.state == base_asm.STATE.ALLOYING then
+        elseif machine.state == base_asm.STATE.ALLOYING or machine.state == base_asm.STATE.EJECT then
             fs=fs..base_mach.fs_proc(3,2,'alloy',machine.inv:get_stack('result',1))
         end
         return fs
@@ -91,30 +92,32 @@ function base_asm.do_processing(smelter, dt)
         else
             smelter.status_text = 'Melting flux (' .. terumet.format_time(smelter.state_time) .. ')'
         end
-    else
+    elseif smelter.state == base_asm.STATE.ALLOYING then
         heat_req = math.min(dt, smelter.state_time) * opts.ALLOY_HUPS
-        if smelter.state == base_asm.STATE.ALLOYING and base_mach.expend_heat(smelter, heat_req, 'Alloying') then
-            local result_stack = smelter.inv:get_stack('result', 1)
-            local result_name = terumet.itemstack_desc(result_stack)
+        if base_mach.expend_heat(smelter, heat_req, 'Alloying') then
+            local result_name = terumet.itemstack_desc(smelter.inv:get_stack('result', 1))
             smelter.state_time = smelter.state_time - dt
             if smelter.state_time <= 0 then
-                local out_inv, out_list = base_mach.get_output(smelter)
-                if out_inv then
-                    if out_inv:room_for_item(out_list, result_stack) then
-                        smelter.inv:set_stack('result', 1, nil)
-                        out_inv:add_item(out_list, result_stack)
-                        smelter.state = base_asm.STATE.IDLE
-                    else
-                        smelter.status_text = result_name .. ' ready - no output space!'
-                        smelter.state_time = -0.1
-                    end
-                else
-                    smelter.status_text = 'No output'
-                    smelter.state_time = -0.1
-                end
+                smelter.state = base_asm.STATE.EJECT
             else
                 smelter.status_text = 'Alloying ' .. result_name .. ' (' .. terumet.format_time(smelter.state_time) .. ')'
             end
+        end
+    end
+    if smelter.state == base_asm.STATE.EJECT then
+        local out_inv, out_list = base_mach.get_output(smelter)
+        if out_inv then
+            local result_stack = smelter.inv:get_stack('result', 1)
+            local result_name = terumet.itemstack_desc(result_stack)
+            if out_inv:room_for_item(out_list, result_stack) then
+                smelter.inv:set_stack('result', 1, nil)
+                out_inv:add_item(out_list, result_stack)
+                smelter.state = base_asm.STATE.IDLE
+            else
+                smelter.status_text = result_name .. ' ready - no output space!'
+            end
+        else
+            smelter.status_text = 'No output'
         end
     end
 end
@@ -195,16 +198,18 @@ function base_asm.tick(pos, dt)
         base_mach.process_fuel(smelter)
     end
 
-    if smelter.state ~= base_asm.STATE.IDLE and (not smelter.need_heat) then
+    local working = (not smelter.need_heat) and (smelter.state == base_asm.STATE.FLUX_MELT or smelter.state == base_asm.STATE.ALLOYING)
+    if working then
         -- if still processing and not waiting for heat, reset timer to continue processing
         reset_timer = true
         base_mach.set_node(pos, base_asm.lit_id)
-        base_mach.generate_smoke(pos)
     else
         base_mach.set_node(pos, base_asm.unlit_id)
     end
 
-    if venting or base_mach.has_upgrade(smelter, 'ext_input') then
+    if working or venting then base_mach.generate_smoke(pos) end
+
+    if venting or base_mach.has_upgrade(smelter, 'ext_input') or (base_mach.has_upgrade(smelter, 'ext_output') and smelter.state == base_asm.STATE.EJECT) then
         reset_timer = true
     end
     -- write status back to meta

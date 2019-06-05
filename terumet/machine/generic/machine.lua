@@ -777,7 +777,7 @@ function base_mach.after_place_machine(pos, placer, itemstack, pointed_thing)
             base_mach.set_timer(machine)
         end
     end
-    if placer:is_player() then
+    if placer and placer:is_player() then
         machine.owner = placer:get_player_name()
     else
         machine.owner = '*'

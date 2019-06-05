@@ -11,6 +11,7 @@ base_vov.unlit_id = terumet.id('mach_vcoven')
 base_vov.STATE = {}
 base_vov.STATE.IDLE = 0
 base_vov.STATE.COOKING = 1
+base_vov.STATE.EJECT = 2
 
 local FSDEF = {
     control_buttons = {
@@ -18,7 +19,7 @@ local FSDEF = {
     },
     machine = function(machine)
         local fs = ''
-        if machine.state == base_vov.STATE.COOKING then
+        if machine.state ~= base_vov.STATE.IDLE then
             fs=fs..base_mach.fs_proc(3,2,'cook', machine.inv:get_stack('result',1))
         end
         return fs
@@ -66,31 +67,33 @@ function base_vov.do_processing(oven, dt)
     if oven.state == base_vov.STATE.COOKING and base_mach.expend_heat(oven, heat_req, 'Heating') then
         oven.state_time = oven.state_time - dt
         if oven.state_time <= 0 then
-            local out_inv, out_list = base_mach.get_output(oven)
-            if out_inv then
-                local empties = 0
-                for result_num = 1,MAX_RESULTS do
-                    local result_stack = oven.inv:get_stack('result', result_num)
-                    if result_stack then
-                        if out_inv:room_for_item(out_list, result_stack) then
-                            oven.inv:set_stack('result', result_num, nil)
-                            out_inv:add_item(out_list, result_stack)
-                            empties = empties + 1
-                        else
-                            oven.status_text = terumet.itemstack_desc(result_stack) .. ' ready - no output space!'
-                            oven.state_time = -0.1
-                        end
-                    else
-                        empties = empties + 1
-                    end
-                end
-                if empties >= MAX_RESULTS then oven.state = base_vov.STATE.IDLE end
-            else
-                oven.status_text = 'No output'
-                oven.state_time = -0.1
-            end
+            oven.state = base_vov.STATE.EJECT
         else
             oven.status_text = 'Heating (' .. terumet.format_time(oven.state_time) .. ')'
+        end
+    end
+
+    if oven.state == base_vov.STATE.EJECT then
+        local out_inv, out_list = base_mach.get_output(oven)
+        if out_inv then
+            local empties = 0
+            for result_num = 1,MAX_RESULTS do
+                local result_stack = oven.inv:get_stack('result', result_num)
+                if result_stack then
+                    if out_inv:room_for_item(out_list, result_stack) then
+                        oven.inv:set_stack('result', result_num, nil)
+                        out_inv:add_item(out_list, result_stack)
+                        empties = empties + 1
+                    else
+                        oven.status_text = terumet.itemstack_desc(result_stack) .. ' ready - no output space!'
+                    end
+                else
+                    empties = empties + 1
+                end
+            end
+            if empties >= MAX_RESULTS then oven.state = base_vov.STATE.IDLE end
+        else
+            oven.status_text = 'No output'
         end
     end
 end
@@ -129,13 +132,13 @@ function base_vov.tick(pos, dt)
         base_vov.check_new_processing(oven)
     end
 
-    local is_active = oven.state ~= base_vov.STATE.IDLE and (not oven.need_heat)
+    local working = oven.state ~= base_vov.STATE.IDLE and (not oven.need_heat)
 
     -- write status back to meta
     base_mach.write_state(pos, oven)
 
     -- return true to reset tick timer
-    return is_active or venting or base_mach.has_upgrade(oven, 'ext_input')
+    return working or venting or base_mach.has_upgrade(oven, 'ext_input')
 end
 
 base_vov.unlit_nodedef = base_mach.nodedef{
