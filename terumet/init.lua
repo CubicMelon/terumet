@@ -313,7 +313,7 @@ end
 terumet.do_lua_file('material/concrete')
 terumet.do_lua_file('material/coalproc')
 
-local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib'}
+local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loot'}
 for _,mod in ipairs(INTEROPS) do
     if minetest.global_exists(mod) then terumet.do_lua_file('interop/'..mod) end
 end

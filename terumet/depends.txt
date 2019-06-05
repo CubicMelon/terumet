@@ -12,3 +12,4 @@ doors?
 stairs?
 tnt?
 mesecons?
+dungeon_loot?
