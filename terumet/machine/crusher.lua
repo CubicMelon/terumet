@@ -67,7 +67,7 @@ end
 function base_crs.do_processing(crusher, dt)
     if base_mach.has_upgrade(crusher, 'speed_up') then dt = dt * 2 end
 
-    local heat_req = math.min(dt, crusher.state_time) * opts.COOK_HUPS
+    local heat_req = math.min(dt, crusher.state_time) * opts.HEAT_HUPS
     if crusher.state == base_crs.STATE.HEATING and base_mach.expend_heat(crusher, heat_req, 'Heating presses') then
         crusher.state_time = crusher.state_time - dt
         if crusher.state_time <= 0 then

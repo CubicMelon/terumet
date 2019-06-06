@@ -53,7 +53,7 @@ end
 function base_lavam.do_processing(lavam, dt)
     if base_mach.has_upgrade(lavam, 'speed_up') then dt = dt * 2.0 end
 
-    local heat_req = math.min(dt, lavam.state_time) * opts.COOK_HUPS
+    local heat_req = lavam.heat_cost * math.min(dt, lavam.state_time)
     if lavam.state == base_lavam.STATE.MELT and base_mach.expend_heat(lavam, heat_req, 'Melting stone') then
         lavam.state_time = lavam.state_time - dt
         if lavam.state_time <= 0 then

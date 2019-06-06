@@ -141,7 +141,7 @@ terumet.options.crusher = {
 
     MAX_HEAT = 5000,
 
-    HEAT_HUPS = 200,
+    HEAT_HUPS = 150,
     TIME_HEATING = 4.0, -- in sec.
     TIME_COOLING = 6.0, -- in sec.
 
