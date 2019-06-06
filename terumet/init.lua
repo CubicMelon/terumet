@@ -317,3 +317,5 @@ local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loo
 for _,mod in ipairs(INTEROPS) do
     if minetest.global_exists(mod) then terumet.do_lua_file('interop/'..mod) end
 end
+
+terumet.do_lua_file('interop/crusher_misc')

@@ -13,3 +13,7 @@ stairs?
 tnt?
 mesecons?
 dungeon_loot?
+farming?
+bushes?
+dryplants?
+vines?
