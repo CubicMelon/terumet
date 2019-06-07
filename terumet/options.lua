@@ -442,7 +442,7 @@ terumet.options.armor = {
         -- movement speed bracer
         spd={name='Speed', mat='terumet:item_cryst_dia', xinfo='Increase move speed', def=5, uses=300, rep=400, speed=0.4},
         -- anti-gravity bracer
-        agv={name='Antigravity', mat='terumet:item_entropy', xinfo='Reduce gravity', def=5, uses=600, rep=300, speed=-0.1, gravity=-0.85, jump=-0.45},
+        agv={name='Antigravity', mat='terumet:item_entropy', xinfo='Reduce gravity', def=5, uses=600, rep=300, speed=-0.05, gravity=-0.4, jump=-0.25},
         -- high heal bracer
         heal={name='Heal', mat='terumet:block_dust_bio', xinfo='Heal +30', heal=30, uses=200, rep=600},
         -- high defense bracer
