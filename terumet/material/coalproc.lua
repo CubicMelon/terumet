@@ -66,7 +66,7 @@ minetest.register_craftitem( rsuit_mat, {
     inventory_image = terumet.tex(rsuit_mat)
 })
 
-terumet.register_alloy_recipe{result=rsuit_mat, flux=8, time=10.0, input={rubber_bar_id, 'terumet:ingot_tcha'}}
+terumet.register_alloy_recipe{result=rsuit_mat, flux=8, time=10.0, input={rubber_bar_id, 'terumet:ingot_cgls'}}
 
 local asphalt_id = terumet.id('block_asphalt')
 

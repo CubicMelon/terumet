@@ -198,4 +198,4 @@ reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'),
     total_def=78, total_heal=36, weight=3, xinfo='Weight +3', uses=3000}
 
 reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'), mrv=180,
-    total_def=78, total_heal=50, weight=-5, xinfo='Weight -5', uses=3000}
+    total_def=78, total_heal=50, weight=-4, xinfo='Weight -4', uses=3000}
