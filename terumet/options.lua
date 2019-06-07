@@ -438,7 +438,7 @@ terumet.options.armor = {
         -- water-breathing bracer
         aqua={name='Aqua', mat='default:papyrus', xinfo='Underwater breathing', def=5, uses=500, rep=100, breathing=1},
         -- high jump bracer
-        jump={name='Jump', mat='default:mese_crystal', xinfo='Increase jump height', def=5, uses=500, rep=150, jump=0.32},
+        jump={name='Jump', mat='terumet:item_cryst_mese', xinfo='Increase jump height', def=5, uses=500, rep=150, jump=0.32},
         -- movement speed bracer
         spd={name='Speed', mat='terumet:item_cryst_dia', xinfo='Increase move speed', def=5, uses=300, rep=400, speed=0.4},
         -- anti-gravity bracer
