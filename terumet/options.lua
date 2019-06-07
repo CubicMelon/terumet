@@ -163,6 +163,7 @@ terumet.options.crusher = {
         ['group:wood']='terumet:item_dust_wood 1',
     }
 }
+
 terumet.options.thermobox = {
     --
     -- THERMOBOX SETTINGS
@@ -439,11 +440,11 @@ terumet.options.armor = {
         -- high jump bracer
         jump={name='Jump', mat='default:mese_crystal', xinfo='Increase jump height', def=5, uses=500, rep=150, jump=0.32},
         -- movement speed bracer
-        spd={name='Speed', mat='terumet:item_cryst_dia', xinfo='Increase move speed', def=5, uses=500, rep=400, speed=0.4},
+        spd={name='Speed', mat='terumet:item_cryst_dia', xinfo='Increase move speed', def=5, uses=300, rep=400, speed=0.4},
         -- anti-gravity bracer
-        agv={name='Antigravity', mat='default:flint', xinfo='Reduce gravity', def=5, uses=500, rep=150, gravity=-0.6, jump=-0.2},
+        agv={name='Antigravity', mat='terumet:item_entropy', xinfo='Reduce gravity', def=5, uses=600, rep=300, speed=-0.1, gravity=-0.85, jump=-0.45},
         -- high heal bracer
-        heal={name='Heal', mat='default:apple', xinfo='Heal +30', heal=30, uses=400, rep=200},
+        heal={name='Heal', mat='default:apple', xinfo='Heal +30', heal=30, uses=200, rep=600},
         -- high defense bracer
         def={name='Defense', mat='default:obsidian', xinfo='Defense +30', def=33, uses=1000, rep=300},
     },

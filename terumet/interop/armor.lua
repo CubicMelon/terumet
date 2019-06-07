@@ -55,11 +55,16 @@ end
 local function reg_terumet_armor(data)
     if not data or not data.suffix or not data.mat then error('Missing data on registering Terumetal armor') end
     data.uses = data.uses or 500
-    data.def = (data.def or 1)
-    data.defhi = (data.defhi or 2)
     data.mrv = data.mrv or 10 -- material repair value of 1x mat
     data.dgroups = data.dgroups or {cracky=3, snappy=3, choppy=3, crumbly=3, level=1}
     data.name = data.name or data.suffix
+
+    local low_def = data.total_def / 6
+    local hi_def = data.total_def / 3
+
+    data.heal = data.total_heal / 4
+    data.speed = data.weight / -100
+    data.gravity = data.weight / 200
 
     local boots_id = terumet.id('armboots_'..data.suffix)
     armor:register_armor(boots_id, {
@@ -68,7 +73,7 @@ local function reg_terumet_armor(data)
         texture = terumet.tex('armboots_'..data.suffix),
         preview = terumet.tex('prvboots_'..data.suffix),
         groups = gen_armor_groups('armor_feet', data),
-        armor_groups = {fleshy=data.def},
+        armor_groups = {fleshy=low_def},
         damage_groups = data.dgroups,
     })
     reg_recipe_boots(boots_id, data.mat)
@@ -81,7 +86,7 @@ local function reg_terumet_armor(data)
         texture = terumet.tex('armhelm_'..data.suffix),
         preview = terumet.tex('prvhelm_'..data.suffix),
         groups = gen_armor_groups('armor_head', data),
-        armor_groups = {fleshy=data.def},
+        armor_groups = {fleshy=low_def},
         damage_groups = data.dgroups,
     })
     reg_recipe_helm(helm_id, data.mat)
@@ -94,7 +99,7 @@ local function reg_terumet_armor(data)
         texture = terumet.tex('armchest_'..data.suffix),
         preview = terumet.tex('prvchest_'..data.suffix),
         groups = gen_armor_groups('armor_torso', data),
-        armor_groups = {fleshy=data.defhi},
+        armor_groups = {fleshy=hi_def},
         damage_groups = data.dgroups,
     })
     reg_recipe_chest(chest_id, data.mat)
@@ -107,7 +112,7 @@ local function reg_terumet_armor(data)
         texture = terumet.tex('armlegs_'..data.suffix),
         preview = terumet.tex('prvlegs_'..data.suffix),
         groups = gen_armor_groups('armor_legs', data),
-        armor_groups = {fleshy=data.defhi},
+        armor_groups = {fleshy=hi_def},
         damage_groups = data.dgroups,
     })
     reg_recipe_legs(legs_id, data.mat)
@@ -180,18 +185,17 @@ if opts.BRACERS then
 end
 
 reg_terumet_armor{suffix='tcop', name='Terucopper', mat=terumet.id('ingot_tcop'), mrv=20,
-    def=4, defhi=6, heal=2, uses=1200}
+    total_def=45, total_heal=4, weight=0, uses=1400}
 reg_terumet_armor{suffix='ttin', name='Terutin', mat=terumet.id('ingot_ttin'), mrv=21,
-    def=3, defhi=5, heal=3, speed=0.02, gravity=-0.01, xinfo='Weight -2', uses=500}
+    total_def=38, total_heal=24, weight=-2, xinfo='Weight -2', uses=1000}
 reg_terumet_armor{suffix='tste', name='Terusteel', mat=terumet.id('ingot_tste'), mrv=40,
-    def=9, defhi=14, heal=0, speed=-0.07, gravity=0.045, xinfo='Weight +7', uses=800}
+    total_def=56, total_heal=12, weight=1, xinfo='Weight +1', uses=2000}
 reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), mrv=60,
-    def=7, defhi=11, heal=4, speed=-0.04, gravity=0.02, xinfo='Weight +4', uses=1500}
+    total_def=64, total_heal=8, weight=2, xinfo='Weight +2', uses=1500}
 reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), mrv=80,
-    def=2, defhi=3, heal=10, speed=-0.05, gravity=0.025, xinfo='Weight +5', uses=300}
+    total_def=24, total_heal=65, weight=-1, xinfo='Weight -1', uses=600}
 reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'), mrv=120,
-    def=6, defhi=14, heal=6, speed=-0.03, gravity=0.015, xinfo='Weight +3', uses=600}
+    total_def=78, total_heal=36, weight=3, xinfo='Weight +3', uses=3000}
 
-reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'), mrv=300,
-    def=10, defhi=15, heal=8, speed=0.05, gravity=-0.025, xinfo='Weight -5', uses=2000}
-    -- TODO: implement proper preview graphics for vulcansuit
+reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'), mrv=180,
+    total_def=78, total_heal=50, weight=-5, xinfo='Weight -5', uses=3000}
