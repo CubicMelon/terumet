@@ -444,9 +444,9 @@ terumet.options.armor = {
         -- anti-gravity bracer
         agv={name='Antigravity', mat='terumet:item_entropy', xinfo='Reduce gravity', def=5, uses=600, rep=300, speed=-0.1, gravity=-0.85, jump=-0.45},
         -- high heal bracer
-        heal={name='Heal', mat='default:apple', xinfo='Heal +30', heal=30, uses=200, rep=600},
+        heal={name='Heal', mat='terumet:block_dust_bio', xinfo='Heal +30', heal=30, uses=200, rep=600},
         -- high defense bracer
-        def={name='Defense', mat='default:obsidian', xinfo='Defense +30', def=33, uses=1000, rep=300},
+        def={name='Defense', mat='terumet:item_rsuitmat', xinfo='Defense +30', def=33, uses=1000, rep=300},
     },
     -- Item used to create bracer crystals
     BRACER_CRYSTAL_ITEM = 'default:steelblock',
