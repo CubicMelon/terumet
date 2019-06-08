@@ -4,8 +4,13 @@ local reg_coil = function(name, mat)
         description = name,
         inventory_image = terumet.tex(coil_id)
     })
-    minetest.register_craft{ output=coil_id .. ' 8',
-        recipe = terumet.recipe_box(terumet.id('ingot_'..mat), 'default:stick')
+    local ingot_id = terumet.id('ingot_'..mat)
+    minetest.register_craft{ output=coil_id .. ' 3',
+        recipe = {
+            {ingot_id},
+            {ingot_id},
+            {ingot_id},
+        }
     }
 end
 
