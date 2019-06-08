@@ -79,7 +79,7 @@ function terumet.register_crystal(data)
         description = data.name,
         inventory_image = terumet.crystal_tex(data.color),
     })
-    minetest.register_craft{ type = 'cooking', 
+    minetest.register_craft{ type = 'cooking',
         output = data.cooking_result,
         recipe = crys_id,
         cooktime = 5

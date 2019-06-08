@@ -3,7 +3,7 @@ local opts = terumet.options.vulcan
 
 local crys_terumetal = terumet.register_crystal{
     suffix='raw',
-    color='#dd859c',
+    color='#a33d57',
     name='Crystallized Terumetal',
     cooking_result=id('ingot_raw')
 }
@@ -12,7 +12,7 @@ terumet.register_vulcan_result(id('ore_raw'),  crys_terumetal, 1)
 
 local crys_copper = terumet.register_crystal{
     suffix='copper',
-    color='#af502e',
+    color='#ec923a',
     name='Crystallized Copper',
     cooking_result='default:copper_ingot'
 }
@@ -48,7 +48,7 @@ terumet.register_vulcan_result('default:stone_with_gold', crys_gold, 1)
 
 local crys_ob = terumet.register_crystal{
     suffix='ob',
-    color='#1f2631',
+    color='#351569',
     name='Crystallized Obsidian',
     cooking_result='default:obsidian'
 }
