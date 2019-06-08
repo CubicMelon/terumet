@@ -23,6 +23,7 @@ function base_tdist.init(pos)
     local meta = minetest.get_meta(pos)
     local inv = meta:get_inventory()
     inv:set_size('fuel', 1)
+    inv:set_size('battery', 1)
     inv:set_size('out', 1)
     inv:set_size('upgrade', 2)
     local init_box = {

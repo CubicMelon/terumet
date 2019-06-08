@@ -63,6 +63,6 @@ terumet.register_machine_upgrade('max_heat', 'Maximum Heat Upgrade', id('ingot_t
 terumet.register_machine_upgrade('heat_xfer', 'Heat Transfer Upgrade', id('item_coil_tgol'), id('item_cryst_gold'))
 terumet.register_machine_upgrade('gen_up', 'Heat Generation Upgrade', id('item_coil_tgol'), id('item_cryst_mese'))
 terumet.register_machine_upgrade('speed_up', 'Speed Upgrade', id('ingot_cgls'), id('item_cryst_dia'))
-terumet.register_machine_upgrade('cryst', 'Crystallization Upgrade', id('item_cryst_dia'), id('item_cryst_mese'))
+terumet.register_machine_upgrade('cryst', 'Crystallization Upgrade', id('item_cryst_dia'), id('item_entropy'))
 
 terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade\nCreative mode only', nil, nil, 'none')
