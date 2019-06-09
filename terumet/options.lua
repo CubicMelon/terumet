@@ -46,6 +46,14 @@ terumet.options.tools = {
         GOLD_ALLOY = 7,
         BRONZE_ALLOY = 10,
         COREGLASS = 12
+    },
+
+    -- Comment out/remove this section to disable all upgraded tools
+    UPGRADES = {
+        -- comment out/remove a single line to disable that upgrade
+        rng = {color='#ffda00', nametag='Kinetic', xinfo='Longer reach', item='terumet:item_cryst_mese 8', time=30.0, flux=20, repmult=1.5, effect=8}, -- effect=new range
+        spd = {color='#4aeffd', nametag='Expert', xinfo='Faster speed', item='terumet:item_cryst_dia 8', time=30.0, flux=20, repmult=2, effect=0.8}, -- effect=multiplier to tool speeds
+        dur = {color='#68905a', nametag='Durable', xinfo='Degrades slower', item='terumet:item_rubber 8', time=30.0, flux=20, repmult=1.5, effect=1.6}, -- effect=multiplier to tool uses
     }
 }
 

@@ -1,5 +1,33 @@
 local id = terumet.id
 local tex = terumet.tex
+local opts = terumet.options.tools
+local FMT = string.format
+
+-- given a tool defintion, return a NEW definition with upgrade's changes
+local TOOL_UPGRADES = {
+    rng = function(orig)
+        local new = table.copy(orig)
+        new.range = opts.UPGRADES.rng.effect
+        return new
+    end,
+    spd = function(orig)
+        local new = table.copy(orig)
+        for _,gdata in pairs(new.tool_capabilities.groupcaps) do
+            for index,tool_time in ipairs(gdata.times) do
+                gdata.times[index] = tool_time * opts.UPGRADES.spd.effect
+            end
+        end
+        return new
+    end,
+    dur = function(orig)
+        local new = table.copy(orig)
+        for _,gdata in pairs(new.tool_capabilities.groupcaps) do
+            local old_uses = gdata.uses
+            gdata.uses = math.floor(old_uses * opts.UPGRADES.dur.effect)
+        end
+        return new
+    end,
+}
 
 function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_count, max_level, sword_damage, ingot_repair_value)
     local stick = 'default:stick'
@@ -97,4 +125,21 @@ function terumet.reg_tools(mat_name, mat_id, craft_item_id, dig_times, base_use_
             {stick}
     }}
     terumet.register_repairable_item(sword_id, ingot_repair_value*2)
+
+    if opts.UPGRADES then
+        local each_tool = {pick=3,shovel=1,axe=3,sword=2}
+        for tool_id,ingot_cost in pairs(each_tool) do
+            local base_tool_id = id(FMT('tool_%s_%s', tool_id, mat_id))
+            for up_id,upgrade in pairs(opts.UPGRADES) do
+                local upgraded_tool_id = base_tool_id .. '_up' .. up_id
+                local upgraded_tool_def = TOOL_UPGRADES[up_id](minetest.registered_tools[base_tool_id])
+                upgraded_tool_def.inventory_image = FMT('%s^%s', upgraded_tool_def.inventory_image, tex(FMT('toolup_%s_%s', tool_id, up_id)))
+                upgraded_tool_def.description = FMT('%s\n%s', minetest.colorize(upgrade.color, FMT('%s %s', upgrade.nametag, upgraded_tool_def.description)), upgrade.xinfo)
+
+                minetest.register_tool(upgraded_tool_id, upgraded_tool_def)
+                terumet.register_alloy_recipe{input={base_tool_id, upgrade.item}, result=upgraded_tool_id, time=(upgrade.time or 5), flux=(upgrade.flux or 4)}
+                terumet.register_repairable_item(upgraded_tool_id, math.floor(ingot_repair_value * ingot_cost * (upgrade.repmult or 1.5)))
+            end
+        end
+    end
 end
