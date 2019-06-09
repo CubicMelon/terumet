@@ -21,7 +21,7 @@ terumet.register_vulcan_result('default:stone_with_copper',  crys_copper, 1)
 
 local crys_tin = terumet.register_crystal{
     suffix='tin',
-    color='#dafbff',
+    color='#dddddd',
     name='Crystallized Tin',
     cooking_result='default:tin_ingot'
 }
@@ -30,7 +30,7 @@ terumet.register_vulcan_result('default:stone_with_tin', crys_tin, 1)
 
 local crys_iron = terumet.register_crystal{
     suffix='iron',
-    color='#eeece8',
+    color='#ffdcb5',
     name='Crystallized Iron',
     cooking_result='default:steel_ingot'
 }
