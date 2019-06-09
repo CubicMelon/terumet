@@ -83,10 +83,15 @@ for index,dye_info in ipairs(dye.dyes) do
     if index ~= 1 then
         local dye_id = "group:dye,color_"..dye_info[1]
         local basic_powder = mix_id(1)
-        minetest.register_craft({
+        minetest.register_craft{
             output = mix_id(index)..' 8',
             recipe = terumet.recipe_box(basic_powder, dye_id)
-        })
+        }
+
+        minetest.register_craft{
+            output = mix_id(index)..' 8',
+            recipe = terumet.recipe_box(basic_powder, 'dye:'..dye_info[1])
+        }
     end
 
     HARDEN_LIST[mix_id(index)] = block_id
