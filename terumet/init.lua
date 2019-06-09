@@ -179,7 +179,7 @@ function terumet.tex(id)
 end
 
 function terumet.crystal_tex(color)
-    return string.format('(%s^[multiply:%s)', terumet.tex('item_cryst'), color)
+    return string.format('%s^[multiply:%s', terumet.tex('item_cryst'), color)
 end
 
 function terumet.tex_comp(base_tex, overlay_id)

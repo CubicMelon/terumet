@@ -6,10 +6,15 @@ local function gen_armor_groups(type, data)
         armor_use=data.uses,
         armor_heal=(data.heal or 0),
         armor_water=(data.breathing or 0),
+        armor_fire=data.fire,
         physics_speed=(data.speed or 0),
         physics_gravity=(data.gravity or 0),
         physics_jump=(data.jump or 0),
     }
+    if data.fire and not armor.config.fire_protect then
+        data.xinfo = '(NO FUNCTION - turn on 3d_armor fire protection)'
+        minetest.log('warning', 'terumet: Armor with fire protection WILL NOT FUNCTION - 3d armor config option for fire protection is disabled!!')
+    end
     grps[type]=1
     return grps
 end
@@ -121,6 +126,20 @@ end
 
 -- enable terumet bracers
 if opts.BRACERS then
+    -- I would love to colorize every texture rather than require a seperate armor & preview texture for every bracer
+    -- but it seems that 3d_armor textures do NOT support texture generation with ^ layering and ^[multiply :(
+    local function bracer_inv_texture(color)
+        if color then
+            return string.format('(%s^(%s^[multiply:%s))', terumet.tex('invbrcr_base'), terumet.tex('invbrcr_color'), color)
+        else
+            return terumet.tex('invbrcr_base')
+        end
+    end
+
+    local function core_texture(color)
+        return string.format('%s^[multiply:%s', terumet.tex('item_brcrcrys'), color)
+    end
+
     table.insert(armor.elements, "terumet_brcr")
 
     local brcrcrys_id = terumet.id('item_brcrcrys')
@@ -137,14 +156,16 @@ if opts.BRACERS then
         data.def = data.def or 0
         data.dgroups = data.dgroups or {cracky=3, snappy=3, choppy=3, crumbly=3, level=1}
         data.name = data.name or data.suffix
+        -- generate groups now to update xinfo if necessary before registering it
+        local groups = gen_armor_groups('armor_terumet_brcr', data)
 
         local band_id = terumet.id('brcr_'..data.suffix)
         armor:register_armor(band_id, {
             description= format_desc(data.name..' Bracers', data.xinfo),
-            inventory_image = terumet.tex('invbrcr_'..data.suffix),
+            inventory_image = bracer_inv_texture(data.color),
             texture = terumet.tex('armbrcr_'..data.suffix),
             preview = terumet.tex('prvbrcr_'..data.suffix),
-            groups = gen_armor_groups('armor_terumet_brcr', data),
+            groups = groups,
             armor_groups = {fleshy=data.def},
             damage_groups = data.dgroups,
             on_equip = data.on_equip,
@@ -157,7 +178,7 @@ if opts.BRACERS then
             local ecryst_id = terumet.id('item_brcrcrys_'..data.suffix)
             minetest.register_craftitem( ecryst_id, {
                 description = data.name..' Bracer Core',
-                inventory_image = terumet.tex(ecryst_id)
+                inventory_image = core_texture(data.color)
             })
 
             terumet.register_alloy_recipe{result=ecryst_id, flux=4, time=10.0, input={brcrcrys_id, data.mat}}
