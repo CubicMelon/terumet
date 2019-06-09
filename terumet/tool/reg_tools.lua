@@ -12,6 +12,7 @@ local TOOL_UPGRADES = {
     end,
     spd = function(orig)
         local new = table.copy(orig)
+        new.tool_capabilities.full_punch_interval = math.max(0.25, new.tool_capabilities.full_punch_interval * opts.UPGRADES.spd.effect)
         for _,gdata in pairs(new.tool_capabilities.groupcaps) do
             for index,tool_time in ipairs(gdata.times) do
                 gdata.times[index] = tool_time * opts.UPGRADES.spd.effect
