@@ -60,6 +60,7 @@ for id,def in pairs(minetest.registered_items) do
 end
 
 -- add a wrapper to core function of do_item_eat which triples hp_change value of items with _terumet_vacfood flag
+-- there's no way to read what value individual food items are calling minetest.item_eat() with, so this is the next best way to multiply the value
 
 local old_item_eat = core.do_item_eat
 
