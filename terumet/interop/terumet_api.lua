@@ -50,6 +50,11 @@ function terumet.register_alloy_recipe(data)
     table.insert(terumet.options.smelter.recipes, 1, data)
 end
 
+-- TODO error checking
+function terumet.register_vacoven_recipe(data)
+    table.insert(terumet.options.vac_oven.recipes, data)
+end
+
 -- register a new crystallized material with the provided data
 -- ID of created item will be 'terumet:item_cryst_<SUFFIX>' 
 -- IMPORTANT NOTE: a single source item can only be defined as a single crystal

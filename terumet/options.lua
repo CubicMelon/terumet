@@ -316,6 +316,8 @@ terumet.options.vac_oven = {
         {results={'terumet:item_tarball 40', 'terumet:block_coke'}, time=80.0, input='default:coalblock'},
     },
 
+    VAC_FOOD = true, -- generate a vacuumed version of every food item if true
+
     MAX_RESULTS = 2, -- Maximum number of result items from recipes (adjust this if any larger recipes are added)
 }
 

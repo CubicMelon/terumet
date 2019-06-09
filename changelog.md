@@ -24,6 +24,9 @@ Newer versions listed first
     * Coke is a more long-burning fuel than plain Coal
     * Tarballs can be used where plant glue is, or further cooked and vulcanized into **Synthetic Rubber Bars**
     * Tarballs can also be used to make **Asphalt** - a cosmetic block.
+    * Upgrades food items - vacuum two food items to create a condensed and packaged version that restores 3 times as much health/stamina.
+        * Food items are items that are of the group "food_*" and have an on_use (presumably minetest.item_eat)
+        * To ensure all food items are seen, any mods that add foods must be added as a dependent mod to Terumet - by default only "farming" is
 * Added **Vulcansuit Armor** set, made from Vulcansuit Plates
     * **Vulcansuit Plates** are made by alloying Synthetic Rubber Bars with Teruchalcum
     * The Vulcansuit is excellent full-body protection and the best overall armor available from the mod.
@@ -32,6 +35,10 @@ Newer versions listed first
     * Necessary to keep balance of Furnace Heater -> High-Temp Furnace -> Battery
 * The Solar Heater has had its generation rates reduced significantly, especially with this new x10 change.
 * Now depends on more minetest default game mods (doors, stairs, walls) -- shouldn't be a problem in 5.0
+* Tool upgrades (more description forthcoming)
+    * Reach distance upgrades via Crystallized Mese
+    * Speed upgrades via Crystallized Diamond
+    * Durability upgrades via Synthetic Rubber
 
 ## Version 2.4
 * Added support to run under (currently) stable Minetest 0.4.17 -- those asking for it rejoice!
