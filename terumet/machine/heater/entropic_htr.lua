@@ -90,7 +90,7 @@ function ent_htr.do_processing(machine, dt)
             machine.search_pos = util3d.pos_plus(machine.pos, opts.MAX_RANGE)
         end
         local found_node = minetest.get_node_or_nil(machine.search_pos)
-        if found_node then
+        if (not minetest.is_protected(machine.search_pos, machine.owner)) and found_node then
             local effects = opts.EFFECTS[found_node.name]
             if not effects then
                 -- check groups for definition
@@ -114,7 +114,7 @@ function ent_htr.do_processing(machine, dt)
                 machine.status_text = node_name .. ' at ' .. minetest.pos_to_string(machine.search_pos) .. ' found but unusuable...'
             end
         else
-            machine.status_text = minetest.pos_to_string(machine.search_pos) .. ' unloaded or invalid...'
+            machine.status_text = minetest.pos_to_string(machine.search_pos) .. ' is protected or unloaded...'
         end
     else
         local gain = math.floor(machine.heat_rate * dt)
