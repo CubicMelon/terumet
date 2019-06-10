@@ -134,10 +134,10 @@ terumet.options.heater = {
             ['fire:basic_flame']={change='air', time=0.5, hups=10000},
             ['fire:permanent_flame']={change='air', time=0.5, hups=10000},
             ['air']={time=1.0, hups=500},
-            ['group:tree']={change='air', time=12.0, hups=300},
-            ['group:sapling']={change='air', time=4.0, hups=400},
-            ['group:wood']={change='air', time=9.0, hups=100},
-            ['group:leaves']={change='air', time=4.0, hups=200},
+            ['group:tree']={change='air', time=12.0, hups=3000},
+            ['group:sapling']={change='air', time=4.0, hups=4000},
+            ['group:wood']={change='air', time=9.0, hups=1000},
+            ['group:leaves']={change='air', time=4.0, hups=2000},
         }
     }
 }
