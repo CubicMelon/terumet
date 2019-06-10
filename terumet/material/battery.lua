@@ -44,3 +44,19 @@ terumet.register_battery{ id='cop', name='Copper', cover_item_id='terumet:ingot_
 
 -- 370 sec = burn time of 1 coal block (default)
 terumet.register_battery{ id='therm', name='Thermese', cover_item_id='terumet:item_ceramic', core_item_id='terumet:item_thermese', heat_time=370, hus=(standard_rate * 370) }
+
+
+local void_id = terumet.id('item_batt_void')
+
+minetest.register_craftitem( void_id, {
+    description = FMT('Void "Battery"\n%s', minetest.colorize('#b0b0b0', 'Voids HU from machine')),
+    stack_max = 1,
+    inventory_image = terumet.tex(void_id),
+    groups={_terumetal_battery=1},
+    _empty_battery_info={void=true}
+})
+
+minetest.register_craft{ output = void_id,
+    recipe = {
+        {'default:cobble', 'terumet:item_entropy', 'default:cobble'}
+}}

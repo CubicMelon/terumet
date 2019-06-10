@@ -473,15 +473,19 @@ function base_mach.process_battery(machine)
     local slot_item = machine.inv:get_stack('battery', 1)
     if slot_item then
         local binfo = slot_item:get_definition()._empty_battery_info
-        if binfo and machine.heat_level >= binfo.fill then
-            machine.inv:set_stack('battery', 1, binfo.change_to) -- batteries are expected to be 1-stacks only
-            machine.heat_level = machine.heat_level - binfo.fill
-            if opts.HEATOUT_SOUND then
-                minetest.sound_play( opts.HEATOUT_SOUND, {
-                    pos = machine.pos,
-                    gain = 0.2,
-                    max_hear_distance = 4,
-                })
+        if binfo then
+            if binfo.void then
+                machine.heat_level = 0
+            elseif machine.heat_level >= binfo.fill then
+                machine.inv:set_stack('battery', 1, binfo.change_to) -- batteries are expected to be 1-stacks only
+                machine.heat_level = machine.heat_level - binfo.fill
+                if opts.HEATOUT_SOUND then
+                    minetest.sound_play( opts.HEATOUT_SOUND, {
+                        pos = machine.pos,
+                        gain = 0.2,
+                        max_hear_distance = 4,
+                    })
+                end
             end
         end
     end
