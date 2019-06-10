@@ -316,7 +316,37 @@ terumet.options.vac_oven = {
         {results={'terumet:item_tarball 40', 'terumet:block_coke'}, time=80.0, input='default:coalblock'},
     },
 
-    VAC_FOOD = true, -- generate a vacuumed version of every food item if true
+    VAC_FOOD = {
+        ACTIVE = true,  -- make false to disable vacuum-packed food entirely
+        -- if AUTO_GENERATE is true, the mod scans all items defined as of this mod's initialization
+        -- if an item has an on_use and has the group food_*, it is assumed to be a food and adds a vacuum-packed version
+        -- to ensure a mod's items are scanned, it should be added to terumet's list of dependent mods in mod.conf/depends.txt
+        AUTO_GENERATE = true,
+        -- items that are flagged as food by AUTO_GENERATE you do not want to be made into a vacfood can be added through this list
+        -- if AUTO_GENERATE is false, this list has no effect
+        -- (1 is meaningless and just to provide a value)
+        BLACKLIST = {
+            ['mobs:glass_milk']=1,
+            ['mobs:bucket_milk']=1,
+            ['main:honey_bottle']=1,
+            ['mobs:egg']=1,
+            ['group:food_butter']=1, -- you can use groups too
+        },
+        -- items that aren't automatically recognized as food can be added through this list
+        -- even if AUTO_GENERATE is false, these items will be made into a vacfood
+        -- (1 is meaningless and just to provide a value)
+        WHITELIST = {
+            ['farming:baked_potato']=1,
+            ['farming:potato_salad']=1,
+            ['farming:pumpkin_bread']=1,
+            ['farming:toast_sandwich']=1,
+            ['farming:donut']=1,
+            ['farming:donut_chocolate']=1,
+            ['farming:donut_apple']=1,
+            ['farming:porridge']=1,
+            ['farming:turkish_delight']=1,
+        }
+    },
 
     MAX_RESULTS = 2, -- Maximum number of result items from recipes (adjust this if any larger recipes are added)
 }

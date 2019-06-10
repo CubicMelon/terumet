@@ -16,3 +16,5 @@ dungeon_loot?
 bushes?
 dryplants?
 vines?
+mobs_animal?
+main?
