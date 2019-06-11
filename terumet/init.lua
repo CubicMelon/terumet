@@ -1,15 +1,21 @@
--- Terumet v3.0
+--[[ Terumet v3.0
 
--- Mod for open-source voxel game Minetest (https://www.minetest.net/)
--- Written for Minetest version 5.0.0
--- Now also supports Minetest 0.4.17
--- Creates a new ore in the world which can be used to make useful alloys
--- and heat-powered machines.
+Mod for open-source voxel game Minetest (https://www.minetest.net/)
+Written for Minetest version 5.0.0
+Now also supports Minetest 0.4.17
 
--- By Terumoc [https://github.com/Terumoc]
--- and with contributions from:
---  > RSL-Redstonier [https://github.com/RSL-Redstonier]
---  > Chem871 [https://github.com/Chemguy99] for many ideas and requests
+Creates a new ore in the world which can be used to make useful alloys
+and heat-powered machines.
+
+By Terumoc [https://github.com/Terumoc]
+and with contributions from:
+  > obl3pplifp (https://github.com/obl3pplifp) for bug reports, information, ideas, and other considerable contributions
+  > RSL-Redstonier [https://github.com/RSL-Redstonier]
+  > Chem871 [https://github.com/Chemguy99] for many ideas and requests
+
+BIG Thanks to all contributors for their input!
+
+]]--
 
 --[[ Copyright (C) 2017-2019 Terumoc (Scott Horvath)
 
