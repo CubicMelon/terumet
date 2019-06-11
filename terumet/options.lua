@@ -479,20 +479,27 @@ terumet.options.armor = {
     -- delete or comment out entire BRACERS = {...} block to disable all bracers
     BRACERS = { -- delete single line or comment out (add -- to start) to disable that type of bracer
         -- water-breathing bracer
-        aqua={name='Aqua', color='#0010ff', mat='default:papyrus', xinfo='Underwater breathing', def=5, uses=500, rep=100, breathing=1},
+        aqua={name='Aqua',        color='#0010ff', mat='default:papyrus',         xinfo='Underwater breathing',
+              def=5,   uses=500, rep=100, breathing=1},
         -- high jump bracer
-        jump={name='Jump', color='#ffac00', mat='terumet:item_cryst_mese', xinfo='Increase jump height', def=5, uses=500, rep=150, jump=0.32},
+        jump={name='Jump',        color='#ffac00', mat='terumet:item_cryst_mese', xinfo='Increase jump height',
+              def=5,   uses=500, rep=150, jump=0.5},
         -- movement speed bracer
-        spd={name='Speed', color='#4eff00', mat='terumet:item_cryst_dia', xinfo='Increase move speed', def=5, uses=300, rep=400, speed=0.4},
+        spd={ name='Speed',       color='#4eff00', mat='terumet:item_cryst_dia',  xinfo='Increase move speed',
+              def=5,   uses=300, rep=400, speed=0.8},
         -- anti-gravity bracer
-        agv={name='Antigravity', color='#7600ff', mat='terumet:item_entropy', xinfo='Reduce gravity', def=5, uses=600, rep=300, speed=-0.05, gravity=-0.4, jump=-0.25},
+        agv={ name='Antigravity', color='#7600ff', mat='terumet:item_entropy',    xinfo='Reduce gravity',
+              def=5,   uses=600, rep=300, speed=-0.1, gravity=-0.5, jump=-0.1},
         -- high heal bracer
-        heal={name='Heal', color='#ff0086', mat='terumet:block_dust_bio', xinfo='Heal +30', heal=30, uses=200, rep=600},
+        heal={name='Heal',        color='#ff0086', mat='terumet:block_dust_bio',  xinfo='Heal +10',
+              heal=10, uses=600, rep=600},
         -- high defense bracer
-        def={name='Defense', color='#727272', mat='terumet:item_rsuitmat', xinfo='Defense +30', def=33, uses=1000, rep=300},
+        def={ name='Defense',     color='#727272', mat='terumet:item_rsuitmat',   xinfo='Defense +30',
+              def=30,  uses=300, rep=300},
         -- fire protection bracer
         -- IMPORTANT: 3darmor must have the option "Enable fire protection" on in order for this bracer to function!
-        fire={name='Fireproof', color='#ff5d00', mat='terumet:item_cryst_ob', xinfo='Immunity to fire/lava', uses=500, rep=300, fire=99},
+        fire={name='Fireproof',   color='#ff5d00', mat='terumet:item_cryst_ob',   xinfo='Immunity to fire/lava',
+                       uses=500, rep=300, fire=99},
     },
     -- Item used to create bracer crystals
     BRACER_CRYSTAL_ITEM = 'default:steelblock',

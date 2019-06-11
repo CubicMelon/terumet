@@ -29,14 +29,14 @@ end
 local function reg_recipe_legs(id, mat)
     minetest.register_craft{output=id, recipe={
         {mat, mat, mat},
-        {mat, '', mat},
-        {mat, '', mat}
+        {mat, '',  mat},
+        {mat, '',  mat}
     }}
 end
 
 local function reg_recipe_chest(id, mat)
     minetest.register_craft{output=id, recipe={
-        {mat, '', mat},
+        {mat, '',  mat},
         {mat, mat, mat},
         {mat, mat, mat}
     }}
@@ -45,7 +45,7 @@ end
 local function reg_recipe_helm(id, mat)
     minetest.register_craft{output=id, recipe={
         {mat, mat, mat},
-        {mat, '', mat},
+        {mat, '',  mat},
     }}
 end
 
@@ -69,7 +69,7 @@ local function reg_terumet_armor(data)
 
     data.heal = data.total_heal / 4
     data.speed = data.weight / -100
-    data.gravity = data.weight / 200
+    data.gravity = data.weight / 50
 
     local boots_id = terumet.id('armboots_'..data.suffix)
     armor:register_armor(boots_id, {
@@ -205,18 +205,17 @@ if opts.BRACERS then
     end
 end
 
-reg_terumet_armor{suffix='tcop', name='Terucopper', mat=terumet.id('ingot_tcop'), mrv=20,
-    total_def=45, total_heal=4, weight=0, uses=1400}
-reg_terumet_armor{suffix='ttin', name='Terutin', mat=terumet.id('ingot_ttin'), mrv=21,
-    total_def=38, total_heal=24, weight=-2, xinfo='Weight -2', uses=1000}
-reg_terumet_armor{suffix='tste', name='Terusteel', mat=terumet.id('ingot_tste'), mrv=40,
-    total_def=56, total_heal=12, weight=1, xinfo='Weight +1', uses=2000}
-reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'), mrv=60,
-    total_def=64, total_heal=8, weight=2, xinfo='Weight +2', uses=1500}
-reg_terumet_armor{suffix='tgol', name='Terugold', mat=terumet.id('ingot_tgol'), mrv=80,
-    total_def=24, total_heal=65, weight=-1, xinfo='Weight -1', uses=600}
-reg_terumet_armor{suffix='cgls', name='Coreglass', mat=terumet.id('ingot_cgls'), mrv=120,
-    total_def=78, total_heal=36, weight=3, xinfo='Weight +3', uses=3000}
-
-reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'), mrv=180,
-    total_def=78, total_heal=50, weight=-5, xinfo='Weight -5', uses=3000}
+reg_terumet_armor{suffix='cgls', name='Coreglass',   mat=terumet.id('ingot_cgls'),
+    mrv=120, total_def=78, total_heal=36, weight=3, xinfo='Weight +3',  uses=120, fire=15}
+reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'),
+    mrv=60,  total_def=64, total_heal=8,  weight=2, xinfo='Weight +2',  uses=260}
+reg_terumet_armor{suffix='tste', name='Terusteel',   mat=terumet.id('ingot_tste'),
+    mrv=40,  total_def=56, total_heal=12, weight=1, xinfo='Weight +1',  uses=190}
+reg_terumet_armor{suffix='tcop', name='Terucopper',  mat=terumet.id('ingot_tcop'),
+    mrv=20,  total_def=45, total_heal=4,  weight=0,                     uses=280}
+reg_terumet_armor{suffix='tgol', name='Terugold',    mat=terumet.id('ingot_tgol'),
+    mrv=80,  total_def=24, total_heal=65, weight=-1, xinfo='Weight -1', uses=720}
+reg_terumet_armor{suffix='ttin', name='Terutin',     mat=terumet.id('ingot_ttin'),
+    mrv=21,  total_def=38, total_heal=24, weight=-2, xinfo='Weight -2', uses=410, fire=10, breathing=.1}
+reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'),
+    mrv=180, total_def=78, total_heal=50, weight=-3, xinfo='Weight -3', uses=120, fire=20}
