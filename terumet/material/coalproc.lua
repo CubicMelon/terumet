@@ -50,9 +50,24 @@ minetest.register_craft({
 	burntime = 30,
 })
 
+local prerubber_id = terumet.id('item_prerub')
+
+minetest.register_craftitem( prerubber_id, {
+    description = 'Bio-tar Mixture',
+    inventory_image = terumet.tex(prerubber_id)
+})
+
+minetest.register_craft{ output = prerubber_id,
+    recipe = {
+        {'', tarball_id, ''},
+        {tarball_id, 'terumet:item_dust_bio', tarball_id},
+        {'', tarball_id, ''}
+    }
+}
+
 local rubber_bar_id = terumet.id('item_rubber')
 
-terumet.options.vulcan.recipes[tarball_id] = {rubber_bar_id, 1}
+terumet.options.vulcan.recipes[prerubber_id] = {rubber_bar_id, 1}
 
 minetest.register_craftitem( rubber_bar_id, {
     description = 'Synthetic Rubber Bar',

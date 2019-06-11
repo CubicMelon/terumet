@@ -312,8 +312,8 @@ terumet.options.vac_oven = {
     COOK_HUPS = 500,
 
     recipes = {
-        {results={'terumet:item_tarball 2', 'terumet:item_coke'}, time=10.0, input='default:coal_lump'},
-        {results={'terumet:item_tarball 20', 'terumet:block_coke'}, time=80.0, input='default:coalblock'},
+        {results={'terumet:item_tarball 4', 'terumet:item_coke'}, time=10.0, input='default:coal_lump'},
+        {results={'terumet:item_tarball 40', 'terumet:block_coke'}, time=80.0, input='default:coalblock'},
     },
 
     VAC_FOOD = {
