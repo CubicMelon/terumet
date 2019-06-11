@@ -47,7 +47,7 @@ minetest.register_craftitem( tarball_id, {
 minetest.register_craft({
 	type = "fuel",
 	recipe = tarball_id,
-	burntime = 20,
+	burntime = 30,
 })
 
 local rubber_bar_id = terumet.id('item_rubber')
