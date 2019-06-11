@@ -313,12 +313,12 @@ end
 terumet.do_lua_file('material/concrete')
 terumet.do_lua_file('material/coalproc')
 
+local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loot', 'moreores', 'farming', 'extra'}
+for _,mod in ipairs(INTEROPS) do
+    if minetest.get_modpath(mod) then terumet.do_lua_file('interop/'..mod) end
+end
+
 local vacfood_options = terumet.options.vac_oven.VAC_FOOD
 if vacfood_options and vacfood_options.ACTIVE then terumet.do_lua_file('material/vacfood') end
-
-local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loot', 'moreores'}
-for _,mod in ipairs(INTEROPS) do
-    if minetest.global_exists(mod) then terumet.do_lua_file('interop/'..mod) end
-end
 
 terumet.do_lua_file('interop/crusher_misc')

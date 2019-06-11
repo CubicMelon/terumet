@@ -336,16 +336,10 @@ terumet.options.vac_oven = {
         -- even if AUTO_GENERATE is false, these items will be made into a vacfood
         -- (1 is meaningless and just to provide a value)
         WHITELIST = {
-            ['farming:baked_potato']=1,
-            ['farming:potato_salad']=1,
-            ['farming:pumpkin_bread']=1,
-            ['farming:toast_sandwich']=1,
-            ['farming:donut']=1,
-            ['farming:donut_chocolate']=1,
-            ['farming:donut_apple']=1,
-            ['farming:porridge']=1,
-            ['farming:turkish_delight']=1,
+            ['moretrees:acorn_muffin']=1,
         }
+        -- see interop/farming.lua for foods from "farming" mod
+        -- see interop/extra.lua for foods from "extra" mod
     },
 
     MAX_RESULTS = 2, -- Maximum number of result items from recipes (adjust this if any larger recipes are added)

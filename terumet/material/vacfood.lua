@@ -51,7 +51,7 @@ local function make_vacfood(item_id)
 
         generated_vacfoods[item_id]=vf_id
     else
-        minetest.log('warning', FMT('terumet: item "%s" was selected for vacfood but mod or item-id did not parse properly', item_id))
+        minetest.log('warning', FMT('terumet: valid item "%s" was selected for vacfood but mod or item-id did not parse properly', item_id))
     end
 end
 
