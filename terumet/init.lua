@@ -196,6 +196,13 @@ function terumet.tex_trans(id, rot)
     return terumet.tex(id) .. '^[transform' .. rot
 end
 
+terumet.squishy_node_sounds = {
+    footstep = 'terumet_squish_step',
+    dig = 'terumet_squish_dig',
+    dug = 'terumet_squish_dug',
+    place = 'terumet_squish_place',
+}
+
 terumet.do_lua_file('util3d')
 
 terumet.do_lua_file('interop/terumet_api')
