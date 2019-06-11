@@ -205,8 +205,12 @@ if opts.BRACERS then
     end
 end
 
+-- 3d_armor fire protection notes: total fire protection must meet or exceed the following values to be immune
+-- torches = 1, fire = 3, lava = 5
+-- this seems to be the only effect it has
+
 reg_terumet_armor{suffix='cgls', name='Coreglass',   mat=terumet.id('ingot_cgls'),
-    mrv=120, total_def=78, total_heal=36, weight=3, xinfo='Weight +3',  uses=120, fire=15}
+    mrv=120, total_def=78, total_heal=36, weight=3, xinfo='Weight +3',  uses=120, fire=0.75} -- 2 pcs = immune to torches, 4 pcs = immune to fire
 reg_terumet_armor{suffix='tcha', name='Teruchalcum', mat=terumet.id('ingot_tcha'),
     mrv=60,  total_def=64, total_heal=8,  weight=2, xinfo='Weight +2',  uses=260}
 reg_terumet_armor{suffix='tste', name='Terusteel',   mat=terumet.id('ingot_tste'),
@@ -216,6 +220,6 @@ reg_terumet_armor{suffix='tcop', name='Terucopper',  mat=terumet.id('ingot_tcop'
 reg_terumet_armor{suffix='tgol', name='Terugold',    mat=terumet.id('ingot_tgol'),
     mrv=80,  total_def=24, total_heal=65, weight=-1, xinfo='Weight -1', uses=720}
 reg_terumet_armor{suffix='ttin', name='Terutin',     mat=terumet.id('ingot_ttin'),
-    mrv=21,  total_def=38, total_heal=24, weight=-2, xinfo='Weight -2', uses=410, fire=10, breathing=.1}
+    mrv=21,  total_def=38, total_heal=24, weight=-2, xinfo='Weight -2', uses=410, fire=0.34, breathing=.1} -- 3 pcs = immune to torches
 reg_terumet_armor{suffix='rsuit', name='Vulcansuit', mat=terumet.id('item_rsuitmat'),
-    mrv=180, total_def=78, total_heal=50, weight=-3, xinfo='Weight -3', uses=120, fire=20}
+    mrv=180, total_def=78, total_heal=50, weight=-3, xinfo='Weight -3', uses=120, fire=1} -- 1 pc = immune to torches, 3 pcs = immune to fire

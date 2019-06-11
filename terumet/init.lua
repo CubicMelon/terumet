@@ -262,7 +262,7 @@ terumet.reg_tools('Teruchalcum', 'tcha',
 terumet.do_lua_file('tool/ore_saw')
 
 -- setup mesecon piston interop before machines are defined
-if minetest.global_exists('mesecon') then -- no 's'
+if minetest.get_modpath('mesecon') then -- no 's'
     terumet.do_lua_file('interop/mesecons')
 end
 
@@ -319,7 +319,7 @@ end
 terumet.do_lua_file('material/concrete')
 terumet.do_lua_file('material/coalproc')
 
-local INTEROPS = {'armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loot', 'moreores', 'farming', 'extra'}
+local INTEROPS = {'3d_armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loot', 'moreores', 'farming', 'extra'}
 for _,mod in ipairs(INTEROPS) do
     if minetest.get_modpath(mod) then terumet.do_lua_file('interop/'..mod) end
 end

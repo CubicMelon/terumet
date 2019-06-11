@@ -5,20 +5,20 @@ local function add_crush(item, result)
 end
 
 
-if minetest.global_exists('bushes') then
+if minetest.get_modpath('bushes') then
     add_crush('bushes:BushLeaves1', 'terumet:item_dust_bio')
     add_crush('bushes:BushLeaves2', 'terumet:item_dust_bio')
 end
 
-if minetest.global_exists('dryplants') then
+if minetest.get_modpath('dryplants') then
     add_crush('dryplants:grass', 'terumet:item_dust_bio')
 end
 
-if minetest.global_exists('vines') then
+if minetest.get_modpath('vines') then
     add_crush('vines:vines', 'terumet:item_dust_bio')
 end
 
-if minetest.global_exists('farming') then
+if minetest.get_modpath('farming') then
     -- small crops turn into 2 biomatter
     local small_crops = {
         'wheat', 'peas', 'barley', 'beans', 'pepper', 'beetroot', 'chili_pepper', 'blueberries',

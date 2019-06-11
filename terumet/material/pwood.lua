@@ -16,7 +16,7 @@ minetest.register_craft{ output = pwood_id..' 16',
     recipe = terumet.recipe_box(terumet.id('item_dust_wood'), 'group:glue'),
 }
 
-if minetest.global_exists('stairs') then
+if minetest.get_modpath('stairs') then
     stairs.register_stair_and_slab(
         'terumet_pwood',
         pwood_id,
@@ -28,7 +28,7 @@ if minetest.global_exists('stairs') then
     )
 end
 
-if minetest.global_exists('walls') then
+if minetest.get_modpath('walls') then
     walls.register(terumet.id('walls_pwood'), 'Pressed Wood Wall', pwood_tiles,
 		pwood_id, default.node_sound_stone_defaults())
 end
