@@ -11,10 +11,6 @@ local function gen_armor_groups(type, data)
         physics_gravity=(data.gravity or 0),
         physics_jump=(data.jump or 0),
     }
-    if data.fire and not armor.config.fire_protect then
-        data.xinfo = '(NO FUNCTION - turn on 3d_armor fire protection)'
-        minetest.log('warning', 'terumet: Armor with fire protection WILL NOT FUNCTION - 3d armor config option for fire protection is disabled!!')
-    end
     grps[type]=1
     return grps
 end
@@ -200,9 +196,15 @@ if opts.BRACERS then
     reg_terumet_band{suffix='base', name='Terumetal', xinfo='No effects', def=5, uses=500, rep=80}
 
     for band_id, band_data in pairs(opts.BRACERS) do
-        band_data.suffix = band_id
-        reg_terumet_band(band_data)
+        if (not band_data.fire) or armor.config.fire_protect then
+            band_data.suffix = band_id
+            reg_terumet_band(band_data)
+        end
     end
+end
+
+if not armor.config.fire_protect then
+    minetest.log('warning', 'terumet: fire protection on armor will not function - 3d_armor fire protection option not activated')
 end
 
 -- 3d_armor fire protection notes: total fire protection must meet or exceed the following values to be immune

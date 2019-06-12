@@ -47,6 +47,45 @@ end
 
 terumet.RAND = PcgRandom(os.time())
 
+local FMT = string.format
+minetest.register_chatcommand( 'item_info', {
+    params = '',
+    description = 'Get a complete description of the ItemStack in your hand',
+    privs = {debug=true},
+    func = function(name)
+        local player = minetest.get_player_by_name(name)
+        if player then
+            local witem = player:get_wielded_item()
+            if witem:is_empty() then
+                return true, "You're not holding anything."
+            else
+                local def = witem:get_definition()
+                local wear = witem:get_wear()
+                local wear_pct = FMT('%.1f%%', wear / 65535 * 100.0)
+                if def then
+                    return true, FMT('%s "%s" #%s/%s w:%s (%s)',
+                        minetest.colorize('#ff0', witem:get_name()),
+                        def.description,
+                        witem:get_count(),
+                        minetest.colorize('#0ff', def.stack_max),
+                        minetest.colorize('#f0f', wear),
+                        minetest.colorize('#f0f', wear_pct)
+                    )
+                else
+                    return true, FMT('*NO DEF* %s #%s w:%s (%s)',
+                        minetest.colorize('#ff0', witem:get_name()),
+                        witem:get_count(),
+                        minetest.colorize('#f0f', wear),
+                        minetest.colorize('#f0f', wear_pct)
+                    )
+                end
+            end
+        else
+            return false, "You aren't a player somehow, sorry?!"
+        end
+    end
+})
+
 function terumet.chance(pct)
     if pct <= 0 then return false end
     if pct >= 100 then return true end
