@@ -56,7 +56,7 @@ minetest.register_node( tarblock_id, {
     description = 'Tar Block',
     tiles = {terumet.tex(tarblock_id)},
     is_ground_content = false,
-    groups = {level=2, crumbly=2, cracky=1, snappy=2, choppy=2, disable_jump=1, fall_damage_add_percent=-75},
+    groups = {level=2, crumbly=2, cracky=1, snappy=2, choppy=2, disable_jump=1, fall_damage_add_percent=-100},
     sounds = terumet.squishy_node_sounds
 })
 

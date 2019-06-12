@@ -235,11 +235,12 @@ function terumet.tex_trans(id, rot)
     return terumet.tex(id) .. '^[transform' .. rot
 end
 
+local HEAR_DIST = 12
 terumet.squishy_node_sounds = {
-    footstep = 'terumet_squish_step',
-    dig = 'terumet_squish_dig',
-    dug = 'terumet_squish_dug',
-    place = 'terumet_squish_place',
+    footstep = {name='terumet_squish_step', max_hear_distance=HEAR_DIST},
+    dig = {name='terumet_squish_dig', max_hear_distance=HEAR_DIST},
+    dug = {name='terumet_squish_dug', max_hear_distance=HEAR_DIST},
+    place = {name='terumet_squish_place', max_hear_distance=HEAR_DIST},
 }
 
 terumet.do_lua_file('util3d')
