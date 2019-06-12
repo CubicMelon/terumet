@@ -7,9 +7,9 @@ local crys_terumetal = terumet.register_crystal{
     name='Crystallized Terumetal',
     cooking_result=id('ingot_raw')
 }
-terumet.register_vulcan_result(id('lump_raw'), crys_terumetal)
-terumet.register_vulcan_result(id('ore_raw'),  crys_terumetal, 1)
-terumet.register_vulcan_result(id('ore_raw_desert'), crys_terumetal, 2)
+terumet.register_vulcan_result(id('lump_raw'), crys_terumetal, nil, true) -- 4th arg indicates it is a terumetal specialized recipe
+terumet.register_vulcan_result(id('ore_raw'),  crys_terumetal, 1, true)
+terumet.register_vulcan_result(id('ore_raw_desert'), crys_terumetal, 2, true)
 
 local crys_copper = terumet.register_crystal{
     suffix='copper',

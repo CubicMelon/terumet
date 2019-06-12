@@ -96,14 +96,14 @@ end
 -- requires source item and result, optionally include integer modifier
 -- by default creates 2 result items, but count_modifier is added to that value
 -- +1 more result item if vulcanizer has upgrade
-function terumet.register_vulcan_result(source, result, count_modifier)
+function terumet.register_vulcan_result(source, result, count_modifier, specialized)
     count_modifier = count_modifier or 0
     local this_func = 'terumet.register_vulcan_result'
     if not source then error(this_func..': no source item provided') end
     if not result then error(this_func..': no result item provided') end
     local count = 2 + count_modifier
     if( count < 1 ) then count = 1 end
-    terumet.options.vulcan.recipes[source] = {result, count}
+    terumet.options.vulcan.recipes[source] = {result, count, specialized}
 end
 
 -- register that a node can generate heat when extracted by the Environmental Entropy Extraction Heater (EEE Heater)

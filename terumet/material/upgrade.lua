@@ -13,8 +13,12 @@ minetest.register_craft{ output = upg_base_id, recipe = {
     {terumet.id('item_coil_raw'), terumet.id('item_coil_raw'), terumet.id('item_coil_raw')},
 }}
 
-function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src_pattern)
+function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src_pattern, xinfo)
     local item_id = id('item_upg_'..upgrade_id)
+
+    if xinfo then
+        desc = string.format('%s\n%s', desc, minetest.colorize(terumet.options.armor.EFFECTS_TEXTCOLOR, xinfo))
+    end
 
     minetest.register_craftitem( item_id, {
         description = desc,
@@ -57,12 +61,13 @@ function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src
     end
 end
 
-terumet.register_machine_upgrade('ext_input', 'External Input Upgrade', 'default:chest', id('item_coil_tcop'), 'left')
-terumet.register_machine_upgrade('ext_output', 'External Output Upgrade', 'default:chest', id('item_coil_tcop'), 'right')
-terumet.register_machine_upgrade('max_heat', 'Maximum Heat Upgrade', id('ingot_tste'), id('item_thermese'))
-terumet.register_machine_upgrade('heat_xfer', 'Heat Transfer Upgrade', id('item_coil_tgol'), id('item_cryst_gold'))
-terumet.register_machine_upgrade('gen_up', 'Heat Generation Upgrade', id('item_coil_tgol'), id('item_cryst_mese'))
-terumet.register_machine_upgrade('speed_up', 'Speed Upgrade', id('ingot_cgls'), id('item_cryst_dia'))
-terumet.register_machine_upgrade('cryst', 'Crystallization Upgrade', id('item_cryst_dia'), id('item_entropy'))
+terumet.register_machine_upgrade('ext_input', 'External Input Upgrade', 'default:chest', id('item_coil_tcop'), 'left', 'Item input from block immediately to left')
+terumet.register_machine_upgrade('ext_output', 'External Output Upgrade', 'default:chest', id('item_coil_tcop'), 'right', 'Item output to block immediately to right')
+terumet.register_machine_upgrade('max_heat', 'Maximum Heat Upgrade', id('ingot_tste'), id('item_thermese'), nil, 'Double machine HU storage')
+terumet.register_machine_upgrade('heat_xfer', 'Heat Transfer Upgrade', id('item_coil_tgol'), id('item_cryst_gold'), nil, 'Send and recieve HU faster')
+terumet.register_machine_upgrade('gen_up', 'Heat Generation Upgrade', id('item_coil_tgol'), id('item_cryst_mese'), nil, '[Heaters only] Generate more HU')
+terumet.register_machine_upgrade('speed_up', 'Speed Upgrade', id('ingot_cgls'), id('item_cryst_dia'), nil, 'Double machine processing speed')
+terumet.register_machine_upgrade('cryst', 'Crystallization Upgrade', id('item_cryst_dia'), id('item_entropy'), nil, '[Crystal Vulcanizer only] +1 yield for triple cost/time')
+terumet.register_machine_upgrade('tmcrys', 'Terumetal Specialization Upgrade', id('ingot_tste'), id('item_cryst_raw'), nil, '[Crystal Vulcanizer only] +2 yield for double cost/time\nMachine can only process Terumetal')
 
-terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade\nCreative mode only', nil, nil, 'none')
+terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade', nil, nil, 'none', 'Testing or cheating tool')

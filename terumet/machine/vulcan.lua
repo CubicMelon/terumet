@@ -98,9 +98,17 @@ function base_vul.check_new_processing(vulcan)
     local in_inv, in_list = base_mach.get_input(vulcan)
     for slot = 1,in_inv:get_size(in_list) do
         local input_stack = in_inv:get_stack(in_list, slot)
+        local input_name = 'None'
+        if not input_stack:is_empty() then input_name = input_stack:get_definition().description end
+
         local source = input_stack:get_name()
         local matched_recipe = opts.recipes[source]
         if matched_recipe then
+            local tm_specialized = base_mach.has_upgrade(vulcan, 'tmcrys')
+            if tm_specialized and not matched_recipe[3] then
+                vulcan.status_text = 'Specialized for Terumetal. Rejecting ' .. input_name
+                return
+            end
             local result = matched_recipe[1]
             local yield = matched_recipe[2]
             vulcan.state = base_vul.STATE.VULCANIZING
@@ -108,10 +116,15 @@ function base_vul.check_new_processing(vulcan)
             vulcan.heat_cost = opts.VULCANIZE_HUPS
             -- if limited, obsidian will not benefit from crystalization upgrade
             local limit_obsidian = opts.LIMIT_OBSIDIAN and source == 'default:obsidian'
-            if not limit_obsidian and base_mach.has_upgrade(vulcan, 'cryst') then
+            if tm_specialized then
+                yield = yield + 2
+                vulcan.state_time = vulcan.state_time * 2
+                vulcan.heat_cost = vulcan.heat_cost * 2
+            end
+            if base_mach.has_upgrade(vulcan, 'cryst') and not limit_obsidian then
                 yield = yield + 1
                 vulcan.state_time = vulcan.state_time * 3
-                vulcan.heat_cost = vulcan.heat_cost * 2
+                vulcan.heat_cost = vulcan.heat_cost * 3
             end
             in_inv:remove_item(in_list, input_stack:get_name())
             vulcan.inv:set_stack('result', 1, result .. ' ' .. yield)
