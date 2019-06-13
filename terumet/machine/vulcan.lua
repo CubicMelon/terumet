@@ -71,7 +71,7 @@ function base_vul.do_processing(vulcan, dt)
         if vulcan.state_time <= 0 then
             vulcan.state = base_vul.STATE.EJECT
         else
-            vulcan.status_text = 'Creating ' .. result_name .. ' (' .. terumet.format_time(vulcan.state_time) .. ')'
+            vulcan.status_text = 'Vulcanizing ' .. result_name .. ' (' .. terumet.format_time(vulcan.state_time) .. ')'
         end
     end
 
