@@ -234,10 +234,10 @@ function base_mach.push_heat_single(machine, target, send_amount)
 end
 
 local function value_to_sideopts(value)
-    if value then
-        return value % 10, math.floor(value / 10)
-    else
+    if (not value) or value == 0 then
         return opts.DEFAULT_INPUT_SIDE, opts.DEFAULT_OUTPUT_SIDE
+    else
+        return value % 10, math.floor(value / 10)
     end
 end
 

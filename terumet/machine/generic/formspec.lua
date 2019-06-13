@@ -48,6 +48,7 @@ base_mach.buttondefs.HEAT_XFER_TOGGLE = {
 function base_mach.build_fs(machine)
     local ext_output = base_mach.has_ext_output(machine)
     local ext_input = base_mach.has_ext_input(machine)
+    --minetest.log('info', dump(machine))
     local fsdef = machine.class.fsdef
     -- start/misc section
     local fs_width = (fsdef.size and fsdef.size.x) or 11
