@@ -8,7 +8,7 @@
 
 -- by Terumoc
 
-local THIS_VERSION = 1
+local THIS_VERSION = 2
 -- don't overwrite a later version if its already loaded
 if minetest.global_exists('util3d') and util3d.version >= THIS_VERSION then return end
 
@@ -40,20 +40,6 @@ function util3d.param2_to_rotation(param2)
     return param2 % 4
 end
 
--- given a node rotation and position, get the position relative to its front
-function util3d.get_front_pos(rot, pos)
-    return util3d.pos_plus(pos, util3d.ROTATION_OFFSETS[rot].front)
-end
-function util3d.get_back_pos(rot, pos)
-    return util3d.pos_plus(pos, util3d.ROTATION_OFFSETS[rot].back)
-end
-function util3d.get_leftside_pos(rot, pos)
-    return util3d.pos_plus(pos, util3d.ROTATION_OFFSETS[rot].left)
-end
-function util3d.get_rightside_pos(rot, pos)
-    return util3d.pos_plus(pos, util3d.ROTATION_OFFSETS[rot].right)
-end
-
 -- human-readable directions of facings
 util3d.FACING_DIRECTION = {
     [0]='up', [1]='north', [2]='south', [3]='east', [4]='west', [5]='down'
@@ -75,9 +61,15 @@ end
 
 -- relative x/y/z offset for rotations
 util3d.ROTATION_OFFSETS = {
-    [0]={left={x=-1,y=0,z=0}, right={x=1,y=0,z=0}, front={x=0,y=0,z=-1}, back={x=0,y=0,z=1}},
-    [1]={left={x=0,y=0,z=1}, right={x=0,y=0,z=-1}, front={x=-1,y=0,z=0}, back={x=1,y=0,z=0}},
-    [2]={left={x=1,y=0,z=0}, right={x=-1,y=0,z=0}, front={x=0,y=0,z=1}, back={x=0,y=0,z=-1}},
-    [3]={left={x=0,y=0,z=-1}, right={x=0,y=0,z=1}, front={x=1,y=0,z=0}, back={x=-1,y=0,z=0}},
+    [0]={left={x=-1,y=0,z=0}, right={x=1,y=0,z=0}, front={x=0,y=0,z=-1}, back={x=0,y=0,z=1}, top=util3d.ADJACENT_OFFSETS.up, bottom=util3d.ADJACENT_OFFSETS.down},
+    [1]={left={x=0,y=0,z=1}, right={x=0,y=0,z=-1}, front={x=-1,y=0,z=0}, back={x=1,y=0,z=0}, top=util3d.ADJACENT_OFFSETS.up, bottom=util3d.ADJACENT_OFFSETS.down},
+    [2]={left={x=1,y=0,z=0}, right={x=-1,y=0,z=0}, front={x=0,y=0,z=1}, back={x=0,y=0,z=-1}, top=util3d.ADJACENT_OFFSETS.up, bottom=util3d.ADJACENT_OFFSETS.down},
+    [3]={left={x=0,y=0,z=-1}, right={x=0,y=0,z=1}, front={x=1,y=0,z=0}, back={x=-1,y=0,z=0}, top=util3d.ADJACENT_OFFSETS.up, bottom=util3d.ADJACENT_OFFSETS.down},
 }
 
+util3d.RELATIVE_SIDES = { 'top', 'bottom', 'left', 'right', 'front', 'back' }
+
+function util3d.get_relative_pos(rot, pos, rel)
+    if 'number'==type(rel) then rel = util3d.RELATIVE_SIDES[rel] end
+    return util3d.pos_plus(pos, util3d.ROTATION_OFFSETS[rot][rel])
+end

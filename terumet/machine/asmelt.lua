@@ -209,7 +209,7 @@ function base_asm.tick(pos, dt)
 
     if working or venting then base_mach.generate_smoke(pos) end
 
-    if venting or base_mach.has_upgrade(smelter, 'ext_input') or (base_mach.has_upgrade(smelter, 'ext_output') and smelter.state == base_asm.STATE.EJECT) then
+    if venting or base_mach.has_external(smelter) or smelter.state == base_asm.STATE.EJECT then
         reset_timer = true
     end
     -- write status back to meta

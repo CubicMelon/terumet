@@ -136,7 +136,7 @@ function furn_htr.tick(pos, dt)
         if heater.heat_level > 0 then base_mach.set_timer(heater) end
     end
 
-    if venting or base_mach.has_upgrade(heater, 'ext_input') then base_mach.set_timer(heater) end
+    if venting or base_mach.has_ext_input(heater) then base_mach.set_timer(heater) end
     -- write status back to meta
     base_mach.write_state(pos, heater)
 

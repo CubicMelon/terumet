@@ -20,7 +20,7 @@ local FSDEF = {
     machine = function(machine)
         local fs = ''
         if machine.state ~= base_vul.STATE.IDLE then
-            fs=base_mach.fs_proc(3,2,'gen',machine.inv:get_stack('result',1))
+            fs=base_mach.fs_proc(3,1.5,'gen',machine.inv:get_stack('result',1))
         end
         return fs
     end,
@@ -151,7 +151,7 @@ function base_vul.tick(pos, dt)
     -- write status back to meta
     base_mach.write_state(pos, vulcan)
 
-    return base_mach.has_upgrade(vulcan, 'ext_input') or venting or (vulcan.state ~= base_vul.STATE.IDLE)
+    return (vulcan.state ~= base_vul.STATE.IDLE) or base_mach.has_ext_input(vulcan) or venting
 end
 
 base_vul.nodedef = base_mach.nodedef{

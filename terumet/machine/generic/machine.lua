@@ -233,6 +233,22 @@ function base_mach.push_heat_single(machine, target, send_amount)
     return base_mach.do_push_heat(machine, send_amount, {target})
 end
 
+local function value_to_sideopts(value)
+    if value then
+        return value % 10, math.floor(value / 10)
+    else
+        return opts.DEFAULT_INPUT_SIDE, opts.DEFAULT_OUTPUT_SIDE
+    end
+end
+
+local function sideopts_to_value(inside, outside)
+    return (inside or opts.DEFAULT_INPUT_SIDE) + ((outside or opts.DEFAULT_OUTPUT_SIDE) * 10)
+end
+
+local function write_side_options(machine)
+    machine.meta:set_int('side_options', sideopts_to_value(machine.input_side, machine.output_side))
+end
+
 function base_mach.read_state(pos)
     local machine = {}
     local node_info = minetest.get_node_or_nil(pos)
@@ -255,6 +271,8 @@ function base_mach.read_state(pos)
     machine.state_time = meta:get_float('state_time') or 0
     machine.status_text = meta:get_string('status_text') or 'No Status'
     machine.installed_upgrades = base_mach.get_installed_upgrades(machine)
+    machine.input_side, machine.output_side = value_to_sideopts(meta:get_int('side_options'))
+
     -- call read callback on node def if exists
     if machine.class.on_read_state then machine.class.on_read_state(machine) end
     -- following attributes are not saved in meta, but reset every tick
@@ -286,6 +304,7 @@ function base_mach.readonly_state(pos)
     machine.inv = meta:get_inventory()
     machine.owner = meta:get_string('owner')
     machine.installed_upgrades = base_mach.get_installed_upgrades(machine)
+    machine.input_side, machine.output_side = value_to_sideopts(meta:get_int('side_options'))
     return machine
 end
 
@@ -302,6 +321,7 @@ function base_mach.write_state(pos, machine)
     meta:set_float('state_time', machine.state_time)
     meta:set_string('formspec', base_mach.build_fs(machine))
     meta:set_string('infotext', base_mach.build_infotext(machine))
+    write_side_options(machine)
     -- call write callback on node def if exists
     if machine.class.on_write_state then machine.class.on_write_state(machine) end
 end
@@ -348,9 +368,9 @@ end
 
 -- return inventory, list of where to acquire input
 function base_mach.get_input(machine)
-    if base_mach.has_upgrade(machine, 'ext_input') then
-        local lpos = util3d.get_leftside_pos(machine.rot, machine.pos)
-        local lmeta = minetest.get_meta(lpos)
+    if base_mach.has_ext_output(machine) then
+        local input_pos = util3d.get_relative_pos(machine.rot, machine.pos, machine.input_side)
+        local lmeta = minetest.get_meta(input_pos)
         if lmeta then return lmeta:get_inventory(), 'main' end
         return nil, nil
     else
@@ -360,9 +380,9 @@ end
 
 -- return inventory, list of where to put output
 function base_mach.get_output(machine)
-    if base_mach.has_upgrade(machine, 'ext_output') then
-        local rpos = util3d.get_rightside_pos(machine.rot, machine.pos)
-        local rmeta = minetest.get_meta(rpos)
+    if base_mach.has_ext_output(machine) then
+        local output_pos = util3d.get_relative_pos(machine.rot, machine.pos, machine.output_side)
+        local rmeta = minetest.get_meta(output_pos)
         if rmeta then return rmeta:get_inventory(), 'main' end
         return nil, nil
     else
@@ -374,6 +394,18 @@ end
 function base_mach.has_upgrade(machine, upgrade)
     if not machine.installed_upgrades then return false end
     return machine.installed_upgrades[upgrade]
+end
+
+function base_mach.has_ext_input(machine)
+    return base_mach.has_upgrade(machine, 'ext_input') or base_mach.has_upgrade(machine, 'ext_both')
+end
+
+function base_mach.has_ext_output(machine)
+    return base_mach.has_upgrade(machine, 'ext_output') or base_mach.has_upgrade(machine, 'ext_both')
+end
+
+function base_mach.has_external(machine)
+    return base_mach.has_upgrade(machine, 'ext_both') or base_mach.has_upgrade(machine, 'ext_input') or base_mach.has_upgrade(machine, 'ext_output')
 end
 
 -- return list of {upgrade_id=true, upgrade_id=true...} of machine's installed upgrades
@@ -645,6 +677,16 @@ function base_mach.nodedef(additions)
                             machine.heat_xfer_mode = machine.class.default_heat_xfer
                         end
                         machine.meta:set_int('heat_xfer_mode', machine.heat_xfer_mode)
+                        updatefs = true
+                    elseif fields.input_side then
+                        machine.input_side = machine.input_side + 1
+                        if machine.input_side > 6 then machine.input_side = 1 end
+                        write_side_options(machine)
+                        updatefs = true
+                    elseif fields.output_side then
+                        machine.output_side = machine.output_side + 1
+                        if machine.output_side > 6 then machine.output_side = 1 end
+                        write_side_options(machine)
                         updatefs = true
                     else
                         -- handle machine custom buttondefs

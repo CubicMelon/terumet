@@ -77,6 +77,9 @@ terumet.options.machine = {
     OVERHEAT_SOUND = 'terumet_venting', -- when overheating and discharging
     HEATIN_SOUND = 'terumet_heatin', -- when accepting heat from an item/battery
     HEATOUT_SOUND = 'terumet_heatout', -- when depositing heat in a battery
+
+    DEFAULT_INPUT_SIDE = 3,
+    DEFAULT_OUTPUT_SIDE = 4,
 }
 
 terumet.options.heater = {

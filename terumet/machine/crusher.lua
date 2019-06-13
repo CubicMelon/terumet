@@ -20,9 +20,9 @@ local FSDEF = {
     machine = function(machine)
         local fs = ''
         if machine.state == base_crs.STATE.HEATING then
-            fs=fs..base_mach.fs_proc(3,2,'pres1', machine.inv:get_stack('process',1))
+            fs=fs..base_mach.fs_proc(3,1.5,'pres1', machine.inv:get_stack('process',1))
         elseif machine.state == base_crs.STATE.COOLING then
-            fs=fs..base_mach.fs_proc(3,2,'pres2', machine.inv:get_stack('result',1))
+            fs=fs..base_mach.fs_proc(3,1.5,'pres2', machine.inv:get_stack('result',1))
         else
             fs=fs..'image[3,2;2,2;terumet_gui_idle_pres.png]'
         end
@@ -158,7 +158,7 @@ function base_crs.tick(pos, dt)
     -- write status back to metad
     base_mach.write_state(pos, crusher)
 
-    return crusher.state ~= base_crs.STATE.IDLE or base_mach.has_upgrade(crusher, 'ext_input') or venting
+    return crusher.state ~= base_crs.STATE.IDLE or base_mach.has_ext_input(crusher) or venting
 end
 
 base_crs.unlit_nodedef = base_mach.nodedef{

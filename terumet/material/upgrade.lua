@@ -47,8 +47,8 @@ function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src
             {source2, upg_base_id, source},
             {source2, source2, source2}
         }
-    elseif src_pattern == 'single' then
-        rec={upg_base_id, source}
+    elseif src_pattern == 'simple' then
+        rec=source
         shapeless=true
     elseif src_pattern == 'none' then
         return
@@ -59,15 +59,18 @@ function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src
     else
         minetest.register_craft{ output=item_id, recipe=rec}
     end
+    return item_id
 end
 
-terumet.register_machine_upgrade('ext_input', 'External Input Upgrade', 'default:chest', id('item_coil_tcop'), 'left', 'Item input from block immediately to left')
-terumet.register_machine_upgrade('ext_output', 'External Output Upgrade', 'default:chest', id('item_coil_tcop'), 'right', 'Item output to block immediately to right')
+local in_up = terumet.register_machine_upgrade('ext_input', 'External Input Upgrade', 'default:chest', id('item_coil_tcop'), 'left', 'Item input from adjacent block')
+local out_up = terumet.register_machine_upgrade('ext_output', 'External Output Upgrade', 'default:chest', id('item_coil_tcop'), 'right', 'Item output to adjacent block')
 terumet.register_machine_upgrade('max_heat', 'Maximum Heat Upgrade', id('ingot_tste'), id('item_thermese'), nil, 'Double machine HU storage')
 terumet.register_machine_upgrade('heat_xfer', 'Heat Transfer Upgrade', id('item_coil_tgol'), id('item_cryst_gold'), nil, 'Send and recieve HU faster')
 terumet.register_machine_upgrade('gen_up', 'Heat Generation Upgrade', id('item_coil_tgol'), id('item_cryst_mese'), nil, '[Heaters only] Generate more HU')
 terumet.register_machine_upgrade('speed_up', 'Speed Upgrade', id('ingot_cgls'), id('item_cryst_dia'), nil, 'Double machine processing speed')
 terumet.register_machine_upgrade('cryst', 'Crystallization Upgrade', id('item_cryst_dia'), id('item_entropy'), nil, '[Crystal Vulcanizer only] +1 yield for triple cost/time')
 terumet.register_machine_upgrade('tmcrys', 'Terumetal Specialization Upgrade', id('ingot_tste'), id('item_cryst_raw'), nil, '[Crystal Vulcanizer only] +2 yield for double cost/time\nMachine can only process Terumetal')
+
+terumet.register_machine_upgrade('ext_both', 'External Input/Output Upgrade', {in_up, out_up, 'group:glue', id('item_thermese')}, nil, 'simple', 'Item input and output to adjacent block(s)')
 
 terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade', nil, nil, 'none', 'Testing or cheating tool')

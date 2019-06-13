@@ -21,7 +21,7 @@ local FSDEF = {
     machine = function(machine)
         local fs = ''
         if machine.state ~= base_htf.STATE.IDLE then
-            fs=fs..base_mach.fs_proc(3,2,'cook', machine.inv:get_stack('result',1))
+            fs=fs..base_mach.fs_proc(3,1.5,'cook', machine.inv:get_stack('result',1))
         end
         return fs
     end,
@@ -154,7 +154,7 @@ function base_htf.tick(pos, dt)
     -- write status back to meta
     base_mach.write_state(pos, furnace)
 
-    return working or venting or base_mach.has_upgrade(furnace, 'ext_input')
+    return working or venting or base_mach.has_ext_input(furnace)
 end
 
 base_htf.unlit_nodedef = base_mach.nodedef{
