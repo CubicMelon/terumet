@@ -83,6 +83,10 @@ terumet.options.machine = {
 
     DEFAULT_INPUT_SIDE = 3,
     DEFAULT_OUTPUT_SIDE = 4,
+
+    -- tooltip colors for machine items
+    TIP_HU_COLOR = '#ff9d15',
+    TIP_PERCENT_COLOR = '#ffdcac',
 }
 
 terumet.options.heater = {

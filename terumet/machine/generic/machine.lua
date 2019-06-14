@@ -2,6 +2,7 @@
 terumet.machine = {}
 local base_mach = terumet.machine
 local opts = terumet.options.machine
+local FMT = string.format
 
 local on_machine_node_creation_callbacks = {}
 -- define a new callback for machine node creation (for interop)
@@ -176,7 +177,7 @@ function base_mach.do_push_heat(from, total_hus, targets)
         -- if from and to_machine are the same, don't bother sending any heat
         if not vector.equals(from.pos, to_machine.pos) then
             local send_amount = math.min(hus_each, to_machine.max_heat - base_mach.get_current_heat(to_machine))
-            --minetest.chat_send_all(string.format('push to %s hl: %d', to_machine.class.name, send_amount))
+            --minetest.chat_send_all(FMT('push to %s hl: %d', to_machine.class.name, send_amount))
             if send_amount > 0 then
                 base_mach.external_send_heat(to_machine, send_amount)
                 actual_hus_sent = actual_hus_sent + send_amount
@@ -599,7 +600,7 @@ function base_mach.generate_smoke(pos, count)
             expirationtime=1.41,
             size=sz,
             collisiondetection=false,
-            texture=string.format('terumet_part_smoke%d.png', terumet.RAND:next(1,3)),
+            texture=FMT('terumet_part_smoke%d.png', terumet.RAND:next(1,3)),
             animation=SMOKE_ANIMATION
         }
     end
@@ -611,11 +612,17 @@ function base_mach.machine_to_itemstack(machine_id, machine_meta_fields)
     local stack = ItemStack{name = machine_id, count=1, wear=0}
     local nodedef = stack:get_definition()
     local stackmeta = stack:get_meta()
-    local machine_heat = machine_meta_fields.heat_level
-    local machine_max = machine_meta_fields.max_heat
+    local machine_heat = tonumber(machine_meta_fields.heat_level)
+    local machine_max = tonumber(machine_meta_fields.max_heat)
     if machine_heat and machine_max then
         stackmeta:set_int('heat_level', machine_heat)
-        stackmeta:set_string('description', string.format('%s\nHeat: %.1f%%', nodedef.description, 100.0*machine_heat/machine_max) )
+        if machine_heat > 0 then
+            stackmeta:set_string('description', FMT('%s\n%s HU (%s)',
+                nodedef.description,
+                minetest.colorize(opts.TIP_HU_COLOR, machine_heat),
+                minetest.colorize(opts.TIP_PERCENT_COLOR, FMT('%.1f%%', 100.0*machine_heat/machine_max))
+            ))
+        end
     end
     return stack
 end
