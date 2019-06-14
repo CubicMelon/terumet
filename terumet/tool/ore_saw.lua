@@ -1,14 +1,7 @@
-local id = terumet.id
-local saw_id = id('tool_ore_saw')
 local opts = terumet.options.ore_saw
 
-minetest.register_tool( saw_id, {
-    description = 'Ore-cutting Saw\nEasily excavates ore nodes',
-    inventory_image = terumet.tex(saw_id),
-    tool_capabilities = {},
-    wield_scale={x=2.0, y=2.0, z=1.2},
-    sound = {breaks = 'default_tool_breaks'},
-    on_use = function (itemstack, user, pointed_thing)
+local function saw_use_function(use_count)
+    return function (itemstack, user, pointed_thing)
         if pointed_thing.type == 'node' and pointed_thing.under then
             local npos = pointed_thing.under
             local node_id = minetest.get_node(npos).name
@@ -20,7 +13,7 @@ minetest.register_tool( saw_id, {
                     gain = 0.3,
                     max_hear_distance = 12
                 })
-                itemstack:add_wear(65535 / opts.USES)
+                itemstack:add_wear(65535 / use_count)
             else
                 minetest.sound_play( 'terumet_saw_fail', {
                     pos = npos,
@@ -31,13 +24,43 @@ minetest.register_tool( saw_id, {
         end
         return itemstack
     end
+end
+
+local basic_id = terumet.id('tool_ore_saw')
+local advanced_id = terumet.id('tool_ore_saw_adv')
+
+minetest.register_tool( basic_id, {
+    description = terumet.item_desc('Ore-cutting Saw', 'Excavates ore blocks'),
+    inventory_image = terumet.tex(basic_id),
+    range = 2,
+    tool_capabilities = {},
+    wield_scale={x=1.5, y=1.5, z=1.0},
+    sound = {breaks = 'default_tool_breaks'},
+    on_use = saw_use_function(opts.BASIC_USES)
 })
 
-minetest.register_craft{ output = saw_id,
+local blade_item = terumet.id('ingot_tcha')
+local handle_item = terumet.id('ingot_tste')
+
+minetest.register_craft{ output = basic_id,
     recipe = {
-        {id('ingot_tcha'), id('ingot_tcha'), id('ingot_tste')},
-        {id('ingot_tcha'), id('ingot_tcha'), id('ingot_tste')},
-        {'', id('ingot_tste'), ''}
+        {blade_item, blade_item, handle_item},
+        {blade_item, blade_item, handle_item},
+        {'', handle_item, ''}
 }}
 
-terumet.register_repairable_item(saw_id, 240) -- 4x value of ingot_tcha
+terumet.register_repairable_item(basic_id, 240) -- 4x value of ingot_tcha
+
+minetest.register_tool( advanced_id, {
+    description = terumet.item_desc('Advanced Ore-cutting Saw', 'Excavates ore blocks (more durable & better range)'),
+    inventory_image = terumet.tex(advanced_id),
+    range = 4,
+    tool_capabilities = {},
+    wield_scale={x=1.8, y=1.8, z=1.4},
+    sound = {breaks = 'default_tool_breaks'},
+    on_use = saw_use_function(opts.ADVANCED_USES)
+})
+
+terumet.register_alloy_recipe{input={basic_id, terumet.id('item_rubber', 3), terumet.id('ingot_cgls')}, result=advanced_id, time=10, flux=6}
+
+terumet.register_repairable_item(advanced_id, 400) -- basic + coreglass + 40

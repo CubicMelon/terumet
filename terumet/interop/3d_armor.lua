@@ -45,14 +45,6 @@ local function reg_recipe_helm(id, mat)
     }}
 end
 
-local function format_desc(fullname, xinfo)
-    if xinfo then
-        return string.format("%s\n%s", fullname, minetest.colorize(opts.EFFECTS_TEXTCOLOR, xinfo))
-    else
-        return fullname
-    end
-end
-
 local function reg_terumet_armor(data)
     if not data or not data.suffix or not data.mat then error('Missing data on registering Terumetal armor') end
     data.uses = data.uses or 500
@@ -69,7 +61,7 @@ local function reg_terumet_armor(data)
 
     local boots_id = terumet.id('armboots_'..data.suffix)
     armor:register_armor(boots_id, {
-        description= format_desc(data.name..' Boots', data.xinfo),
+        description = terumet.item_desc(data.name..' Boots', data.xinfo),
         inventory_image = terumet.tex('invboots_'..data.suffix),
         texture = terumet.tex('armboots_'..data.suffix),
         preview = terumet.tex('prvboots_'..data.suffix),
@@ -82,7 +74,7 @@ local function reg_terumet_armor(data)
 
     local helm_id = terumet.id('armhelm_'..data.suffix)
     armor:register_armor(helm_id, {
-        description= format_desc(data.name..' Helmet', data.xinfo),
+        description= terumet.item_desc(data.name..' Helmet', data.xinfo),
         inventory_image = terumet.tex('invhelm_'..data.suffix),
         texture = terumet.tex('armhelm_'..data.suffix),
         preview = terumet.tex('prvhelm_'..data.suffix),
@@ -95,7 +87,7 @@ local function reg_terumet_armor(data)
 
     local chest_id = terumet.id('armchest_'..data.suffix)
     armor:register_armor(chest_id, {
-        description= format_desc(data.name..' Chestpiece', data.xinfo),
+        description= terumet.item_desc(data.name..' Chestpiece', data.xinfo),
         inventory_image = terumet.tex('invchest_'..data.suffix),
         texture = terumet.tex('armchest_'..data.suffix),
         preview = terumet.tex('prvchest_'..data.suffix),
@@ -108,7 +100,7 @@ local function reg_terumet_armor(data)
 
     local legs_id = terumet.id('armlegs_'..data.suffix)
     armor:register_armor(legs_id, {
-        description= format_desc(data.name..' Leggings', data.xinfo),
+        description= terumet.item_desc(data.name..' Leggings', data.xinfo),
         inventory_image = terumet.tex('invlegs_'..data.suffix),
         texture = terumet.tex('armlegs_'..data.suffix),
         preview = terumet.tex('prvlegs_'..data.suffix),
@@ -157,7 +149,7 @@ if opts.BRACERS then
 
         local band_id = terumet.id('brcr_'..data.suffix)
         armor:register_armor(band_id, {
-            description= format_desc(data.name..' Bracers', data.xinfo),
+            description= terumet.item_desc(data.name..' Bracers', data.xinfo),
             inventory_image = bracer_inv_texture(data.color),
             texture = terumet.tex('armbrcr_'..data.suffix),
             preview = terumet.tex('prvbrcr_'..data.suffix),

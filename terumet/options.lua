@@ -31,7 +31,10 @@ terumet.options.misc = {
         ['wood']=1,
         ['stone']=1,
         ['flammable']=1,
-    }
+    },
+
+    -- text color for additional info on items
+    TIP_COLOR = '#ffa2ba',
 }
 
 terumet.options.tools = {
@@ -467,8 +470,10 @@ terumet.options.ore_saw = {
         ['quartz:quartz_ore']=1,
         ['nether:titanium_ore']=1,
     },
-    -- Number of times ore saw can be used before breaking
-    USES = 50,
+    -- Number of times basic ore saw can be used before breaking
+    BASIC_USES = 40,
+    -- Number of times advanced ore saw can be used before breaking
+    ADVANCED_USES = 200,
 }
 
 -- NOTE: Armor and bracers will only be available if the mod "3d_armor" by stujones11 (https://github.com/stujones11/minetest-3d_armor) is active
@@ -500,6 +505,4 @@ terumet.options.armor = {
     },
     -- Item used to create bracer crystals
     BRACER_CRYSTAL_ITEM = 'default:steelblock',
-    -- tooltip text color for armor/bracer extra effects
-    EFFECTS_TEXTCOLOR = '#ffa2ba'
 }

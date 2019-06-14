@@ -17,7 +17,7 @@ function terumet.register_machine_upgrade(upgrade_id, desc, source, source2, src
     local item_id = id('item_upg_'..upgrade_id)
 
     if xinfo then
-        desc = string.format('%s\n%s', desc, minetest.colorize(terumet.options.armor.EFFECTS_TEXTCOLOR, xinfo))
+        desc = terumet.item_desc(desc, xinfo)
     end
 
     minetest.register_craftitem( item_id, {

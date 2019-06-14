@@ -223,6 +223,14 @@ function terumet.tex(id)
     end
 end
 
+function terumet.item_desc(name, xinfo)
+    if xinfo then
+        return string.format("%s\n%s", name, minetest.colorize(terumet.options.misc.TIP_COLOR, xinfo))
+    else
+        return name
+    end
+end
+
 function terumet.crystal_tex(color)
     return string.format('%s^[multiply:%s', terumet.tex('item_cryst'), color)
 end
