@@ -369,7 +369,7 @@ end
 
 -- return inventory, list of where to acquire input
 function base_mach.get_input(machine)
-    if base_mach.has_ext_output(machine) then
+    if base_mach.has_ext_input(machine) then
         local input_pos = util3d.get_relative_pos(machine.rot, machine.pos, machine.input_side)
         local lmeta = minetest.get_meta(input_pos)
         if lmeta then return lmeta:get_inventory(), 'main' end
@@ -405,7 +405,7 @@ function base_mach.has_ext_output(machine)
     return base_mach.has_upgrade(machine, 'ext_output') or base_mach.has_upgrade(machine, 'ext_both')
 end
 
-function base_mach.has_external(machine)
+function base_mach.has_ext_any(machine)
     return base_mach.has_upgrade(machine, 'ext_both') or base_mach.has_upgrade(machine, 'ext_input') or base_mach.has_upgrade(machine, 'ext_output')
 end
 
