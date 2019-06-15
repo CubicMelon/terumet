@@ -20,12 +20,18 @@ local FSDEF = {
     machine = function(machine)
         local fs = ''
         if machine.state ~= furn_htr.STATE.IDLE then
-            fs=fs..base_mach.fs_proc(3.5, 1.5, 'heat', machine.inv:get_stack('burn', 1))
+            local bx, by
+            if base_mach.has_ext_input(machine) then
+                bx, by = 4, 1.5
+            else
+                bx, by = 3, 1
+            end
+            fs=fs..base_mach.fs_proc(bx, by, 'heat', machine.inv:get_stack('burn', 1))
         end
         return fs
     end,
     battery_slot = {true},
-    input = {x=2.5, y=1.5}
+    input = {x=2, y=1}
 }
 
 function furn_htr.init(pos)

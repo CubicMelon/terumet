@@ -428,7 +428,7 @@ end
 -- returns true if venting
 function base_mach.check_overheat(machine, base_max_heat)
     if base_mach.has_upgrade(machine, 'max_heat') then
-        machine.max_heat = math.floor(base_max_heat * 1.5)
+        machine.max_heat = math.floor(base_max_heat * 2)
     else
         machine.max_heat = base_max_heat
     end
