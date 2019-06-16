@@ -374,6 +374,9 @@ end
 terumet.do_lua_file('material/concrete')
 terumet.do_lua_file('material/coalproc')
 
+--experimental stuff
+--terumet.do_lua_file('material/meson')
+
 local INTEROPS = {'3d_armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loot', 'moreores', 'farming', 'extra'}
 for _,mod in ipairs(INTEROPS) do
     if minetest.get_modpath(mod) then terumet.do_lua_file('interop/'..mod) end
