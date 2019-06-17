@@ -20,9 +20,17 @@ Newer versions listed first
     * White concrete mix can be dyed into any of the 14 other standard dye colors.
     * (Yes, just like another crafty game)
     * Concrete can be made into doors, slabs, walls, stairs, etc.
+* Tool upgrades
+    * Reach distance upgrades via Crystallized Mese
+    * Speed upgrades via Crystallized Diamond
+    * Durability upgrades via Synthetic Rubber
+* Added Fireproof Bracer
+    * Functions only if 3d_armor's fire protection option is turned on (wherein it overrides fire/lava functions itself)
+* Added combined External Input/Output Upgrade
+* Input/Output upgrades now allow changing which side of machine is used
 * Added **Vacuum Oven** - Tier 3 processing machine that can turn Coal into **Coke & Tarballs**
     * Coke is a more long-burning fuel than plain Coal
-    * Tarballs can be used where plant glue is, or further cooked and vulcanized into **Synthetic Rubber Bars**
+    * Tarballs can be used where plant glue is, or further combined with Biomatter and vulcanized into **Synthetic Rubber Bars**
     * Tarballs can also be used to make **Asphalt** - a cosmetic block.
     * Upgrades food items - vacuum two food items to create a condensed and packaged version that restores 3 times as much health/stamina.
         * Food items are items that are of the group "food_*" and have an on_use (presumably minetest.item_eat)
@@ -35,10 +43,8 @@ Newer versions listed first
     * Necessary to keep balance of Furnace Heater -> High-Temp Furnace -> Battery
 * The Solar Heater has had its generation rates reduced significantly, especially with this new x10 change.
 * Now depends on more minetest default game mods (doors, stairs, walls) -- shouldn't be a problem in 5.0
-* Tool upgrades (more description forthcoming)
-    * Reach distance upgrades via Crystallized Mese
-    * Speed upgrades via Crystallized Diamond
-    * Durability upgrades via Synthetic Rubber
+* All armor and bracer effects rebalanced
+    * Big thanks to obl3pplifp (https://github.com/obl3pplifp) for all of their work and assitance!
 
 ## Version 2.4
 * Added support to run under (currently) stable Minetest 0.4.17 -- those asking for it rejoice!

@@ -1,13 +1,6 @@
-# Good News!
-The mod is working again with the latest Dev builds!
-Also, support for legacy/stable Minetest 0.4.17 has been added!
-The legacy support has not been exhaustively tested, so please report any bugs on 0.4.17 servers. Thanks!
-
 # Terumetal [terumet]
-### Current release version: v2.2
-A mod for the open-source voxel game Minetest (https://www.minetest.net/) version 5.0
-
-Minetest 5.0 is presently in development and can be downloaded [here](https://gitlab.com/minetest/minetest/pipelines)
+### Current release version: v3.0
+A mod for the open-source voxel game Minetest (https://www.minetest.net/)
 
 This mod creates a new ore in the world which can be used to make useful alloys from many already available materials.
 
