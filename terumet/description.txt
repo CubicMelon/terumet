@@ -1,1 +1,1 @@
-Terumetal v2.4 for Minetest 0.4.17 and 5 - Make life easier with alloys and heat machinery!
+Terumetal v3.0 - Make life easier with alloys and heat machinery!

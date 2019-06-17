@@ -45,6 +45,7 @@ Newer versions listed first
 * Now depends on more minetest default game mods (doors, stairs, walls) -- shouldn't be a problem in 5.0
 * All armor and bracer effects rebalanced
     * Big thanks to obl3pplifp (https://github.com/obl3pplifp) for all of their work and assitance!
+* Added mod-related items to dungeon loot
 
 ## Version 2.4
 * Added support to run under (currently) stable Minetest 0.4.17 -- those asking for it rejoice!

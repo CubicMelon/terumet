@@ -18,10 +18,7 @@ Unzip the folder into a temporary space then move/copy the *subfolder* **terumet
 
 ## Mod Dependencies
 This mod depends on:
-* default
-* bucket
-* screwdriver
-* farming (either default or farming redo)
+* minetest game "default" and many of its submods
 
 All above mods should normally be included already if playing the default Minetest subgame.
 
@@ -29,6 +26,8 @@ Additonal *optional* support for:
 * unified_inventory (**HIGHLY recommended**)
 * techpack / tubelib
 * 3d_armor
+* mobs_animal (foods)
+* bushes, dryplants, vines (crushing recipes)
 
 Note: mesecons is listed as an optional dependent only for code to prevent Terumetal machines from being moved by mesecon pistons.
 
