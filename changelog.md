@@ -13,14 +13,15 @@ Newer versions listed first
     * For technical reasons, The High-Temp furnace's standard speed bonus does not apply when heating batteries. Sorry!
         * (It's because you could easily double Heat this way; its heat costs are purely based on how long it takes to heat an item)
     * Because of this addition, the old heating feature of Thermese blocks is removed as it has been superseded by the more useful function of batteries.
-* Machines that had a "Fuel" slot now have a "Heat In" slot where old heat sources (lava, heated thermese) and full batteries can be inserted to transfer into the machine.
-* Additionally, the generating/storage machines now have a "Heat Out" slot where empty heat batteries can be inserted and filled.
+    * A special **Void "Battery"** is also available which acts as a battery but destroys any heat in a machine it is placed in. This is useful for EEE Heaters being used for its side effects rather than for gathering HU.
+* Machines that had a "Fuel" slot now have a "Heat In" slot where lava buckets and full batteries can be inserted to transfer into the machine.
+    * Additionally, generating/storage machines now have a "Heat Out" slot where empty heat batteries can be inserted and filled from its storage.
 * Moved cosmetic blocks **Concrete Mix & Concrete** from my other mod into Terumetal.
     * Make concrete mix with sand & gravel, when Concrete Mix in world comes in contact with water it hardens to Concrete.
     * White concrete mix can be dyed into any of the 14 other standard dye colors.
     * (Yes, just like another crafty game)
     * Concrete can be made into doors, slabs, walls, stairs, etc.
-* Tool upgrades
+* Upgraded tools can be made via the Alloy Smelter
     * Reach distance upgrades via Crystallized Mese
     * Speed upgrades via Crystallized Diamond
     * Durability upgrades via Synthetic Rubber
@@ -32,9 +33,10 @@ Newer versions listed first
     * Coke is a more long-burning fuel than plain Coal
     * Tarballs can be used where plant glue is, or further combined with Biomatter and vulcanized into **Synthetic Rubber Bars**
     * Tarballs can also be used to make **Asphalt** - a cosmetic block.
-    * Upgrades food items - vacuum two food items to create a condensed and packaged version that restores 3 times as much health/stamina.
+    * Also upgrades food items - vacuum two food items to create a condensed and packaged version that restores 3 times as much health/stamina.
         * Food items are items that are of the group "food_*" and have an on_use (presumably minetest.item_eat)
-        * To ensure all food items are seen, any mods that add foods must be added as a dependent mod to Terumet - by default only "farming" is
+        * To ensure all food items are seen, any mods that add foods must be added as a dependent mod to Terumet
+        * Specific white/blacklists for food items is in options.lua
 * Added **Vulcansuit Armor** set, made from Vulcansuit Plates
     * **Vulcansuit Plates** are made by alloying Synthetic Rubber Bars with Teruchalcum
     * The Vulcansuit is excellent full-body protection and the best overall armor available from the mod.
