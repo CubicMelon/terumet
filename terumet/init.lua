@@ -1,4 +1,4 @@
---[[ Terumet v3.0
+--[[ Terumet v3.1
 
 Mod for open-source voxel game Minetest (https://www.minetest.net/)
 Written for Minetest version 5.0.0
@@ -33,7 +33,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=3, minor=0, patch=0}
+terumet.version = {major=3, minor=1, patch=0}
 local ver = terumet.version
 terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
 terumet.mod_name = "terumet"

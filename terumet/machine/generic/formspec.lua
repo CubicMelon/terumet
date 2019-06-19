@@ -1,4 +1,6 @@
 local base_mach = terumet.machine
+local opts = terumet.options.machine
+
 local FMT = string.format
 
 local SPECIAL_OWNERS = {
@@ -186,7 +188,7 @@ function base_mach.build_fs(machine)
 end
 
 function base_mach.build_infotext(machine)
-    return FMT('%s (%.1f%% heat): %s', machine.class.name, base_mach.heat_pct(machine), machine.status_text)
+    return FMT('%s (%.1f%% HU): %s', machine.class.name, base_mach.heat_pct(machine), machine.status_text)
 end
 
 -- basic process display

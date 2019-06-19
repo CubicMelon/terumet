@@ -35,6 +35,8 @@ terumet.options.misc = {
 
     -- text color for additional info on items
     TIP_COLOR = '#ffa2ba',
+    -- text color for machine description on upgrades
+    TIP_UPGRADE_MACHINE_COLOR = '#ff5fdd',
 }
 
 terumet.options.tools = {
