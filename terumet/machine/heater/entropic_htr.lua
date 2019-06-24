@@ -119,6 +119,8 @@ function ent_htr.do_processing(machine, dt)
     else
         local gain = math.floor(machine.heat_rate * dt)
         --if gain == 0 then return end -- no longer necessary?
+        if base_mach.has_upgrade(machine, 'gen_up') then gain = math.floor(gain * 1.5) end
+
         local under_cap = machine.heat_level < (machine.max_heat - gain)
         if machine.state == ent_htr.STATE.DRAIN_FULL and under_cap then
             machine.state = ent_htr.STATE.DRAINING
