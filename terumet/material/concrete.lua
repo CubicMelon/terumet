@@ -117,13 +117,15 @@ for index,dye_info in ipairs(dye.dyes) do
         }
     })
 
-    stairs.register_stair_and_slab(con_id, block_id,
-        {cracky = 2, level = 1},
-        {block_texture(index)},
-        make_name('stair',index), make_name('slab', index),
-        default.node_sound_stone_defaults(),
-        false
-    )
+    if minetest.get_modpath('stairs') then
+        stairs.register_stair_and_slab(con_id, block_id,
+            {cracky = 2, level = 1},
+            {block_texture(index)},
+            make_name('stair',index), make_name('slab', index),
+            default.node_sound_stone_defaults(),
+            false
+        )
+    end
 end
 
 minetest.register_abm{

@@ -2,14 +2,10 @@ default
 bucket
 screwdriver
 farming
-walls
-doors
-stairs
 dye
 unified_inventory?
 tubelib?
 doors?
-stairs?
 tnt?
 mesecons?
 dungeon_loot?
@@ -19,3 +15,6 @@ vines?
 mobs_animal?
 main?
 extra?
+walls?
+doors?
+stairs?

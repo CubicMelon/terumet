@@ -18,7 +18,11 @@ Unzip the folder into a temporary space then move/copy the *subfolder* **terumet
 
 ## Mod Dependencies
 This mod depends on:
-* minetest game "default" and many of its submods
+* minetest game "default" and many of its submods:
+    * bucket
+    * screwdriver
+    * dye
+    * farming
 
 All above mods should normally be included already if playing the default Minetest subgame.
 
@@ -28,6 +32,12 @@ Additonal *optional* support for:
 * 3d_armor
 * mobs_animal (foods)
 * bushes, dryplants, vines (crushing recipes)
+* stairs
+* mobs_animal
+* other "default" submods:
+    * walls
+    * doors
+    * dungeon_loot
 
 Note: mesecons is listed as an optional dependent only for code to prevent Terumetal machines from being moved by mesecon pistons.
 
@@ -122,4 +132,4 @@ To create an alloy simply place the source materials into the input, and if ther
 ![Alloying Copper to Terucopper](tutorial/smelter_alloying.png)
 
 ## Options
-See options.lua for many, many ways to adjust or alter how machines function and recipes for creating items.
+See options.lua for many, many ways to adjust or alter how much of the mod functions.
