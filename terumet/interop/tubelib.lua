@@ -49,4 +49,4 @@ tubelib.register_node(terumet.id('mach_crusher'), {terumet.id('mach_crusher_lit'
 --tubelib.register_node(terumet.id('mach_meseg'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
 tubelib.register_node(terumet.id('mach_repm'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
 tubelib.register_node(terumet.id('mach_vulcan'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
-
+tubelib.register_node(terumet.id('mach_vcoven'), terumet.EMPTY, TUBELIB_MACHINE_DEF)
