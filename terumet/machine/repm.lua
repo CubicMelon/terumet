@@ -238,6 +238,7 @@ base_repm.nodedef = base_mach.nodedef{
     -- machine class data
     _terumach_class = {
         name = 'Equipment Reformer',
+        valid_upgrades = terumet.valid_upgrade_sets{'input', 'output'},
         timer = 0.5,
         -- NEW
         fsdef = FSDEF,

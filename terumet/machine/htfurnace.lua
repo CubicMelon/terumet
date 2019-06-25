@@ -171,6 +171,7 @@ base_htf.unlit_nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'High-Temperature Furnace',
+        valid_upgrades = terumet.valid_upgrade_sets{'input', 'output'},
         timer = 0.5,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,

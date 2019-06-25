@@ -168,6 +168,7 @@ base_vul.nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'Crystal Vulcanizer',
+        valid_upgrades = terumet.valid_upgrade_sets{'input', 'output', 'crystal'},
         timer = 0.5,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,

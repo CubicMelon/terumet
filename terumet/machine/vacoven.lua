@@ -155,6 +155,7 @@ base_vov.unlit_nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'Vacuum Oven',
+        valid_upgrades = terumet.valid_upgrade_sets{'input', 'output'},
         timer = 0.5,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,

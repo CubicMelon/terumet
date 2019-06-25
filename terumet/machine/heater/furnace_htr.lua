@@ -162,6 +162,7 @@ furn_htr.unlit_nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'Furnace Heater',
+        valid_upgrades = terumet.valid_upgrade_sets{'heater', 'input'},
         timer = 0.5,
         fsdef = FSDEF,
         -- heatlines cannot send heat to this machine

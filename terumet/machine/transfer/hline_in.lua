@@ -275,6 +275,7 @@ base_hlin.nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'Heatline Distributor',
+        valid_upgrades = terumet.valid_upgrade_sets(),
         timer = 1.0,
         -- heatlines cannot send heat to this machine
         heatline_target = false,

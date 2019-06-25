@@ -144,6 +144,7 @@ base_lavam.unlit_nodedef = base_mach.nodedef{
     -- machine class data
     _terumach_class = {
         name = 'Lava Melter',
+        valid_upgrades = terumet.valid_upgrade_sets{'input'},
         timer = 1.0,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,

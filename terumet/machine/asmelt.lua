@@ -232,6 +232,7 @@ base_asm.unlit_nodedef = base_mach.nodedef{
     -- machine class data
     _terumach_class = {
         name = 'Terumetal Alloy Smelter',
+        valid_upgrades = terumet.valid_upgrade_sets{'input', 'output'},
         timer = 0.5,
         -- NEW
         fsdef = FSDEF,

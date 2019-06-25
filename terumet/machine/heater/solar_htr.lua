@@ -114,6 +114,7 @@ sol_htr.nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'Solar Heater',
+        valid_upgrades = terumet.valid_upgrade_sets{'heater'},
         timer = 1.0,
         -- heatlines cannot send heat to this machine
         heatline_target = false,

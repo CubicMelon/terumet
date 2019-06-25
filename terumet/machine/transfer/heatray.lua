@@ -237,6 +237,7 @@ base_ray.nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'HEAT Ray Emitter',
+        valid_upgrades = terumet.valid_upgrade_sets(),
         timer = 0.2,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.ACCEPT,

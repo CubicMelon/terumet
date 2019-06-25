@@ -181,6 +181,7 @@ ent_htr.nodedef = base_mach.nodedef{
     -- terumet machine class data
     _terumach_class = {
         name = 'Environmental Entropy Extraction Heater',
+        valid_upgrades = terumet.valid_upgrade_sets{'heater'},
         timer = 0.5,
         fsdef = FSDEF,
         default_heat_xfer = base_mach.HEAT_XFER_MODE.PROVIDE_ONLY,

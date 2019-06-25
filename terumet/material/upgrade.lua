@@ -77,3 +77,24 @@ terumet.register_machine_upgrade('tmcrys', 'Terumetal Specialization Upgrade', i
 terumet.register_machine_upgrade('ext_both', 'External Input/Output Upgrade', {in_up, out_up, 'group:glue', id('item_thermese')}, nil, 'simple', 'Item input and output to adjacent block(s)', 'Any machine with input/output')
 
 terumet.register_machine_upgrade('cheat', 'Infinite Heat Upgrade', nil, nil, 'none', 'Testing or cheating tool', 'Any machine')
+
+
+local SETS = {
+    ALL={cheat=1, max_heat=1, heat_xfer=1, speed_up=1},
+    heater={gen_up=1},
+    input={ext_input=1, ext_both=1, tubelib=1},
+    output={ext_output=1, ext_both=1, tubelib=1},
+    crystal={cryst=1, tmcrys=1},
+}
+-- given a list of "upgrade sets" defined above, return all upgrades in those set(s) plus ALL
+function terumet.valid_upgrade_sets(set_list)
+    local list = table.copy(SETS.ALL)
+    if set_list and type(set_list) == 'table' then
+        for _,set in ipairs(set_list) do
+            for upgrade,_ in pairs(SETS[set]) do
+                list[upgrade] = 1
+            end
+        end
+    end
+    return list
+end
