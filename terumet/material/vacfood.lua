@@ -64,10 +64,10 @@ if options.AUTO_GENERATE then
                 blacklisted = terumet.match_group_key(options.BLACKLIST, def)
             end
         end
-        if not blacklisted then
+        if (not blacklisted) and def.on_use then
             local is_food = false
             for group,_ in pairs(def.groups) do
-                if def.on_use and group:match('^food_') then
+                if group:match('^food_') then
                     is_food = true
                     break
                 end

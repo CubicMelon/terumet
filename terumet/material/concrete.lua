@@ -28,12 +28,12 @@ function terumet.concrete_block_id(dye_index)
 end
 
 local NAMEFORMATS = {
-    mix="%s Concrete Mix",
-    block="%s Concrete Block",
-    door="%s Concrete Door",
-    wall="%s Concrete Wall",
-    stair="%s Concrete Stair",
-    slab="%s Concrete Slab"
+    mix="%s Sandcrete Mix",
+    block="%s Sandcrete Block",
+    door="%s Sandcrete Door",
+    wall="%s Sandcrete Wall",
+    stair="%s Sandcrete Stair",
+    slab="%s Sandcrete Slab"
 }
 
 local function make_name(name, dye_index)
@@ -129,7 +129,7 @@ for index,dye_info in ipairs(dye.dyes) do
 end
 
 minetest.register_abm{
-    label = 'Concrete mix hardening',
+    label = 'Sandcrete mix hardening',
     nodenames = MIXES_LIST,
     neighbors = {'default:water_source', 'default:water_flowing'},
     interval = 3.0, -- Run every 3 seconds
