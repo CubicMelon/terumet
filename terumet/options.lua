@@ -330,6 +330,10 @@ terumet.options.vac_oven = {
 
     VAC_FOOD = {
         ACTIVE = true,  -- make false to disable vacuum-packed food entirely
+        -- number of items from a stack used to make one(1) vacuum-packed version
+        PACKED_ITEMS = 1,
+        -- multiplier applied to healing/stamina effect of a vacuum-packed food over its non-packed type
+        EFFECT_MULTIPLIER = 1.5,
         -- if AUTO_GENERATE is true, the mod scans all items defined as of this mod's initialization
         -- if an item has an on_use and has the group food_*, it is assumed to be a food and adds a vacuum-packed version
         -- to ensure a mod's items are scanned, it should be added to terumet's list of dependent mods in mod.conf/depends.txt
