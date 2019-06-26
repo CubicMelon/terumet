@@ -1,6 +1,13 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+## Version 3.1
+* Renamed Concrete Mix/Blocks to Sandcrete Mix/Blocks to differentiate it from other mods' concrete.
+* Machines will now only accept upgrades that apply to that machine.
+* For balance, vacuum-packed food changed by default to only use 1 item and provide 1.5x effect.
+    * These settings were added to options.lua where they can be changed freely.
+* Various minor oversights fixed.
+
 # Version 3.0
 * **MAJOR VERSION CHANGE**: ALL MACHINE FUNCTIONALITY IS NOW SCALED PER SECOND RATHER THAN PER TICK. -- MOST IMPORTANTLY: **HEAT COSTS**
     * This is way overdue, especially since Minetest 5.0 seems to not call node ticks as uniformly as it used to.
