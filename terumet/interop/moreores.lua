@@ -20,3 +20,8 @@ terumet.register_vulcan_result('moreores:mineral_silver', crys_silver, 1)
 
 terumet.crystal_ids.mitril = crys_mithril
 terumet.crystal_ids.silver = crys_silver
+
+terumet.register_alloy_recipe{result='basic_materials:brass_ingot 3', flux=0, time=4.0, input={'default:copper_lump 2', 'moreores:silver_lump'}}
+terumet.register_alloy_recipe{result='basic_materials:brass_ingot 3', flux=0, time=8.0, input={'default:copper_ingot 2', 'moreores:silver_ingot'}}
+terumet.register_alloy_recipe{result='basic_materials:brass_block 3', flux=0, time=40.0, input={'default:copperblock 2', 'moreores:silver_block'}}
+terumet.register_alloy_recipe{result='basic_materials:brass_ingot 3', flux=0, time=2.0, input={'terumet:item_cryst_copper 2', crys_silver}}

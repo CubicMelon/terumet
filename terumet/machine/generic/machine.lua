@@ -95,10 +95,10 @@ local SMOKE_ANIMATION = {
 -- CRAFTING MATERIALS
 --
 
-function base_mach.register_frame(id, name, craft_item, center_item)
+function base_mach.register_frame(id, name, xinfo, craft_item, center_item)
     -- added and modified from https://github.com/Terumoc/terumet/pull/1 by RSL-Redstonier - thanks!
     minetest.register_node(terumet.id(id), {
-        description = name,
+        description = terumet.item_desc(name, xinfo),
         tiles = {terumet.tex(id)},
         drawtype = "nodebox",
         node_box = {
@@ -129,9 +129,9 @@ function base_mach.register_frame(id, name, craft_item, center_item)
     })
 end
 
-base_mach.register_frame('frame_raw', 'Terumetal Machine Frame\nFoundation of simple Terumetal machinery', 'ingot_raw', 'default:copperblock')
-base_mach.register_frame('frame_tste', 'Terusteel Machine Frame\nFoundation of advanced Terumetal machinery', 'ingot_tste', terumet.id('item_thermese'))
-base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame\nFoundation of highly advanced Terumetal machinery', 'ingot_cgls', terumet.id('mach_thermobox'))
+base_mach.register_frame('frame_raw', 'Terumetal Machine Frame', 'Foundation of simple Terumetal machinery', 'ingot_raw', terumet.id('item_heater_basic'))
+base_mach.register_frame('frame_tste', 'Terusteel Machine Frame', 'Foundation of advanced Terumetal machinery', 'ingot_tste', terumet.id('item_heater_therm'))
+base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame', 'Foundation of highly advanced Terumetal machinery', 'ingot_cgls', terumet.id('mach_thermobox'))
 
 --
 -- GENERIC FORMSPECS

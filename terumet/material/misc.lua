@@ -1,3 +1,46 @@
+local heater_id = terumet.id('item_heater_basic')
+minetest.register_craftitem( heater_id, {
+    description = 'Terumetal Heating Unit',
+    inventory_image = terumet.tex(heater_id)
+})
+
+minetest.register_craft{ output = heater_id,
+    recipe = {
+        {'basic_materials:heating_element'},
+        {terumet.id('item_coil_raw')},
+        {'basic_materials:heating_element'},
+    }
+}
+
+-- =============================================
+
+local therm_elem_id = terumet.id('item_helem_therm')
+minetest.register_craftitem( therm_elem_id, {
+    description = 'Thermese Heating Element',
+    inventory_image = terumet.tex(therm_elem_id)
+})
+
+minetest.register_craft{output = therm_elem_id .. ' 2',
+    recipe = {{ terumet.id('ingot_tcop'), terumet.id('item_thermese'), terumet.id('ingot_tcop') }},
+}
+
+-- =============================================
+
+local heater2_id = terumet.id('item_heater_therm')
+minetest.register_craftitem( heater2_id, {
+    description = 'Thermese Heating Unit',
+    inventory_image = terumet.tex(heater2_id)
+})
+
+minetest.register_craft{ output = heater2_id,
+    recipe = {
+        {therm_elem_id},
+        {terumet.id('item_coil_tgol')},
+        {therm_elem_id},
+    }
+}
+
+-- =============================================
 
 local htg_id = terumet.id('item_htglass')
 minetest.register_craftitem( htg_id, {

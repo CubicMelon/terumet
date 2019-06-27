@@ -3,6 +3,7 @@ bucket
 screwdriver
 farming
 dye
+basic_materials
 unified_inventory?
 tubelib?
 doors?

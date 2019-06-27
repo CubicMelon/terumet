@@ -1,6 +1,17 @@
 ## Terumetal mod changelog
 Newer versions listed first
 
+## Version 3.2
+* Terumet now depends on the basic_materials mod and integrates many of its materials and recipes with it.
+    * The Expansion Crusher now makes basic_materials Oil Extract from leaves rather than Biomatter.
+    * The Alloy Smelter can now create Brass (if moreores is also active)
+    * Creating coke lumps from coal via the Vacuum Oven also results in Oil Extract as well.
+* A fully optional Texture Pack is provided with the mod to retexture most of the basic_materials items to look more Terumetal-style
+    * To use it:
+        1. Copy/move the "terubasmat" folder inside basic_materials_texturepack to your Minetest textures folder
+        2. Then, activate the texture pack under the "Content" tab in Minetest
+    * Additionally, if you wish to use this texture pack for everyone on a server, you can copy the contents of the texture pack folder into the mod's "textures" folder as well.
+
 ## Version 3.1
 * Renamed Concrete Mix/Blocks to Sandcrete Mix/Blocks to differentiate it from other mods' concrete.
 * Machines will now only accept upgrades that apply to that machine.
