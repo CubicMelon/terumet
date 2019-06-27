@@ -187,5 +187,5 @@ base_mach.define_machine_node(base_vul.id, base_vul.nodedef)
 minetest.register_craft{ output = base_vul.id, recipe = {
     {terumet.id('item_coil_tgol'), terumet.id('item_cryscham'), terumet.id('item_coil_tgol')},
     {terumet.id('item_thermese'), terumet.id('frame_tste'), terumet.id('item_thermese')},
-    {terumet.id('item_ceramic'), terumet.id('block_ceramic'), terumet.id('item_ceramic')}
+    {terumet.id('block_ceramic'), 'basic_materials:energy_crystal_simple', terumet.id('block_ceramic')}
 }}

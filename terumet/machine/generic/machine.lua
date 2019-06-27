@@ -131,7 +131,7 @@ end
 
 base_mach.register_frame('frame_raw', 'Terumetal Machine Frame', 'Foundation of simple Terumetal machinery', 'ingot_raw', terumet.id('item_heater_basic'))
 base_mach.register_frame('frame_tste', 'Terusteel Machine Frame', 'Foundation of advanced Terumetal machinery', 'ingot_tste', terumet.id('item_heater_therm'))
-base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame', 'Foundation of highly advanced Terumetal machinery', 'ingot_cgls', terumet.id('mach_thermobox'))
+base_mach.register_frame('frame_cgls', 'Coreglass Machine Frame', 'Foundation of highly advanced Terumetal machinery', 'ingot_cgls', terumet.id('item_heater_array'))
 
 --
 -- GENERIC FORMSPECS

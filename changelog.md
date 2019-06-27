@@ -7,6 +7,7 @@ Newer versions listed first
     * The Expansion Crusher now makes basic_materials Oil Extract from leaves rather than Biomatter.
     * The Alloy Smelter can now create Brass (if moreores is also active)
     * Creating coke lumps from coal via the Vacuum Oven also results in Oil Extract as well.
+* Many old recipes have been updated to include items from basic_materials.
 * A fully optional **Texture Pack** is provided with the mod to retexture most of the basic_materials items to look more Terumetal-style
     * To use it:
         1. Copy/move the "terubasmat" folder inside basic_materials_texturepack to your Minetest textures folder

@@ -224,7 +224,7 @@ base_msg.nodedef = base_mach.nodedef{
 base_mach.define_machine_node(base_msg.id, base_msg.nodedef)
 
 minetest.register_craft{ output = base_msg.id, recipe = {
-    {terumet.id('item_thermese'), terumet.id('item_coil_tcop'), terumet.id('item_thermese')},
+    {terumet.id('item_thermese'), terumet.id('item_cryscham'), terumet.id('item_thermese')},
     {terumet.id('item_ceramic'), terumet.id('frame_tste'), terumet.id('item_ceramic')},
-    {terumet.id('item_ceramic'), terumet.id('item_cryscham'), terumet.id('item_ceramic')}
+    {terumet.id('item_ceramic'), 'basic_materials:energy_crystal_simple', terumet.id('item_ceramic')}
 }}

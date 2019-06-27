@@ -208,7 +208,7 @@ ent_htr.nodedef = base_mach.nodedef{
 base_mach.define_machine_node(ent_htr.id, ent_htr.nodedef)
 
 minetest.register_craft{ output = ent_htr.id, recipe = {
-    {terumet.id('item_upg_gen_up'), terumet.id('item_htglass'), terumet.id('item_upg_gen_up')},
+    {'basic_materials:energy_crystal_simple', terumet.id('item_htglass'), 'basic_materials:energy_crystal_simple'},
     {terumet.id('item_entropy'), terumet.id('frame_cgls'), terumet.id('item_entropy')},
-    {terumet.id('block_ceramic'), terumet.id('item_entropy'), terumet.id('block_ceramic')}
+    {'basic_materials:energy_crystal_simple', terumet.id('mach_thermobox'), 'basic_materials:energy_crystal_simple'}
 }}

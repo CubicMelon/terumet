@@ -42,6 +42,21 @@ minetest.register_craft{ output = heater2_id,
 
 -- =============================================
 
+local heater3_id = terumet.id('item_heater_array')
+minetest.register_craftitem( heater3_id, {
+    description = 'Thermese Heating Array',
+    inventory_image = terumet.tex(heater3_id)
+})
+
+minetest.register_craft{ output = heater3_id,
+    recipe = {
+        {heater2_id, heater2_id, heater2_id},
+        {heater2_id, heater2_id, heater2_id},
+    }
+}
+
+-- =============================================
+
 local htg_id = terumet.id('item_htglass')
 minetest.register_craftitem( htg_id, {
     description = 'Heat-transference Glass',

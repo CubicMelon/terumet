@@ -3,7 +3,7 @@ if tubelib.version < 2.0 then
     tube = 'tubelib:tube1'
 end
 
-terumet.register_machine_upgrade('tubelib', 'Tube Support Upgrade', {terumet.id('item_upg_base'), tube}, nil, 'simple', 'Allows machine to interface with tubelib tubes', 'Any machine with input/output')
+terumet.register_machine_upgrade('tubelib', 'Tube Support Upgrade', 'Allows machine to interface with tubelib tubes', 'Any machine with input/output', {tube})
 
 local machine_check = function(machine, player_name)
     return machine and terumet.machine.has_upgrade(machine, 'tubelib')
