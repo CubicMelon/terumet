@@ -2,11 +2,12 @@
 Newer versions listed first
 
 ## Version 3.2
-* Terumet now depends on the basic_materials mod and integrates many of its materials and recipes with it.
+* Terumet now depends on VanessaE's **basic_materials** mod and integrates many of its materials and recipes with it.
+    * It can be found through the Minetest Content Server or downloaded [here](https://gitlab.com/VanessaE/basic_materials)
     * The Expansion Crusher now makes basic_materials Oil Extract from leaves rather than Biomatter.
     * The Alloy Smelter can now create Brass (if moreores is also active)
     * Creating coke lumps from coal via the Vacuum Oven also results in Oil Extract as well.
-* A fully optional Texture Pack is provided with the mod to retexture most of the basic_materials items to look more Terumetal-style
+* A fully optional **Texture Pack** is provided with the mod to retexture most of the basic_materials items to look more Terumetal-style
     * To use it:
         1. Copy/move the "terubasmat" folder inside basic_materials_texturepack to your Minetest textures folder
         2. Then, activate the texture pack under the "Content" tab in Minetest

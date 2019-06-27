@@ -18,6 +18,7 @@ Unzip the folder into a temporary space then move/copy the *subfolder* **terumet
 
 ## Mod Dependencies
 This mod depends on:
+* **(NEW with 3.2)** [basic_materials](https://gitlab.com/VanessaE/basic_materials)
 * minetest game "default" and many of its submods:
     * bucket
     * screwdriver
