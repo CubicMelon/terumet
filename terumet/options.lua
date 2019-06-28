@@ -358,7 +358,7 @@ terumet.options.vac_oven = {
         -- see interop/extra.lua for foods from "extra" mod
     },
 
-    MAX_RESULTS = 2, -- Maximum number of result items from recipes (adjust this if any larger recipes are added)
+    MAX_RESULTS = 4, -- Maximum number of result items from recipes (adjust this if any larger recipes are added)
 }
 
 terumet.options.vulcan = {
