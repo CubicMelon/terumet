@@ -1,5 +1,5 @@
 local opts = terumet.options.heater.entropy
--- local base_opts = terumet.options.machine
+local util3d = terumet.util3d
 
 local base_mach = terumet.machine
 

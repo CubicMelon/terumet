@@ -20,7 +20,7 @@ function terumet.register_machine_upgrade(upgrade_id, desc, xinfo, xmach, recipe
         desc = desc .. '\nUsable: ' .. minetest.colorize(terumet.options.misc.TIP_UPGRADE_MACHINE_COLOR, xmach)
     end
     if xinfo then
-        desc = terumet.item_desc(desc, xinfo)
+        desc = terumet.description(desc, xinfo)
     end
 
     minetest.register_craftitem( item_id, {

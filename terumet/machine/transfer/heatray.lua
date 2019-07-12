@@ -1,5 +1,5 @@
 local opts = terumet.options.heat_ray
---local base_opts = terumet.options.machine
+local util3d = terumet.util3d
 local base_mach = terumet.machine
 
 local base_ray = {}
@@ -147,7 +147,7 @@ function base_ray.fire(ray, target)
         for _,ppos in pairs(ray_path) do
             minetest.add_particle{
                 pos=ppos,
-                velocity=terumet.random_velocity(5),
+                velocity=terumet.random_vector(5),
                 expirationtime=1,
                 size=1,
                 texture='terumet_part_ray.png',

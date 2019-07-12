@@ -33,19 +33,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=3, minor=2, patch=0}
-local ver = terumet.version
-terumet.version_text = ver.major .. '.' .. ver.minor .. '.' .. ver.patch
+terumet.version = {major=3, minor=2, patch=1}
 terumet.mod_name = "terumet"
+
+-- inject global functions into mod namespace (do_lua_file, etc.)
+dofile(minetest.get_modpath(terumet.mod_name) .. '/global.lua')(terumet)
 
 -- this isn't the suggested way to check for game version but... it works for my purposes
 terumet.legacy = minetest.get_version().string:find('0.4')
-
 if terumet.legacy then
     minetest.log('[terumet] MTv0.4.* detected - in legacy mode!')
 end
-
-terumet.RAND = PcgRandom(os.time())
 
 local FMT = string.format
 minetest.register_chatcommand( 'item_info', {
@@ -86,12 +84,6 @@ minetest.register_chatcommand( 'item_info', {
     end
 })
 
-function terumet.chance(pct)
-    if pct <= 0 then return false end
-    if pct >= 100 then return true end
-    return terumet.RAND:next(1,100) <= pct
-end
-
 -- function for a node's on_blast callback to be removed with a pct% chance
 function terumet.blast_chance(pct, id)
     return function(pos)
@@ -104,65 +96,8 @@ function terumet.blast_chance(pct, id)
     end
 end
 
--- empty function useful for where a callback is necessary but using nil would cause undesired default behavior
-terumet.NO_FUNCTION = function() end
-terumet.EMPTY = {}
-terumet.ZERO_XYZ = {x=0,y=0,z=0}
-
-function terumet.recipe_3x3(i)
-    return {
-        {i, i, i}, {i, i, i}, {i, i, i}
-    }
-end
-
-function terumet.recipe_box(outer, inner)
-    return {
-        {outer, outer, outer}, {outer, inner, outer}, {outer, outer, outer}
-    }
-end
-
-function terumet.recipe_plus(i)
-    return {
-        {'', i, ''}, {i, i, i}, {'', i, ''}
-    }
-end
-
-function terumet.random_velocity(max_tenths)
-    return {
-        x = terumet.RAND:next(-max_tenths,max_tenths) / 10,
-        y = terumet.RAND:next(-max_tenths,max_tenths) / 10,
-        z = terumet.RAND:next(-max_tenths,max_tenths) / 10
-    }
-end
-
-function terumet.particle_stream(pointA, pointB, density, particle_data, player)
-    local dist_vector = {x=(pointB.x-pointA.x), y=(pointB.y-pointA.y), z=(pointB.z-pointA.z)}
-    local dist = vector.length(dist_vector)
-    local pcount = dist * density
-    if pcount < 1 then return end -- guard against div/0
-    local step = {x=(dist_vector.x/pcount), y=(dist_vector.y/pcount), z=(dist_vector.z/pcount)}
-    local ppos = vector.new(pointA)
-    for _ = 1,pcount do
-        ppos = util3d.pos_plus(ppos, step)
-        minetest.add_particle{
-            pos = vector.new(ppos),
-            velocity=terumet.random_velocity(5),
-            expirationtime=(particle_data.expiration or 1),
-            size=(particle_data.size or 1),
-            glow=(particle_data.glow or 1),
-            playername=player,
-            texture=particle_data.texture,
-            animation=particle_data.animation
-        }
-    end
-end
-
 function terumet.format_time(t)
     return string.format('%.1f s', t or 0)
-end
-
-function terumet.do_lua_file(name)
-    dofile(minetest.get_modpath(terumet.mod_name) .. '/' .. name .. '.lua')
 end
 
 -- create a copy of node groups from an unlit machine for lit version of machine
@@ -172,58 +107,7 @@ function terumet.create_lit_node_groups(unlit_groups)
     return new_groups
 end
 
-function terumet.itemstack_desc(stack)
-    local stack_desc = stack:get_definition().description
-    -- use only what is before a newline if one is in the description
-    if stack_desc:find('\n') then stack_desc = stack_desc:match('(.*)\n') end
-    if stack:get_count() > 1 then
-        return string.format('%s (x%d)', stack_desc, stack:get_count())
-    else
-        return stack_desc
-    end
-end
-
--- given a table with 'group:XXX' keys and a node/item definition with groups, return the
--- (first) value in the table where node/item has a group key of XXX, otherwise nil
-function terumet.match_group_key(table, def)
-    if not def then return nil end
-    for group_name,_ in pairs(def.groups) do
-        local grp_key = 'group:'..group_name
-        if table[grp_key] then
-            return table[grp_key]
-        end
-    end
-    return nil
-end
-
-function terumet.id(id, number)
-    if number then
-        return string.format('%s:%s %d', terumet.mod_name, id, number)
-    else
-        return string.format('%s:%s', terumet.mod_name, id)
-    end
-end
-
-function terumet.give_player_item(pos, player, stack)
-    local inv = player:get_inventory()
-    local leftover = inv:add_item("main", stack)
-    if leftover and not leftover:is_empty() then
-        minetest.item_drop(leftover, player, player:get_pos())
-    end
-end
-
-function terumet.tex(id)
-    -- accepts both base ids (assuming this mod) and full mod ids
-    -- ex: terumet.tex('ingot_raw') -> 'terumet_ingot_raw.png'
-    --     terumet.tex('default:cobble') -> 'default_cobble.png'
-    if id:match(':') then
-        return string.format('%s.png', id:gsub(':', '_'))
-    else
-        return string.format('%s_%s.png', terumet.mod_name, id)
-    end
-end
-
-function terumet.item_desc(name, xinfo)
+function terumet.description(name, xinfo)
     if xinfo then
         return string.format("%s\n%s", name, minetest.colorize(terumet.options.misc.TIP_COLOR, xinfo))
     else
@@ -233,10 +117,6 @@ end
 
 function terumet.crystal_tex(color)
     return string.format('%s^[multiply:%s', terumet.tex('item_cryst'), color)
-end
-
-function terumet.tex_comp(base_tex, overlay_id)
-    return base_tex .. '^' .. terumet.tex(overlay_id)
 end
 
 function terumet.tex_trans(id, rot)
@@ -250,8 +130,6 @@ terumet.squishy_node_sounds = {
     dug = {name='terumet_squish_dug', max_hear_distance=HEAR_DIST},
     place = {name='terumet_squish_place', max_hear_distance=HEAR_DIST},
 }
-
-terumet.do_lua_file('util3d')
 
 terumet.do_lua_file('interop/terumet_api')
 terumet.do_lua_file('options')

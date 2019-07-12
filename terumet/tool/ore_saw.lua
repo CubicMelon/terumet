@@ -30,7 +30,7 @@ local basic_id = terumet.id('tool_ore_saw')
 local advanced_id = terumet.id('tool_ore_saw_adv')
 
 minetest.register_tool( basic_id, {
-    description = terumet.item_desc('Ore-cutting Saw', 'Excavates ore blocks'),
+    description = terumet.description('Ore-cutting Saw', 'Excavates ore blocks'),
     inventory_image = terumet.tex(basic_id),
     range = 2,
     tool_capabilities = {},
@@ -52,7 +52,7 @@ minetest.register_craft{ output = basic_id,
 terumet.register_repairable_item(basic_id, 240) -- 4x value of ingot_tcha
 
 minetest.register_tool( advanced_id, {
-    description = terumet.item_desc('Advanced Ore-cutting Saw', 'Excavates ore blocks (more durable & better range)'),
+    description = terumet.description('Advanced Ore-cutting Saw', 'Excavates ore blocks (more durable & better range)'),
     inventory_image = terumet.tex(advanced_id),
     range = 4,
     tool_capabilities = {},

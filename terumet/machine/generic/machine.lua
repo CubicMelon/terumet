@@ -3,6 +3,7 @@ terumet.machine = {}
 local base_mach = terumet.machine
 local opts = terumet.options.machine
 local FMT = string.format
+local util3d = terumet.util3d
 
 local on_machine_node_creation_callbacks = {}
 -- define a new callback for machine node creation (for interop)
@@ -98,7 +99,7 @@ local SMOKE_ANIMATION = {
 function base_mach.register_frame(id, name, xinfo, craft_item, center_item)
     -- added and modified from https://github.com/Terumoc/terumet/pull/1 by RSL-Redstonier - thanks!
     minetest.register_node(terumet.id(id), {
-        description = terumet.item_desc(name, xinfo),
+        description = terumet.description(name, xinfo),
         tiles = {terumet.tex(id)},
         drawtype = "nodebox",
         node_box = {

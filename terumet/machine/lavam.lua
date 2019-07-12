@@ -1,5 +1,4 @@
 local opts = terumet.options.lavam
-local base_opts = terumet.options.machine
 
 local base_mach = terumet.machine
 
@@ -64,7 +63,7 @@ function base_lavam.do_processing(lavam, dt)
         end
     end
     if lavam.state == base_lavam.STATE.DISPENSE then
-        local dispense_pos = util3d.get_relative_pos(lavam.rot, lavam.pos, 'front')
+        local dispense_pos = terumet.util3d.get_relative_pos(lavam.rot, lavam.pos, 'front')
         local dispense_node = minetest.get_node_or_nil(dispense_pos)
         if dispense_node and dispense_node.name == 'air' then
             dispense_node.name = 'default:lava_source'

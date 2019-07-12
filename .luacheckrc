@@ -6,5 +6,4 @@ globals = { -- expected new globals
     "default", "dye", "doors", "stairs", "walls", "screwdriver",
     "ItemStack", "PcgRandom",
     "terumet", "armor",
-    "util3d"
 }
