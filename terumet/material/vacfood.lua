@@ -52,7 +52,7 @@ local function make_vacfood(item_id)
         minetest.register_craft({
             output=item_id,
             type="shapeless",
-            intput={vf_id}
+            input={vf_id}
         })
 
         generated_vacfoods[item_id]=vf_id
