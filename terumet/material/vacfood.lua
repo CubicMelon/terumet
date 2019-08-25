@@ -49,6 +49,12 @@ local function make_vacfood(item_id)
             time=4.0
         }
 
+        minetest.register_craft({
+            output=item_id,
+            type="shapeless",
+            recipe={vf_id}
+        })
+
         generated_vacfoods[item_id]=vf_id
     else
         minetest.log('warning', FMT('terumet: valid item "%s" was selected for vacfood but mod or item-id did not parse properly', item_id))
