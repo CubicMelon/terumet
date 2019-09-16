@@ -56,10 +56,10 @@ function terumet.register_vacoven_recipe(data)
 end
 
 -- register a new crystallized material with the provided data
--- ID of created item will be 'terumet:item_cryst_<SUFFIX>' 
+-- ID of created item will be 'terumet:item_cryst_<SUFFIX>'
 -- IMPORTANT NOTE: a single source item can only be defined as a single crystal
 -- for example, trying to add a new crystal for 'default:copper_lump' will override the default one
--- 
+--
 -- required data keys and descriptions:
 local CRYSTAL_REQUIRED = {
     suffix='[string] ID suffix for crystallized item',
@@ -80,7 +80,11 @@ function terumet.register_crystal(data)
         end
     end
     local crys_id = terumet.id('item_cryst_'..data.suffix)
-    minetest.register_craftitem( crys_id, {
+    local create_id = crys_id
+    if terumet.mod_name ~= minetest.get_current_modname() then
+        create_id = ":" .. create_id
+    end
+    minetest.register_craftitem( create_id, {
         description = data.name,
         inventory_image = terumet.crystal_tex(data.color),
     })
