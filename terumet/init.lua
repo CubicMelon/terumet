@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
 terumet.version = {major=3, minor=2, patch=1}
-terumet.mod_name = "terumet"
+terumet.mod_name = minetest.get_current_modname()
 
 -- inject global functions into mod namespace (do_lua_file, etc.)
 dofile(minetest.get_modpath(terumet.mod_name) .. '/global.lua')(terumet)
