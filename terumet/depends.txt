@@ -4,6 +4,7 @@ screwdriver
 farming
 dye
 basic_materials
+3d_armor?
 unified_inventory?
 tubelib?
 doors?
