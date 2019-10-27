@@ -195,7 +195,7 @@ terumet.reg_tools('Teruchalcum', 'tcha',
 terumet.do_lua_file('tool/ore_saw')
 
 -- setup mesecon piston interop before machines are defined
-if minetest.get_modpath('mesecon') then -- no 's'
+if minetest.get_modpath('mesecons') then
     terumet.do_lua_file('interop/mesecons')
 end
 

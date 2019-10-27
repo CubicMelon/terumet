@@ -8,7 +8,7 @@ local util3d = terumet.util3d
 local on_machine_node_creation_callbacks = {}
 -- define a new callback for machine node creation (for interop)
 -- callback is called with params (machine_id, machine_def)
-function base_mach.register_on_new_machine_node(cb)
+function base_mach.on_machine_registration(cb)
     on_machine_node_creation_callbacks[#on_machine_node_creation_callbacks+1]=cb
 end
 
