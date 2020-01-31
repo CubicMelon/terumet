@@ -8,11 +8,6 @@ local SPECIAL_OWNERS = {
     ['*'] = '<Everyone>'
 }
 
--- UNUSED TEST
--- local fs_container = function(fsx,fsy,machine,content_func)
---    return FMT('container[%f,%f]%scontainer_end[]', fsx, fsy, func(machine))
--- end
-
 base_mach.buttondefs = {}
 -- standard control button to toggle on/off heat transfer
 base_mach.buttondefs.HEAT_XFER_TOGGLE = {
@@ -68,8 +63,6 @@ function base_mach.build_fs(machine)
     else
         fs = fs..base_mach.fs_meter(0,0.5, 'heat', base_mach.heat_pct(machine), FMT('%d/%d HU', base_mach.get_current_heat(machine), machine.max_heat))
     end
-    -- DEBUG
-    --fs=fs..FMT('label[0.3,1.3;Pending: %d]', machine.meta:get_int('pending_heat_xfer') or -1)
     -- control: fuel_slot
     if fsdef.fuel_slot then
         local fsx = fsdef.fuel_slot.x or 0
@@ -89,14 +82,13 @@ function base_mach.build_fs(machine)
         local upy = fs_height - 2.5
         fs = fs..FMT('label[%f,%f;Upgrades]list[context;upgrade;%f,%f;3,%d]', upx, upy, upx, upy+0.5, math.ceil(upg_ct/3))
     end
-    --fs = fs..FMT('label[0,%f;HU Xfer: %s]', fs_height - 1, opts.HEAT_TRANSFER_MODE_NAMES[machine.heat_xfer_mode])
-    fs = fs..FMT('label[0,%f;Owner: %s]', fs_height - 0.25, SPECIAL_OWNERS[machine.owner] or machine.owner or "(BUG)none")
+
+	fs = fs..FMT('label[0,%f;Owner: %s]', fs_height - 0.25, SPECIAL_OWNERS[machine.owner] or machine.owner or "(BUG)none")
     if fsdef.control then
         fs = fs .. fsdef.control(machine)
     end
-    -- DEBUG
-    -- fs = fs..FMT('label[0,%f;State: %d]', fs_height - 0.25, machine.state or 'nil')
-    -- control: buttons container
+
+	-- control: buttons container
     fs = fs..'container[0,3]'
 
     local btx = 0
@@ -183,7 +175,6 @@ function base_mach.build_fs(machine)
     if fsdef.after then
         fs = fs .. fsdef.after(machine)
     end
-    --minetest.log('warn', fs)
     return fs
 end
 
