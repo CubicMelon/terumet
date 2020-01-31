@@ -20,3 +20,4 @@ extra?
 walls?
 doors?
 stairs?
+stamina?
