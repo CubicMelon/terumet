@@ -18,7 +18,7 @@ and with additional contributions from:
 BIG Thanks to all contributors for their input!
 ]]--
 
---[[ Copyright (C) 2017-2019 Terumoc (Scott Horvath)
+--[[ Copyright (C) 2017-2020 Terumoc (Scott Horvath)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
