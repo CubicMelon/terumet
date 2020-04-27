@@ -37,6 +37,9 @@ terumet.options.misc = {
     TIP_COLOR = '#ffa2ba',
     -- text color for machine description on upgrades
     TIP_UPGRADE_MACHINE_COLOR = '#ff5fdd',
+
+    -- whether /item_info is available to players
+    ITEM_INFO_CHATCOMMAND = true
 }
 
 terumet.options.tools = {

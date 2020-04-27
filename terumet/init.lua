@@ -1,4 +1,4 @@
---[[ Terumet v3.2
+--[[ Terumet v3.3
 
 Mod for open-source voxel game Minetest (https://www.minetest.net/)
 Written for Minetest version 5.0.0
@@ -34,7 +34,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. ]]
 
 terumet = {}
-terumet.version = {major=3, minor=2, patch=1}
+terumet.version = {major=3, minor=3, patch=0}
 terumet.mod_name = minetest.get_current_modname()
 
 -- inject global functions into mod namespace (do_lua_file, etc.)
@@ -47,43 +47,6 @@ if terumet.legacy then
 end
 
 local FMT = string.format
-minetest.register_chatcommand( 'item_info', {
-    params = '',
-    description = 'Get a complete description of the ItemStack in your hand',
-    privs = {debug=true},
-    func = function(name)
-        local player = minetest.get_player_by_name(name)
-        if player then
-            local witem = player:get_wielded_item()
-            if witem:is_empty() then
-                return true, "You're not holding anything."
-            else
-                local def = witem:get_definition()
-                local wear = witem:get_wear()
-                local wear_pct = FMT('%.1f%%', wear / 65535 * 100.0)
-                if def then
-                    return true, FMT('%s "%s" #%s/%s w:%s (%s)',
-                        minetest.colorize('#ff0', witem:get_name()),
-                        def.description,
-                        witem:get_count(),
-                        minetest.colorize('#0ff', def.stack_max),
-                        minetest.colorize('#f0f', wear),
-                        minetest.colorize('#f0f', wear_pct)
-                    )
-                else
-                    return true, FMT('*NO DEF* %s #%s w:%s (%s)',
-                        minetest.colorize('#ff0', witem:get_name()),
-                        witem:get_count(),
-                        minetest.colorize('#f0f', wear),
-                        minetest.colorize('#f0f', wear_pct)
-                    )
-                end
-            end
-        else
-            return false, "You aren't a player somehow, sorry?!"
-        end
-    end
-})
 
 -- function for a node's on_blast callback to be removed with a pct% chance
 function terumet.blast_chance(pct, id)
@@ -139,6 +102,56 @@ terumet.do_lua_file('material/raw')
 terumet.do_lua_file('material/reg_alloy')
 terumet.do_lua_file('material/upgrade')
 terumet.do_lua_file('material/entropy')
+
+if terumet.options.misc.ITEM_INFO_CHATCOMMAND then
+    minetest.register_chatcommand( 'item_info', {
+        params = '',
+        description = 'Get a complete description of the ItemStack in your hand',
+        privs = {debug=true},
+        func = function(name)
+            local player = minetest.get_player_by_name(name)
+            if player then
+                local witem = player:get_wielded_item()
+                if witem:is_empty() then
+                    return true, "You're not holding anything."
+                else
+                    local def = witem:get_definition()
+                    local wear = witem:get_wear()
+                    local wear_pct = FMT('%.1f%%', wear / 65535 * 100.0)
+                    if def then
+                        local grpsText = ''
+                        for grp,gval in pairs(def.groups) do
+                            local grpt = FMT('%s=%s', grp, gval)
+                            if #grpsText > 0 then
+                                grpsText = grpsText..', '..grpt
+                            else
+                                grpsText = grpt
+                            end
+                        end
+                        return true, FMT('%s "%s" #%s/%s w:%s (%s) gs:%s',
+                            minetest.colorize('#ff0', witem:get_name()),
+                            def.description,
+                            witem:get_count(),
+                            minetest.colorize('#0ff', def.stack_max),
+                            minetest.colorize('#f0f', wear),
+                            minetest.colorize('#f0f', wear_pct),
+                            minetest.colorize('#aaa', grpsText)
+                        )
+                    else
+                        return true, FMT('*NO DEF* %s #%s w:%s (%s)',
+                            minetest.colorize('#ff0', witem:get_name()),
+                            witem:get_count(),
+                            minetest.colorize('#f0f', wear),
+                            minetest.colorize('#f0f', wear_pct)
+                        )
+                    end
+                end
+            else
+                return false, "You aren't a player somehow, sorry?!"
+            end
+        end
+    })
+end
 
 -- reg_alloy(name, id, block hardness level, repair material value)
 terumet.reg_alloy('Terucopper', 'tcop', 1, 20)
