@@ -105,14 +105,6 @@ function base_htf.check_new_processing(furnace)
     for slot = 1,in_inv:get_size(in_list) do
         local input_stack = in_inv:get_stack(in_list, slot)
         cook_result, cook_after = minetest.get_craft_result({method = 'cooking', width = 1, items = {input_stack}})
-        if input_stack:get_name() == 'terumet:block_thermese' then
-            cook_result = {item='default:mese_crystal_fragment',time=2} -- fix heat exploit, sorry!
-            minetest.sound_play( 'default_break_glass', {
-                pos = furnace.pos,
-                gain = 0.3,
-                max_hear_distance = 16
-            })
-        end
         local is_battery = input_stack:get_definition().groups._terumetal_battery
         if cook_result.time ~= 0 then
             furnace.state = base_htf.STATE.COOKING
