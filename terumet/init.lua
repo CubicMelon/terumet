@@ -94,6 +94,7 @@ terumet.squishy_node_sounds = {
     place = {name='terumet_squish_place', max_hear_distance=HEAR_DIST},
 }
 
+terumet.do_lua_file('settings')
 terumet.do_lua_file('interop/terumet_api')
 terumet.do_lua_file('options')
 terumet.do_lua_file('machine/generic/machine')
@@ -271,6 +272,10 @@ terumet.do_lua_file('material/coalproc')
 local INTEROPS = {'3d_armor', 'doors', 'unified_inventory', 'tubelib', 'dungeon_loot', 'moreores', 'farming', 'extra'}
 for _,mod in ipairs(INTEROPS) do
     if minetest.get_modpath(mod) then terumet.do_lua_file('interop/'..mod) end
+end
+
+if terumet.settings.moreblocks_integration then
+    terumet.do_lua_file('interop/moreblocks')
 end
 
 local vacfood_options = terumet.options.vac_oven.VAC_FOOD

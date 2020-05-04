@@ -16,7 +16,7 @@ minetest.register_craft{ output = pwood_id..' 16',
     recipe = terumet.recipe_box(terumet.id('item_dust_wood'), 'group:glue'),
 }
 
-if minetest.get_modpath('stairs') then
+if minetest.get_modpath('stairs') and not terumet.settings.moreblocks_integration then
     stairs.register_stair_and_slab(
         'terumet_pwood',
         pwood_id,
