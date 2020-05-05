@@ -6,7 +6,9 @@ farming
 screwdriver
 
 3d_armor?
+bbq?
 bushes?
+cucina_vegana?
 doors?
 dryplants?
 dungeon_loot?
