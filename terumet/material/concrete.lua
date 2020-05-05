@@ -117,7 +117,7 @@ for index,dye_info in ipairs(dye.dyes) do
         }
     })
 
-    if minetest.get_modpath('stairs') then
+    if minetest.get_modpath('stairs') and not terumet.settings.moreblocks_integration then
         stairs.register_stair_and_slab(con_id, block_id,
             {cracky = 2, level = 1},
             {block_texture(index)},

@@ -117,6 +117,6 @@ minetest.register_craft({
 
 terumet.register_convertible_block(asphalt_id, 'asphalt')
 walls.register(terumet.id('wall_asphalt'), 'Asphalt Wall', terumet.tex(asphalt_id), asphalt_id, default.node_sound_stone_defaults())
-if minetest.get_modpath('stairs') then
+if minetest.get_modpath('stairs') and not terumet.settings.moreblocks_integration then
     stairs.register_stair_and_slab('asphalt', asphalt_id, {cracky = 3, crumbly = 1, level = 1}, {terumet.tex(asphalt_id)}, 'Asphalt Stair', 'Asphalt Slab', default.node_sound_stone_defaults(), false )
 end
