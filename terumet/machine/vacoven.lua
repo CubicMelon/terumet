@@ -138,7 +138,7 @@ function base_vov.tick(pos, dt)
     base_mach.write_state(pos, oven)
 
     -- return true to reset tick timer
-    return working or venting or base_mach.has_ext_input(oven)
+    return working or venting or base_mach.has_ext_any(oven)
 end
 
 base_vov.unlit_nodedef = base_mach.nodedef{

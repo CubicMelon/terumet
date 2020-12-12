@@ -151,7 +151,7 @@ function base_vul.tick(pos, dt)
     -- write status back to meta
     base_mach.write_state(pos, vulcan)
 
-    return (vulcan.state ~= base_vul.STATE.IDLE) or base_mach.has_ext_input(vulcan) or venting
+    return (vulcan.state ~= base_vul.STATE.IDLE) or base_mach.has_ext_any(vulcan) or venting
 end
 
 base_vul.nodedef = base_mach.nodedef{
