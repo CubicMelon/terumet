@@ -146,7 +146,7 @@ function base_htf.tick(pos, dt)
     -- write status back to meta
     base_mach.write_state(pos, furnace)
 
-    return working or venting or base_mach.has_ext_input(furnace)
+    return working or venting or base_mach.has_ext_any(furnace)
 end
 
 base_htf.unlit_nodedef = base_mach.nodedef{

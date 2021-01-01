@@ -213,7 +213,7 @@ function base_repm.tick(pos, dt)
         -- if still processing and not waiting for heat, reset timer to continue processing
         reset_timer = true
         base_mach.generate_smoke(pos)
-    elseif venting or base_mach.has_ext_input(repm) then
+    elseif venting or base_mach.has_ext_any(repm) then
         reset_timer = true
     end
     -- write status back to meta
