@@ -925,6 +925,9 @@ function base_mach.allow_put(pos, listname, index, stack, player)
     elseif listname == "out" then
         -- deny insertion into output slots
         return 0
+    elseif base_mach.has_ext_input(base_mach.readonly_state(pos)) then
+        -- deny insertion while an input upgrade is installed
+        return 0
     else
         return stack:get_count()
     end
