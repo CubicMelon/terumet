@@ -10,14 +10,16 @@ local machine_check = function(machine, player_name)
     ---terumet.machine.has_auth(machine, player_name)
 end
 
-local PUSH_FUNC = function(pos, side, item, player_name)
-    local machine = terumet.machine.readonly_state(pos)
-    if machine_check(machine) then
-        local result = tubelib.put_item(machine.meta, 'in', item)
-        if result then machine.class.on_inventory_change(machine) end
-        return result
+local PUSH_FUNC = function (dir)
+    return function(pos, side, item, player_name)
+        local machine = terumet.machine.readonly_state(pos)
+        if machine_check(machine) then
+            local result = tubelib.put_item(machine.meta, dir, item)
+            if result then machine.class.on_inventory_change(machine) end
+            return result
+        end
+        return false
     end
-    return false
 end
 
 local TUBELIB_MACHINE_DEF = {
@@ -28,8 +30,8 @@ local TUBELIB_MACHINE_DEF = {
         end
         return nil
     end,
-    on_push_item = PUSH_FUNC,
-    on_unpull_item = PUSH_FUNC
+    on_push_item = PUSH_FUNC('in'),
+    on_unpull_item = PUSH_FUNC('out')
 }
 
 terumet.machine.register_on_place(function (pos, machine, placer)
