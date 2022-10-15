@@ -1,3 +1,9 @@
+***Archived***
+
+I have not worked on this project for years now and will likely not come back to it.
+
+I still like Minetest and may come back to seriously working on modding for it some time! However if I do, I will probably remake this mod from scratch because it is extremely messy and could really use a rewrite from the bottom up at this point.
+
 # Terumetal [terumet]
 ### Current release version: [v3.0](https://github.com/Terumoc/terumet/releases/tag/v3.0)
 A mod for the open-source voxel game Minetest (https://www.minetest.net/)
